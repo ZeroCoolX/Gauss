@@ -4,8 +4,10 @@ using namespace sf;
 
 int main() {
 
-	RenderWindow window(VideoMode(800, 600), "Galactic Defender", Style::Default);
+	RenderWindow window(VideoMode(800, 600), "Gauss", Style::Default);
 	window.setFramerateLimit(60);
+
+	Game game(&window);
 
 	//Game Loop
 	while (window.isOpen()) {
@@ -16,6 +18,9 @@ int main() {
 			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
 				window.close();
 		}
+
+		game.Update();
+		game.Draw();
 	}
 
 	return 0;

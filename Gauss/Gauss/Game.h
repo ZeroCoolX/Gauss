@@ -7,6 +7,9 @@ class Game
 private:
 	RenderWindow *window;
 
+	Player *player;
+	Texture playerTexture;
+
 public:
 	Game(RenderWindow *window);
 	virtual ~Game();

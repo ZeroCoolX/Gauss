@@ -11,8 +11,10 @@ class Player
 {
 private:
 	Texture *texture;
-	Sprite shape;
+	Sprite sprite;
 	RectangleShape hitBox;
+
+	int controls[5];
 
 	int level;
 	int exp;
@@ -27,10 +29,16 @@ private:
 	int score;
 
 public:
-	Player();
+	Player(Texture *texture,
+		int UP = Keyboard::W, 
+		int DOWN = Keyboard::S,
+		int LEFT = Keyboard::A, 
+		int RIGHT = Keyboard::D,
+		int FIRE = Keyboard::Space);
 	virtual ~Player();
 
-	void Draw();
+	void Movement();
+	void Draw(RenderTarget &renderTarget);
 	void Update();
 };
 
