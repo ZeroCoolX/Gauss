@@ -50,10 +50,7 @@ void Player::Movement() {
 void Player::Combat() {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		// Fix position so that the missile spawns in the middle of the ship (sprite height / 2)
-		// TODO: also need to account for the size fo the bullet (subtract height/2 of that as well)
-		Vector2f fixedPos = Vector2f(this->sprite.getPosition().x, this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2));
-		this->bullets.push_back(Bullet(bulletTexture, fixedPos));
+		this->bullets.push_back(Bullet(bulletTexture, this->playerCenter, Vector2f(1.f, 0.f), 5.f, 25.f, 0.5f)); // TODO: fix these random numbers
 		this->shootTimer = 0; // RESET TIMER
 	}
 }
@@ -65,16 +62,20 @@ void Player::Update(Vector2u windowBounds) {
 	if (this->damageTimer < this->damageTimerMax)
 		this->damageTimer++;
 
+	// Update sprite center
+	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
+	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
+
 	this->Movement();
 	this->Combat();
 }
 
 void Player::Draw(RenderTarget &renderTarget) {
-	renderTarget.draw(this->sprite);
-
 	for (size_t i = 0; i < this->bullets.size(); ++i) {
 		this->bullets[i].Draw(renderTarget);
 	}
+
+	renderTarget.draw(this->sprite);
 }
 
 void Player::processPlayerInput() {
