@@ -54,7 +54,7 @@ void Player::Combat() {
 		// TODO: also need to account for the size fo the bullet (subtract height/2 of that as well)
 		Vector2f fixedPos = Vector2f(this->sprite.getPosition().x, this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2));
 		this->bullets.push_back(Bullet(bulletTexture, fixedPos));
-		this->shootTimer = 0.f; // RESET TIMER
+		this->shootTimer = 0; // RESET TIMER
 	}
 }
 
