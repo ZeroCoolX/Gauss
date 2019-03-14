@@ -1,18 +1,18 @@
 #pragma once
 
-#include <SFML\Graphics.hpp>
-#include <SFML\System.hpp>
-#include <SFML\Audio.hpp>
-#include <iostream>
-
-using namespace sf;
+#include "Bullet.h"
 
 class Player
 {
 private:
+	unsigned int playerNumber;
+
 	Texture *texture;
 	Sprite sprite;
 	RectangleShape hitBox;
+
+	Texture *bulletTexture;
+	std::vector<Bullet> bullets;
 
 	int controls[5];
 
@@ -29,7 +29,8 @@ private:
 	int score;
 
 public:
-	Player(Texture *texture,
+	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
+	Player(Texture *texture, Texture *bulletTexture,
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
@@ -40,5 +41,8 @@ public:
 	void Movement();
 	void Draw(RenderTarget &renderTarget);
 	void Update();
+
+	// Statics
+	static unsigned playerId;
 };
 
