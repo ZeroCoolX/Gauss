@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Player.h"
 
 unsigned Player::playerId = 0;
@@ -17,11 +18,16 @@ Player::Player(Texture *texture, Texture *bulletTexture,
 	this->sprite.setTexture(*this->texture);
 	this->sprite.setScale(0.13f, 0.13f);
 	
-	// Assign bullet
+	// Assign bullet properties
 	this->bulletTexture = bulletTexture;
+	this->bulletSpeed = 2.f;
+	this->bulletMaxSpeed = 50;
+	this->bulletAcceleration = 1.f;
 
 	// Setup timers
+	this->shootTimerMax = 15;
 	this->shootTimer = this->shootTimerMax;
+	this->damageMax = 5;
 	this->damageTimer = this->damageMax;
 
 	// Set player controls
@@ -30,6 +36,10 @@ Player::Player(Texture *texture, Texture *bulletTexture,
 	this->controls[control_index::LEFT] = LEFT;
 	this->controls[control_index::RIGHT] = RIGHT;
 	this->controls[control_index::FIRE] = FIRE;
+
+	this->maxVelocity = 15.f;
+	this->acceleration = 1.f;
+	this->stabalizingForce = 0.3f;
 
 	this->playerNumber = Player::playerId;
 	Player::playerId++;
@@ -78,12 +88,49 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 void Player::processPlayerInput() {
 	// Collect player input
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::UP])))
-		this->sprite.move(0.f, -10.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::DOWN])))
-		this->sprite.move(0.f, 10.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::LEFT])))
-		this->sprite.move(-10.f, 0.f);
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::RIGHT])))
-		this->sprite.move(10.f, 0.f);
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::UP]))) {
+		this->direction.y = -1;
+		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
+			this->velocity.y += direction.y * this->acceleration;
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::DOWN]))) {
+		this->direction.y = 1;
+		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
+			this->velocity.y += direction.y * this->acceleration;
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::LEFT]))) {
+		this->direction.x = -1;
+		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
+			this->velocity.x += direction.x * this->acceleration;
+		}
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::RIGHT]))) {
+		this->direction.x = 1;
+		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
+			this->velocity.x += direction.x * this->acceleration;
+		}
+	}
+
+	// Apply Drag Force
+	if (this->velocity.x > 0) {
+		this->velocity.x -= this->stabalizingForce;
+		this->velocity.x = std::max(0.f, this->velocity.x);
+	}else if (this->velocity.x < 0) {
+		this->velocity.x += this->stabalizingForce;
+		this->velocity.x = std::min(0.f, this->velocity.x);
+	}
+	if (this->velocity.y > 0) {
+		this->velocity.y -= this->stabalizingForce;
+		this->velocity.y = std::max(0.f, this->velocity.y);
+	}
+	else if (this->velocity.y < 0) {
+		this->velocity.y += this->stabalizingForce;
+		this->velocity.y = std::min(0.f, this->velocity.y);
+	}
+	
+
+	// Final movement
+	this->sprite.move(this->velocity);
 }
