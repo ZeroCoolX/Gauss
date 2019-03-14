@@ -17,7 +17,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, &mainGunTexture));
-	//this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, &mainGunTexture, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->InitUI();
 }
