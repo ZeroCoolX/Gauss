@@ -21,6 +21,7 @@ public:
 	// Setters
 
 	// Functions
+	void CombatUpdate();
 	void Update();
 	void Draw();
 };
