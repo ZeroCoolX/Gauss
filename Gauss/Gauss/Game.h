@@ -18,6 +18,7 @@ private:
 	// Textures
 	Texture playerTexture;
 	Texture bulletTexture;
+	Texture mainGunTexture;
 
 public:
 	Game(RenderWindow *window);

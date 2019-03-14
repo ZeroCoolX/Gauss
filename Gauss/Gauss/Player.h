@@ -18,6 +18,10 @@ private:
 	Sprite sprite;
 	RectangleShape hitBox;
 
+	// Accessories
+	Texture *mainGunTexture;
+	Sprite mainGunSprite;
+
 	Texture *bulletTexture;
 	std::vector<Bullet> bullets;
 	float bulletSpeed;
@@ -49,7 +53,7 @@ private:
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
-	Player(Texture *texture, Texture *bulletTexture,
+	Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture,
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
@@ -64,6 +68,7 @@ public:
 	inline const FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 
 	// Functions
+	void UpdateAccessories();
 	void Combat();
 	void Movement();
 	void Draw(RenderTarget &renderTarget);

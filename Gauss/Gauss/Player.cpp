@@ -5,7 +5,7 @@ unsigned Player::playerId = 0;
 
 enum control_index {UP = 0, DOWN, LEFT, RIGHT, FIRE};
 
-Player::Player(Texture *texture, Texture *bulletTexture,
+Player::Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture,
 	int UP, 
 	int DOWN,
 	int LEFT, 
@@ -17,11 +17,20 @@ Player::Player(Texture *texture, Texture *bulletTexture,
 	this->texture = texture;
 	this->sprite.setTexture(*this->texture);
 	this->sprite.setScale(0.13f, 0.13f);
+
+	// Assign accessories
+	this->mainGunTexture = mainGunTexture;
+	this->mainGunSprite.setTexture(*this->mainGunTexture);
+	this->mainGunSprite.setOrigin(
+		this->mainGunSprite.getGlobalBounds().width / 2,
+		this->mainGunSprite.getGlobalBounds().height / 2);
+	this->mainGunSprite.rotate(90);
+
 	
 	// Assign bullet properties
 	this->bulletTexture = bulletTexture;
 	this->bulletSpeed = 2.f;
-	this->bulletMaxSpeed = 50;
+	this->bulletMaxSpeed = 75;
 	this->bulletAcceleration = 1.f;
 
 	// Setup timers
@@ -51,8 +60,18 @@ Player::~Player()
 {
 }
 
+void Player::UpdateAccessories() {
+	this->mainGunSprite.setPosition(
+		this->playerCenter.x + this->sprite.getGlobalBounds().width / 4,
+		this->playerCenter.y);
+}
+
 void Player::Movement() {
 	this->processPlayerInput();
+
+	// Update sprite center
+	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
+	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
 }
 
 void Player::Combat() {
@@ -70,11 +89,8 @@ void Player::Update(Vector2u windowBounds) {
 	if (this->damageTimer < this->damageTimerMax)
 		this->damageTimer++;
 
-	// Update sprite center
-	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
-	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
-
 	this->Movement();
+	this->UpdateAccessories();
 	this->Combat();
 }
 
@@ -82,6 +98,7 @@ void Player::Draw(RenderTarget &renderTarget) {
 	for (size_t i = 0; i < this->bullets.size(); ++i) {
 		this->bullets[i].Draw(renderTarget);
 	}
+	renderTarget.draw(this->mainGunSprite);
 
 	renderTarget.draw(this->sprite);
 }
