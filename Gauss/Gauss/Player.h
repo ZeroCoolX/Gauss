@@ -10,9 +10,9 @@ private:
 	Vector2f playerCenter;
 
 	int shootTimer;
-	int shootTimerMax;
+	int shootTimerMax = 25;
 	int damageTimer;
-	int damageTimerMax;
+	int damageTimerMax = 5;
 
 	Texture *texture;
 	Sprite sprite;
@@ -20,6 +20,9 @@ private:
 
 	Texture *bulletTexture;
 	std::vector<Bullet> bullets;
+	float bulletSpeed = 5.f;
+	float bulletMaxSpeed = 25.f;
+	float bulletAcceleration = 0.5f;
 
 	int controls[5];
 

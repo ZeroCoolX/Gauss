@@ -21,9 +21,7 @@ Player::Player(Texture *texture, Texture *bulletTexture,
 	this->bulletTexture = bulletTexture;
 
 	// Setup timers
-	this->shootTimerMax = 25;
 	this->shootTimer = this->shootTimerMax;
-	this->damageMax = 10;
 	this->damageTimer = this->damageMax;
 
 	// Set player controls
@@ -50,7 +48,7 @@ void Player::Movement() {
 void Player::Combat() {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		this->bullets.push_back(Bullet(bulletTexture, this->playerCenter, Vector2f(1.f, 0.f), 5.f, 25.f, 0.5f)); // TODO: fix these random numbers
+		this->bullets.push_back(Bullet(bulletTexture, this->playerCenter, Vector2f(1.f, 0.f), this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration));
 		this->shootTimer = 0; // RESET TIMER
 	}
 }
