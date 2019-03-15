@@ -9,7 +9,7 @@ private:
 	Sprite sprite;
 	Vector2f direction;
 
-	float moveSpeed = 10.f;
+	float moveSpeed = 10;
 
 	int type;
 	int hp;
@@ -37,7 +37,7 @@ public:
 
 	// Functions
 	void TakeDamage(int damage);
-	void Update();
+	void Update(float dt);
 	void Draw(RenderTarget &renderTarget);
 };
 

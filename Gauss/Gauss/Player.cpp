@@ -66,7 +66,7 @@ Player::~Player()
 {
 }
 
-void Player::UpdateAccessories() {
+void Player::UpdateAccessories(float dt) {
 	// Update the position of the gun to track the player
 	this->mainGunSprite.setPosition(
 		this->mainGunSprite.getPosition().x,
@@ -85,15 +85,18 @@ void Player::UpdateAccessories() {
 	}
 }
 
-void Player::Movement() {
+void Player::Movement(float dt) {
 	this->processPlayerInput();
+
+	// Final movement
+	this->sprite.move(this->velocity);
 
 	// Update sprite center
 	this->playerCenter.x = this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 2;
 	this->playerCenter.y = this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 2;
 }
 
-void Player::Combat() {
+void Player::Combat(float dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
 		const Vector2f direction = Vector2f(1.f, 0.f);
@@ -148,16 +151,16 @@ void Player::Combat() {
 	}
 }
 
-void Player::Update(Vector2u windowBounds) {
+void Player::Update(Vector2u windowBounds, float dt) {
 	// Update timers
 	if (this->shootTimer < this->shootTimerMax)
 		this->shootTimer++;
 	if (this->damageTimer < this->damageTimerMax)
 		this->damageTimer++;
 
-	this->Movement();
-	this->UpdateAccessories();
-	this->Combat();
+	this->Movement(dt);
+	this->UpdateAccessories(dt);
+	this->Combat(dt);
 }
 
 void Player::Draw(RenderTarget &renderTarget) {
@@ -212,8 +215,5 @@ void Player::processPlayerInput() {
 		this->velocity.y += this->stabalizingForce;
 		this->velocity.y = std::min(0.f, this->velocity.y);
 	}
-	
 
-	// Final movement
-	this->sprite.move(this->velocity);
 }

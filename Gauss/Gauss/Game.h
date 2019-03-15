@@ -44,7 +44,7 @@ public:
 	// Functions
 	void InitUI();
 	void UpdateUI();
-	void Update();
+	void Update(float dt);
 	void DrawUI();
 	void Draw();
 };

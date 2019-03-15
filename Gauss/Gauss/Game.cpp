@@ -4,7 +4,6 @@
 Game::Game(RenderWindow *window)
 {
 	this->window = window;
-	this->window->setFramerateLimit(60);
 
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -38,7 +37,7 @@ Game::Game(RenderWindow *window)
 		this->enemyHp,
 		this->enemyDamageRange));
 
-	this->enemySpawnTimerMax = 25;
+	this->enemySpawnTimerMax = 500;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
@@ -81,7 +80,7 @@ void Game::UpdateUI() {
 }
 
 
-void Game::Update() {
+void Game::Update(float dt) {
 	// Update timers
 	if (this->enemySpawnTimer < this->enemySpawnTimerMax) { ++this->enemySpawnTimer; }
 
@@ -100,12 +99,12 @@ void Game::Update() {
 
 	for (size_t i = 0; i < this->players.size(); ++i) {
 		// Players update
-		this->players[i].Update(this->window->getSize());
+		this->players[i].Update(this->window->getSize(), dt);
 
 		// Bullets update
 		for (size_t j = 0; j < this->players[i].getBullets().size(); j++)
 		{
-			this->players[i].getBullets()[j].Update();
+			this->players[i].getBullets()[j].Update(dt);
 
 			// Bullet Window bounds check
 			if (this->players[i].getBullets()[j].getPosition().x > this->window->getSize().x) {
@@ -127,7 +126,7 @@ void Game::Update() {
 	// Update Enemy Movement
 	for (size_t i = 0; i < this->enemies.size(); i++)
 	{
-		this->enemies[i].Update();
+		this->enemies[i].Update(dt);
 
 		// Enemy Window Bounds check
 		if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {

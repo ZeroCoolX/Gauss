@@ -83,11 +83,11 @@ public:
 	inline const FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 
 	// Functions
-	void UpdateAccessories();
-	void Combat();
-	void Movement();
+	void UpdateAccessories(float dt);
+	void Combat(float dt);
+	void Movement(float dt);
 	void Draw(RenderTarget &renderTarget);
-	void Update(Vector2u windowBounds);
+	void Update(Vector2u windowBounds, float dt);
 
 	// Statics
 	static unsigned playerId;

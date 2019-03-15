@@ -35,10 +35,10 @@ void Enemy::TakeDamage(int damage){
 	this->hp = std::max(0, (this->hp - damage));
 }
 
-void Enemy::Update(){
+void Enemy::Update(float dt){
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
-			this->sprite.move(this->direction.x * this->moveSpeed, this->direction.y * this->moveSpeed);
+			this->sprite.move(this->direction.x * this->moveSpeed * dt * 62.f, this->direction.y * this->moveSpeed * dt * 62.f);
 			break;
 	}
 }

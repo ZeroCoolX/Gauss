@@ -31,7 +31,7 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::Movement() {
+void Bullet::Movement(float dt) {
 	// Accelerate to constant max speed
 	if (this->acceleration >= 0.f) {
 		if (this->velocity.x < this->maxVelocity) {
@@ -48,8 +48,8 @@ void Bullet::Movement() {
 	this->sprite.move(this->velocity.x,this->velocity.y);
 }
 
-void Bullet::Update() {
-	this->Movement();
+void Bullet::Update(float dt) {
+	this->Movement(dt);
 
 }
 void Bullet::Draw(RenderTarget &renderTarget) {

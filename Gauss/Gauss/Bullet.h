@@ -35,8 +35,8 @@ public:
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 
 	// Functions
-	void Movement();
-	void Update();
+	void Movement(float dt);
+	void Update(float dt);
 	void Draw(RenderTarget &renderTarget);
 };
 
