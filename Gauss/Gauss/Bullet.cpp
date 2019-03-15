@@ -1,6 +1,7 @@
 #include "Bullet.h"
 
 Bullet::Bullet(Texture *texture,
+	Vector2f scale,
 	Vector2f position,
 	Vector2f direction,
 	float initialVelocity,
@@ -17,7 +18,7 @@ Bullet::Bullet(Texture *texture,
 		initialVelocity * this->direction.y);
 
 	// Setup bullet
-	this->sprite.setScale(0.1f, 0.1f);
+	this->sprite.setScale(scale);
 	// Compensate for the top left origin of the sprite
 	this->sprite.setPosition(
 		Vector2f(

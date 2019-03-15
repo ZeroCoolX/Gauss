@@ -13,19 +13,20 @@ Player::Player(std::vector<Texture> &textureMap,
 ) :level(1), exp(0), expNext(100), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
 {
 	// Assign ship
-	this->sprite.setTexture(textureMap[GameEnums::SHIP]);
+	this->sprite.setTexture(textureMap[GameEnums::T_SHIP]);
 	this->sprite.setScale(0.13f, 0.13f);
 
 	// Assign accessories
-	this->mainGunSprite.setTexture(textureMap[GameEnums::MAIN_GUN01]);
+	this->mainGunSprite.setTexture(textureMap[GameEnums::T_MAIN_GUN]);
 	this->mainGunSprite.setOrigin(
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
 	this->mainGunSprite.rotate(90);
-
 	
 	// Assign bullet properties
-	this->bulletTexture = &textureMap[GameEnums::MISSILE01];
+	this->laserProjectileTexture = &textureMap[GameEnums::T_LASER01];
+	this->missile01ProjectileTexture = &textureMap[GameEnums::T_MISSILE01];
+
 	this->bulletSpeed = 2.f;
 	this->bulletMaxSpeed = 75;
 	this->bulletAcceleration = 1.f;
@@ -37,15 +38,24 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->damageTimer = this->damageMax;
 
 	// Set player controls
-	this->controls[GameEnums::UP] = UP;
-	this->controls[GameEnums::DOWN] = DOWN;
-	this->controls[GameEnums::LEFT] = LEFT;
-	this->controls[GameEnums::RIGHT] = RIGHT;
-	this->controls[GameEnums::FIRE] = FIRE;
+	this->controls[GameEnums::C_UP] = UP;
+	this->controls[GameEnums::C_DOWN] = DOWN;
+	this->controls[GameEnums::C_LEFT] = LEFT;
+	this->controls[GameEnums::C_RIGHT] = RIGHT;
+	this->controls[GameEnums::C_FIRE] = FIRE;
 
+	// Movement setup
 	this->maxVelocity = 15.f;
 	this->acceleration = 1.f;
 	this->stabalizingForce = 0.3f;
+
+	// Weapons
+	this->currentWeapon = GameEnums::G_LASER;
+
+	// UPGRADES
+	this->mainGunLevel = GameEnums::DEFAULT_LASER;
+	this->dualMissiles01 = false;
+	this->dualMissiles02 = false;
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId;
@@ -65,7 +75,7 @@ void Player::UpdateAccessories() {
 	// Compensate after fire kickback
 	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 4;
 	if (this->mainGunSprite.getPosition().x < origin) {
-		this->mainGunSprite.move(2.f + this->velocity.x, 0.f);
+		this->mainGunSprite.move(this->mainGunReturnSpeed + this->velocity.x, 0.f);
 
 	}
 	if (this->mainGunSprite.getPosition().x > origin) {
@@ -84,21 +94,59 @@ void Player::Movement() {
 }
 
 void Player::Combat() {
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::FIRE])) && this->shootTimer >= this->shootTimerMax)
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		this->bullets.push_back(
-			Bullet(
-				bulletTexture, 
-				Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y), 
-				Vector2f(1.f, 0.f), 
-				this->bulletSpeed, 
-				this->bulletMaxSpeed, 
-				this->bulletAcceleration
-			)
-		);
-
-		// Animate gun
-		this->mainGunSprite.move(-mainGunKickback, 0.f);
+		const Vector2f direction = Vector2f(1.f, 0.f);
+		switch (this->currentWeapon) {
+			case GameEnums::G_LASER:
+				// Create Laser
+				switch (this->mainGunLevel) {
+					case GameEnums::DEFAULT_LASER:
+						this->bullets.push_back(
+							Bullet(laserProjectileTexture,
+								laserBulletScale,
+								Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y),
+								direction,
+								this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+						);
+						break;
+					case GameEnums::LEVEL_2_LASER:
+						break;
+					case GameEnums::LEVEL_3_LASER:
+						break;
+					default:
+						break;
+				}
+				// Animate gun
+				this->mainGunSprite.move(-mainGunKickback, 0.f);
+				break;
+			case GameEnums::G_MISSILE01:
+				// Create Missile
+				this->bullets.push_back(
+					Bullet(missile01ProjectileTexture,
+						missileScale,
+						Vector2f(this->playerCenter.x, this->playerCenter.y - (this->sprite.getGlobalBounds().height / 2)),
+						direction,
+						this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration)
+				);
+				if (dualMissiles01) {
+					this->bullets.push_back(
+						Bullet(missile01ProjectileTexture,
+							missileScale,
+							Vector2f(this->playerCenter.x, this->playerCenter.y + (this->sprite.getGlobalBounds().height / 2)),
+							direction,
+							this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration)
+					);
+				}
+				break;
+			case GameEnums::G_MISSILE02:
+				if (dualMissiles02) {
+					// setup
+				}
+				break;
+			default:
+				break;
+		}
 
 		this->shootTimer = 0; // RESET TIMER
 	}
@@ -127,25 +175,25 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 void Player::processPlayerInput() {
 	// Collect player input
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::UP]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
 		this->direction.y = -1;
 		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
 			this->velocity.y += direction.y * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::DOWN]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_DOWN]))) {
 		this->direction.y = 1;
 		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
 			this->velocity.y += direction.y * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::LEFT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
 			this->velocity.x += direction.x * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::RIGHT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_RIGHT]))) {
 		this->direction.x = 1;
 		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
 			this->velocity.x += direction.x * this->acceleration;

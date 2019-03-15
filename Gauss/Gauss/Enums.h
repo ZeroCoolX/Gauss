@@ -2,6 +2,9 @@
 
 namespace GameEnums
 {
-	enum control_index { UP = 0, DOWN, LEFT, RIGHT, FIRE };
-	enum texture_index { SHIP = 0, MISSILE01, MAIN_GUN01 };
+	enum control_index { C_UP = 0, C_DOWN, C_LEFT, C_RIGHT, C_FIRE };
+	enum texture_index { T_SHIP = 0, T_LASER01, T_MISSILE01, T_MAIN_GUN };
+	enum gun_index { G_LASER = 0, G_MISSILE01, G_MISSILE02 };
+	enum laser_level { DEFAULT_LASER = 0, LEVEL_2_LASER, LEVEL_3_LASER
+	};
 }

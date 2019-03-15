@@ -11,17 +11,20 @@ Game::Game(RenderWindow *window)
 
 	// Init textures
 	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::SHIP].loadFromFile("Textures/ship.png");
+	this->textureMap[GameEnums::T_SHIP].loadFromFile("Textures/ship.png");
 
 	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
+	this->textureMap[GameEnums::T_LASER01].loadFromFile("Textures/Guns/rayTex01.png");
 
 	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::MAIN_GUN01].loadFromFile("Textures/Guns/gun01.png");
+	this->textureMap[GameEnums::T_MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
+
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::T_MAIN_GUN].loadFromFile("Textures/Guns/gun01.png");
 
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->InitUI();
 }

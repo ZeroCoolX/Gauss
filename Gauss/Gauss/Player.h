@@ -19,14 +19,23 @@ private:
 
 	// Accessories
 	Sprite mainGunSprite;
-	const float mainGunKickback = 25.f;
+	const float mainGunKickback = 30.f;
+	const float mainGunReturnSpeed = 2.f;
 
-	Texture *bulletTexture;
 	std::vector<Bullet> bullets;
+
+	Texture *missile01ProjectileTexture;
+	Texture *missile02ProjectileTexture;
+	const Vector2f missileScale = Vector2f(0.05f, 0.05f);
+
+	Texture *laserProjectileTexture;
+	const Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
+
 	float bulletSpeed;
 	float bulletMaxSpeed;
 	float bulletAcceleration;
 
+	// Player input controls
 	int controls[5];
 
 	// Movement
@@ -47,6 +56,13 @@ private:
 	int damageMax;
 
 	int score;
+
+	int currentWeapon;
+
+	// Upgrades
+	bool mainGunLevel;
+	bool dualMissiles01;
+	bool dualMissiles02;
 
 	void processPlayerInput();
 
