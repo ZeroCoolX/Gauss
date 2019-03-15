@@ -7,6 +7,9 @@ class Enemy
 private:
 	Texture *texture;
 	Sprite sprite;
+	Vector2f direction;
+
+	float moveSpeed = 10.f;
 
 	int type;
 	int hp;

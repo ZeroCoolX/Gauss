@@ -14,7 +14,12 @@ Enemy::Enemy(Texture* texture,
 	this->texture = texture;
 	this->sprite.setTexture(*texture);
 	this->sprite.setScale(scale);
-	this->sprite.setPosition(windowBounds.x, rand() % windowBounds.y + this->sprite.getGlobalBounds().height);
+
+	const float xPos((float)windowBounds.x);
+	const float yPos((float)(rand() % windowBounds.y + this->sprite.getGlobalBounds().height));
+	this->sprite.setPosition(xPos, yPos);
+
+	this->direction = direction;
 
 	this->hpMax = hpMax;
 	this->hp = this->hpMax;
@@ -33,7 +38,7 @@ void Enemy::TakeDamage(int damage){
 void Enemy::Update(){
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
-			this->sprite.move(-10.f, 0.f); // TODO: Enemy speed should be a const
+			this->sprite.move(this->direction.x * this->moveSpeed, this->direction.y * this->moveSpeed);
 			break;
 	}
 }

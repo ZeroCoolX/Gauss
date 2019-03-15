@@ -30,35 +30,16 @@ Game::Game(RenderWindow *window)
 	//this->players.push_back(Player(this->textureMap, Keyboard::Numpad8, Keyboard::Numpad5, Keyboard::Numpad4, Keyboard::Numpad6, Keyboard::RShift));
 
 	// Init enemy
-	this->enemies.push_back(Enemy(
-		&this->textureMap[GameEnums::T_ENEMY01],
+	this->enemies.push_back(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
 		GameEnums::E_MOVE_LEFT,
 		this->window->getSize(),
-		Vector2f(0.1f, 0.1f),
-		Vector2f(-1.0f, 0.f), 
-		rand() % 3 + 1,  // TODO: magic random numbers for now
-		Vector2i(1, 3))  // TODO: magic random numbers for now
-	);
-	this->enemies.push_back(Enemy(
-		&this->textureMap[GameEnums::T_ENEMY01],
-		GameEnums::E_MOVE_LEFT,
-		this->window->getSize(),
-		Vector2f(0.1f, 0.1f),
-		Vector2f(-1.0f, 0.f),
-		rand() % 3 + 1,  // TODO: magic random numbers for now
-		Vector2i(1, 3))  // TODO: magic random numbers for now
-	);
+		this->enemyScale,
+		this->enemyDirection,
+		this->enemyHp,
+		this->enemyDamageRange));
 
-	this->enemies.push_back(Enemy(
-		&this->textureMap[GameEnums::T_ENEMY01],
-		GameEnums::E_MOVE_LEFT,
-		this->window->getSize(),
-		Vector2f(0.1f, 0.1f),
-		Vector2f(-1.0f, 0.f),
-		rand() % 3 + 1,  // TODO: magic random numbers for now
-		Vector2i(1, 3))  // TODO: magic random numbers for now
-	);
-
+	this->enemySpawnTimerMax = 25;
+	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
 }
@@ -101,6 +82,22 @@ void Game::UpdateUI() {
 
 
 void Game::Update() {
+	// Update timers
+	if (this->enemySpawnTimer < this->enemySpawnTimerMax) { ++this->enemySpawnTimer; }
+
+	// Spawn enemies
+	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
+		this->enemies.push_back(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
+			GameEnums::E_MOVE_LEFT,
+			this->window->getSize(),
+			this->enemyScale,
+			this->enemyDirection,
+			this->enemyHp,
+			this->enemyDamageRange));
+
+		this->enemySpawnTimer = 0;
+	}
+
 	for (size_t i = 0; i < this->players.size(); ++i) {
 		// Players update
 		this->players[i].Update(this->window->getSize());
