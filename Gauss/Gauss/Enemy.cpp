@@ -38,7 +38,7 @@ void Enemy::TakeDamage(int damage){
 void Enemy::Update(float dt){
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
-			this->sprite.move(this->direction.x * this->moveSpeed * dt * 62.f, this->direction.y * this->moveSpeed * dt * 62.f);
+			this->sprite.move(this->direction.x * this->moveSpeed /** dt * 62.f*/, this->direction.y * this->moveSpeed /** dt * 62.f*/);
 			break;
 	}
 }

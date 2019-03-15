@@ -37,7 +37,7 @@ Game::Game(RenderWindow *window)
 		this->enemyHp,
 		this->enemyDamageRange));
 
-	this->enemySpawnTimerMax = 500;
+	this->enemySpawnTimerMax = 100;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
@@ -63,6 +63,11 @@ void Game::InitUI() {
 		tempText.setString("");
 		this->staticPlayerTexts.push_back(tempText);
 	}
+
+	// Enemy Text
+	this->enemyText.setFont(this->font);
+	this->enemyText.setCharacterSize(14);
+	this->enemyText.setFillColor(Color::White);
 }
 
 void Game::UpdateUI() {
@@ -115,8 +120,15 @@ void Game::Update(float dt) {
 				for (size_t k = 0; k < this->enemies.size(); k++)
 				{
 					if (this->players[i].getBullets()[j].getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
+								
+						// Health check for damage or destruction
+						this->enemies[k].TakeDamage(this->players[i].getDamage());
+
+						if (this->enemies[k].getHp() <= 0) {
+							this->enemies.erase(this->enemies.begin() + k);
+						}
+
 						this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
-						this->enemies.erase(this->enemies.begin() + k);
 						break;
 					}
 				}
@@ -160,7 +172,11 @@ void Game::Draw(){
 
 	for (size_t i = 0; i < this->enemies.size(); i++)
 	{
+		this->enemyText.setPosition(this->enemies[i].getPosition());
+		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
+
 		this->enemies[i].Draw(*this->window);
+		this->window->draw(this->enemyText);
 	}
 
 	this->DrawUI();

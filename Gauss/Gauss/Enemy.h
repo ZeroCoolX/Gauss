@@ -9,7 +9,7 @@ private:
 	Sprite sprite;
 	Vector2f direction;
 
-	float moveSpeed = 10;
+	float moveSpeed = 5.f;
 
 	int type;
 	int hp;

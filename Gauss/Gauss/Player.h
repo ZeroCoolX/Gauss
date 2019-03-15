@@ -81,6 +81,7 @@ public:
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline const FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline const int getDamage() const { rand() % this->damageMax + this->damage; }
 
 	// Functions
 	void UpdateAccessories(float dt);
