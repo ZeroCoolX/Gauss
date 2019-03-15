@@ -66,6 +66,10 @@ Player::~Player()
 {
 }
 
+void Player::TakeDamage(int damage) {
+	this->hp = std::max(0, (this->hp - damage));
+}
+
 void Player::UpdateAccessories(float dt) {
 	// Update the position of the gun to track the player
 	this->mainGunSprite.setPosition(

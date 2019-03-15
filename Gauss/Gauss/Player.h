@@ -80,10 +80,12 @@ public:
 	inline std::vector<Bullet>& getBullets() { return this->bullets; }
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
-	inline const FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
-	inline const int getDamage() const { rand() % this->damageMax + this->damage; }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline const int getDamage() const { return rand() % this->damageMax + this->damage; }
+	inline const int getHp() const { return hp; }
 
 	// Functions
+	void TakeDamage(int damage);
 	void UpdateAccessories(float dt);
 	void Combat(float dt);
 	void Movement(float dt);

@@ -128,6 +128,7 @@ void Game::Update(float dt) {
 							this->enemies.erase(this->enemies.begin() + k);
 						}
 
+						// Destroy the bullet regardless
 						this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
 						break;
 					}
@@ -143,6 +144,20 @@ void Game::Update(float dt) {
 		// Enemy Window Bounds check
 		if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
 			this->enemies.erase(this->enemies.begin() + i);
+		}
+		else {
+			// Check Player - Enemy collision
+			for (size_t j = 0; j < this->players.size(); j++)
+			{
+				if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds())) {
+					// The amount of damage the player takes is relative to how much health the enemy has.
+					// A fully healed enemy will produce maximum amount of damage - whereas an enemy that is barely clinging to life will only damage the player a little		
+					this->players[j].TakeDamage(this->enemies[i].getHp());
+					this->enemies.erase(this->enemies.begin() + i);
+
+					break;
+				}
+			}
 		}
 	}
 
