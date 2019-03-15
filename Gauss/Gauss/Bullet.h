@@ -31,7 +31,7 @@ public:
 	virtual ~Bullet();
 
 	// Accessors
-	inline const FloatRect& getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 
 	// Functions

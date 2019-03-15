@@ -60,7 +60,7 @@ private:
 	int currentWeapon;
 
 	// Upgrades
-	bool mainGunLevel;
+	int mainGunLevel;
 	bool dualMissiles01;
 	bool dualMissiles02;
 

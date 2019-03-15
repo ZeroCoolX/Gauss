@@ -22,9 +22,43 @@ Game::Game(RenderWindow *window)
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_MAIN_GUN].loadFromFile("Textures/Guns/gun01.png");
 
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::T_ENEMY01].loadFromFile("Textures/enemy.png");
+
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.push_back(Player(this->textureMap, Keyboard::Numpad8, Keyboard::Numpad5, Keyboard::Numpad4, Keyboard::Numpad6, Keyboard::RShift));
+
+	// Init enemy
+	this->enemies.push_back(Enemy(
+		&this->textureMap[GameEnums::T_ENEMY01],
+		GameEnums::E_MOVE_LEFT,
+		this->window->getSize(),
+		Vector2f(0.1f, 0.1f),
+		Vector2f(-1.0f, 0.f), 
+		rand() % 3 + 1,  // TODO: magic random numbers for now
+		Vector2i(1, 3))  // TODO: magic random numbers for now
+	);
+	this->enemies.push_back(Enemy(
+		&this->textureMap[GameEnums::T_ENEMY01],
+		GameEnums::E_MOVE_LEFT,
+		this->window->getSize(),
+		Vector2f(0.1f, 0.1f),
+		Vector2f(-1.0f, 0.f),
+		rand() % 3 + 1,  // TODO: magic random numbers for now
+		Vector2i(1, 3))  // TODO: magic random numbers for now
+	);
+
+	this->enemies.push_back(Enemy(
+		&this->textureMap[GameEnums::T_ENEMY01],
+		GameEnums::E_MOVE_LEFT,
+		this->window->getSize(),
+		Vector2f(0.1f, 0.1f),
+		Vector2f(-1.0f, 0.f),
+		rand() % 3 + 1,  // TODO: magic random numbers for now
+		Vector2i(1, 3))  // TODO: magic random numbers for now
+	);
+
 
 	this->InitUI();
 }
@@ -68,22 +102,39 @@ void Game::UpdateUI() {
 
 void Game::Update() {
 	for (size_t i = 0; i < this->players.size(); ++i) {
-		
 		// Players update
 		this->players[i].Update(this->window->getSize());
 
 		// Bullets update
-		for (size_t k = 0; k < this->players[i].getBullets().size(); k++)
+		for (size_t j = 0; j < this->players[i].getBullets().size(); j++)
 		{
-			this->players[i].getBullets()[k].Update();
+			this->players[i].getBullets()[j].Update();
 
-			// Window bounds check
-			if (this->players[i].getBullets()[k].getPosition().x > this->window->getSize().x) {
-				this->players[i].getBullets().erase(this->players[i].getBullets().begin() + k);
-				break;
+			// Bullet Window bounds check
+			if (this->players[i].getBullets()[j].getPosition().x > this->window->getSize().x) {
+				this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
 			}
+			else {
+				// Enemy - Bullet Collision check since it still exists in the world
+				for (size_t k = 0; k < this->enemies.size(); k++)
+				{
+					if (this->players[i].getBullets()[j].getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
+						this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
+						this->enemies.erase(this->enemies.begin() + k);
+						break;
+					}
+				}
+			}
+		}
+	}
+	// Update Enemy Movement
+	for (size_t i = 0; i < this->enemies.size(); i++)
+	{
+		this->enemies[i].Update();
 
-			// Enemy collision check
+		// Enemy Window Bounds check
+		if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
+			this->enemies.erase(this->enemies.begin() + i);
 		}
 	}
 
@@ -109,6 +160,11 @@ void Game::Draw(){
 
 	for (size_t i = 0; i < this->players.size(); ++i) {
 		this->players[i].Draw(*this->window);
+	}
+
+	for (size_t i = 0; i < this->enemies.size(); i++)
+	{
+		this->enemies[i].Draw(*this->window);
 	}
 
 	this->DrawUI();

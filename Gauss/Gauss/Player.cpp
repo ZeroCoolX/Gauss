@@ -114,8 +114,6 @@ void Player::Combat() {
 						break;
 					case GameEnums::LEVEL_3_LASER:
 						break;
-					default:
-						break;
 				}
 				// Animate gun
 				this->mainGunSprite.move(-mainGunKickback, 0.f);
@@ -143,8 +141,6 @@ void Player::Combat() {
 				if (dualMissiles02) {
 					// setup
 				}
-				break;
-			default:
 				break;
 		}
 
