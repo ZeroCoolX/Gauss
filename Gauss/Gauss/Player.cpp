@@ -47,10 +47,9 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->acceleration = 1.f;
 	this->stabalizingForce = 0.3f;
 
+	// Number of players for co-op
 	this->playerNumber = Player::playerId;
 	Player::playerId++;
-
-	std::cout << "Player [" << this->playerNumber << "] Created\n";
 }
 
 Player::~Player()
@@ -58,9 +57,22 @@ Player::~Player()
 }
 
 void Player::UpdateAccessories() {
+	// Update the position of the gun to track the player
 	this->mainGunSprite.setPosition(
-		this->playerCenter.x + this->sprite.getGlobalBounds().width / 4,
+		this->mainGunSprite.getPosition().x,
 		this->playerCenter.y);
+
+	// Compensate after fire kickback
+	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 4;
+	if (this->mainGunSprite.getPosition().x < origin) {
+		this->mainGunSprite.move(2.f + this->velocity.x, 0.f);
+
+	}
+	if (this->mainGunSprite.getPosition().x > origin) {
+		this->mainGunSprite.setPosition(
+			origin,
+			this->playerCenter.y);
+	}
 }
 
 void Player::Movement() {
@@ -84,6 +96,10 @@ void Player::Combat() {
 				this->bulletAcceleration
 			)
 		);
+
+		// Animate gun
+		this->mainGunSprite.move(-mainGunKickback, 0.f);
+
 		this->shootTimer = 0; // RESET TIMER
 	}
 }

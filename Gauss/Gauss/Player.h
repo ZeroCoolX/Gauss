@@ -19,6 +19,7 @@ private:
 
 	// Accessories
 	Sprite mainGunSprite;
+	const float mainGunKickback = 25.f;
 
 	Texture *bulletTexture;
 	std::vector<Bullet> bullets;
