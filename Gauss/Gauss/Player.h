@@ -14,12 +14,10 @@ private:
 	int damageTimer;
 	int damageTimerMax;
 
-	Texture *texture;
 	Sprite sprite;
 	RectangleShape hitBox;
 
 	// Accessories
-	Texture *mainGunTexture;
 	Sprite mainGunSprite;
 
 	Texture *bulletTexture;
@@ -53,7 +51,7 @@ private:
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
-	Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture,
+	Player(std::vector<Texture> &textureMap,
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 

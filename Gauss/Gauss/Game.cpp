@@ -1,6 +1,5 @@
 #include "Game.h"
-
-
+#include "Enums.h"
 
 Game::Game(RenderWindow *window)
 {
@@ -11,13 +10,18 @@ Game::Game(RenderWindow *window)
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
 	// Init textures
-	this->playerTexture.loadFromFile("Textures/ship.png");
-	this->bulletTexture.loadFromFile("Textures/Guns/missileTex01.png");
-	this->mainGunTexture.loadFromFile("Textures/Guns/gun01.png");
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::SHIP].loadFromFile("Textures/ship.png");
+
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
+
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::MAIN_GUN01].loadFromFile("Textures/Guns/gun01.png");
 
 	// Init player
-	this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, &mainGunTexture));
-	this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, &mainGunTexture, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.push_back(Player(this->textureMap));
+	//this->players.push_back(Player(&this->playerTexture, &this->bulletTexture, &mainGunTexture01, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->InitUI();
 }

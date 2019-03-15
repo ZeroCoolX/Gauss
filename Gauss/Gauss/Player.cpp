@@ -1,11 +1,10 @@
 #include <algorithm>
 #include "Player.h"
+#include "Enums.h"
 
 unsigned Player::playerId = 0;
 
-enum control_index {UP = 0, DOWN, LEFT, RIGHT, FIRE};
-
-Player::Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture,
+Player::Player(std::vector<Texture> &textureMap,
 	int UP, 
 	int DOWN,
 	int LEFT, 
@@ -14,13 +13,11 @@ Player::Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture
 ) :level(1), exp(0), expNext(100), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
 {
 	// Assign ship
-	this->texture = texture;
-	this->sprite.setTexture(*this->texture);
+	this->sprite.setTexture(textureMap[GameEnums::SHIP]);
 	this->sprite.setScale(0.13f, 0.13f);
 
 	// Assign accessories
-	this->mainGunTexture = mainGunTexture;
-	this->mainGunSprite.setTexture(*this->mainGunTexture);
+	this->mainGunSprite.setTexture(textureMap[GameEnums::MAIN_GUN01]);
 	this->mainGunSprite.setOrigin(
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
@@ -28,7 +25,7 @@ Player::Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture
 
 	
 	// Assign bullet properties
-	this->bulletTexture = bulletTexture;
+	this->bulletTexture = &textureMap[GameEnums::MISSILE01];
 	this->bulletSpeed = 2.f;
 	this->bulletMaxSpeed = 75;
 	this->bulletAcceleration = 1.f;
@@ -40,11 +37,11 @@ Player::Player(Texture *texture, Texture *bulletTexture, Texture *mainGunTexture
 	this->damageTimer = this->damageMax;
 
 	// Set player controls
-	this->controls[control_index::UP] = UP;
-	this->controls[control_index::DOWN] = DOWN;
-	this->controls[control_index::LEFT] = LEFT;
-	this->controls[control_index::RIGHT] = RIGHT;
-	this->controls[control_index::FIRE] = FIRE;
+	this->controls[GameEnums::UP] = UP;
+	this->controls[GameEnums::DOWN] = DOWN;
+	this->controls[GameEnums::LEFT] = LEFT;
+	this->controls[GameEnums::RIGHT] = RIGHT;
+	this->controls[GameEnums::FIRE] = FIRE;
 
 	this->maxVelocity = 15.f;
 	this->acceleration = 1.f;
@@ -75,9 +72,18 @@ void Player::Movement() {
 }
 
 void Player::Combat() {
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::FIRE])) && this->shootTimer >= this->shootTimerMax)
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		this->bullets.push_back(Bullet(bulletTexture, this->playerCenter, Vector2f(1.f, 0.f), this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration));
+		this->bullets.push_back(
+			Bullet(
+				bulletTexture, 
+				Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y), 
+				Vector2f(1.f, 0.f), 
+				this->bulletSpeed, 
+				this->bulletMaxSpeed, 
+				this->bulletAcceleration
+			)
+		);
 		this->shootTimer = 0; // RESET TIMER
 	}
 }
@@ -105,25 +111,25 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 void Player::processPlayerInput() {
 	// Collect player input
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::UP]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::UP]))) {
 		this->direction.y = -1;
 		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
 			this->velocity.y += direction.y * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::DOWN]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::DOWN]))) {
 		this->direction.y = 1;
 		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
 			this->velocity.y += direction.y * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::LEFT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
 			this->velocity.x += direction.x * this->acceleration;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[control_index::RIGHT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::RIGHT]))) {
 		this->direction.x = 1;
 		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
 			this->velocity.x += direction.x * this->acceleration;

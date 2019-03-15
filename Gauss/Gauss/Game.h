@@ -16,9 +16,7 @@ private:
 	std::vector<Player> players;
 
 	// Textures
-	Texture playerTexture;
-	Texture bulletTexture;
-	Texture mainGunTexture;
+	std::vector<Texture> textureMap;
 
 public:
 	Game(RenderWindow *window);
