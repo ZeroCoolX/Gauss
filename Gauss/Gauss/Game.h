@@ -10,7 +10,9 @@ private:
 
 	// Text
 	Font font;
-	std::vector<Text> staticPlayerTexts;
+
+	Text staticPlayerText;
+
 	Text enemyText;
 	Text gameOverText;
 
@@ -48,7 +50,7 @@ public:
 
 	// Functions
 	void InitUI();
-	void UpdateUI();
+	void UpdatePlayerUI();
 	void Update(const float &dt);
 	void DrawUI();
 	void Draw();

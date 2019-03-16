@@ -32,12 +32,6 @@ Game::Game(RenderWindow *window)
 	this->enemySpawnTimerMax = 25;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
-	this->gameOverText.setFont(this->font);
-	this->gameOverText.setCharacterSize(40);
-	this->gameOverText.setFillColor(Color::Red);
-	this->gameOverText.setString("Game Over! (X___X)");
-	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
-
 	this->InitUI();
 }
 
@@ -53,27 +47,33 @@ void Game::InitUI() {
 
 	for (size_t i = 0; i < this->players.size(); i++)
 	{
-		// Follow Text init
+		// Follow Text init - belongs to the player
 		this->players[i].InitStatsText(tempText);
 
-		// Static Text init
-		tempText.setString("");
-		this->staticPlayerTexts.push_back(tempText);
+		// Static Text init - is "about" the player but belongs to the game
+		this->staticPlayerText.setFont(this->font);
+		this->staticPlayerText.setCharacterSize(14);
+		this->staticPlayerText.setFillColor(Color::White);
+		this->staticPlayerText.setString("");
 	}
 
 	// Enemy Text
 	this->enemyText.setFont(this->font);
 	this->enemyText.setCharacterSize(14);
 	this->enemyText.setFillColor(Color::White);
+
+	// Game Over Text
+	this->gameOverText.setFont(this->font);
+	this->gameOverText.setCharacterSize(40);
+	this->gameOverText.setFillColor(Color::Red);
+	this->gameOverText.setString("Game Over! (X___X)");
+	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
 }
 
-void Game::UpdateUI() {
-	for (size_t i = 0; i < this->staticPlayerTexts.size(); i++)
-	{
-		//offset * player num
-	}
+void Game::UpdatePlayerUI() {
+	// Static text
+	//?
 }
-
 
 void Game::Update(const float &dt) {
 	
@@ -151,40 +151,40 @@ void Game::Update(const float &dt) {
 			}
 		}
 
-		//UI update
-		this->UpdateUI();
+		//Player UI update
+		this->UpdatePlayerUI();
 	}
 }
 
 void Game::DrawUI() {
-	if (!this->playersExistInWorld()) {
-		this->window->draw(this->gameOverText);
+	// Draw enemies
+	for (size_t i = 0; i < this->enemies.size(); i++)
+	{
+		this->enemyText.setPosition(this->enemies[i].getPosition());
+		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
+
+		// Draw Enemy
+		this->enemies[i].Draw(*this->window);
+		// Draw Enemy UI
+		this->window->draw(this->enemyText);
 	}
 
-	for (size_t i = 0; i < this->staticPlayerTexts.size(); i++)
-	{
-		//offset * player num
-		this->window->draw(this->staticPlayerTexts[i]);
+	// Draw Game Over Text - if needed
+	if (!this->playersExistInWorld()) {
+		this->window->draw(this->gameOverText);
 	}
 }
 
 void Game::Draw(){
 	this->window->clear();
 
+	// Draw Players
 	for (size_t i = 0; i < this->players.size(); ++i) {
 		this->players[i].Draw(*this->window);
 	}
 
-	for (size_t i = 0; i < this->enemies.size(); i++)
-	{
-		this->enemyText.setPosition(this->enemies[i].getPosition());
-		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
-
-		this->enemies[i].Draw(*this->window);
-		this->window->draw(this->enemyText);
-	}
-
 	this->DrawUI();
+
 	this->window->display();
 }
 
