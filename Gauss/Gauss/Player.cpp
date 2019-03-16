@@ -12,6 +12,8 @@ Player::Player(std::vector<Texture> &textureMap,
 	int FIRE
 ) :level(1), exp(0), expNext(100), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
 {
+	this->dtMultiplier = 62.5f;
+
 	this->_initTextures(textureMap);
 	this->_initPlayerSettings();
 
@@ -27,7 +29,7 @@ Player::~Player()
 {
 }
 
-void Player::UpdateAccessories(float dt) {
+void Player::UpdateAccessories(const float &dt) {
 	// Update the position of the gun to track the player
 	this->mainGunSprite.setPosition(
 		this->mainGunSprite.getPosition().x,
@@ -36,7 +38,7 @@ void Player::UpdateAccessories(float dt) {
 	// Compensate after fire kickback
 	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 4;
 	if (this->mainGunSprite.getPosition().x < origin) {
-		this->mainGunSprite.move(this->mainGunReturnSpeed + this->velocity.x, 0.f);
+		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * this->dtMultiplier, 0.f);
 
 	}
 	if (this->mainGunSprite.getPosition().x > origin) {
@@ -46,16 +48,16 @@ void Player::UpdateAccessories(float dt) {
 	}
 }
 
-void Player::Movement(float dt) {
-	this->_processPlayerInput();
+void Player::Movement(const float &dt) {
+	this->_processPlayerInput(dt);
 
 	// Move player
-	this->sprite.move(this->velocity);
+	this->sprite.move(this->velocity * dt * this->dtMultiplier);
 
 	this->_recalculatePlayerCenter();
 }
 
-void Player::Combat(float dt) {
+void Player::Combat(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
 		const Vector2f direction = Vector2f(1.f, 0.f);
@@ -81,12 +83,12 @@ void Player::UpdateStatsUI() {
 	this->statsText.setString("[" + std::to_string(this->playerNumber) + "]					" + this->getHpAsString());
 }
 
-void Player::Update(Vector2u windowBounds, float dt) {
+void Player::Update(Vector2u windowBounds, const float &dt) {
 	// Update timers
 	if (this->shootTimer < this->shootTimerMax)
-		this->shootTimer++;
+		this->shootTimer += 1.f * dt * this->dtMultiplier;
 	if (this->damageTimer < this->damageTimerMax)
-		this->damageTimer++;
+		this->damageTimer += 1.f * dt * this->dtMultiplier;
 
 	this->Movement(dt);
 	this->UpdateAccessories(dt);
@@ -110,47 +112,47 @@ void Player::Draw(RenderTarget &renderTarget) {
 	this->DrawStatsUI(renderTarget);
 }
 
-void Player::_processPlayerInput() {
+void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
 		this->direction.y = -1;
 		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
-			this->velocity.y += direction.y * this->acceleration;
+			this->velocity.y += direction.y * this->acceleration * dt * this->dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_DOWN]))) {
 		this->direction.y = 1;
 		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
-			this->velocity.y += direction.y * this->acceleration;
+			this->velocity.y += direction.y * this->acceleration * dt * this->dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
-			this->velocity.x += direction.x * this->acceleration;
+			this->velocity.x += direction.x * this->acceleration * dt * this->dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_RIGHT]))) {
 		this->direction.x = 1;
 		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
-			this->velocity.x += direction.x * this->acceleration;
+			this->velocity.x += direction.x * this->acceleration * dt * this->dtMultiplier;
 		}
 	}
 
 	// Apply Drag Force
 	if (this->velocity.x > 0) {
-		this->velocity.x -= this->stabalizingForce;
+		this->velocity.x -= this->stabalizingForce * dt * this->dtMultiplier;
 		this->velocity.x = std::max(0.f, this->velocity.x);
 	}else if (this->velocity.x < 0) {
-		this->velocity.x += this->stabalizingForce;
+		this->velocity.x += this->stabalizingForce * dt * this->dtMultiplier;
 		this->velocity.x = std::min(0.f, this->velocity.x);
 	}
 	if (this->velocity.y > 0) {
-		this->velocity.y -= this->stabalizingForce;
+		this->velocity.y -= this->stabalizingForce * dt * this->dtMultiplier;
 		this->velocity.y = std::max(0.f, this->velocity.y);
 	}
 	else if (this->velocity.y < 0) {
-		this->velocity.y += this->stabalizingForce;
+		this->velocity.y += this->stabalizingForce * dt * this->dtMultiplier;
 		this->velocity.y = std::min(0.f, this->velocity.y);
 	}
 }
@@ -180,14 +182,14 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 void Player::_initPlayerSettings() {
 	// Bullet settings
 	this->bulletSpeed = 2.f;
-	this->bulletMaxSpeed = 75;
+	this->bulletMaxSpeed = 60;
 	this->bulletAcceleration = 1.f;
 
 	// Setup timers
-	this->shootTimerMax = 15;
+	this->shootTimerMax = 20.f;
 	this->shootTimer = this->shootTimerMax;
-	this->damageMax = 5;
-	this->damageTimer = this->damageMax;
+	this->damageTimerMax = 5.f;
+	this->damageTimer = this->damageTimerMax;
 
 	// Movement settings
 	this->maxVelocity = 15.f;
@@ -231,7 +233,7 @@ void Player::_fireLaser(const Vector2f direction) {
 		break;
 	}
 	// Animate gun
-	this->mainGunSprite.move(-mainGunKickback, 0.f);
+	this->mainGunSprite.move(-mainGunKickback, 0.f); // Should arguably be .setPosition() instead of move...
 }
 
 void Player::_fireMissileLight(const Vector2f direction) {

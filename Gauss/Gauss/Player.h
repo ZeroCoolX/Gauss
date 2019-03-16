@@ -5,15 +5,17 @@
 class Player
 {
 private:
+	float dtMultiplier;
+
 	unsigned int playerNumber;
 	Text statsText;
 
 	Vector2f playerCenter;
 
-	int shootTimer;
-	int shootTimerMax;
-	int damageTimer;
-	int damageTimerMax;
+	float shootTimer;
+	float shootTimerMax;
+	float damageTimer;
+	float damageTimerMax;
 
 	Sprite sprite;
 	RectangleShape hitBox;
@@ -66,7 +68,7 @@ private:
 	bool dualMissiles02;
 
 	// Utility Functions
-	void _processPlayerInput();
+	void _processPlayerInput(const float &dt);
 	void _initTextures(std::vector <Texture> &textureMap);
 	void _initPlayerSettings();
 	void _recalculatePlayerCenter();
@@ -95,13 +97,13 @@ public:
 	inline const bool isDead() const { return this->hp <= 0; }
 
 	// Functions
-	void UpdateAccessories(float dt);
-	void Combat(float dt);
-	void Movement(float dt);
+	void UpdateAccessories(const float &dt);
+	void Combat(const float &dt);
+	void Movement(const float &dt);
 	void Draw(RenderTarget &renderTarget);
 	void DrawStatsUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();
-	void Update(Vector2u windowBounds, float dt);
+	void Update(Vector2u windowBounds, const float &dt);
 	void InitStatsText(Text t);
 
 

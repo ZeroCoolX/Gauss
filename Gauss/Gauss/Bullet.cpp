@@ -8,6 +8,8 @@ Bullet::Bullet(Texture *texture,
 	float maxVelocity,
 	float acceleration)
 {
+	this->dtMultiplier = 62.5f;
+
 	this->texture = texture;
 	this->sprite.setTexture(*this->texture);
 	this->maxVelocity = maxVelocity;
@@ -31,24 +33,24 @@ Bullet::~Bullet()
 {
 }
 
-void Bullet::Movement(float dt) {
+void Bullet::Movement(const float &dt) {
 	// Accelerate to constant max speed
 	if (this->acceleration >= 0.f) {
 		if (this->velocity.x < this->maxVelocity) {
-			this->velocity.x += this->acceleration * this->direction.x;
+			this->velocity.x += this->acceleration * this->direction.x * dt * this->dtMultiplier;
 		}
 		if (this->velocity.y < this->maxVelocity) {
-			this->velocity.y += this->acceleration * this->direction.y;
+			this->velocity.y += this->acceleration * this->direction.y * dt * this->dtMultiplier;
 		}
 	}
 	else { // Move at constant speed
 		this->velocity = Vector2f(this->maxVelocity * this->direction.x, this->maxVelocity * this->direction.y);
 	}
 
-	this->sprite.move(this->velocity.x,this->velocity.y);
+	this->sprite.move(this->velocity.x * dt * this->dtMultiplier,this->velocity.y * dt * this->dtMultiplier);
 }
 
-void Bullet::Update(float dt) {
+void Bullet::Update(const float &dt) {
 	this->Movement(dt);
 
 }

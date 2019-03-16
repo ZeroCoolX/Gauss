@@ -6,6 +6,8 @@
 class Game
 {
 private:
+	float dtMultiplier;
+
 	RenderWindow *window;
 
 	// Text
@@ -20,8 +22,8 @@ private:
 	// Enemies
 	std::vector<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
-	int enemySpawnTimer;
-	int enemySpawnTimerMax;
+	float enemySpawnTimer;
+	float enemySpawnTimerMax;
 
 	// Enemy Spawn Data
 	// TODO: Definetly make a struct of like EnemySpawnData or something in the future
@@ -49,7 +51,7 @@ public:
 	// Functions
 	void InitUI();
 	void UpdateUI();
-	void Update(float dt);
+	void Update(const float &dt);
 	void DrawUI();
 	void Draw();
 };

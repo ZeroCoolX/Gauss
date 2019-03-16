@@ -11,6 +11,8 @@ Enemy::Enemy(Texture* texture,
 {
 	this->type = type;
 
+	this->dtMultiplier = 62.5f;
+
 	this->texture = texture;
 	this->sprite.setTexture(*texture);
 	this->sprite.setScale(scale);
@@ -35,10 +37,10 @@ void Enemy::TakeDamage(int damage){
 	this->hp = std::max(0, (this->hp - damage));
 }
 
-void Enemy::Update(float dt){
+void Enemy::Update(const float &dt){
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
-			this->sprite.move(this->direction.x * this->moveSpeed /** dt * 62.f*/, this->direction.y * this->moveSpeed /** dt * 62.f*/);
+			this->sprite.move(this->direction.x * this->moveSpeed * dt * this->dtMultiplier, this->direction.y * this->moveSpeed * dt * this->dtMultiplier);
 			break;
 	}
 }

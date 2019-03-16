@@ -4,6 +4,7 @@
 Game::Game(RenderWindow *window)
 {
 	this->window = window;
+	this->dtMultiplier = 62.5f;
 
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -29,7 +30,7 @@ Game::Game(RenderWindow *window)
 	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 50;
+	this->enemySpawnTimerMax = 25;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->gameOverText.setFont(this->font);
@@ -75,11 +76,11 @@ void Game::UpdateUI() {
 }
 
 
-void Game::Update(float dt) {
+void Game::Update(const float &dt) {
 	
 	if (this->playersExistInWorld()) {
 		// Update timers
-		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { ++this->enemySpawnTimer; }
+		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * this->dtMultiplier; } // 1.f is not needed here
 
 		// Spawn enemies
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {

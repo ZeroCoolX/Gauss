@@ -11,6 +11,8 @@ using namespace sf;
 class Bullet
 {
 private:
+	float dtMultiplier;
+
 	Texture *texture;
 	Sprite sprite;
 
@@ -35,8 +37,8 @@ public:
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 
 	// Functions
-	void Movement(float dt);
-	void Update(float dt);
+	void Movement(const float &dt);
+	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
 };
 

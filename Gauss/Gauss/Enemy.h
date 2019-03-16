@@ -5,6 +5,8 @@
 class Enemy
 {
 private:
+	float dtMultiplier;
+
 	Texture *texture;
 	Sprite sprite;
 	Vector2f direction;
@@ -37,7 +39,7 @@ public:
 
 	// Functions
 	void TakeDamage(int damage);
-	void Update(float dt);
+	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
 };
 

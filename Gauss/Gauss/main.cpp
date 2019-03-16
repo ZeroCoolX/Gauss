@@ -5,10 +5,9 @@ using namespace sf;
 int main() {
 
 	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Default);
-	window.setFramerateLimit(60); // 0.016
 
 	Clock clock;
-	float dt;
+	float dt = 0.f;
 
 	Game game(&window);
 
@@ -27,7 +26,7 @@ int main() {
 		game.Update(dt);
 		game.Draw();
 
-		//std::cout << "dt: " << dt << std::endl;
+		std::cout << "dt: " << dt << std::endl;
 	}
 
 	return 0;
