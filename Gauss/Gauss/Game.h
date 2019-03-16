@@ -10,7 +10,6 @@ private:
 
 	// Text
 	Font font;
-	std::vector<Text> followPlayerTexts;
 	std::vector<Text> staticPlayerTexts;
 	Text enemyText;
 
@@ -33,12 +32,16 @@ private:
 	// Textures
 	std::vector<Texture> textureMap;
 
+	// Utility Functions
+	void _spawnEnemy();
+
 public:
 	Game(RenderWindow *window);
 	virtual ~Game();
 	
 	// Accessors
 	inline RenderWindow& getWindow() { return *this->window; }
+	inline const bool playersExistInWorld() const { return this->players.size() > 0; }
 
 	// Setters
 

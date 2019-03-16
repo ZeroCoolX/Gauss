@@ -6,6 +6,7 @@ class Player
 {
 private:
 	unsigned int playerNumber;
+	Text statsText;
 
 	Vector2f playerCenter;
 
@@ -19,17 +20,17 @@ private:
 
 	// Accessories
 	Sprite mainGunSprite;
-	const float mainGunKickback = 30.f;
-	const float mainGunReturnSpeed = 2.f;
+	float mainGunKickback = 30.f;
+	float mainGunReturnSpeed = 2.f;
 
 	std::vector<Bullet> bullets;
 
 	Texture *missile01ProjectileTexture;
 	Texture *missile02ProjectileTexture;
-	const Vector2f missileScale = Vector2f(0.05f, 0.05f);
+	Vector2f missileScale = Vector2f(0.05f, 0.05f);
 
 	Texture *laserProjectileTexture;
-	const Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
+	Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
 
 	float bulletSpeed;
 	float bulletMaxSpeed;
@@ -64,7 +65,14 @@ private:
 	bool dualMissiles01;
 	bool dualMissiles02;
 
-	void processPlayerInput();
+	// Utility Functions
+	void _processPlayerInput();
+	void _initTextures(std::vector <Texture> &textureMap);
+	void _initPlayerSettings();
+	void _recalculatePlayerCenter();
+	void _fireLaser(const Vector2f direction);
+	void _fireMissileLight(const Vector2f direction);
+	void _fireMissileHeavy(const Vector2f direction);
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
@@ -83,14 +91,19 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const int getDamage() const { return rand() % this->damageMax + this->damage; }
 	inline const int getHp() const { return hp; }
+	inline void takeDamage(int damage) { this->hp = std::max(0, (this->hp - damage)); }
+	inline const bool isDead() const { return this->hp <= 0; }
 
 	// Functions
-	void TakeDamage(int damage);
 	void UpdateAccessories(float dt);
 	void Combat(float dt);
 	void Movement(float dt);
 	void Draw(RenderTarget &renderTarget);
+	void DrawStatsUI(RenderTarget &renderTarget);
+	void UpdateStatsUI();
 	void Update(Vector2u windowBounds, float dt);
+	void InitStatsText(Text t);
+
 
 	// Statics
 	static unsigned playerId;
