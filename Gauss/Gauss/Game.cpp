@@ -70,11 +70,6 @@ void Game::InitUI() {
 	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
 }
 
-void Game::UpdatePlayerUI() {
-	// Static text
-	//?
-}
-
 void Game::Update(const float &dt) {
 	
 	if (this->playersExistInWorld()) {
@@ -140,12 +135,27 @@ void Game::Update(const float &dt) {
 				for (size_t j = 0; j < this->players.size(); j++)
 				{
 					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds())) {
-						// The amount of damage the player takes is relative to how much health the enemy has.
-						// A fully healed enemy will produce maximum amount of damage - whereas an enemy that is barely clinging to life will only damage the player a little		
-						this->players[j].takeDamage(this->enemies[i].getHp());
+						// Damage player		
+						int damage = this->enemies[i].getDamage();
+						this->players[j].takeDamage(damage);
+						
+						// Create Texttag effect
+						this->textTags.push_back(
+							TextTag(
+								&this->font, 
+								std::to_string(damage),
+								Color::Red, 
+								Vector2f(
+									this->players[j].getPosition().x + this->players[j].getGlobalBounds().width/4,
+									this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2
+								),
+								20)
+						);
+
+						// Destroy enemy
 						this->enemies.erase(this->enemies.begin() + i);
 
-						// Check for death
+						// Check for player death
 						if (players[j].isDead()) {
 							this->players.erase(this->players.begin() + j);
 						}
@@ -155,8 +165,15 @@ void Game::Update(const float &dt) {
 			}
 		}
 
-		//Player UI update
-		this->UpdatePlayerUI();
+		// Update Texttags
+		for (size_t i = 0; i < this->textTags.size(); i++)
+		{
+			this->textTags[i].Update(dt);
+
+			if (this->textTags[i].getTimer() <= 0.f) {
+				this->textTags.erase(this->textTags.begin() + i);
+			}
+		}
 	}
 }
 
@@ -171,6 +188,12 @@ void Game::DrawUI() {
 		this->enemies[i].Draw(*this->window);
 		// Draw Enemy UI
 		this->window->draw(this->enemyText);
+	}
+
+	// Draw Texttags
+	for (size_t i = 0; i < this->textTags.size(); i++)
+	{
+		this->textTags[i].Draw(*this->window);
 	}
 
 	// Draw Game Over Text - if needed

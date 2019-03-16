@@ -10,7 +10,7 @@ Player::Player(std::vector<Texture> &textureMap,
 	int LEFT, 
 	int RIGHT,
 	int FIRE
-) :level(1), exp(0), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
+) :level(1), exp(0), hp(10), hpMax(10), statPoints(0), cooling(0), maneuverability(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
 	// Formula courtesy of Suraj Sharma and Tibia
@@ -36,6 +36,23 @@ Player::Player(std::vector<Texture> &textureMap,
 
 Player::~Player()
 {
+}
+
+int Player::getDamage() const { 
+	int damage = rand() % this->damageMax + this->damage;
+
+	switch (this->currentWeapon) {
+		case GameEnums::G_LASER:
+			// Accept regular damage
+			break;
+		case GameEnums::G_MISSILE01:
+			damage *= 2;
+			break;
+		case GameEnums::G_MISSILE02:
+			damage *= 4;
+			break;
+	}
+	return damage; 
 }
 
 void Player::UpdateLeveling() {
@@ -194,8 +211,8 @@ void Player::_processPlayerInput(const float &dt) {
 void Player::InitUI(Text t) {
 	this->statsText = t;
 
-	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // magic numbers need to go away
-	this->playerExpBar.setFillColor(Color(0.f, 90.f, 200.f, 200.f));
+	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // TODO: magic numbers need to go away
+	this->playerExpBar.setFillColor(Color(0, 90, 200, 200));
 }
 
 

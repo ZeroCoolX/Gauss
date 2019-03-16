@@ -14,6 +14,9 @@ private:
 	Text enemyText;
 	Text gameOverText;
 
+	// Texttags
+	std::vector<TextTag> textTags;
+
 	// Players
 	std::vector<Player> players;
 
@@ -48,7 +51,6 @@ public:
 
 	// Functions
 	void InitUI();
-	void UpdatePlayerUI();
 	void Update(const float &dt);
 	void DrawUI();
 	void Draw();

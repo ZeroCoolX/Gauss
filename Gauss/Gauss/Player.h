@@ -97,7 +97,7 @@ public:
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
-	inline const int& getDamage() const { return rand() % this->damageMax + this->damage; }
+	int getDamage() const;
 	inline const int& getHp() const { return hp; }
 	inline void takeDamage(int damage) { this->hp = std::max(0, (this->hp - damage)); }
 	inline const bool isDead() const { return this->hp <= 0; }
