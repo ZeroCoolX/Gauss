@@ -26,11 +26,17 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 100;
+	this->enemySpawnTimerMax = 50;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
+
+	this->gameOverText.setFont(this->font);
+	this->gameOverText.setCharacterSize(40);
+	this->gameOverText.setFillColor(Color::Red);
+	this->gameOverText.setString("Game Over! (X___X)");
+	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
 
 	this->InitUI();
 }
@@ -151,10 +157,9 @@ void Game::Update(float dt) {
 }
 
 void Game::DrawUI() {
-	//for (size_t i = 0; i < this->followPlayerTexts.size(); i++)
-	//{
-	//	this->window->draw(this->followPlayerTexts[i]);
-	//}
+	if (!this->playersExistInWorld()) {
+		this->window->draw(this->gameOverText);
+	}
 
 	for (size_t i = 0; i < this->staticPlayerTexts.size(); i++)
 	{

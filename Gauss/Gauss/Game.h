@@ -12,6 +12,7 @@ private:
 	Font font;
 	std::vector<Text> staticPlayerTexts;
 	Text enemyText;
+	Text gameOverText;
 
 	// Players
 	std::vector<Player> players;
