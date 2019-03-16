@@ -26,7 +26,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25;
@@ -48,7 +48,7 @@ void Game::InitUI() {
 	for (size_t i = 0; i < this->players.size(); i++)
 	{
 		// Follow Text init - belongs to the player
-		this->players[i].InitStatsText(tempText);
+		this->players[i].InitUI(tempText);
 
 		// Static Text init - is "about" the player but belongs to the game
 		this->staticPlayerText.setFont(this->font);
@@ -111,6 +111,10 @@ void Game::Update(const float &dt) {
 							this->enemies[k].TakeDamage(this->players[i].getDamage());
 
 							if (this->enemies[k].getHp() <= 0) {
+								// Player earned some EXP!
+								this->players[i].gainExp(this->enemies[k].getHpMax() 
+									+ (rand()%this->enemies[k].getHpMax() + 1) // Add random exp factor from 1-hpMax
+								);
 								this->enemies.erase(this->enemies.begin() + k);
 							}
 

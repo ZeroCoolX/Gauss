@@ -25,8 +25,6 @@ int main() {
 
 		game.Update(dt);
 		game.Draw();
-
-		std::cout << "dt: " << dt << std::endl;
 	}
 
 	return 0;

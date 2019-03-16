@@ -7,6 +7,7 @@ class Player
 private:
 	unsigned int playerNumber;
 	Text statsText;
+	RectangleShape playerExpBar;
 
 	Vector2f playerCenter;
 
@@ -49,6 +50,13 @@ private:
 	int level;
 	int exp;
 	int expNext;
+	int statPoints;
+
+	int cooling;				// shot rate
+	int plating;				// armour
+	int power;					// strength
+	int maneuverability;		// agility
+
 
 	int hp;
 	int hpMax;
@@ -89,20 +97,25 @@ public:
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
-	inline const int getDamage() const { return rand() % this->damageMax + this->damage; }
-	inline const int getHp() const { return hp; }
+	inline const int& getDamage() const { return rand() % this->damageMax + this->damage; }
+	inline const int& getHp() const { return hp; }
 	inline void takeDamage(int damage) { this->hp = std::max(0, (this->hp - damage)); }
 	inline const bool isDead() const { return this->hp <= 0; }
+	inline const int& getLevel() const { return this->level; }
+	inline const int& getExp() const { return this->exp; }
+	inline const int& getExpNext() const { return this->expNext; }
+	inline void gainExp(int exp) { this->exp += exp; this->UpdateLeveling(); }
 
 	// Functions
+	void UpdateLeveling();
 	void UpdateAccessories(const float &dt);
 	void Combat(const float &dt);
 	void Movement(const float &dt);
 	void Draw(RenderTarget &renderTarget);
-	void DrawStatsUI(RenderTarget &renderTarget);
+	void DrawUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();
 	void Update(Vector2u windowBounds, const float &dt);
-	void InitStatsText(Text t);
+	void InitUI(Text t);
 
 
 	// Statics

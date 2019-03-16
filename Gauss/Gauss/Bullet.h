@@ -5,6 +5,7 @@
 #include <SFML\Audio.hpp>
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include "DeltaTime.h"
 
 using namespace sf;

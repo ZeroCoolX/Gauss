@@ -10,8 +10,19 @@ Player::Player(std::vector<Texture> &textureMap,
 	int LEFT, 
 	int RIGHT,
 	int FIRE
-) :level(1), exp(0), expNext(100), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
+) :level(1), exp(0), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
 {
+	// Stats
+	// Formula courtesy of Suraj Sharma and Tibia
+	// https://www.youtube.com/watch?v=SPcLqoTbIWE&list=PL6xSOsbVA1eZUKRu_boTDdzu8pGsVNpTo&index=18
+	// https://tibia.fandom.com/wiki/Experience_Formula
+	this->expNext = 20 + static_cast<int>(
+		(50/3)
+		*((pow(level,3)-6
+			* pow(level, 2)) + 17
+			* level -12)
+		);
+
 	this->_initTextures(textureMap);
 	this->_initPlayerSettings();
 
@@ -25,6 +36,19 @@ Player::Player(std::vector<Texture> &textureMap,
 
 Player::~Player()
 {
+}
+
+void Player::UpdateLeveling() {
+	if (this->exp >= this->expNext) {
+		this->level++;
+		this->exp -= this->expNext;
+		this->expNext = static_cast<int>(
+			(50 / 3)
+			*((pow(level, 3) - 6
+				* pow(level, 2)) + 17
+				* level - 12)
+			);
+	}
 }
 
 void Player::UpdateAccessories(const float &dt) {
@@ -76,9 +100,19 @@ void Player::Combat(const float &dt) {
 }
 
 void Player::UpdateStatsUI() {
-	Vector2f fixedPos = Vector2f(this->getPosition().x, (this->getPosition().y + this->getGlobalBounds().height));
-	this->statsText.setPosition(fixedPos);
-	this->statsText.setString("[" + std::to_string(this->playerNumber) + "]					" + this->getHpAsString());
+	Vector2f statsPos = Vector2f(this->getPosition().x, (this->getPosition().y - this->getGlobalBounds().height / 4));
+
+	// Stats
+	this->statsText.setPosition(statsPos);
+	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]					" + this->getHpAsString()
+	+ "\n\n\n\n\n\n"
+	+ std::to_string(this->getLevel()));
+
+	// Exp Bar
+	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 12.f)); // Clean up magic numbers
+	this->playerExpBar.setPosition(expBarPos);
+	// Scale based off player experience to create a dynamic bar
+	this->playerExpBar.setScale(static_cast<float>(this->getExp()) / static_cast<float>(getExpNext()), 1.f);
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
@@ -94,9 +128,11 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	this->UpdateStatsUI();
 }
 
-void Player::DrawStatsUI(RenderTarget &renderTarget) {
-	std::string s = statsText.getString();
+void Player::DrawUI(RenderTarget &renderTarget) {
+	// Stats
 	renderTarget.draw(this->statsText);
+	// Exp bar
+	renderTarget.draw(this->playerExpBar);
 }
 
 void Player::Draw(RenderTarget &renderTarget) {
@@ -107,7 +143,7 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 	renderTarget.draw(this->sprite);
 
-	this->DrawStatsUI(renderTarget);
+	this->DrawUI(renderTarget);
 }
 
 void Player::_processPlayerInput(const float &dt) {
@@ -155,8 +191,11 @@ void Player::_processPlayerInput(const float &dt) {
 	}
 }
 
-void Player::InitStatsText(Text t) {
+void Player::InitUI(Text t) {
 	this->statsText = t;
+
+	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // magic numbers need to go away
+	this->playerExpBar.setFillColor(Color(0.f, 90.f, 200.f, 200.f));
 }
 
 
@@ -178,6 +217,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 }
 
 void Player::_initPlayerSettings() {
+
 	// Bullet settings
 	this->bulletSpeed = 2.f;
 	this->bulletMaxSpeed = 60;

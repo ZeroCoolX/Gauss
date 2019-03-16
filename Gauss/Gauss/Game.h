@@ -8,11 +8,9 @@ class Game
 private:
 	RenderWindow *window;
 
-	// Text
+	// UI
 	Font font;
-
 	Text staticPlayerText;
-
 	Text enemyText;
 	Text gameOverText;
 
