@@ -203,7 +203,7 @@ void Player::_initPlayerSettings() {
 	this->dualMissiles02 = false;
 
 	// Number of players for co-op
-	this->playerNumber = Player::playerId;
+	this->playerNumber = Player::playerId + 1;
 	Player::playerId++;
 }
 

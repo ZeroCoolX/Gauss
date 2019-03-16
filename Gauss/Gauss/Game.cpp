@@ -26,7 +26,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	//this->players.push_back(Player(this->textureMap, Keyboard::Numpad8, Keyboard::Numpad5, Keyboard::Numpad4, Keyboard::Numpad6, Keyboard::RShift));
+	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 100;
