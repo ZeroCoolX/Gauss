@@ -4,7 +4,6 @@
 Game::Game(RenderWindow *window)
 {
 	this->window = window;
-	this->dtMultiplier = 62.5f;
 
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -80,7 +79,7 @@ void Game::Update(const float &dt) {
 	
 	if (this->playersExistInWorld()) {
 		// Update timers
-		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * this->dtMultiplier; } // 1.f is not needed here
+		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * DeltaTime::dtMultiplier; } // 1.f is not needed here
 
 		// Spawn enemies
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {

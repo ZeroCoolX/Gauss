@@ -5,8 +5,6 @@
 class Enemy
 {
 private:
-	float dtMultiplier;
-
 	Texture *texture;
 	Sprite sprite;
 	Vector2f direction;

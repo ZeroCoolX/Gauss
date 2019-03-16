@@ -6,8 +6,6 @@
 class Game
 {
 private:
-	float dtMultiplier;
-
 	RenderWindow *window;
 
 	// Text

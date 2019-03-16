@@ -5,8 +5,6 @@
 class Player
 {
 private:
-	float dtMultiplier;
-
 	unsigned int playerNumber;
 	Text statsText;
 

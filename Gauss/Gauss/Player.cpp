@@ -12,8 +12,6 @@ Player::Player(std::vector<Texture> &textureMap,
 	int FIRE
 ) :level(1), exp(0), expNext(100), hp(10), hpMax(10), damage(1), damageMax(2), score(0)
 {
-	this->dtMultiplier = 62.5f;
-
 	this->_initTextures(textureMap);
 	this->_initPlayerSettings();
 
@@ -38,7 +36,7 @@ void Player::UpdateAccessories(const float &dt) {
 	// Compensate after fire kickback
 	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 4;
 	if (this->mainGunSprite.getPosition().x < origin) {
-		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * this->dtMultiplier, 0.f);
+		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
 
 	}
 	if (this->mainGunSprite.getPosition().x > origin) {
@@ -52,7 +50,7 @@ void Player::Movement(const float &dt) {
 	this->_processPlayerInput(dt);
 
 	// Move player
-	this->sprite.move(this->velocity * dt * this->dtMultiplier);
+	this->sprite.move(this->velocity * dt * DeltaTime::dtMultiplier);
 
 	this->_recalculatePlayerCenter();
 }
@@ -86,9 +84,9 @@ void Player::UpdateStatsUI() {
 void Player::Update(Vector2u windowBounds, const float &dt) {
 	// Update timers
 	if (this->shootTimer < this->shootTimerMax)
-		this->shootTimer += 1.f * dt * this->dtMultiplier;
+		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	if (this->damageTimer < this->damageTimerMax)
-		this->damageTimer += 1.f * dt * this->dtMultiplier;
+		this->damageTimer += 1.f * dt * DeltaTime::dtMultiplier;
 
 	this->Movement(dt);
 	this->UpdateAccessories(dt);
@@ -117,42 +115,42 @@ void Player::_processPlayerInput(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
 		this->direction.y = -1;
 		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
-			this->velocity.y += direction.y * this->acceleration * dt * this->dtMultiplier;
+			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_DOWN]))) {
 		this->direction.y = 1;
 		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
-			this->velocity.y += direction.y * this->acceleration * dt * this->dtMultiplier;
+			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
-			this->velocity.x += direction.x * this->acceleration * dt * this->dtMultiplier;
+			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_RIGHT]))) {
 		this->direction.x = 1;
 		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
-			this->velocity.x += direction.x * this->acceleration * dt * this->dtMultiplier;
+			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
 
 	// Apply Drag Force
 	if (this->velocity.x > 0) {
-		this->velocity.x -= this->stabalizingForce * dt * this->dtMultiplier;
+		this->velocity.x -= this->stabalizingForce * dt * DeltaTime::dtMultiplier;
 		this->velocity.x = std::max(0.f, this->velocity.x);
 	}else if (this->velocity.x < 0) {
-		this->velocity.x += this->stabalizingForce * dt * this->dtMultiplier;
+		this->velocity.x += this->stabalizingForce * dt * DeltaTime::dtMultiplier;
 		this->velocity.x = std::min(0.f, this->velocity.x);
 	}
 	if (this->velocity.y > 0) {
-		this->velocity.y -= this->stabalizingForce * dt * this->dtMultiplier;
+		this->velocity.y -= this->stabalizingForce * dt * DeltaTime::dtMultiplier;
 		this->velocity.y = std::max(0.f, this->velocity.y);
 	}
 	else if (this->velocity.y < 0) {
-		this->velocity.y += this->stabalizingForce * dt * this->dtMultiplier;
+		this->velocity.y += this->stabalizingForce * dt * DeltaTime::dtMultiplier;
 		this->velocity.y = std::min(0.f, this->velocity.y);
 	}
 }

@@ -5,14 +5,13 @@
 #include <SFML\Audio.hpp>
 #include <iostream>
 #include <vector>
+#include "DeltaTime.h"
 
 using namespace sf;
 
 class Bullet
 {
 private:
-	float dtMultiplier;
-
 	Texture *texture;
 	Sprite sprite;
 
