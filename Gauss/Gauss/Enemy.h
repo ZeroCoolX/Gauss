@@ -9,6 +9,9 @@ private:
 	Sprite sprite;
 	Vector2f direction;
 
+	float damageTimerMax;
+	float damageTimer;
+
 	float moveSpeed = 10.f;
 
 	int type;

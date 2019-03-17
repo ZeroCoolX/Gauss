@@ -19,14 +19,14 @@ private:
 
 	float speed;
 	Vector2f direction;
-	bool follow;
+	bool accelerate;
 
 	// Timers
 	float timer;
 	float timerMax;
 
 public:
-	TextTag(Font *font, std::string text, const Color color, Vector2f position, unsigned int characterSize, float timerMax);
+	TextTag(Font *font, std::string text, const Color color, Vector2f position, Vector2f direction, unsigned int characterSize, float timerMax, bool accelerate = false);
 	virtual ~TextTag();
 
 	// Accessors

@@ -13,7 +13,6 @@ private:
 	float acceleration;
 	Vector2f direction;
 
-
 public:
 	Bullet(Texture *texture, 
 		Vector2f scale,

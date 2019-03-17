@@ -38,7 +38,6 @@ private:
 
 	// Utility Functions
 	void _spawnEnemy();
-	void _generateTextTag(std::string text, Color color, Vector2f position, unsigned int charSize, float showTime);
 
 public:
 	Game(RenderWindow *window);
