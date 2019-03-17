@@ -25,8 +25,8 @@ Game::Game(RenderWindow *window)
 	this->textureMap[GameEnums::T_ENEMY01].loadFromFile("Textures/enemy.png");
 
 	// Init player
-	this->players.push_back(Player(this->textureMap));
-	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap));
+	//this->players.Add(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25;
@@ -45,7 +45,7 @@ void Game::InitUI() {
 	tempText.setCharacterSize(14);
 	tempText.setFillColor(Color::White);
 
-	for (size_t i = 0; i < this->players.size(); i++)
+	for (size_t i = 0; i < this->players.Size(); i++)
 	{
 		// Follow Text init - belongs to the player
 		this->players[i].InitUI(tempText);
@@ -82,25 +82,25 @@ void Game::Update(const float &dt) {
 			this->enemySpawnTimer = 0;
 		}
 
-		for (size_t i = 0; i < this->players.size(); ++i) {
+		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
 			this->players[i].Update(this->window->getSize(), dt);
 
 			// Bullets update
-			for (size_t j = 0; j < this->players[i].getBullets().size(); j++)
+			for (size_t j = 0; j < this->players[i].getBulletsSize(); j++)
 			{
-				this->players[i].getBullets()[j].Update(dt);
+				this->players[i].BulletAt(j).Update(dt);
 
 				// Bullet Window bounds check
-				if (this->players[i].getBullets()[j].getPosition().x > this->window->getSize().x) {
-					this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
+				if (this->players[i].BulletAt(j).getPosition().x > this->window->getSize().x) {
+					this->players[i].RemoveBullet(j);
 				}
 				else {
 					// Enemy - Bullet Collision check since it still exists in the world
-					for (size_t k = 0; k < this->enemies.size(); k++)
+					for (size_t k = 0; k < this->enemies.Size(); k++)
 					{
-						if (this->players[i].getBullets()[j].getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
+						if (this->players[i].BulletAt(j).getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
 								
 							// Health check for damage or destruction
 							int damage = this->players[i].getDamage();
@@ -130,11 +130,11 @@ void Game::Update(const float &dt) {
 										this->players[i].getPosition().y - this->players[i].getGlobalBounds().height / 2),
 										20, 20.f);
 								}
-								this->enemies.erase(this->enemies.begin() + k);
+								this->enemies.Remove(k);
 							}
 
 							// Destroy the bullet regardless
-							this->players[i].getBullets().erase(this->players[i].getBullets().begin() + j);
+							this->players[i].RemoveBullet(j);
 							break;
 						}
 					}
@@ -142,17 +142,17 @@ void Game::Update(const float &dt) {
 			}
 		}
 		// Update Enemy Movement
-		for (size_t i = 0; i < this->enemies.size(); i++)
+		for (size_t i = 0; i < this->enemies.Size(); i++)
 		{
 			this->enemies[i].Update(dt);
 
 			// Enemy Window Bounds check
 			if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
-				this->enemies.erase(this->enemies.begin() + i);
+				this->enemies.Remove(i);
 			}
 			else {
 				// Check Player - Enemy collision
-				for (size_t j = 0; j < this->players.size(); j++)
+				for (size_t j = 0; j < this->players.Size(); j++)
 				{
 					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds())) {
 						// Damage player		
@@ -166,11 +166,11 @@ void Game::Update(const float &dt) {
 							28, 20.f);
 
 						// Destroy enemy
-						this->enemies.erase(this->enemies.begin() + i);
+						this->enemies.Remove(i);
 
 						// Check for player death
 						if (players[j].isDead()) {
-							this->players.erase(this->players.begin() + j);
+							this->players.Remove(j);
 						}
 						break;
 					}
@@ -179,12 +179,12 @@ void Game::Update(const float &dt) {
 		}
 
 		// Update Texttags
-		for (size_t i = 0; i < this->textTags.size(); i++)
+		for (size_t i = 0; i < this->textTags.Size(); i++)
 		{
 			this->textTags[i].Update(dt);
 
 			if (this->textTags[i].getTimer() <= 0.f) {
-				this->textTags.erase(this->textTags.begin() + i);
+				this->textTags.Remove(i);
 			}
 		}
 	}
@@ -192,7 +192,7 @@ void Game::Update(const float &dt) {
 
 void Game::DrawUI() {
 	// Draw enemies
-	for (size_t i = 0; i < this->enemies.size(); i++)
+	for (size_t i = 0; i < this->enemies.Size(); i++)
 	{
 		this->enemyText.setPosition(this->enemies[i].getPosition());
 		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
@@ -204,7 +204,7 @@ void Game::DrawUI() {
 	}
 
 	// Draw Texttags
-	for (size_t i = 0; i < this->textTags.size(); i++)
+	for (size_t i = 0; i < this->textTags.Size(); i++)
 	{
 		this->textTags[i].Draw(*this->window);
 	}
@@ -219,7 +219,7 @@ void Game::Draw(){
 	this->window->clear();
 
 	// Draw Players
-	for (size_t i = 0; i < this->players.size(); ++i) {
+	for (size_t i = 0; i < this->players.Size(); ++i) {
 		this->players[i].Draw(*this->window);
 	}
 
@@ -229,7 +229,7 @@ void Game::Draw(){
 }
 
 void Game::_spawnEnemy() {
-	this->enemies.push_back(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
+	this->enemies.Add(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
 		GameEnums::E_MOVE_LEFT,
 		this->window->getSize(),
 		this->enemyScale,
@@ -240,7 +240,7 @@ void Game::_spawnEnemy() {
 
 void Game::_generateTextTag(std::string text, Color color, Vector2f position, unsigned int charSize, float showTime) {
 	// Create Texttag effect
-	this->textTags.push_back(
+	this->textTags.Add(
 		TextTag(
 			&this->font,
 			text,

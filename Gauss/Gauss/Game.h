@@ -15,13 +15,13 @@ private:
 	Text gameOverText;
 
 	// Texttags
-	std::vector<TextTag> textTags;
+	dArr<TextTag> textTags;
 
 	// Players
-	std::vector<Player> players;
+	dArr<Player> players;
 
 	// Enemies
-	std::vector<Enemy> enemies;
+	dArr<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
@@ -46,7 +46,7 @@ public:
 	
 	// Accessors
 	inline RenderWindow& getWindow() { return *this->window; }
-	inline const bool playersExistInWorld() const { return this->players.size() > 0; }
+	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Setters
 

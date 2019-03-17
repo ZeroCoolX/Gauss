@@ -65,7 +65,6 @@ bool Player::UpdateLeveling() {
 				* pow(level, 2)) + 17
 				* level - 12)
 			);
-
 		// Regenerate health for now
 		this->hp = this->hpMax;
 		
@@ -159,7 +158,7 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 }
 
 void Player::Draw(RenderTarget &renderTarget) {
-	for (size_t i = 0; i < this->bullets.size(); ++i) {
+	for (size_t i = 0; i < this->bullets.Size(); ++i) {
 		this->bullets[i].Draw(renderTarget);
 	}
 	renderTarget.draw(this->mainGunSprite);
@@ -167,6 +166,27 @@ void Player::Draw(RenderTarget &renderTarget) {
 	renderTarget.draw(this->sprite);
 
 	this->DrawUI(renderTarget);
+}
+
+void Player::InitUI(Text t) {
+	this->statsText = t;
+
+	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // TODO: magic numbers need to go away
+	this->playerExpBar.setFillColor(Color(0, 90, 200, 200));
+}
+
+Bullet& Player::BulletAt(unsigned index) {
+	if (index < 0 || index > this->bullets.Size()) {
+		throw "OutOfBoundsBullet - Player::BulletAt";
+	}
+	return this->bullets[index];
+}
+
+void Player::RemoveBullet(unsigned index) {
+	if (index < 0 || index > this->bullets.Size()) {
+		throw "OutOfBoundsBullet - Player::RemoveBullet";
+	}
+	return this->bullets.Remove(index);
 }
 
 void Player::_processPlayerInput(const float &dt) {
@@ -214,12 +234,6 @@ void Player::_processPlayerInput(const float &dt) {
 	}
 }
 
-void Player::InitUI(Text t) {
-	this->statsText = t;
-
-	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // TODO: magic numbers need to go away
-	this->playerExpBar.setFillColor(Color(0, 90, 200, 200));
-}
 
 
 void Player::_initTextures(std::vector <Texture> &textureMap) {
@@ -280,7 +294,7 @@ void Player::_fireLaser(const Vector2f direction) {
 	// Create Laser
 	switch (this->mainGunLevel) {
 	case GameEnums::DEFAULT_LASER:
-		this->bullets.push_back(
+		this->bullets.Add(
 			Bullet(laserProjectileTexture,
 				laserBulletScale,
 				Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y),
@@ -299,7 +313,7 @@ void Player::_fireLaser(const Vector2f direction) {
 
 void Player::_fireMissileLight(const Vector2f direction) {
 	// Create Missile
-	this->bullets.push_back(
+	this->bullets.Add(
 		Bullet(missile01ProjectileTexture,
 			missileScale,
 			Vector2f(this->playerCenter.x, this->playerCenter.y - (this->sprite.getGlobalBounds().height / 2)),
@@ -307,7 +321,7 @@ void Player::_fireMissileLight(const Vector2f direction) {
 			this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration)
 	);
 	if (dualMissiles01) {
-		this->bullets.push_back(
+		this->bullets.Add(
 			Bullet(missile01ProjectileTexture,
 				missileScale,
 				Vector2f(this->playerCenter.x, this->playerCenter.y + (this->sprite.getGlobalBounds().height / 2)),

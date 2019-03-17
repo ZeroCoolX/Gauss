@@ -44,19 +44,19 @@
     <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DeltaTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextTag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dArr.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeltaTime.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>

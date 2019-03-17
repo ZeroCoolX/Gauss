@@ -18,7 +18,7 @@ public:
 
 	void Add(const T element);
 	void Remove(unsigned index);
-	unsigned GetSize() const;
+	unsigned Size() const;
 	void Clear();
 };
 
@@ -55,15 +55,14 @@ void dArr<T>::Remove(unsigned index) {
 		throw("OutOfBoundsException");
 	}
 	delete this->arr[index];
-	for (size_t i = index; i < this->numOfElements - 1; i++)
-	{
-		this->arr[i] = this->arr[i + 1];
-	}
-	this->arr[this->numOfElements--] = nullptr;
+
+	this->arr[index] = this->arr[numOfElements - 1];
+
+	this->arr[--this->numOfElements] = nullptr;
 }
 
 template<typename T>
-unsigned dArr<T>::GetSize() const {
+unsigned dArr<T>::Size() const {
 	return this->numOfElements;
 }
 

@@ -24,7 +24,7 @@ private:
 	float mainGunKickback = 30.f;
 	float mainGunReturnSpeed = 2.f;
 
-	std::vector<Bullet> bullets;
+	dArr<Bullet> bullets;
 
 	Texture *missile01ProjectileTexture;
 	Texture *missile02ProjectileTexture;
@@ -93,8 +93,8 @@ public:
 	virtual ~Player();
 
 	// Accessors
-	inline std::vector<Bullet>& getBullets() { return this->bullets; }
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
+	inline const int getBulletsSize() const { return this->bullets.Size(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	int getDamage() const;
@@ -116,6 +116,8 @@ public:
 	void UpdateStatsUI();
 	void Update(Vector2u windowBounds, const float &dt);
 	void InitUI(Text t);
+	Bullet& BulletAt(unsigned index);
+	void RemoveBullet(unsigned index);
 
 
 	// Statics
