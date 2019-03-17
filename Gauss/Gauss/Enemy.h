@@ -18,6 +18,8 @@ private:
 	int hp;
 	int hpMax;
 	Vector2i damageRange;
+	bool divebombPlayer = false;
+	int divebombDistanceThreshold = false;
 	int playerFollowNum;
 
 	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
@@ -46,10 +48,12 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
 	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
+	inline void updatePlayerFollowNum(int num) { this->playerFollowNum = num; }
+	inline void updateAttackType(int type) { this->type = type; }
 
 	// Functions
 	void TakeDamage(int damage);
-	void Update(const float &dt, Vector2f playerPosition);
+	void Update(const float &dt, Vector2f playerPosition = Vector2f());
 	void Draw(RenderTarget &renderTarget);
 };
 

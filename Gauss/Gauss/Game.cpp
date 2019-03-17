@@ -26,7 +26,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap));
-	//this->players.Add(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -157,11 +157,23 @@ void Game::Update(const float &dt) {
 				}
 			}
 		}
+
+		int playerWhoDied = -1;
 		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemies.Size(); i++)
 		{
-			// this causes a crash when the player dies because  "this->players[num]" won't exist if the player died
-			this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());
+			// Safety check in case there are no more players in the world
+			if (!this->playersExistInWorld()){
+				this->enemies[i].updateAttackType(GameEnums::E_MOVE_LEFT);
+				this->enemies[i].Update(dt);
+			}
+			else {
+				// Check if we need to update the player this enemy is following incase they died
+				if (this->enemies[i].getPlayerFollowNum() > this->players.Size() - 1) {
+					this->enemies[i].updatePlayerFollowNum(rand()% this->players.Size());
+				}
+				this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());
+			}
 
 			// Enemy Window Bounds check
 			if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
@@ -192,6 +204,7 @@ void Game::Update(const float &dt) {
 
 						// Check for player death
 						if (players[j].isDead()) {
+							playerWhoDied = j;
 							this->players.Remove(j);
 						}
 						break;

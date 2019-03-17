@@ -23,6 +23,7 @@ Enemy::Enemy(Texture* texture,
 	this->damageTimerMax = 3.f;
 	this->damageTimer = 0;
 	this->damageRange = damageRange;
+	this->divebombDistanceThreshold = rand() % 700 + 300;
 
 	this->direction = direction;
 
@@ -45,23 +46,34 @@ void Enemy::TakeDamage(int damage){
 
 void Enemy::Update(const float &dt, Vector2f playerPosition){
 	Vector2f normalizedDir;
+	float adjustedMoveSpeed;
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
 			this->sprite.move(this->direction.x * this->moveSpeed * dt * DeltaTime::dtMultiplier, this->direction.y * this->moveSpeed * dt * DeltaTime::dtMultiplier);
 			break;
 		case GameEnums::E_FOLLOW:
-			// Get the direction from us to the player 
-			this->direction.x = playerPosition.x - this->sprite.getPosition().x;
-			this->direction.y = playerPosition.y - this->sprite.getPosition().y;
-			// Normalize direction
-			normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
-			// Angle needed to go from current facing dir to face player
-			float angle = atan2(normalizedDir.y, normalizedDir.x) * 180 / 3.14159265359 + 180;
-			// Rotate
-			this->sprite.setRotation(angle);
-			// Move in that direction
-			this->sprite.move(normalizedDir.x * 3.f * dt * DeltaTime::dtMultiplier, normalizedDir.y * 3.f * dt * DeltaTime::dtMultiplier);
+			// Get distance to see if we need to divebomb
+			float distance = sqrt(pow(this->sprite.getPosition().x - playerPosition.x, 2) + pow(this->sprite.getPosition().y - playerPosition.x, 2));
 
+			if (distance < divebombDistanceThreshold || this->divebombPlayer) {
+				this->divebombPlayer = true;
+				normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
+				adjustedMoveSpeed = (this->moveSpeed / 2);
+			}
+			else {
+				// Get the direction from us to the player 
+				this->direction.x = playerPosition.x - this->sprite.getPosition().x;
+				this->direction.y = playerPosition.y - this->sprite.getPosition().y;
+				// Normalize direction
+				normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
+				// Angle needed to go from current facing dir to face player
+				float angle = atan2(normalizedDir.y, normalizedDir.x) * 180 / 3.14159265359 + 180;
+				// Rotate
+				this->sprite.setRotation(angle);
+				adjustedMoveSpeed = (this->moveSpeed / 3);
+			}
+
+			this->sprite.move(normalizedDir.x * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier, normalizedDir.y * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier);
 			break;
 	}
 
