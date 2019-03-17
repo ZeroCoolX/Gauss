@@ -7,6 +7,7 @@
 #include <vector>
 #include <math.h>
 #include "DeltaTime.h"
+#include "dArr.h"
 
 using namespace sf;
 
