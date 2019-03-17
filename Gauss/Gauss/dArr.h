@@ -16,6 +16,7 @@ public:
 	~dArr();
 
 	T& operator[](unsigned index);
+	void operator = (const T& obj);
 
 	void Add(const T element);
 	void Remove(unsigned index);
@@ -54,7 +55,7 @@ dArr<T>::~dArr() {
 	{
 		delete this->arr[i];
 	}
-	delete this->arr;
+	delete[] this->arr;
 }
 
 template<typename T>
@@ -100,6 +101,29 @@ T& dArr<T>::operator[](unsigned index) {
 		throw("OutOfBoundsException");
 	}
 	return *this->arr[index];
+}
+
+template<typename T>
+void dArr<T>::operator = (const T& obj) {
+	// Must remove everything and delete
+	for (size_t i = 0; i < this->numOfElements; i++)
+	{
+		delete this->arr[i];
+	}
+	delete[] this->arr;
+
+	// Then cope constructor
+	this->capactity = obj.capactity;
+	this->numOfElements = obj.numOfElements;
+
+	this->arr = new T*[this->capactity];
+
+	for (size_t i = 0; i < this->numOfElements; i++)
+	{
+		this->arr[i] = new T(*obj.arr[i]);
+	}
+
+	this->_initialize(this->numOfElements);
 }
 
 template<typename T>
