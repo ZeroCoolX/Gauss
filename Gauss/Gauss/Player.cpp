@@ -55,7 +55,7 @@ int Player::getDamage() const {
 	return damage; 
 }
 
-void Player::UpdateLeveling() {
+bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
 		this->level++;
 		this->exp -= this->expNext;
@@ -65,7 +65,13 @@ void Player::UpdateLeveling() {
 				* pow(level, 2)) + 17
 				* level - 12)
 			);
+
+		// Regenerate health for now
+		this->hp = this->hpMax;
+		
+		return true;
 	}
+	return false;
 }
 
 void Player::UpdateAccessories(const float &dt) {

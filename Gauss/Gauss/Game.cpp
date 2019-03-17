@@ -26,7 +26,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.push_back(Player(this->textureMap));
-	this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.push_back(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25;
@@ -103,13 +103,33 @@ void Game::Update(const float &dt) {
 						if (this->players[i].getBullets()[j].getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
 								
 							// Health check for damage or destruction
-							this->enemies[k].TakeDamage(this->players[i].getDamage());
+							int damage = this->players[i].getDamage();
+
+							this->_generateTextTag("-" + std::to_string(damage), Color::Yellow, Vector2f(
+								this->enemies[k].getPosition().x + this->enemies[k].getGlobalBounds().width / 4,
+								this->enemies[k].getPosition().y - this->enemies[k].getGlobalBounds().height / 2),
+								24, 15.f);
+
+							this->enemies[k].TakeDamage(damage);
 
 							if (this->enemies[k].getHp() <= 0) {
+
 								// Player earned some EXP!
-								this->players[i].gainExp(this->enemies[k].getHpMax() 
-									+ (rand()%this->enemies[k].getHpMax() + 1) // Add random exp factor from 1-hpMax
-								);
+								int exp = this->enemies[k].getHpMax()
+									+ (rand() % this->enemies[k].getHpMax() + 1);
+
+								// Player leveled up!
+								if (this->players[i].gainExp(exp)) {
+									this->_generateTextTag("LEVEL UP!", Color::White, Vector2f(
+										this->players[i].getPosition().x + this->players[i].getGlobalBounds().width / 4,
+										this->players[i].getPosition().y - this->players[i].getGlobalBounds().height / 2),
+										30, 25.f);
+								}else{
+									this->_generateTextTag("+" + std::to_string(exp) + " EXP", Color::Cyan, Vector2f(
+										this->players[i].getPosition().x,
+										this->players[i].getPosition().y - this->players[i].getGlobalBounds().height / 2),
+										20, 20.f);
+								}
 								this->enemies.erase(this->enemies.begin() + k);
 							}
 
@@ -140,17 +160,10 @@ void Game::Update(const float &dt) {
 						this->players[j].takeDamage(damage);
 						
 						// Create Texttag effect
-						this->textTags.push_back(
-							TextTag(
-								&this->font, 
-								std::to_string(damage),
-								Color::Red, 
-								Vector2f(
-									this->players[j].getPosition().x + this->players[j].getGlobalBounds().width/4,
-									this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2
-								),
-								20)
-						);
+						this->_generateTextTag("-" + std::to_string(damage), Color::Red,Vector2f(
+							this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+							this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
+							28, 20.f);
 
 						// Destroy enemy
 						this->enemies.erase(this->enemies.begin() + i);
@@ -223,4 +236,16 @@ void Game::_spawnEnemy() {
 		this->enemyDirection,
 		this->enemyHp,
 		this->enemyDamageRange));
+}
+
+void Game::_generateTextTag(std::string text, Color color, Vector2f position, unsigned int charSize, float showTime) {
+	// Create Texttag effect
+	this->textTags.push_back(
+		TextTag(
+			&this->font,
+			text,
+			color,
+			position,
+			charSize, showTime)
+	);
 }

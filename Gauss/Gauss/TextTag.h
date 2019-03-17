@@ -25,7 +25,7 @@ private:
 	float timerMax;
 
 public:
-	TextTag(Font *font, std::string text, const Color color, Vector2f position, unsigned int characterSize);
+	TextTag(Font *font, std::string text, const Color color, Vector2f position, unsigned int characterSize, float timerMax);
 	virtual ~TextTag();
 
 	// Accessors
