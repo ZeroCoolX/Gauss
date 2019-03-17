@@ -18,6 +18,13 @@ private:
 	int hp;
 	int hpMax;
 	Vector2i damageRange;
+	int playerFollowNum;
+
+	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
+	Vector2f _normalize(Vector2f v, float length) {
+		if (length == 0) { return v; }
+		return (v / length);
+	}
 
 public:
 	Enemy(Texture* texture, 
@@ -26,7 +33,8 @@ public:
 		Vector2f scale, 
 		Vector2f direction, 
 		int hpMax, 
-		Vector2i damageRange);
+		Vector2i damageRange,
+		int playerFollowNum);
 
 	virtual ~Enemy();
 
@@ -37,10 +45,11 @@ public:
 	inline const bool isDead() const { return this->hp <= 0; }
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
+	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
 
 	// Functions
 	void TakeDamage(int damage);
-	void Update(const float &dt);
+	void Update(const float &dt, Vector2f playerPosition);
 	void Draw(RenderTarget &renderTarget);
 };
 

@@ -29,7 +29,7 @@ Game::Game(RenderWindow *window)
 	//this->players.Add(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 25;
+	this->enemySpawnTimerMax = 25.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
@@ -160,7 +160,8 @@ void Game::Update(const float &dt) {
 		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemies.Size(); i++)
 		{
-			this->enemies[i].Update(dt);
+			// this causes a crash when the player dies because  "this->players[num]" won't exist if the player died
+			this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());
 
 			// Enemy Window Bounds check
 			if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
@@ -250,11 +251,15 @@ void Game::Draw(){
 }
 
 void Game::_spawnEnemy() {
+	const int pNum = rand() % this->players.Size();
 	this->enemies.Add(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
-		GameEnums::E_MOVE_LEFT,
+		rand()%2, // Random enemy type
 		this->window->getSize(),
 		this->enemyScale,
 		this->enemyDirection,
 		this->enemyHp,
-		this->enemyDamageRange));
+		this->enemyDamageRange, 
+		pNum) // Random player
+	);
+
 }

@@ -7,7 +7,8 @@ Enemy::Enemy(Texture* texture,
 	Vector2f scale,
 	Vector2f direction,
 	int hpMax,
-	Vector2i damageRange)
+	Vector2i damageRange,
+	int playerFollowNum)
 {
 	this->type = type;
 
@@ -21,13 +22,14 @@ Enemy::Enemy(Texture* texture,
 
 	this->damageTimerMax = 3.f;
 	this->damageTimer = 0;
+	this->damageRange = damageRange;
 
 	this->direction = direction;
 
 	this->hpMax = hpMax;
 	this->hp = this->hpMax;
 
-	this->damageRange = damageRange;
+	this->playerFollowNum = playerFollowNum;
 }
 
 Enemy::~Enemy()
@@ -41,10 +43,25 @@ void Enemy::TakeDamage(int damage){
 	this->damageTimer = this->damageTimerMax;
 }
 
-void Enemy::Update(const float &dt){
+void Enemy::Update(const float &dt, Vector2f playerPosition){
+	Vector2f normalizedDir;
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
 			this->sprite.move(this->direction.x * this->moveSpeed * dt * DeltaTime::dtMultiplier, this->direction.y * this->moveSpeed * dt * DeltaTime::dtMultiplier);
+			break;
+		case GameEnums::E_FOLLOW:
+			// Get the direction from us to the player 
+			this->direction.x = playerPosition.x - this->sprite.getPosition().x;
+			this->direction.y = playerPosition.y - this->sprite.getPosition().y;
+			// Normalize direction
+			normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
+			// Angle needed to go from current facing dir to face player
+			float angle = atan2(normalizedDir.y, normalizedDir.x) * 180 / 3.14159265359 + 180;
+			// Rotate
+			this->sprite.setRotation(angle);
+			// Move in that direction
+			this->sprite.move(normalizedDir.x * 3.f * dt * DeltaTime::dtMultiplier, normalizedDir.y * 3.f * dt * DeltaTime::dtMultiplier);
+
 			break;
 	}
 
