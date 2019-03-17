@@ -12,6 +12,7 @@ private:
 	
 public:
 	dArr(unsigned size = 5);
+	dArr(const dArr& obj);
 	~dArr();
 
 	T& operator[](unsigned index);
@@ -30,6 +31,21 @@ dArr<T>::dArr(unsigned capactity) {
 	this->arr = new T*[this->capactity];
 
 	this->_initialize(0);
+}
+
+template<typename T>
+dArr<T>::dArr(const dArr& obj) {
+	this->capactity = obj.capactity;
+	this->numOfElements = obj.numOfElements;
+
+	this->arr = new T*[this->capactity];
+
+	for (size_t i = 0; i < this->numOfElements; i++)
+	{
+		this->arr[i] = new T(*obj.arr[i]);
+	}
+
+	this->_initialize(this->numOfElements);
 }
 
 template<typename T>

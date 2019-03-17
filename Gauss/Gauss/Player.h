@@ -94,7 +94,7 @@ public:
 
 	// Accessors
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
-	inline const int getBulletsSize() const { return this->bullets.Size(); }
+	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	int getDamage() const;
