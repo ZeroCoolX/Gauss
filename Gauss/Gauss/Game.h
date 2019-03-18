@@ -27,7 +27,6 @@ private:
 	float enemySpawnTimerMax;
 
 	// Enemy Spawn Data
-	// TODO: Definetly make a struct of like EnemySpawnData or something in the future
 	const Vector2f enemyScale = Vector2f(0.1f, 0.1f);
 	const Vector2f enemyDirection = Vector2f(-1.0f, 0.f);
 	const int enemyHp = rand() % 2 + 1;
@@ -35,6 +34,10 @@ private:
 
 	// Textures
 	std::vector<Texture> textureMap;
+	dArr<Texture> lWingTextures;
+	dArr<Texture> rWingTextures;
+	dArr<Texture> cockpitTextures;
+	dArr<Texture> auraTextures;
 
 	// Utility Functions
 	void _spawnEnemy();
@@ -51,6 +54,7 @@ public:
 
 	// Functions
 	void InitUI();
+	void InitTextures();
 	void Update(const float &dt);
 	void DrawUI();
 	void Draw();

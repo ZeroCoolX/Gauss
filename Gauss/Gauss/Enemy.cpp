@@ -67,7 +67,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 				// Normalize direction
 				normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
 				// Angle needed to go from current facing dir to face player
-				float angle = atan2(normalizedDir.y, normalizedDir.x) * 180 / 3.14159265359 + 180;
+				float angle = atan2(normalizedDir.y, normalizedDir.x) * 180.f / 3.14159265359f + 180.f;
 				// Rotate
 				this->sprite.setRotation(angle);
 				adjustedMoveSpeed = (this->moveSpeed / 3);

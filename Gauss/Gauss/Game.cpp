@@ -9,6 +9,25 @@ Game::Game(RenderWindow *window)
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
 	// Init textures
+	this->InitTextures();
+
+	// Init player
+	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
+	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+
+	this->_spawnEnemy();
+	this->enemySpawnTimerMax = 25.f;
+	this->enemySpawnTimer = this->enemySpawnTimerMax;
+
+	this->InitUI();
+}
+
+Game::~Game()
+{
+}
+
+void Game::InitTextures() {
+	// Init textures
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_SHIP].loadFromFile("Textures/ship.png");
 
@@ -24,19 +43,38 @@ Game::Game(RenderWindow *window)
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_ENEMY01].loadFromFile("Textures/enemy.png");
 
-	// Init player
-	this->players.Add(Player(this->textureMap));
-	this->players.Add(Player(this->textureMap, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	// Init Accessories
+	std::string accessoriesBaseDir = "Textures/Accessories/";
+	std::string accessories[] = {
+	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
 
-	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 25.f;
-	this->enemySpawnTimer = this->enemySpawnTimerMax;
-
-	this->InitUI();
-}
-
-Game::~Game()
-{
+	std::ifstream in;
+	std::string accessoryFileName;
+	for (int i = 0; i < 4; ++i)
+	{
+		in.open(accessoriesBaseDir + accessories[i]);
+		if (in.is_open()) {
+			while (getline(in, accessoryFileName)) {
+				Texture temp;
+				temp.loadFromFile(accessoryFileName);
+				switch (i) {
+				case 0:
+					this->lWingTextures.Add(Texture(temp));
+					break;
+				case 1:
+					this->rWingTextures.Add(Texture(temp));
+					break;
+				case 2:
+					this->auraTextures.Add(Texture(temp));
+					break;
+				case 3:
+					this->cockpitTextures.Add(Texture(temp));
+					break;
+				}
+			}
+		}
+		in.close();
+	}
 }
 
 void Game::InitUI() {
@@ -169,7 +207,7 @@ void Game::Update(const float &dt) {
 			}
 			else {
 				// Check if we need to update the player this enemy is following incase they died
-				if (this->enemies[i].getPlayerFollowNum() > this->players.Size() - 1) {
+				if (this->enemies[i].getPlayerFollowNum() > (int)this->players.Size() - 1) {
 					this->enemies[i].updatePlayerFollowNum(rand()% this->players.Size());
 				}
 				this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());

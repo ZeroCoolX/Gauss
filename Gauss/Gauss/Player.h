@@ -37,6 +37,16 @@ private:
 	float bulletMaxSpeed;
 	float bulletAcceleration;
 
+	// Accessories
+	dArr<Texture>* lWingTextureMap;
+	dArr<Texture>* rWingTextureMap;
+	dArr<Texture>* auraTextureMap;
+	dArr<Texture>* cPitTextureMap;
+	Sprite lWing;
+	Sprite rWing;
+	Sprite aura;
+	Sprite cPit;
+
 	// Player input controls
 	int controls[5];
 
@@ -85,6 +95,10 @@ private:
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
 	Player(std::vector<Texture> &textureMap,
+		dArr<Texture> &lWingTextureMap,
+		dArr<Texture> &rWingTextureMap,
+		dArr<Texture> &auraTextureMap,
+		dArr<Texture> &cPitTextureMap,
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 

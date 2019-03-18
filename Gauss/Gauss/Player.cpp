@@ -5,6 +5,10 @@
 unsigned Player::playerId = 0;
 
 Player::Player(std::vector<Texture> &textureMap,
+	dArr<Texture> &lWingTextureMap,
+	dArr<Texture> &rWingTextureMap,
+	dArr<Texture> &auraTextureMap,
+	dArr<Texture> &cPitTextureMap,
 	int UP, 
 	int DOWN,
 	int LEFT, 
@@ -22,6 +26,13 @@ Player::Player(std::vector<Texture> &textureMap,
 			* pow(level, 2)) + 17
 			* level -12)
 		);
+
+	// Accesory Textures
+	this->lWingTextureMap = &lWingTextureMap;
+	this->rWingTextureMap = &rWingTextureMap;
+	this->auraTextureMap = &auraTextureMap;
+	this->cPitTextureMap = &cPitTextureMap;
+
 
 	this->_initTextures(textureMap);
 	this->_initPlayerSettings();
@@ -90,6 +101,14 @@ void Player::UpdateAccessories(const float &dt) {
 			origin,
 			this->playerCenter.y);
 	}
+
+	// Left Wing
+
+	// Right Wing
+
+	// Aura
+
+	// Cockpit
 }
 
 void Player::Movement(const float &dt) {
@@ -157,13 +176,20 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 	renderTarget.draw(this->playerExpBar);
 }
 
+// Order matters!
 void Player::Draw(RenderTarget &renderTarget) {
+	renderTarget.draw(this->aura);
+
 	for (size_t i = 0; i < this->bullets.Size(); ++i) {
 		this->bullets[i].Draw(renderTarget);
 	}
-	renderTarget.draw(this->mainGunSprite);
 
+	renderTarget.draw(this->mainGunSprite);
 	renderTarget.draw(this->sprite);
+
+	renderTarget.draw(this->cPit);
+	renderTarget.draw(this->lWing);
+	renderTarget.draw(this->rWing);
 
 	this->DrawUI(renderTarget);
 }
@@ -251,6 +277,11 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	// Assign bullet properties
 	this->laserProjectileTexture = &textureMap[GameEnums::T_LASER01];
 	this->missile01ProjectileTexture = &textureMap[GameEnums::T_MISSILE01];
+
+	this->lWing.setTexture((*this->lWingTextureMap)[0]);
+	this->rWing.setTexture((*this->rWingTextureMap)[0]);
+	this->aura.setTexture((*this->auraTextureMap)[0]);
+	this->cPit.setTexture((*this->cPitTextureMap)[0]);
 }
 
 void Player::_initPlayerSettings() {
