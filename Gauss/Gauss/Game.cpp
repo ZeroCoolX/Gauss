@@ -40,8 +40,14 @@ void Game::InitTextures() {
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_MAIN_GUN].loadFromFile("Textures/Guns/gun01.png");
 
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_ENEMY01].loadFromFile("Textures/enemy.png");
+	// Load Enemy Textures
+	Texture temp;
+	temp.loadFromFile("Textures/Ships/enemyMoveLeft.png");
+	this->enemyTextures.Add(Texture(temp));
+
+	temp.loadFromFile("Textures/Ships/enemyFollow.png");
+	this->enemyTextures.Add(Texture(temp));
+
 
 	// Init Accessories
 	std::string accessoriesBaseDir = "Textures/Accessories/";
@@ -116,7 +122,7 @@ void Game::Update(const float &dt) {
 
 		// Spawn enemies
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-			//this->_spawnEnemy();
+			this->_spawnEnemy();
 			this->enemySpawnTimer = 0;
 		}
 
@@ -303,7 +309,7 @@ void Game::Draw(){
 
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
-	this->enemies.Add(Enemy(&this->textureMap[GameEnums::T_ENEMY01],
+	this->enemies.Add(Enemy(this->enemyTextures,
 		rand()%2, // Random enemy type
 		this->window->getSize(),
 		this->enemyScale,

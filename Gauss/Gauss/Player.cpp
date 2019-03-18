@@ -117,6 +117,7 @@ void Player::UpdateAccessories(const float &dt) {
 
 	// Aura
 	this->aura.setPosition(this->playerCenter.x, this->playerCenter.y);
+	this->aura.rotate(5.f * dt * DeltaTime::dtMultiplier);
 
 	// Cockpit
 	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
@@ -308,7 +309,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->rWing.setScale(0.7f, 0.7f);
 
 	// Aura
-	this->aura.setTexture((*this->auraTextureMap)[1]);
+	this->aura.setTexture((*this->auraTextureMap)[6]);
 	this->aura.setOrigin(this->aura.getGlobalBounds().width / 2,
 		this->aura.getGlobalBounds().height / 2);
 	this->aura.setPosition(this->playerCenter);

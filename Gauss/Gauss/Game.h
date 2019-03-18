@@ -34,6 +34,7 @@ private:
 
 	// Textures
 	std::vector<Texture> textureMap;
+	dArr<Texture> enemyTextures;
 	dArr<Texture> lWingTextures;
 	dArr<Texture> rWingTextures;
 	dArr<Texture> cockpitTextures;

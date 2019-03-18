@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Enums.h"
 
-Enemy::Enemy(Texture* texture,
+Enemy::Enemy(dArr<Texture> &textures,
 	int type,
 	Vector2u windowBounds,
 	Vector2f scale,
@@ -12,8 +12,8 @@ Enemy::Enemy(Texture* texture,
 {
 	this->type = type;
 
-	this->texture = texture;
-	this->sprite.setTexture(*texture);
+	this->textures = &textures;
+	this->sprite.setTexture((*this->textures)[this->type]);
 	this->sprite.setScale(scale);
 
 	const float xPos((float)windowBounds.x);

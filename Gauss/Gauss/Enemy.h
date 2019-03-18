@@ -5,7 +5,7 @@
 class Enemy
 {
 private:
-	Texture *texture;
+	dArr<Texture> *textures;
 	Sprite sprite;
 	Vector2f direction;
 
@@ -29,7 +29,7 @@ private:
 	}
 
 public:
-	Enemy(Texture* texture, 
+	Enemy(dArr<Texture> &textures, 
 		int type, 
 		Vector2u windowBounds,
 		Vector2f scale, 
