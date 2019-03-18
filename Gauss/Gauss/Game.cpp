@@ -13,7 +13,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -270,18 +270,6 @@ void Game::Update(const float &dt) {
 }
 
 void Game::DrawUI() {
-	// Draw enemies
-	for (size_t i = 0; i < this->enemies.Size(); i++)
-	{
-		this->enemyText.setPosition(this->enemies[i].getPosition());
-		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
-
-		// Draw Enemy
-		this->enemies[i].Draw(*this->window);
-		// Draw Enemy UI
-		this->window->draw(this->enemyText);
-	}
-
 	// Draw Texttags
 	for (size_t i = 0; i < this->textTags.Size(); i++)
 	{
@@ -300,6 +288,18 @@ void Game::Draw(){
 	// Draw Players
 	for (size_t i = 0; i < this->players.Size(); ++i) {
 		this->players[i].Draw(*this->window);
+	}
+
+	// Draw enemies
+	for (size_t i = 0; i < this->enemies.Size(); i++)
+	{
+		this->enemyText.setPosition(this->enemies[i].getPosition());
+		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
+
+		// Draw Enemy
+		this->enemies[i].Draw(*this->window);
+		// Draw Enemy UI
+		this->window->draw(this->enemyText);
 	}
 
 	this->DrawUI();

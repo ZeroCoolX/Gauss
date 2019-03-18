@@ -153,16 +153,16 @@ void Player::Combat(const float &dt) {
 }
 
 void Player::UpdateStatsUI() {
-	Vector2f statsPos = Vector2f(this->getPosition().x, (this->getPosition().y - this->getGlobalBounds().height / 4));
+	Vector2f statsPos = Vector2f(this->getPosition().x, (this->getPosition().y - this->getGlobalBounds().height));
 
 	// Stats
 	this->statsText.setPosition(statsPos);
 	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]					" + this->getHpAsString()
-	+ "\n\n\n\n\n\n"
+	+ "\n\n\n\n\n\n\n\n\n"
 	+ std::to_string(this->getLevel()));
 
 	// Exp Bar
-	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 12.f)); // Clean up magic numbers
+	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 45.f)); // Clean up magic numbers
 	this->playerExpBar.setPosition(expBarPos);
 	// Scale based off player experience to create a dynamic bar
 	this->playerExpBar.setScale(static_cast<float>(this->getExp()) / static_cast<float>(getExpNext()), 1.f);
@@ -277,7 +277,7 @@ void Player::_processPlayerInput(const float &dt) {
 void Player::_initTextures(std::vector <Texture> &textureMap) {
 	// Assign ship
 	this->sprite.setTexture(textureMap[GameEnums::T_SHIP]);
-	this->sprite.setScale(0.13f, 0.13f);
+	this->sprite.setScale(0.1f, 0.1f);
 	this->sprite.setColor(Color(10, 10, 10, 255));
 
 	// Assign accessories

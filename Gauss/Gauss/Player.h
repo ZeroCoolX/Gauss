@@ -47,6 +47,11 @@ private:
 	Sprite aura;
 	Sprite cPit;
 
+	int lWingSelect;
+	int rwingSelect;
+	int cPitSelect;
+	int auraSelect;
+
 	// Player input controls
 	int controls[5];
 
