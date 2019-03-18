@@ -101,11 +101,7 @@ private:
 	void _fireLaser(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
-	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
-	Vector2f _normalize(Vector2f v, float length) {
-		if (length == 0) { return Vector2f(0.f, 0.f); }
-		return (v / length);
-	}
+	void _checkBounds(Vector2u windowBounds, bool warpVertical);
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
@@ -136,13 +132,18 @@ public:
 	inline void gainScore(int score) { this->score += score; }
 	inline const int getScore() const { return this->score; }
 	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
+	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
+	inline Vector2f normalize(Vector2f v, float length) {
+		if (length == 0) { return Vector2f(0.f, 0.f); }
+		return (v / length);
+	}
 
 	// Functions
 	bool UpdateLeveling();
 	void ChangeAccessories();
 	void UpdateAccessories(const float &dt);
 	void Combat(const float &dt);
-	void Movement(const float &dt);
+	void Movement(const float &dt, Vector2u windowBounds);
 	void Draw(RenderTarget &renderTarget);
 	void DrawUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();

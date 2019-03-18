@@ -99,7 +99,7 @@ bool Player::UpdateLeveling() {
 		this->power++;
 		this->maneuverability++;
 
-		this->hpMax = 10 + this->plating * 3;
+		this->hpMax = 10 + this->plating * 5;
 		this->damageMax = 2 + this->power * 2;
 		this->damage = 1 + power;
 
@@ -172,9 +172,9 @@ void Player::UpdateAccessories(const float &dt) {
 	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
 }
 
-void Player::Movement(const float &dt) {
+void Player::Movement(const float &dt, Vector2u windowBounds) {
 	// Update normalized direction
-	this->normalizedDir = this->_normalize(this->velocity, this->_vectorLength(this->velocity));
+	this->normalizedDir = this->normalize(this->velocity, this->vectorLength(this->velocity));
 
 	this->_processPlayerInput(dt);
 
@@ -182,6 +182,9 @@ void Player::Movement(const float &dt) {
 	this->sprite.move(this->velocity * dt * DeltaTime::dtMultiplier);
 
 	this->_recalculatePlayerCenter();
+
+	// Bounds check for window collision
+	this->_checkBounds(windowBounds, false);
 }
 
 void Player::Combat(const float &dt) {
@@ -250,7 +253,7 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
 	}
 
-	this->Movement(dt);
+	this->Movement(dt, windowBounds);
 	this->ChangeAccessories();
 	this->UpdateAccessories(dt);
 	this->Combat(dt);
@@ -482,5 +485,35 @@ void Player::_fireMissileLight(const Vector2f direction) {
 void Player::_fireMissileHeavy(const Vector2f direction) {
 	if (dualMissiles02) {
 		// setup
+	}
+}
+
+void Player::_checkBounds(Vector2u windowBounds, bool warpVertical) {
+	if (this->getPosition().x <= 0) {// LEFT BOUNDS
+		this->sprite.setPosition(0.f, this->sprite.getPosition().y);
+		this->velocity.x = 0.f;
+	}
+	else if (this->getPosition().x + this->sprite.getGlobalBounds().width >= windowBounds.x) { // RIGHT BOUNDS
+		this->sprite.setPosition(windowBounds.x - this->sprite.getGlobalBounds().width, this->sprite.getPosition().y);
+		this->velocity.x = 0.f;
+	}
+
+	if (warpVertical) {
+		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= 0) { // TOP BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y);
+		}
+		else if (this->getPosition().y >= windowBounds.y) { // BOTTOM BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, 0.f - this->sprite.getGlobalBounds().height);
+		}
+	}
+	else {
+		if (this->getPosition().y <= 0) { // TOP BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
+			this->velocity.y = 0.f;
+		}
+		else if (this->getPosition().y + this->sprite.getGlobalBounds().height >= windowBounds.y) { // BOTTOM BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y - this->sprite.getGlobalBounds().height);
+			this->velocity.y = 0.f;
+		}
 	}
 }
