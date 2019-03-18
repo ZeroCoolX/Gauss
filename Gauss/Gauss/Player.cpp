@@ -91,7 +91,7 @@ void Player::UpdateAccessories(const float &dt) {
 		this->playerCenter.y);
 
 	// Compensate after fire kickback
-	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 4;
+	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
 	if (this->mainGunSprite.getPosition().x < origin) {
 		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
 
@@ -103,12 +103,23 @@ void Player::UpdateAccessories(const float &dt) {
 	}
 
 	// Left Wing
+	float xMovement = (this->velocity.x < 0 ? -abs(this->velocity.x) : abs(this->velocity.x/3));
+	float yMovement = (this->velocity.x < 0 ? abs(this->velocity.x) : -abs(this->velocity.x / 4));
+
+	this->lWing.setPosition(
+		this->playerCenter.x + xMovement,
+		this->playerCenter.y - yMovement);
 
 	// Right Wing
+	this->rWing.setPosition(
+		this->playerCenter.x + xMovement,
+		this->playerCenter.y + yMovement);
 
 	// Aura
+	this->aura.setPosition(this->playerCenter.x, this->playerCenter.y);
 
 	// Cockpit
+	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
 }
 
 void Player::Movement(const float &dt) {
@@ -266,6 +277,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	// Assign ship
 	this->sprite.setTexture(textureMap[GameEnums::T_SHIP]);
 	this->sprite.setScale(0.13f, 0.13f);
+	this->sprite.setColor(Color(10, 10, 10, 255));
 
 	// Assign accessories
 	this->mainGunSprite.setTexture(textureMap[GameEnums::T_MAIN_GUN]);
@@ -278,10 +290,38 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->laserProjectileTexture = &textureMap[GameEnums::T_LASER01];
 	this->missile01ProjectileTexture = &textureMap[GameEnums::T_MISSILE01];
 
-	this->lWing.setTexture((*this->lWingTextureMap)[0]);
-	this->rWing.setTexture((*this->rWingTextureMap)[0]);
-	this->aura.setTexture((*this->auraTextureMap)[0]);
-	this->cPit.setTexture((*this->cPitTextureMap)[0]);
+	// Accessories
+	// Left wing
+	this->lWing.setTexture((*this->lWingTextureMap)[1]);
+	this->lWing.setOrigin(this->lWing.getGlobalBounds().width / 2,
+		this->lWing.getGlobalBounds().height / 2);
+	this->lWing.setPosition(this->playerCenter);
+	this->lWing.setRotation(90.f);
+	this->lWing.setScale(0.7f, 0.7f);
+
+	// Right wing
+	this->rWing.setTexture((*this->rWingTextureMap)[1]);
+	this->rWing.setOrigin(this->rWing.getGlobalBounds().width / 2,
+		this->rWing.getGlobalBounds().height / 2);
+	this->rWing.setPosition(this->playerCenter);
+	this->rWing.setRotation(90.f);
+	this->rWing.setScale(0.7f, 0.7f);
+
+	// Aura
+	this->aura.setTexture((*this->auraTextureMap)[1]);
+	this->aura.setOrigin(this->aura.getGlobalBounds().width / 2,
+		this->aura.getGlobalBounds().height / 2);
+	this->aura.setPosition(this->playerCenter);
+	this->aura.setRotation(90.f);
+	this->aura.setScale(0.7f, 0.7f);
+
+	// Cockpit
+	this->cPit.setTexture((*this->cPitTextureMap)[1]);
+	this->cPit.setOrigin(this->cPit.getGlobalBounds().width / 2,
+		this->cPit.getGlobalBounds().height / 2);
+	this->cPit.setPosition(this->playerCenter);
+	this->cPit.setRotation(90.f);
+	this->cPit.setScale(0.7f, 0.7f);
 }
 
 void Player::_initPlayerSettings() {

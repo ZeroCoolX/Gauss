@@ -116,7 +116,7 @@ void Game::Update(const float &dt) {
 
 		// Spawn enemies
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-			this->_spawnEnemy();
+			//this->_spawnEnemy();
 			this->enemySpawnTimer = 0;
 		}
 
