@@ -13,7 +13,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -163,6 +163,10 @@ void Game::Update(const float &dt) {
 
 							if (this->enemies[k].getHp() <= 0) {
 
+								// Gain score
+								int score = this->enemies[k].getHpMax();
+								this->players[i].gainScore(score);
+
 								// Player earned some EXP!
 								int exp = this->enemies[k].getHpMax()
 									+ (rand() % this->enemies[k].getHpMax() + 1);
@@ -202,7 +206,6 @@ void Game::Update(const float &dt) {
 			}
 		}
 
-		int playerWhoDied = -1;
 		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemies.Size(); i++)
 		{
@@ -227,10 +230,11 @@ void Game::Update(const float &dt) {
 				// Check Player - Enemy collision
 				for (size_t j = 0; j < this->players.Size(); j++)
 				{
-					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds())) {
+					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds()) 
+						&& !this->players[j].isDamageCooldown()) {
 						// Damage player		
 						int damage = this->enemies[i].getDamage();
-						this->players[j].takeDamage(damage);
+						this->players[j].TakeDamage(damage);
 						
 						// Create Texttag effect
 						this->textTags.Add(
@@ -243,12 +247,8 @@ void Game::Update(const float &dt) {
 							)
 						);
 
-						// Destroy enemy
-						this->enemies.Remove(i);
-
 						// Check for player death
 						if (players[j].isDead()) {
-							playerWhoDied = j;
 							this->players.Remove(j);
 						}
 						break;
@@ -293,7 +293,7 @@ void Game::Draw(){
 	// Draw enemies
 	for (size_t i = 0; i < this->enemies.Size(); i++)
 	{
-		this->enemyText.setPosition(this->enemies[i].getPosition());
+		this->enemyText.setPosition(this->enemies[i].getPosition().x, this->enemies[i].getPosition().y - 10.f);
 		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
 
 		// Draw Enemy

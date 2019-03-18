@@ -27,11 +27,20 @@ Player::Player(std::vector<Texture> &textureMap,
 			* level -12)
 		);
 
+	this->keyTimeMax = 8.f;
+	this->keyTime = this->keyTimeMax;
+
 	// Accesory Textures
 	this->lWingTextureMap = &lWingTextureMap;
 	this->rWingTextureMap = &rWingTextureMap;
 	this->auraTextureMap = &auraTextureMap;
 	this->cPitTextureMap = &cPitTextureMap;
+
+	// Selectors
+	this->lWingSelect = 1;
+	this->rWingSelect = 1;
+	this->cPitSelect = 1;
+	this->auraSelect = 0;
 
 
 	this->_initTextures(textureMap);
@@ -66,6 +75,12 @@ int Player::getDamage() const {
 	return damage; 
 }
 
+void Player::TakeDamage(int damage) {
+	this->hp -= damage;
+
+	this->damageTimer = 0;
+}
+
 bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
 		this->level++;
@@ -76,12 +91,43 @@ bool Player::UpdateLeveling() {
 				* pow(level, 2)) + 17
 				* level - 12)
 			);
-		// Regenerate health for now
+		this->cooling++;
+		this->plating++;
+		this->power++;
+		this->maneuverability++;
+
+		this->hpMax = 10 + this->plating * 3;
+		this->damageMax = 2 + this->power * 2;
+		this->damage = 1 + power;
+
 		this->hp = this->hpMax;
 		
 		return true;
 	}
 	return false;
+}
+
+void Player::ChangeAccessories() {
+	if (Keyboard::isKeyPressed(Keyboard::Num1) && this->keyTime >= this->keyTimeMax ) {
+		lWingSelect = ++lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
+		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
+		this->keyTime = 0;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Num2) && this->keyTime >= this->keyTimeMax) {
+		rWingSelect = ++rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
+		this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
+		this->keyTime = 0;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Num3) && this->keyTime >= this->keyTimeMax) {
+		auraSelect = ++auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
+		this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
+		this->keyTime = 0;
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Num4) && this->keyTime >= this->keyTimeMax) {
+		cPitSelect = ++cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
+		this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
+		this->keyTime = 0;
+	}
 }
 
 void Player::UpdateAccessories(const float &dt) {
@@ -150,6 +196,24 @@ void Player::Combat(const float &dt) {
 
 		this->shootTimer = 0; // RESET TIMER
 	}
+
+	if (this->isDamageCooldown()) {
+		if ((int)this->damageTimer % 2 == 0) {
+			this->lWing.setColor(Color::Red);
+			this->rWing.setColor(Color::Red);
+			this->cPit.setColor(Color::Red);
+		}
+		else {
+			this->lWing.setColor(Color::White);
+			this->rWing.setColor(Color::White);
+			this->cPit.setColor(Color::White);
+		}
+	}
+	else {
+		this->lWing.setColor(Color::White);
+		this->rWing.setColor(Color::White);
+		this->cPit.setColor(Color::White);
+	}
 }
 
 void Player::UpdateStatsUI() {
@@ -170,12 +234,18 @@ void Player::UpdateStatsUI() {
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
 	// Update timers
-	if (this->shootTimer < this->shootTimerMax)
+	if (this->shootTimer < this->shootTimerMax) {
 		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
-	if (this->damageTimer < this->damageTimerMax)
+	}
+	if (this->damageTimer < this->damageTimerMax) {
 		this->damageTimer += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+	if (this->keyTime < this->keyTimeMax) {
+		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
+	}
 
 	this->Movement(dt);
+	this->ChangeAccessories();
 	this->UpdateAccessories(dt);
 	this->Combat(dt);
 	this->UpdateStatsUI();
@@ -293,7 +363,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 
 	// Accessories
 	// Left wing
-	this->lWing.setTexture((*this->lWingTextureMap)[1]);
+	this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
 	this->lWing.setOrigin(this->lWing.getGlobalBounds().width / 2,
 		this->lWing.getGlobalBounds().height / 2);
 	this->lWing.setPosition(this->playerCenter);
@@ -301,7 +371,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->lWing.setScale(0.7f, 0.7f);
 
 	// Right wing
-	this->rWing.setTexture((*this->rWingTextureMap)[1]);
+	this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
 	this->rWing.setOrigin(this->rWing.getGlobalBounds().width / 2,
 		this->rWing.getGlobalBounds().height / 2);
 	this->rWing.setPosition(this->playerCenter);
@@ -309,7 +379,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->rWing.setScale(0.7f, 0.7f);
 
 	// Aura
-	this->aura.setTexture((*this->auraTextureMap)[6]);
+	this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
 	this->aura.setOrigin(this->aura.getGlobalBounds().width / 2,
 		this->aura.getGlobalBounds().height / 2);
 	this->aura.setPosition(this->playerCenter);
@@ -317,7 +387,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->aura.setScale(0.7f, 0.7f);
 
 	// Cockpit
-	this->cPit.setTexture((*this->cPitTextureMap)[1]);
+	this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
 	this->cPit.setOrigin(this->cPit.getGlobalBounds().width / 2,
 		this->cPit.getGlobalBounds().height / 2);
 	this->cPit.setPosition(this->playerCenter);
@@ -335,7 +405,7 @@ void Player::_initPlayerSettings() {
 	// Setup timers
 	this->shootTimerMax = 20.f;
 	this->shootTimer = this->shootTimerMax;
-	this->damageTimerMax = 5.f;
+	this->damageTimerMax = 40.f;
 	this->damageTimer = this->damageTimerMax;
 
 	// Movement settings

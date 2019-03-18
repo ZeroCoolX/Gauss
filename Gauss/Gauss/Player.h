@@ -5,6 +5,10 @@
 class Player
 {
 private:
+	// Stops keyspamming
+	float keyTimeMax;
+	float keyTime;
+
 	unsigned int playerNumber;
 	Text statsText;
 	RectangleShape playerExpBar;
@@ -48,7 +52,7 @@ private:
 	Sprite cPit;
 
 	int lWingSelect;
-	int rwingSelect;
+	int rWingSelect;
 	int cPitSelect;
 	int auraSelect;
 
@@ -118,15 +122,18 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	int getDamage() const;
 	inline const int& getHp() const { return hp; }
-	inline void takeDamage(int damage) { this->hp = std::max(0, (this->hp - damage)); }
 	inline const bool isDead() const { return this->hp <= 0; }
 	inline const int& getLevel() const { return this->level; }
 	inline const int& getExp() const { return this->exp; }
 	inline const int& getExpNext() const { return this->expNext; }
 	inline bool gainExp(int exp) { this->exp += exp; return this->UpdateLeveling(); }
+	inline void gainScore(int score) { this->score += score; }
+	inline const int getScore() const { return this->score; }
+	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
 
 	// Functions
 	bool UpdateLeveling();
+	void ChangeAccessories();
 	void UpdateAccessories(const float &dt);
 	void Combat(const float &dt);
 	void Movement(const float &dt);
@@ -137,6 +144,7 @@ public:
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
+	void TakeDamage(int damage);
 
 
 	// Statics
