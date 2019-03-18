@@ -29,13 +29,13 @@ Enemy::Enemy(dArr<Texture> &textures,
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
 			this->hpMax = (rand() % 5 + 1) * scalar;
-			this->damageRange = Vector2i((rand() % 4 + 1)*scalar, (rand() % 2 + 1)*scalar);
-			this->moveSpeed = rand() % 20 + 10.f;
+			this->damageRange = Vector2i((rand() % 3 + 1)*scalar, (rand() % 2 + 1)*scalar);
+			this->moveSpeed = rand() % 15 + 5.f;
 			break;
 		case GameEnums::E_FOLLOW:
 			this->hpMax = (rand() % 3 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
-			this->moveSpeed = rand() % 10 + 5.f;
+			this->moveSpeed = rand() % 6 + 3.f;
 		default:
 			this->moveSpeed = 10.f;
 			break;
