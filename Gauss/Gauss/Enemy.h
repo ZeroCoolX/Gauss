@@ -8,6 +8,7 @@ private:
 	dArr<Texture> *textures;
 	Sprite sprite;
 	Vector2f direction;
+	Vector2f normalizedDir;
 
 	float damageTimerMax;
 	float damageTimer;
@@ -24,7 +25,7 @@ private:
 
 	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
 	Vector2f _normalize(Vector2f v, float length) {
-		if (length == 0) { return v; }
+		if (length == 0) { return Vector2f(0.f, 0.f); }
 		return (v / length);
 	}
 
@@ -34,8 +35,7 @@ public:
 		Vector2u windowBounds,
 		Vector2f scale, 
 		Vector2f direction, 
-		int hpMax, 
-		Vector2i damageRange,
+		int scalar,
 		int playerFollowNum);
 
 	virtual ~Enemy();
@@ -52,6 +52,7 @@ public:
 	inline void updateAttackType(int type) { this->type = type; }
 
 	// Functions
+	void Collision();
 	void TakeDamage(int damage);
 	void Update(const float &dt, Vector2f playerPosition = Vector2f());
 	void Draw(RenderTarget &renderTarget);

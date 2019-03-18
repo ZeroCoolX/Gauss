@@ -64,6 +64,7 @@ private:
 	float maxVelocity;
 	float acceleration;
 	Vector2f direction;
+	Vector2f normalizedDir;
 	float stabalizingForce;
 
 	int level;
@@ -100,6 +101,11 @@ private:
 	void _fireLaser(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
+	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
+	Vector2f _normalize(Vector2f v, float length) {
+		if (length == 0) { return Vector2f(0.f, 0.f); }
+		return (v / length);
+	}
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire

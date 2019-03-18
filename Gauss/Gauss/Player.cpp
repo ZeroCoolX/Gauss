@@ -79,6 +79,9 @@ void Player::TakeDamage(int damage) {
 	this->hp -= damage;
 
 	this->damageTimer = 0;
+
+	this->velocity.x += -this->normalizedDir.x * 10.f; // knockback amount
+	this->velocity.y += -this->normalizedDir.y * 10.f; // knockback amount
 }
 
 bool Player::UpdateLeveling() {
@@ -170,6 +173,9 @@ void Player::UpdateAccessories(const float &dt) {
 }
 
 void Player::Movement(const float &dt) {
+	// Update normalized direction
+	this->normalizedDir = this->_normalize(this->velocity, this->_vectorLength(this->velocity));
+
 	this->_processPlayerInput(dt);
 
 	// Move player

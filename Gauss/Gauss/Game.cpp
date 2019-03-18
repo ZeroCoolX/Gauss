@@ -16,7 +16,7 @@ Game::Game(RenderWindow *window)
 	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 25.f;
+	this->enemySpawnTimerMax = 20.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
@@ -235,7 +235,8 @@ void Game::Update(const float &dt) {
 						// Damage player		
 						int damage = this->enemies[i].getDamage();
 						this->players[j].TakeDamage(damage);
-						
+						this->enemies[i].Collision();
+
 						// Create Texttag effect
 						this->textTags.Add(
 							TextTag(
@@ -314,8 +315,7 @@ void Game::_spawnEnemy() {
 		this->window->getSize(),
 		this->enemyScale,
 		this->enemyDirection,
-		this->enemyHp,
-		this->enemyDamageRange, 
+		this->players[pNum].getLevel(),
 		pNum) // Random player
 	);
 

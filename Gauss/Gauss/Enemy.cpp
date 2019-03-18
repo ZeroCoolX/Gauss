@@ -6,8 +6,7 @@ Enemy::Enemy(dArr<Texture> &textures,
 	Vector2u windowBounds,
 	Vector2f scale,
 	Vector2f direction,
-	int hpMax,
-	Vector2i damageRange,
+	int scalar,
 	int playerFollowNum)
 {
 	this->type = type;
@@ -27,7 +26,20 @@ Enemy::Enemy(dArr<Texture> &textures,
 
 	this->direction = direction;
 
-	this->hpMax = hpMax;
+	switch (this->type) {
+		case GameEnums::E_MOVE_LEFT:
+			this->hpMax = (rand() % 5 + 1) * scalar;
+			this->damageRange = Vector2i((rand() % 4 + 1)*scalar, (rand() % 2 + 1)*scalar);
+			this->moveSpeed = rand() % 20 + 10.f;
+			break;
+		case GameEnums::E_FOLLOW:
+			this->hpMax = (rand() % 3 + 1) * scalar;
+			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
+			this->moveSpeed = rand() % 10 + 5.f;
+		default:
+			this->moveSpeed = 10.f;
+			break;
+	}
 	this->hp = this->hpMax;
 
 	this->playerFollowNum = playerFollowNum;
@@ -35,6 +47,10 @@ Enemy::Enemy(dArr<Texture> &textures,
 
 Enemy::~Enemy()
 {
+}
+
+void Enemy::Collision() {
+	this->damageTimer = this->damageTimerMax;
 }
 
 void Enemy::TakeDamage(int damage){
@@ -45,11 +61,11 @@ void Enemy::TakeDamage(int damage){
 }
 
 void Enemy::Update(const float &dt, Vector2f playerPosition){
-	Vector2f normalizedDir;
 	float adjustedMoveSpeed;
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
 			this->sprite.move(this->direction.x * this->moveSpeed * dt * DeltaTime::dtMultiplier, this->direction.y * this->moveSpeed * dt * DeltaTime::dtMultiplier);
+			this->normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
 			break;
 		case GameEnums::E_FOLLOW:
 			// Get distance to see if we need to divebomb
@@ -57,30 +73,32 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 
 			if (distance < divebombDistanceThreshold || this->divebombPlayer) {
 				this->divebombPlayer = true;
-				normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
-				adjustedMoveSpeed = (this->moveSpeed / 2);
+				this->normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
+				adjustedMoveSpeed = this->moveSpeed;
 			}
 			else {
 				// Get the direction from us to the player 
 				this->direction.x = playerPosition.x - this->sprite.getPosition().x;
 				this->direction.y = playerPosition.y - this->sprite.getPosition().y;
 				// Normalize direction
-				normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
+				this->normalizedDir = this->_normalize(this->direction, this->_vectorLength(this->direction));
 				// Angle needed to go from current facing dir to face player
-				float angle = atan2(normalizedDir.y, normalizedDir.x) * 180.f / 3.14159265359f + 180.f;
+				float angle = atan2(this->normalizedDir.y, this->normalizedDir.x) * 180.f / 3.14159265359f + 180.f;
 				// Rotate
 				this->sprite.setRotation(angle);
-				adjustedMoveSpeed = (this->moveSpeed / 3);
+				adjustedMoveSpeed = this->moveSpeed * 0.75f;
 			}
 
-			this->sprite.move(normalizedDir.x * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier, normalizedDir.y * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier);
+			this->sprite.move(this->normalizedDir.x * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier, this->normalizedDir.y * adjustedMoveSpeed * dt * DeltaTime::dtMultiplier);
 			break;
 	}
 
 	if (this->damageTimer > 0.f) {
-		this->damageTimer -= 1.f * dt * DeltaTime::dtMultiplier;
 		this->sprite.setColor(Color::Red);
-		this->sprite.move(this->moveSpeed/2 * this->damageTimer * dt * DeltaTime::dtMultiplier, 0.f);
+		this->damageTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+		// Knockback
+		this->sprite.move(this->moveSpeed * -this->normalizedDir.x * this->damageTimer * dt * DeltaTime::dtMultiplier,
+			this->moveSpeed * -this->normalizedDir.y * this->damageTimer * dt * DeltaTime::dtMultiplier);
 	}
 	else {
 		this->sprite.setColor(Color::White);
