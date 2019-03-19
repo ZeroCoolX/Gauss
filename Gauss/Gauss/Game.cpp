@@ -67,6 +67,17 @@ void Game::InitTextures() {
 	this->enemyBulletTextures.Add(Texture(temp));
 
 
+	// Init pickups textures
+	temp.loadFromFile("Textures/Pickups/hpSupply.png");
+	this->pickupTextures.Add(Texture(temp));
+	
+	temp.loadFromFile("Textures/Pickups/missileSupply.png");
+	this->pickupTextures.Add(Texture(temp));
+
+	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
+	this->pickupTextures.Add(Texture(temp));
+
+
 	// Init Accessories
 	std::string accessoriesBaseDir = "Textures/Accessories/";
 	std::string accessories[] = {
@@ -246,6 +257,19 @@ void Game::Update(const float &dt) {
 									);
 
 								}
+
+								// Change to drop pickup
+								const int pickupChance = rand() % 10;
+
+								if (pickupChance > 7) {
+									this->pickups.Add(Pickup(
+										&this->pickupTextures,
+										this->enemies[k].getPosition(),
+										0,
+										150.f));
+								}
+
+								// Destroy the enemy
 								this->enemies.Remove(k);
 							}
 
@@ -357,6 +381,38 @@ void Game::Update(const float &dt) {
 				this->textTags.Remove(i);
 			}
 		}
+
+		// Update pickups
+		for (size_t i = 0; i < this->pickups.Size(); i++)
+		{
+			this->pickups[i].Update(dt);
+
+			if (this->pickups[i].canDelete()) {
+				this->pickups.Remove(i);
+				continue;
+			}
+
+			// Check player collision
+			for (size_t j = 0; j < this->players.Size(); j++)
+			{
+				if (this->pickups[i].CheckCollision(this->players[j].getGlobalBounds())) {
+					switch (this->pickups[i].getType()) {
+					case 0: // HP
+						this->players[j].gainHp(this->players[j].getHpMax() / 5);
+						break;
+
+					case 1: // Missile
+						break;
+
+					case 2: // Missile Heavy
+						break;
+					}
+
+					this->pickups.Remove(i);
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -394,6 +450,11 @@ void Game::Draw(){
 		this->enemies[i].Draw(*this->window);
 		// Draw Enemy UI
 		this->window->draw(this->enemyText);
+	}
+
+	// Draw Pickups
+	for (size_t i = 0; i < this->pickups.Size(); ++i) {
+		this->pickups[i].Draw(*this->window);
 	}
 
 	this->DrawUI();

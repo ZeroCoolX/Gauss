@@ -50,6 +50,9 @@ private:
 	const Vector2f enemyDirection = Vector2f(-1.0f, 0.f);
 	const int enemyHp = rand() % 2 + 1;
 	const Vector2i enemyDamageRange = Vector2i(1, 3);
+	
+	// Pickups
+	dArr<Pickup> pickups;
 
 	// Textures
 	std::vector<Texture> textureMap;
@@ -59,6 +62,7 @@ private:
 	dArr<Texture> rWingTextures;
 	dArr<Texture> cockpitTextures;
 	dArr<Texture> auraTextures;
+	dArr<Texture> pickupTextures;
 
 	// Utility Functions
 	void _spawnEnemy();

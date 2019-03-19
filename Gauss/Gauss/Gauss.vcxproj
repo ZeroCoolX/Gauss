@@ -128,6 +128,7 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TextTag.cpp" />
   </ItemGroup>
@@ -138,6 +139,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="dArr.h" />
+    <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TextTag.h" />
   </ItemGroup>

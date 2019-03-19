@@ -124,12 +124,14 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	int getDamage() const;
 	inline const int& getHp() const { return hp; }
+	inline const int& getHpMax() const { return hpMax; }
 	inline const bool isDead() const { return this->hp <= 0; }
 	inline const int& getLevel() const { return this->level; }
 	inline const int& getExp() const { return this->exp; }
 	inline const int& getExpNext() const { return this->expNext; }
 	inline bool gainExp(int exp) { this->exp += exp; return this->UpdateLeveling(); }
 	inline void gainScore(int score) { this->score += score; }
+	inline void gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); }
 	inline const int getScore() const { return this->score; }
 	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
 	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
