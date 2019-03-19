@@ -14,13 +14,13 @@ Game::Game(RenderWindow *window)
 	// Init scoring
 	this->killPerfectionMultiplier = 1;
 	this->killPerfectionAdder = 0;
-	this->killPerfectionAdderMax = 10;
+	this->killPerfectionAdderMax = 15;
 
-	this->killboxMultiplier = 1;
+	this->killboxMultiplier = 0;
 	this->killboxTimerMax = 400.f;
 	this->killboxTimer = this->killboxTimerMax;
 	this->killboxAdder = 0;
-	this->killboxAdderMax = 25;
+	this->killboxAdderMax = 10;
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
@@ -126,7 +126,7 @@ void Game::InitUI() {
 
 	this->scoreText.setFont(this->font);
 	this->scoreText.setCharacterSize(32);
-	this->scoreText.setFillColor(Color::White);
+	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setString("Score: 0");
 	this->scoreText.setPosition(10.f, 10.f); // top left magic numbers for now
 }
@@ -144,7 +144,7 @@ void Game::Update(const float &dt) {
 		else {
 			this->killboxTimer = 0.f;
 			this->killboxAdder = 0;
-			this->killboxMultiplier = 1;
+			this->killboxMultiplier = 0;
 		}
 
 		// Spawn enemies
@@ -198,8 +198,19 @@ void Game::Update(const float &dt) {
 								this->killboxAdder++;
 								this->killPerfectionAdder++;
 
-								int score = this->enemies[k].getHpMax() * this->killboxMultiplier; // apply the score and multipliers
-								this->players[i].gainScore(score * this->killPerfectionMultiplier);
+								// Total Score = (EnemyMaxHp + (EnemyMaxHp * KillboxMultiplier)) * PerfectionMultiplier 
+								int score = (this->enemies[k].getHpMax() + (this->enemies[k].getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
+								this->players[i].gainScore(score);
+
+								// Score text tag
+								this->textTags.Add(
+									TextTag(
+										&this->font, "+" + std::to_string(score), Color::White,
+										Vector2f(100.f, 10.f),
+										Vector2f(1.f, 0.f),
+										30, 40.f, true
+									)
+								);
 
 								// Player earned some EXP!
 								int exp = this->enemies[k].getHpMax()
@@ -244,12 +255,12 @@ void Game::Update(const float &dt) {
 
 		// Update Score text
 		this->scoreText.setString(
-			"Perfection Mult: X" + std::to_string(killPerfectionMultiplier)
-		+	"\nPerfect Kills / Next Multiplier: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
-		+	"\nKillbox Mult : X" + std::to_string(killboxMultiplier)
-		+	"\nKillbox Kills / Next Multiplier: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
-		+	"\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
-		+	"\nTotal Score: " + std::to_string(this->totalScore));
+			"Score: " + std::to_string(this->totalScore)
+		+	"\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
+		+	"\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
+		+	"\nKill Mult: x" + std::to_string(killboxMultiplier)
+		+	"\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
+		+	"\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s");
 
 		// Update score multipliers
 		// Increase the killbox multiplier by 1 everytime the max is reached and raise the max by half the current. Reset the adder
@@ -263,6 +274,7 @@ void Game::Update(const float &dt) {
 		if (this->killPerfectionAdder >= this->killPerfectionAdderMax) {
 			this->killPerfectionMultiplier *= 2;
 			this->killPerfectionAdder = 0;
+			this->killPerfectionAdderMax = (int)std::floor(this->killPerfectionAdderMax * 1.25);
 		}
 
 
