@@ -7,8 +7,10 @@ class Enemy
 private:
 	dArr<Texture> *textures;
 	Sprite sprite;
-	Vector2f direction;
-	Vector2f normalizedDir;
+	Vector2f moveDirection;
+	Vector2f normalizedMoveDirection;
+	Vector2f lookDirection;
+	Vector2f normalizedLookDirection;
 
 	float damageTimerMax;
 	float damageTimer;
@@ -34,7 +36,7 @@ public:
 		int type, 
 		Vector2u windowBounds,
 		Vector2f scale, 
-		Vector2f direction, 
+		Vector2f moveDirection,
 		int scalar,
 		int playerFollowNum);
 

@@ -16,7 +16,7 @@ Game::Game(RenderWindow *window)
 	this->killPerfectionAdder = 0;
 	this->killPerfectionAdderMax = 15;
 
-	this->killboxMultiplier = 0;
+	this->killboxMultiplier = 1;
 	this->killboxTimerMax = 400.f;
 	this->killboxTimer = this->killboxTimerMax;
 	this->killboxAdder = 0;
@@ -57,6 +57,9 @@ void Game::InitTextures() {
 	this->enemyTextures.Add(Texture(temp));
 
 	temp.loadFromFile("Textures/Ships/enemyFollow.png");
+	this->enemyTextures.Add(Texture(temp));
+
+	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot.png");
 	this->enemyTextures.Add(Texture(temp));
 
 
@@ -144,7 +147,7 @@ void Game::Update(const float &dt) {
 		else {
 			this->killboxTimer = 0.f;
 			this->killboxAdder = 0;
-			this->killboxMultiplier = 0;
+			this->killboxMultiplier = 1;
 		}
 
 		// Spawn enemies
@@ -390,10 +393,12 @@ void Game::Draw(){
 
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
+	const int randType = rand() % 3;
+	const Vector2f scale = randType == 2 ? Vector2f(0.2f, 0.2f) : this->enemyScale;
 	this->enemies.Add(Enemy(this->enemyTextures,
-		rand()%2, // Random enemy type
+		randType, // Random enemy type
 		this->window->getSize(),
-		this->enemyScale,
+		scale, // Scale based on enemy type - this is screaming to get refactored
 		this->enemyDirection,
 		this->players[pNum].getLevel(),
 		pNum) // Random player
