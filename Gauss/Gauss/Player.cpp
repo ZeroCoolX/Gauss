@@ -500,7 +500,7 @@ void Player::_checkBounds(Vector2u windowBounds, bool warpVertical) {
 
 	if (warpVertical) {
 		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= 0) { // TOP BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y);
+			this->sprite.setPosition(this->sprite.getPosition().x, (float)windowBounds.y);
 		}
 		else if (this->getPosition().y >= windowBounds.y) { // BOTTOM BOUNDS
 			this->sprite.setPosition(this->sprite.getPosition().x, 0.f - this->sprite.getGlobalBounds().height);

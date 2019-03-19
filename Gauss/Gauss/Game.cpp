@@ -11,12 +11,23 @@ Game::Game(RenderWindow *window)
 	// Init textures
 	this->InitTextures();
 
+	// Init scoring
+	this->killPerfectionMultiplier = 1;
+	this->killPerfectionAdder = 0;
+	this->killPerfectionAdderMax = 10;
+
+	this->killboxMultiplier = 1;
+	this->killboxTimerMax = 400.f;
+	this->killboxTimer = this->killboxTimerMax;
+	this->killboxAdder = 0;
+	this->killboxAdderMax = 25;
+
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
 	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 20.f;
+	this->enemySpawnTimerMax = 25.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 
 	this->InitUI();
@@ -112,6 +123,12 @@ void Game::InitUI() {
 	this->gameOverText.setFillColor(Color::Red);
 	this->gameOverText.setString("Game Over! (X___X)");
 	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
+
+	this->scoreText.setFont(this->font);
+	this->scoreText.setCharacterSize(32);
+	this->scoreText.setFillColor(Color::White);
+	this->scoreText.setString("Score: 0");
+	this->scoreText.setPosition(10.f, 10.f); // top left magic numbers for now
 }
 
 void Game::Update(const float &dt) {
@@ -119,12 +136,25 @@ void Game::Update(const float &dt) {
 	if (this->playersExistInWorld()) {
 		// Update timers
 		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * DeltaTime::dtMultiplier; } // 1.f is not needed here
+		
+		// Update Killbox timer
+		if (this->killboxTimer > 0.f) {
+			this->killboxTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+		}
+		else {
+			this->killboxTimer = 0.f;
+			this->killboxAdder = 0;
+			this->killboxMultiplier = 1;
+		}
 
 		// Spawn enemies
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
 			this->_spawnEnemy();
 			this->enemySpawnTimer = 0;
 		}
+
+		// Reset the total each time
+		this->totalScore = 0;
 
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
@@ -163,9 +193,13 @@ void Game::Update(const float &dt) {
 
 							if (this->enemies[k].getHp() <= 0) {
 
-								// Gain score
-								int score = this->enemies[k].getHpMax();
-								this->players[i].gainScore(score);
+								// Gain score & Reset multiplier timer
+								this->killboxTimer = this->killboxTimerMax;
+								this->killboxAdder++;
+								this->killPerfectionAdder++;
+
+								int score = this->enemies[k].getHpMax() * this->killboxMultiplier; // apply the score and multipliers
+								this->players[i].gainScore(score * this->killPerfectionMultiplier);
 
 								// Player earned some EXP!
 								int exp = this->enemies[k].getHpMax()
@@ -204,7 +238,33 @@ void Game::Update(const float &dt) {
 					}
 				}
 			}
+
+			this->totalScore += this->players[i].getScore();
 		}
+
+		// Update Score text
+		this->scoreText.setString(
+			"Perfection Mult: X" + std::to_string(killPerfectionMultiplier)
+		+	"\nPerfect Kills / Next Multiplier: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
+		+	"\nKillbox Mult : X" + std::to_string(killboxMultiplier)
+		+	"\nKillbox Kills / Next Multiplier: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
+		+	"\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
+		+	"\nTotal Score: " + std::to_string(this->totalScore));
+
+		// Update score multipliers
+		// Increase the killbox multiplier by 1 everytime the max is reached and raise the max by half the current. Reset the adder
+		if (this->killboxAdder >= this->killboxAdderMax) {
+			this->killboxMultiplier++;
+			this->killboxAdder = 0;
+			this->killboxAdderMax = (int)std::floor(this->killboxAdderMax * 1.5);
+			this->killboxTimer = this->killboxTimerMax;
+		}
+		// Increase the perfection multiplier by factor of 2 everytime the max is reached and reset the adder
+		if (this->killPerfectionAdder >= this->killPerfectionAdderMax) {
+			this->killPerfectionMultiplier *= 2;
+			this->killPerfectionAdder = 0;
+		}
+
 
 		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemies.Size(); i++)
@@ -232,9 +292,14 @@ void Game::Update(const float &dt) {
 				{
 					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds()) 
 						&& !this->players[j].isDamageCooldown()) {
+						
 						// Damage player		
 						int damage = this->enemies[i].getDamage();
 						this->players[j].TakeDamage(damage);
+						// Collision resets the perfection streak
+						this->killPerfectionAdder = 0;
+						this->killPerfectionMultiplier = 1;
+
 						this->enemies[i].Collision();
 
 						// Create Texttag effect
@@ -281,6 +346,9 @@ void Game::DrawUI() {
 	if (!this->playersExistInWorld()) {
 		this->window->draw(this->gameOverText);
 	}
+
+	// Score text
+	this->window->draw(this->scoreText);
 }
 
 void Game::Draw(){
