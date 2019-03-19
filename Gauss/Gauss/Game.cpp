@@ -17,7 +17,7 @@ Game::Game(RenderWindow *window)
 	this->killPerfectionAdderMax = 15;
 
 	this->killboxMultiplier = 1;
-	this->killboxTimerMax = 400.f;
+	this->killboxTimerMax = 250.f;
 	this->killboxTimer = this->killboxTimerMax;
 	this->killboxAdder = 0;
 	this->killboxAdderMax = 10;
@@ -221,7 +221,7 @@ void Game::Update(const float &dt) {
 
 								// Player earned some EXP!
 								int exp = this->enemies[k].getHpMax()
-									+ (rand() % this->enemies[k].getHpMax() + 1);
+									+ (rand() % this->enemies[k].getHpMax() + 1) * (this->killboxMultiplier + 1);
 
 								// Player leveled up!
 								if (this->players[i].gainExp(exp)) {
@@ -231,7 +231,7 @@ void Game::Update(const float &dt) {
 											Vector2f(this->players[i].getPosition().x + this->players[i].getGlobalBounds().width / 4,
 												this->players[i].getPosition().y + this->players[i].getGlobalBounds().height),
 											Vector2f(0.f, 1.f),
-											36, 25.f, true
+											36, 40.f, true
 										)
 									);
 								}else{
@@ -241,7 +241,7 @@ void Game::Update(const float &dt) {
 											Vector2f(this->players[i].getPosition().x + this->players[i].getGlobalBounds().width / 4,
 												this->players[i].getPosition().y + this->players[i].getGlobalBounds().height),
 											Vector2f(0.f, 1.f),
-											24, 20.f, true
+											24, 40.f, true
 										)
 									);
 
@@ -334,7 +334,7 @@ void Game::Update(const float &dt) {
 								Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
 									this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
 								Vector2f(-1.f, 0.f),
-								28, 20.f, true
+								28, 30.f, true
 							)
 						);
 

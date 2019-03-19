@@ -5,7 +5,7 @@ using namespace sf;
 int main() {
 
 	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Default);
-
+	//window.setFramerateLimit(20);
 	Clock clock;
 	float dt = 0.f;
 

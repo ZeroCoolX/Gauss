@@ -33,7 +33,7 @@ Enemy::Enemy(dArr<Texture> &textures,
 		case GameEnums::E_FOLLOW:
 			this->hpMax = (rand() % 3 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
-			this->moveSpeed = rand() % 8 + 3.f;
+			this->moveSpeed = rand() % 12 + 5.f;
 			this->sprite.setScale(Vector2f(0.12f, 0.12f));
 			break;
 		case GameEnums::E_MOVE_LEFT_SHOOT:
@@ -144,7 +144,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 						Vector2f(0.2f, 0.2f),
 						this->sprite.getPosition(),
 						this->normalizedLookDirection,
-						20.f, 20, 0.f) // No acceleration - only constant velocity
+						15.f, 15, 0.f) // No acceleration - only constant velocity
 				);
 			}
 		}
