@@ -6,7 +6,7 @@ Pickup::Pickup(dArr<Texture> *textures, Vector2f position, int type, float lifet
 {
 	this->textures = textures;
 	this->type = type;
-	if (this->type >= (*this->textures).Size()) {
+	if (this->type >= (int)(*this->textures).Size()) {
 		throw "ERROR! No texture for this type";
 	}
 	this->sprite.setTexture((*this->textures)[this->type]);

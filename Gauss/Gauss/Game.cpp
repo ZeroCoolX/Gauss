@@ -259,9 +259,9 @@ void Game::Update(const float &dt) {
 								}
 
 								// Change to drop pickup
-								const int pickupChance = rand() % 10;
+								const int pickupChance = rand() % 10 + 1;
 
-								if (pickupChance > 7) {
+								if (pickupChance > 8) {
 									this->pickups.Add(Pickup(
 										&this->pickupTextures,
 										this->enemies[k].getPosition(),
@@ -365,6 +365,7 @@ void Game::Update(const float &dt) {
 						// Check for player death
 						if (players[j].isDead()) {
 							this->players.Remove(j);
+							return;
 						}
 						break;
 					}
@@ -398,9 +399,45 @@ void Game::Update(const float &dt) {
 				if (this->pickups[i].CheckCollision(this->players[j].getGlobalBounds())) {
 					switch (this->pickups[i].getType()) {
 					case 0: // HP
-						this->players[j].gainHp(this->players[j].getHpMax() / 5);
+					{
+						const int gainedHp = this->players[j].getHpMax() / 5;
+						if (this->players[j].gainHp(gainedHp)) {
+							this->textTags.Add(
+								TextTag(
+									&this->font, "+" + std::to_string(gainedHp) + " HP", Color::Green,
+									Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+										this->players[j].getPosition().y - this->players[j].getGlobalBounds().height),
+									Vector2f(0.f, 1.f),
+									24, 40.f, true
+								)
+							);
+						}
+						else {
+							if (this->players[j].gainExp(10)) {
+								this->textTags.Add(
+									TextTag(
+										&this->font, "LEVEL UP!", Color::Cyan,
+										Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+											this->players[j].getPosition().y + this->players[j].getGlobalBounds().height),
+										Vector2f(0.f, 1.f),
+										36, 40.f, true
+									)
+								);
+							}
+							else {
+								this->textTags.Add(
+									TextTag(
+										&this->font, "+" + std::to_string(10) + " EXP", Color::Cyan,
+										Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+											this->players[j].getPosition().y + this->players[j].getGlobalBounds().height),
+										Vector2f(0.f, 1.f),
+										24, 40.f, true
+									)
+								);
+							}
+						}
 						break;
-
+					}
 					case 1: // Missile
 						break;
 

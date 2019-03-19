@@ -29,6 +29,7 @@ public:
 
 	inline const int& getType() const { return this->type; }
 	inline const bool canDelete() const { return this->aliveTimer >= this->aliveTimerMax; }
+	inline Vector2f getPosition() { return this->sprite.getPosition(); }
 
 	bool CheckCollision(FloatRect rect);
 	void Update(const float &dt);

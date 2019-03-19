@@ -131,7 +131,7 @@ public:
 	inline const int& getExpNext() const { return this->expNext; }
 	inline bool gainExp(int exp) { this->exp += exp; return this->UpdateLeveling(); }
 	inline void gainScore(int score) { this->score += score; }
-	inline void gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); }
+	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
 	inline const int getScore() const { return this->score; }
 	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
 	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }

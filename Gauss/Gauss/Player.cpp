@@ -426,7 +426,7 @@ void Player::_initPlayerSettings() {
 	this->currentWeapon = GameEnums::G_LASER;
 
 	// UPGRADES
-	this->mainGunLevel = GameEnums::DEFAULT_LASER;
+	this->mainGunLevel = GameEnums::LEVEL_3_LASER;
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
 
@@ -444,19 +444,54 @@ void Player::_recalculatePlayerCenter() {
 void Player::_fireLaser(const Vector2f direction) {
 	// Create Laser
 	switch (this->mainGunLevel) {
-	case GameEnums::DEFAULT_LASER:
-		this->bullets.Add(
-			Bullet(laserProjectileTexture,
-				laserBulletScale,
-				Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y),
-				direction,
-				this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-		);
-		break;
-	case GameEnums::LEVEL_2_LASER:
-		break;
-	case GameEnums::LEVEL_3_LASER:
-		break;
+		case GameEnums::DEFAULT_LASER:
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			break;
+		case GameEnums::LEVEL_2_LASER:
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y - 15.f),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y + 15.f),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			break;
+		case GameEnums::LEVEL_3_LASER:
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y - 25.f),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + 50.f, this->playerCenter.y),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			this->bullets.Add(
+				Bullet(laserProjectileTexture,
+					laserBulletScale,
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 25.f),
+					direction,
+					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
+			);
+			break;
 	}
 	// Animate gun
 	this->mainGunSprite.move(-mainGunKickback, 0.f); // Should arguably be .setPosition() instead of move...
