@@ -24,7 +24,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
