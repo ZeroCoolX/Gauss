@@ -24,7 +24,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -61,6 +61,10 @@ void Game::InitTextures() {
 
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot.png");
 	this->enemyTextures.Add(Texture(temp));
+
+	// Load Enemy Bullet Textures
+	temp.loadFromFile("Textures/Guns/roundBulletRed.png");
+	this->enemyBulletTextures.Add(Texture(temp));
 
 
 	// Init Accessories
@@ -297,6 +301,12 @@ void Game::Update(const float &dt) {
 				this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());
 			}
 
+			// Enemy Bullet Update
+			for (size_t j = 0; j < this->enemies[i].getBullets().Size(); j++)
+			{
+				this->enemies[i].getBullets()[j].Update(dt);
+			}
+
 			// Enemy Window Bounds check
 			if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
 				this->enemies.Remove(i);
@@ -395,6 +405,7 @@ void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
 	const int randType = rand() % 3;
 	this->enemies.Add(Enemy(this->enemyTextures,
+		this->enemyBulletTextures,
 		randType, // Random enemy type
 		this->window->getSize(),
 		this->enemyDirection,

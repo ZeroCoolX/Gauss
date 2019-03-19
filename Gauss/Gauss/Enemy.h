@@ -15,7 +15,14 @@ private:
 	float damageTimerMax;
 	float damageTimer;
 
+	float shootTimer;
+	float shootTimerMax;
+
 	float moveSpeed = 10.f;
+
+	Texture* bulletTexture;
+	dArr<Texture> *bulletTextures;
+	dArr<Bullet> bullets;
 
 	int type;
 	int hp;
@@ -33,6 +40,7 @@ private:
 
 public:
 	Enemy(dArr<Texture> &textures, 
+		dArr<Texture> &bulletTextures,
 		int type, 
 		Vector2u windowBounds,
 		Vector2f moveDirection,
@@ -51,6 +59,7 @@ public:
 	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
 	inline void updatePlayerFollowNum(int num) { this->playerFollowNum = num; }
 	inline void updateAttackType(int type) { this->type = type; }
+	inline dArr<Bullet>& getBullets() { return this->bullets; }
 
 	// Functions
 	void Collision();

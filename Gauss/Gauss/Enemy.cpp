@@ -2,16 +2,18 @@
 #include "Enums.h"
 
 Enemy::Enemy(dArr<Texture> &textures,
+	dArr<Texture> &bulletTextures,
 	int type,
 	Vector2u windowBounds,
 	Vector2f moveDirection,
 	int scalar,
 	int playerFollowNum)
 {
+	this->bulletTextures = &bulletTextures;
+
+	// Initialize sprite and enemy data
 	this->type = type;
-
 	this->textures = &textures;
-
 	if (this->type >= (int)(*this->textures).Size()) {
 		std::cout << "No texture for type: " << this->type << ". ERROR!" << std::endl;
 		// Default
@@ -19,13 +21,7 @@ Enemy::Enemy(dArr<Texture> &textures,
 	}
 	this->sprite.setTexture((*this->textures)[this->type]);
 	this->sprite.setScale(Vector2f(1.f, 1.f));
-
-	this->damageTimerMax = 3.f;
-	this->damageTimer = 0;
-	this->damageRange = damageRange;
-	this->divebombDistanceThreshold = rand() % 700 + 300;
-
-	this->moveDirection = moveDirection;
+	this->shootTimerMax = 0.f;
 
 	switch (this->type) {
 		case GameEnums::E_MOVE_LEFT:
@@ -45,6 +41,7 @@ Enemy::Enemy(dArr<Texture> &textures,
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
 			this->moveSpeed = rand() % 10 + 3.f;
 			this->sprite.setScale(Vector2f(0.15f, 0.15f));
+			this->shootTimerMax = 50.f;
 			break;
 		default:
 			this->hpMax = (rand() % 1 + 1) * scalar;
@@ -53,14 +50,24 @@ Enemy::Enemy(dArr<Texture> &textures,
 			this->sprite.setScale(Vector2f(0.1f, 0.1f));
 			break;
 	}
+	this->hp = this->hpMax;
 
+	// Init sprite position
 	const float xPos((float)windowBounds.x);
 	const float yPos((float)(rand() % windowBounds.y + this->sprite.getGlobalBounds().height));
 	this->sprite.setPosition(xPos, yPos);
 
-	this->hp = this->hpMax;
-
+	// Init other data
+	this->moveDirection = moveDirection;
 	this->playerFollowNum = playerFollowNum;
+
+
+	// Init timers
+	this->damageTimerMax = 3.f;
+	this->damageTimer = 0;
+	this->damageRange = damageRange;
+	this->divebombDistanceThreshold = rand() % 700 + 300;
+	this->shootTimer = 0.f;
 }
 
 Enemy::~Enemy()
@@ -104,7 +111,7 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 				// Normalize direction
 				this->normalizedMoveDirection = this->_normalize(this->moveDirection, this->_vectorLength(this->moveDirection));
 				// Angle needed to go from current facing dir to face player
-				float angle = atan2(this->normalizedMoveDirection.y, this->normalizedMoveDirection.x) * 180.f / 3.14159265359f + 180.f;
+				float angle = atan2(this->normalizedMoveDirection.y, this->normalizedMoveDirection.x) * 180.f / 3.14159265359f + 180.f; // TODO: DEFINE PI
 				// Rotate
 				this->sprite.setRotation(angle);
 				adjustedMoveSpeed = this->moveSpeed * 0.75f;
@@ -115,6 +122,10 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 		break;
 		case GameEnums::E_MOVE_LEFT_SHOOT:
 		{
+			if (this->shootTimer < this->shootTimerMax) {
+				this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
+			}
+
 			this->lookDirection.x = playerPosition.x - this->sprite.getPosition().x;
 			this->lookDirection.y = playerPosition.y - this->sprite.getPosition().y;
 			this->normalizedLookDirection = this->_normalize(this->lookDirection, this->_vectorLength(this->lookDirection));
@@ -124,6 +135,18 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 
 			this->sprite.move(this->moveDirection.x * this->moveSpeed * dt * DeltaTime::dtMultiplier, this->moveDirection.y * this->moveSpeed * dt * DeltaTime::dtMultiplier);
 			this->normalizedMoveDirection = this->_normalize(this->moveDirection, this->_vectorLength(this->moveDirection));
+		
+			// Shoot bullet
+			if (this->shootTimer >= this->shootTimerMax) {
+				this->shootTimer = 0.f;
+				this->bullets.Add(
+					Bullet(&(*this->bulletTextures)[GameEnums::EB_DEFAULT],
+						Vector2f(0.2f, 0.2f),
+						this->sprite.getPosition(),
+						this->normalizedLookDirection,
+						20.f, 20, 0.f) // No acceleration - only constant velocity
+				);
+			}
 		}
 		break;
 	}
@@ -142,4 +165,10 @@ void Enemy::Update(const float &dt, Vector2f playerPosition){
 
 void Enemy::Draw(RenderTarget &renderTarget){
 	renderTarget.draw(this->sprite);
+
+	// Draw bullets
+	for (size_t i = 0; i < this->bullets.Size(); i++)
+	{
+		this->bullets[i].Draw(renderTarget);
+	}
 }

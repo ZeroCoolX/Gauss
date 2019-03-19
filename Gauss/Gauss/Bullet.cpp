@@ -17,14 +17,15 @@ Bullet::Bullet(Texture *texture,
 		initialVelocity * this->direction.x, 
 		initialVelocity * this->direction.y);
 
+	// Center the origin
+	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2,
+		this->sprite.getGlobalBounds().height / 2);
+
 	// Setup bullet
 	this->sprite.setScale(scale);
 	// Compensate for the top left origin of the sprite
-	this->sprite.setPosition(
-		Vector2f(
-			position.x - this->sprite.getGlobalBounds().width / 2, 
-			position.y - this->sprite.getGlobalBounds().height / 2)
-	);
+	this->sprite.setPosition(position);
+	this->sprite.setRotation(atan2(this->direction.y, this->direction.x) * 180.f / 3.14159265359f);
 }
 
 Bullet::~Bullet()
