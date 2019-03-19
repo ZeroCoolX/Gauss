@@ -29,6 +29,7 @@ private:
 	float mainGunReturnSpeed = 2.f;
 
 	dArr<Bullet> bullets;
+	dArr<Texture> *mainGunTextureMap;
 
 	Texture *missile01ProjectileTexture;
 	Texture *missile02ProjectileTexture;
@@ -102,10 +103,13 @@ private:
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
 	void _checkBounds(Vector2u windowBounds, bool warpVertical);
+	void _setGunLevel(int gunLevel);
+
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
 	Player(std::vector<Texture> &textureMap,
+		dArr<Texture> &mainGunTextureMap,
 		dArr<Texture> &lWingTextureMap,
 		dArr<Texture> &rWingTextureMap,
 		dArr<Texture> &auraTextureMap,

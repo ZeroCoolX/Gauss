@@ -55,6 +55,7 @@ private:
 	dArr<Pickup> pickups;
 
 	// Textures
+	dArr<Texture> playerMainGunTextures;
 	std::vector<Texture> textureMap;
 	dArr<Texture> enemyTextures;
 	dArr<Texture> enemyBulletTextures;

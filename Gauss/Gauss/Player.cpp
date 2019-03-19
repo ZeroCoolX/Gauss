@@ -5,6 +5,7 @@
 unsigned Player::playerId = 0;
 
 Player::Player(std::vector<Texture> &textureMap,
+	dArr<Texture> &mainGunTextureMap,
 	dArr<Texture> &lWingTextureMap,
 	dArr<Texture> &rWingTextureMap,
 	dArr<Texture> &auraTextureMap,
@@ -35,6 +36,9 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->rWingTextureMap = &rWingTextureMap;
 	this->auraTextureMap = &auraTextureMap;
 	this->cPitTextureMap = &cPitTextureMap;
+
+	// Main Gun Textures
+	this->mainGunTextureMap = &mainGunTextureMap;
 
 	// Selectors
 	this->lWingSelect = 1;
@@ -359,8 +363,8 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->sprite.setScale(0.1f, 0.1f);
 	this->sprite.setColor(Color(10, 10, 10, 255));
 
-	// Assign accessories
-	this->mainGunSprite.setTexture(textureMap[GameEnums::T_MAIN_GUN]);
+	// Assign main gun
+	this->mainGunSprite.setTexture((*this->mainGunTextureMap)[GameEnums::MGT_MAIN_GUN]);
 	this->mainGunSprite.setOrigin(
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
@@ -426,7 +430,7 @@ void Player::_initPlayerSettings() {
 	this->currentWeapon = GameEnums::G_LASER;
 
 	// UPGRADES
-	this->mainGunLevel = GameEnums::LEVEL_3_LASER;
+	this->_setGunLevel(GameEnums::LEVEL_2_LASER);
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
 
@@ -473,7 +477,7 @@ void Player::_fireLaser(const Vector2f direction) {
 			this->bullets.Add(
 				Bullet(laserProjectileTexture,
 					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y - 25.f),
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y - 30.f),
 					direction,
 					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
 			);
@@ -487,7 +491,7 @@ void Player::_fireLaser(const Vector2f direction) {
 			this->bullets.Add(
 				Bullet(laserProjectileTexture,
 					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 25.f),
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 3.f),
 					direction,
 					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
 			);
@@ -549,6 +553,20 @@ void Player::_checkBounds(Vector2u windowBounds, bool warpVertical) {
 		else if (this->getPosition().y + this->sprite.getGlobalBounds().height >= windowBounds.y) { // BOTTOM BOUNDS
 			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y - this->sprite.getGlobalBounds().height);
 			this->velocity.y = 0.f;
+		}
+	}
+}
+
+void Player::_setGunLevel(int gunLevel) {
+	this->mainGunLevel = gunLevel;
+	if (this->mainGunLevel >= (int)(*this->mainGunTextureMap).Size()) {
+		std::cout << "ERROR! No texture for gun level " << gunLevel << std::endl;
+	}
+	else {
+		this->mainGunSprite.setTexture((*this->mainGunTextureMap)[this->mainGunLevel]);
+		// Hack right now since I don't like how the level 3 gun looks
+		if (this->mainGunLevel == GameEnums::LEVEL_3_LASER) {
+			this->mainGunSprite.setScale(0.75f, 0.75f);
 		}
 	}
 }

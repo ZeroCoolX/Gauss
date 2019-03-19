@@ -23,8 +23,8 @@ Game::Game(RenderWindow *window)
 	this->killboxAdderMax = 10;
 
 	// Init player
-	this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
+	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -41,24 +41,17 @@ void Game::InitTextures() {
 	// Init textures
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_SHIP].loadFromFile("Textures/ship.png");
-
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_LASER01].loadFromFile("Textures/Guns/rayTex01.png");
-
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
-
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_MAIN_GUN].loadFromFile("Textures/Guns/gun01.png");
 
 	// Load Enemy Textures
 	Texture temp;
 	temp.loadFromFile("Textures/Ships/enemyMoveLeft.png");
 	this->enemyTextures.Add(Texture(temp));
-
 	temp.loadFromFile("Textures/Ships/enemyFollow.png");
 	this->enemyTextures.Add(Texture(temp));
-
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot.png");
 	this->enemyTextures.Add(Texture(temp));
 
@@ -66,14 +59,20 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Guns/roundBulletRed.png");
 	this->enemyBulletTextures.Add(Texture(temp));
 
+	// Init player Main gun textures
+	temp.loadFromFile("Textures/Guns/gun01.png");
+	this->playerMainGunTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Guns/gun02.png");
+	this->playerMainGunTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Guns/gun03.png");
+	this->playerMainGunTextures.Add(Texture(temp));
+
 
 	// Init pickups textures
 	temp.loadFromFile("Textures/Pickups/hpSupply.png");
 	this->pickupTextures.Add(Texture(temp));
-	
 	temp.loadFromFile("Textures/Pickups/missileSupply.png");
 	this->pickupTextures.Add(Texture(temp));
-
 	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
 	this->pickupTextures.Add(Texture(temp));
 
