@@ -4,7 +4,6 @@
 Enemy::Enemy(dArr<Texture> &textures,
 	int type,
 	Vector2u windowBounds,
-	Vector2f scale,
 	Vector2f moveDirection,
 	int scalar,
 	int playerFollowNum)
@@ -19,11 +18,7 @@ Enemy::Enemy(dArr<Texture> &textures,
 		this->type = 0;
 	}
 	this->sprite.setTexture((*this->textures)[this->type]);
-	this->sprite.setScale(scale);
-
-	const float xPos((float)windowBounds.x);
-	const float yPos((float)(rand() % windowBounds.y + this->sprite.getGlobalBounds().height));
-	this->sprite.setPosition(xPos, yPos);
+	this->sprite.setScale(Vector2f(1.f, 1.f));
 
 	this->damageTimerMax = 3.f;
 	this->damageTimer = 0;
@@ -37,21 +32,32 @@ Enemy::Enemy(dArr<Texture> &textures,
 			this->hpMax = (rand() % 5 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 3 + 1)*scalar, (rand() % 2 + 1)*scalar);
 			this->moveSpeed = rand() % 15 + 5.f;
+			this->sprite.setScale(Vector2f(0.175f, 0.175f));
 			break;
 		case GameEnums::E_FOLLOW:
 			this->hpMax = (rand() % 3 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
 			this->moveSpeed = rand() % 8 + 3.f;
+			this->sprite.setScale(Vector2f(0.12f, 0.12f));
+			break;
 		case GameEnums::E_MOVE_LEFT_SHOOT:
 			this->hpMax = (rand() % 3 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
 			this->moveSpeed = rand() % 10 + 3.f;
+			this->sprite.setScale(Vector2f(0.15f, 0.15f));
+			break;
 		default:
-			this->hpMax = (rand() % 3 + 1) * scalar;
+			this->hpMax = (rand() % 1 + 1) * scalar;
 			this->damageRange = Vector2i((rand() % 2 + 1)*scalar, (rand() % 1 + 1)*scalar);
-			this->moveSpeed = rand() % 10 + 3.f;
+			this->moveSpeed = rand() % 15 + 5.f;
+			this->sprite.setScale(Vector2f(0.1f, 0.1f));
 			break;
 	}
+
+	const float xPos((float)windowBounds.x);
+	const float yPos((float)(rand() % windowBounds.y + this->sprite.getGlobalBounds().height));
+	this->sprite.setPosition(xPos, yPos);
+
 	this->hp = this->hpMax;
 
 	this->playerFollowNum = playerFollowNum;

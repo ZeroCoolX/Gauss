@@ -35,7 +35,6 @@ public:
 	Enemy(dArr<Texture> &textures, 
 		int type, 
 		Vector2u windowBounds,
-		Vector2f scale, 
 		Vector2f moveDirection,
 		int scalar,
 		int playerFollowNum);

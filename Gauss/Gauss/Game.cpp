@@ -394,11 +394,9 @@ void Game::Draw(){
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
 	const int randType = rand() % 3;
-	const Vector2f scale = randType == 2 ? Vector2f(0.2f, 0.2f) : this->enemyScale;
 	this->enemies.Add(Enemy(this->enemyTextures,
 		randType, // Random enemy type
 		this->window->getSize(),
-		scale, // Scale based on enemy type - this is screaming to get refactored
 		this->enemyDirection,
 		this->players[pNum].getLevel(),
 		pNum) // Random player
