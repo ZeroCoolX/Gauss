@@ -17,14 +17,14 @@ Game::Game(RenderWindow *window)
 	this->killPerfectionAdderMax = 15;
 
 	this->killboxMultiplier = 1;
-	this->killboxTimerMax = 250.f;
+	this->killboxTimerMax = 400.f;
 	this->killboxTimer = this->killboxTimerMax;
 	this->killboxAdder = 0;
 	this->killboxAdderMax = 10;
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	this->_spawnEnemy();
 	this->enemySpawnTimerMax = 25.f;
@@ -67,7 +67,6 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Guns/gun03.png");
 	this->playerMainGunTextures.Add(Texture(temp));
 
-
 	// Init pickups textures
 	temp.loadFromFile("Textures/Pickups/hpSupply.png");
 	this->pickupTextures.Add(Texture(temp));
@@ -75,6 +74,18 @@ void Game::InitTextures() {
 	this->pickupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
 	this->pickupTextures.Add(Texture(temp));
+
+	// Init Upgrade textures
+	temp.loadFromFile("Textures/Upgrades/doubleray.png");
+	this->upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/tripleray.png");
+	this->upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/piercingshot.png");
+	this->upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/shield.png");
+	this->upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/healthtank.png");
+	this->upgradeTextures.Add(Texture(temp));
 
 
 	// Init Accessories
@@ -258,22 +269,34 @@ void Game::Update(const float &dt) {
 								}
 
 								// Change to drop pickup
-								const int pickupChance = rand() % 10 + 1;
+								int dropChance = rand() % 100 + 1;
 
-								if (pickupChance > 8) {
+								if (dropChance > 75) { // 25% chance health is dropped
 									this->pickups.Add(Pickup(
-										&this->pickupTextures,
+										this->pickupTextures,
 										this->enemies[k].getPosition(),
 										0,
 										150.f));
+								}
+								else {
+									if (dropChance > 1) { // 5% chance for an upgrade
+										this->upgrades.Add(Upgrade(
+											this->upgradeTextures,
+											this->enemies[k].getPosition(),
+											rand() % 5,
+											300.f));
+									}
 								}
 
 								// Destroy the enemy
 								this->enemies.Remove(k);
 							}
 
-							// Destroy the bullet regardless
-							this->players[i].RemoveBullet(j);
+							// Destroy the bullet if not piercing shot
+							if (!this->players[i].getPiercingShot()) {
+								// Should add effect to indicate it is piercing shots
+								this->players[i].RemoveBullet(j);
+							}
 							break;
 						}
 					}
@@ -372,13 +395,78 @@ void Game::Update(const float &dt) {
 			}
 		}
 
-		// Update Texttags
-		for (size_t i = 0; i < this->textTags.Size(); i++)
+		// Update Upgrades
+		for (size_t i = 0; i < this->upgrades.Size(); i++)
 		{
-			this->textTags[i].Update(dt);
+			this->upgrades[i].Update(dt);
 
-			if (this->textTags[i].getTimer() <= 0.f) {
-				this->textTags.Remove(i);
+			if (this->upgrades[i].canDelete()) {
+				this->upgrades.Remove(i);
+				continue;
+			}
+
+			for (size_t j = 0; j < this->players.Size(); j++)
+			{
+				if (this->upgrades[i].CheckCollision(this->players[j].getGlobalBounds())) {
+					switch (this->upgrades[i].getType()) {
+					case GameEnums::UT_DOUBLE_RAY:
+						if (this->players[j].getGunLevel() < GameEnums::MGT_MAIN_GUN02) {
+							this->players[j].SetGunLevel(GameEnums::MGT_MAIN_GUN02);
+							this->textTags.Add(
+								TextTag(
+									&this->font, "DOUBLE RAY UPGRADE", Color::Yellow,
+									Vector2f(this->players[j].getPosition()),
+									Vector2f(1.f, 0.f),
+									40, 100.f, true
+								));
+						}
+						break;
+					case GameEnums::UT_TRIPLE_RAY:
+						if (this->players[j].getGunLevel() < GameEnums::MGT_MAIN_GUN03) {
+							this->players[j].SetGunLevel(GameEnums::MGT_MAIN_GUN03);
+							this->textTags.Add(
+								TextTag(
+									&this->font, "TRIPLE RAY UPGRADE", Color::Yellow,
+									Vector2f(this->players[j].getPosition()),
+									Vector2f(1.f, 0.f),
+									40, 100.f, true
+								));
+						}
+						break;
+					case GameEnums::UT_PIERCING_SHOT: // need to take away once it dies off
+						this->players[j].enablePiercingShot();
+						this->textTags.Add(
+							TextTag(
+								&this->font, "PIERCING SHOT UPGRADE", Color::Yellow,
+								Vector2f(this->players[j].getPosition()),
+								Vector2f(1.f, 0.f),
+								40, 100.f, true
+							));
+						break;
+					case GameEnums::UT_SHEILD: // need to take away once it dies off
+						this->players[j].enableSheild();
+						this->textTags.Add(
+							TextTag(
+								&this->font, "SHEILD UPGRADE", Color::Yellow,
+								Vector2f(this->players[j].getPosition()),
+								Vector2f(1.f, 0.f),
+								40, 100.f, true
+							));
+						break;
+					case GameEnums::UT_HEALTH_TANK:
+						this->players[j].upgradeHP();
+						this->textTags.Add(
+							TextTag(
+								&this->font, "PERMANANT HEALTH UPGRADE", Color::Yellow,
+								Vector2f(this->players[j].getPosition()),
+								Vector2f(1.f, 0.f),
+								40, 100.f, true
+							));
+						break;
+					}
+					this->upgrades.Remove(i);
+					break;
+				}
 			}
 		}
 
@@ -449,6 +537,16 @@ void Game::Update(const float &dt) {
 				}
 			}
 		}
+
+		// Update Texttags
+		for (size_t i = 0; i < this->textTags.Size(); i++)
+		{
+			this->textTags[i].Update(dt);
+
+			if (this->textTags[i].getTimer() <= 0.f) {
+				this->textTags.Remove(i);
+			}
+		}
 	}
 }
 
@@ -491,6 +589,11 @@ void Game::Draw(){
 	// Draw Pickups
 	for (size_t i = 0; i < this->pickups.Size(); ++i) {
 		this->pickups[i].Draw(*this->window);
+	}
+
+	// Draw Upgrades
+	for (size_t i = 0; i < this->upgrades.Size(); ++i) {
+		this->upgrades[i].Draw(*this->window);
 	}
 
 	this->DrawUI();

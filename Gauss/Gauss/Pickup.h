@@ -1,16 +1,6 @@
 #pragma once
 
-#include <SFML\Graphics.hpp>
-#include <SFML\System.hpp>
-#include <SFML\Audio.hpp>
-#include <iostream>
-#include <vector>
-#include <math.h>
-#include <fstream>
-#include "DeltaTime.h"
-#include "dArr.h"
-
-using namespace sf;
+#include "Upgrade.h"
 
 class Pickup
 {
@@ -24,7 +14,7 @@ private:
 	float aliveTimer;
 
 public:
-	Pickup(dArr<Texture> *textures, Vector2f position, int type, float lifetime);
+	Pickup(dArr<Texture> &textures, Vector2f position, int type, float lifetime);
 	virtual ~Pickup();
 
 	inline const int& getType() const { return this->type; }

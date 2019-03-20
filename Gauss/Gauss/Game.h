@@ -54,6 +54,9 @@ private:
 	// Pickups
 	dArr<Pickup> pickups;
 
+	// Upgrades
+	dArr<Upgrade> upgrades;
+
 	// Textures
 	dArr<Texture> playerMainGunTextures;
 	std::vector<Texture> textureMap;
@@ -64,6 +67,7 @@ private:
 	dArr<Texture> cockpitTextures;
 	dArr<Texture> auraTextures;
 	dArr<Texture> pickupTextures;
+	dArr<Texture> upgradeTextures;
 
 	// Utility Functions
 	void _spawnEnemy();

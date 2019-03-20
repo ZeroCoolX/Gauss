@@ -103,7 +103,7 @@ bool Player::UpdateLeveling() {
 		this->power++;
 		this->maneuverability++;
 
-		this->hpMax = 10 + this->plating * 5;
+		this->hpMax += (10 + this->plating * 5);
 		this->damageMax = 2 + this->power * 2;
 		this->damage = 1 + power;
 
@@ -310,6 +310,20 @@ void Player::RemoveBullet(unsigned index) {
 	return this->bullets.Remove(index);
 }
 
+void Player::SetGunLevel(int gunLevel) {
+	this->mainGunLevel = gunLevel;
+	if (this->mainGunLevel >= (int)(*this->mainGunTextureMap).Size()) {
+		std::cout << "ERROR! No texture for gun level " << gunLevel << std::endl;
+	}
+	else {
+		this->mainGunSprite.setTexture((*this->mainGunTextureMap)[this->mainGunLevel]);
+		// Hack right now since I don't like how the level 3 gun looks
+		if (this->mainGunLevel == GameEnums::LEVEL_3_LASER) {
+			this->mainGunSprite.setScale(0.75f, 0.75f);
+		}
+	}
+}
+
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
@@ -430,9 +444,11 @@ void Player::_initPlayerSettings() {
 	this->currentWeapon = GameEnums::G_LASER;
 
 	// UPGRADES
-	this->_setGunLevel(GameEnums::LEVEL_2_LASER);
+	this->SetGunLevel(GameEnums::DEFAULT_LASER);
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
+	this->sheild = false;
+	this->piercingShot = false;
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;
@@ -553,20 +569,6 @@ void Player::_checkBounds(Vector2u windowBounds, bool warpVertical) {
 		else if (this->getPosition().y + this->sprite.getGlobalBounds().height >= windowBounds.y) { // BOTTOM BOUNDS
 			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y - this->sprite.getGlobalBounds().height);
 			this->velocity.y = 0.f;
-		}
-	}
-}
-
-void Player::_setGunLevel(int gunLevel) {
-	this->mainGunLevel = gunLevel;
-	if (this->mainGunLevel >= (int)(*this->mainGunTextureMap).Size()) {
-		std::cout << "ERROR! No texture for gun level " << gunLevel << std::endl;
-	}
-	else {
-		this->mainGunSprite.setTexture((*this->mainGunTextureMap)[this->mainGunLevel]);
-		// Hack right now since I don't like how the level 3 gun looks
-		if (this->mainGunLevel == GameEnums::LEVEL_3_LASER) {
-			this->mainGunSprite.setScale(0.75f, 0.75f);
 		}
 	}
 }

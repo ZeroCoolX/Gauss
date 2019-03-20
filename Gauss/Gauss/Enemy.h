@@ -29,7 +29,7 @@ private:
 	int hpMax;
 	Vector2i damageRange;
 	bool divebombPlayer = false;
-	int divebombDistanceThreshold = false;
+	int divebombDistanceThreshold;
 	int playerFollowNum;
 
 	float _vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }

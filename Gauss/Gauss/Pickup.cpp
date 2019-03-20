@@ -2,9 +2,9 @@
 
 
 
-Pickup::Pickup(dArr<Texture> *textures, Vector2f position, int type, float lifetime)
+Pickup::Pickup(dArr<Texture> &textures, Vector2f position, int type, float lifetime)
 {
-	this->textures = textures;
+	this->textures = &textures;
 	this->type = type;
 	if (this->type >= (int)(*this->textures).Size()) {
 		throw "ERROR! No texture for this type";

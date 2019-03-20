@@ -91,6 +91,8 @@ private:
 
 	// Upgrades
 	int mainGunLevel;
+	bool piercingShot;
+	bool sheild;
 	bool dualMissiles01;
 	bool dualMissiles02;
 
@@ -103,7 +105,6 @@ private:
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
 	void _checkBounds(Vector2u windowBounds, bool warpVertical);
-	void _setGunLevel(int gunLevel);
 
 
 public:
@@ -143,6 +144,13 @@ public:
 		if (length == 0) { return Vector2f(0.f, 0.f); }
 		return (v / length);
 	}
+	inline void enablePiercingShot() { this->piercingShot = true; }
+	inline void enableSheild() { this->sheild = true; }
+	inline void enableDualMissile01() { this->dualMissiles01 = true; }
+	inline void enableDualMissile02() { this->dualMissiles02 = true; }
+	inline void upgradeHP() { this->hpMax += 10; this->hp = this->hpMax; }
+	inline bool getPiercingShot() const { return this->piercingShot; }
+	inline const int& getGunLevel() const { return this->mainGunLevel; }
 
 	// Functions
 	bool UpdateLeveling();
@@ -158,7 +166,7 @@ public:
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
 	void TakeDamage(int damage);
-
+	void SetGunLevel(int gunLevel);
 
 	// Statics
 	static unsigned playerId;
