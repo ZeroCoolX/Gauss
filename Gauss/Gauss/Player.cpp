@@ -103,7 +103,7 @@ bool Player::UpdateLeveling() {
 		this->power++;
 		this->maneuverability++;
 
-		this->hpMax += (10 + this->plating * 5);
+		this->hpMax = (10 + this->plating * 5);
 		this->damageMax = 2 + this->power * 2;
 		this->damage = 1 + power;
 
@@ -114,7 +114,7 @@ bool Player::UpdateLeveling() {
 	return false;
 }
 
-void Player::ChangeAccessories() {
+void Player::ChangeAccessories(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Num1) && this->keyTime >= this->keyTimeMax ) {
 		lWingSelect = ++lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
 		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
@@ -258,7 +258,7 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	}
 
 	this->Movement(dt, windowBounds);
-	this->ChangeAccessories();
+	//?this->ChangeAccessories();
 	this->UpdateAccessories(dt);
 	this->Combat(dt);
 	this->UpdateStatsUI();
@@ -324,6 +324,39 @@ void Player::SetGunLevel(int gunLevel) {
 	}
 }
 
+void Player::Reset() {
+	// Reset sprite
+	this->sprite.setPosition(Vector2f(100.f, 100.f));
+	
+	// Reset stats
+	this->hpMax = 10;
+	this->hp = this->hpMax;
+	this->level = 1;
+	this->exp = 0;
+	this->expNext = 20;
+	this->statPoints = 0;
+	this->maneuverability = 0;
+	this->cooling = 0;
+	this->power = 0;
+	this->plating = 0;
+
+	// Reset upgrades
+	this->dualMissiles01 = false;
+	this->dualMissiles02 = false;
+	this->sheild = false;
+	this->piercingShot = false;
+
+	// Reset weapons
+	this->currentWeapon = GameEnums::G_LASER;
+	this->SetGunLevel(GameEnums::DEFAULT_LASER);
+	this->bullets.Clear();
+
+	// Reset Timers
+	this->shootTimer = this->shootTimerMax;
+	this->damageTimer = this->damageTimerMax;
+}
+
+
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
@@ -368,8 +401,6 @@ void Player::_processPlayerInput(const float &dt) {
 		this->velocity.y = std::min(0.f, this->velocity.y);
 	}
 }
-
-
 
 void Player::_initTextures(std::vector <Texture> &textureMap) {
 	// Assign ship

@@ -11,24 +11,37 @@ Game::Game(RenderWindow *window)
 	// Init textures
 	this->InitTextures();
 
-	// Init scoring
+	// Init scoring multipliers
 	this->killPerfectionMultiplier = 1;
 	this->killPerfectionAdder = 0;
 	this->killPerfectionAdderMax = 15;
-
 	this->killboxMultiplier = 1;
 	this->killboxTimerMax = 400.f;
 	this->killboxTimer = this->killboxTimerMax;
 	this->killboxAdder = 0;
 	this->killboxAdderMax = 10;
 
+
+
 	// Init player
 	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
-	this->_spawnEnemy();
-	this->enemySpawnTimerMax = 25.f;
+	// Init timers
+	this->enemySpawnTimerMax = 35.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
+	this->fullscreen = false;
+	this->totalScore = 0;
+	this->scoreTimer.restart();
+	this->scoreTime = 0;
+	this->bestScorePerSecond = 0.0;
+	this->difficulty = 0;
+	this->difficultyTimer = 0;
+
+	// Init Game controls
+	this->paused = true;
+	this->keyTimeMax = 10.f;
+	this->keyTime = this->keyTimeMax;
 
 	this->InitUI();
 }
@@ -161,10 +174,48 @@ void Game::InitUI() {
 
 void Game::Update(const float &dt) {
 	
-	if (this->playersExistInWorld()) {
+	// Keytime update
+	if (this->keyTime < this->keyTimeMax) {
+		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+
+	// Fullscreen check
+	if (Keyboard::isKeyPressed(Keyboard::F11) && this->keyTime >= this->keyTimeMax) {
+
+	}
+
+	// Pause check
+	if (Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
+		this->paused = !this->paused;
+		this->keyTime = 0.f;
+	}
+
+	// Only allow changing accessories while paused
+	if (this->paused) {
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			if (!this->players[i].isDead()) {
+				this->players[i].ChangeAccessories(dt);
+			}
+		}
+	}
+
+	// Update the world
+	if (!this->paused && this->playersExistInWorld()) {
 		// Update timers
 		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * DeltaTime::dtMultiplier; } // 1.f is not needed here
 		
+		if (this->enemySpawnTimerMax > 10) {
+			this->difficultyTimer += 1.f * dt * DeltaTime::dtMultiplier;
+		}
+
+		// Make the game harder with time by decreasing the wait between enemy spawns over time
+		if ((int)this->difficultyTimer % 1000 == 0 && this->enemySpawnTimerMax > 10) {
+			this->enemySpawnTimerMax--;
+			this->difficulty++;
+			this->difficultyTimer = 1.f;
+		}
+
 		// Update Killbox timer
 		if (this->killboxTimer > 0.f) {
 			this->killboxTimer -= 1.f * dt * DeltaTime::dtMultiplier;
@@ -181,7 +232,7 @@ void Game::Update(const float &dt) {
 			this->enemySpawnTimer = 0;
 		}
 
-		// Reset the total each time
+		// Reset the total each calculation
 		this->totalScore = 0;
 
 		for (size_t i = 0; i < this->players.Size(); ++i) {
@@ -279,7 +330,7 @@ void Game::Update(const float &dt) {
 										150.f));
 								}
 								else {
-									if (dropChance > 1) { // 5% chance for an upgrade
+									if (dropChance > 90) { // 10% chance for an upgrade
 										this->upgrades.Add(Upgrade(
 											this->upgradeTextures,
 											this->enemies[k].getPosition(),
@@ -313,7 +364,10 @@ void Game::Update(const float &dt) {
 		+	"\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
 		+	"\nKill Mult: x" + std::to_string(killboxMultiplier)
 		+	"\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
-		+	"\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s");
+		+	"\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
+		+	"\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds())
+		+	"\nDifficulty: " + std::to_string(this->difficulty)
+		+	"\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
 
 		// Update score multipliers
 		// Increase the killbox multiplier by 1 everytime the max is reached and raise the max by half the current. Reset the adder
@@ -373,7 +427,7 @@ void Game::Update(const float &dt) {
 
 						this->enemies[i].Collision();
 
-						// Create Texttag effect
+						// Player collision damage
 						this->textTags.Add(
 							TextTag(
 								&this->font, "-" + std::to_string(damage), Color::Red,
@@ -547,6 +601,50 @@ void Game::Update(const float &dt) {
 				this->textTags.Remove(i);
 			}
 		}
+	}else if (!this->playersExistInWorld() && this->scoreTime == 0) {
+		this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
+
+		this->gameOverText.setString("Game Over (X___X)\nScore: " +
+			std::to_string(this->totalScore) +
+			"\nTime: " +
+			std::to_string(this->scoreTime) +
+			"\n Score/Second: " +
+			std::to_string(std::ceil((double)this->totalScore / (double)this->scoreTime)) +
+			"\nF11 to Restart"
+		);
+
+		if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
+			this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
+		}
+	}
+
+	// Restart
+	if (!this->playersExistInWorld()) {
+		if (Keyboard::isKeyPressed(Keyboard::F11)) {
+			for (size_t i = 0; i < this->players.Size(); i++)
+			{
+				this->players[i].Reset();
+			}
+
+			// Reset score and multipliers
+			this->totalScore = 0;
+			this->scoreTime = 0;
+			this->killPerfectionMultiplier = 1;
+			this->killPerfectionAdder = 0;
+			this->killPerfectionAdderMax = 15;
+			this->killboxMultiplier = 1;
+			this->killboxTimerMax = 400.f;
+			this->killboxTimer = this->killboxTimerMax;
+			this->killboxAdder = 0;
+			this->killboxAdderMax = 10;
+
+			// Reset difficulty
+			this->difficulty = 0;
+			this->enemySpawnTimerMax = 35.f; // Also in constructor
+			this->enemies.Clear();
+			this->upgrades.Clear();
+			this->pickups.Clear();
+		}
 	}
 }
 
@@ -564,6 +662,10 @@ void Game::DrawUI() {
 
 	// Score text
 	this->window->draw(this->scoreText);
+
+	if (this->paused) {
+		this->window->draw(this->controlsText);
+	}
 }
 
 void Game::Draw(){

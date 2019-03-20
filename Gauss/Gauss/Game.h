@@ -6,25 +6,35 @@
 class Game
 {
 private:
+	// Game
 	RenderWindow *window;
-	unsigned totalScore;
+	bool paused;
+	float keyTimeMax;
+	float keyTime;
+	bool fullscreen;
 
-	// Increasingly massive multiplier for killing enemies without ever taking damage
-	// Effects the score AFTER the killbox multiplier has been applied
-	// It resets on any damage taken
+	// Score
+	Clock scoreTimer;
+	int scoreTime;
+	unsigned totalScore;
+		// Increasingly massive multiplier for killing enemies without ever taking damage
+		// Effects the score AFTER the killbox multiplier has been applied
+		// It resets on any damage taken
 	unsigned killPerfectionMultiplier;
 	int killPerfectionAdder;
 	int killPerfectionAdderMax;
-
-	// Slight multiplier added to each kill for continuously killing enemies 
-	// Multiplier increases as long as you kill within the alotted time
-		// Each multiplier increase you get longer to kill enemies, but you need more and they are more difficult to kill
-	// Everytime the timer runs out the it resets
+		// Slight multiplier added to each kill for continuously killing enemies 
+		// Multiplier increases as long as you kill within the alotted time
+			// Each multiplier increase you get longer to kill enemies, but you need more and they are more difficult to kill
+		// Everytime the timer runs out the it resets
 	unsigned killboxMultiplier;
 	float killboxTimer;
 	float killboxTimerMax;
 	int killboxAdder;
 	int killboxAdderMax;
+	float difficultyTimer;
+	int difficulty;
+	double bestScorePerSecond;
 
 	// UI
 	Font font;
@@ -32,6 +42,7 @@ private:
 	Text enemyText;
 	Text gameOverText;
 	Text scoreText;
+	Text controlsText;
 
 	// Texttags
 	dArr<TextTag> textTags;
@@ -58,8 +69,8 @@ private:
 	dArr<Upgrade> upgrades;
 
 	// Textures
-	dArr<Texture> playerMainGunTextures;
 	std::vector<Texture> textureMap;
+	dArr<Texture> playerMainGunTextures;
 	dArr<Texture> enemyTextures;
 	dArr<Texture> enemyBulletTextures;
 	dArr<Texture> lWingTextures;
@@ -88,5 +99,7 @@ public:
 	void Update(const float &dt);
 	void DrawUI();
 	void Draw();
+	void ToggleFullscreen();
+
 };
 
