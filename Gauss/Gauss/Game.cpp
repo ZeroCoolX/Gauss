@@ -165,6 +165,14 @@ void Game::InitUI() {
 	this->gameOverText.setString("Game Over! (X___X)");
 	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
 
+	// Controls / Pause text
+	this->controlsText.setFont(this->font);
+	this->controlsText.setCharacterSize(30);
+	this->controlsText.setFillColor(Color::White);
+	this->controlsText.setPosition(20.f, ((float)this->window->getSize().y / 3) + 50.f);
+	this->controlsText.setString("W: UP\nA: LEFT\nS: DOWN\nD: RIGHT\nSPACE: SHOOT\nP: PAUSE/CONTROLS (START GAME)\nESC: Quit\n1, 2, 3 & 4: CUSTOMIZE SHIP (ONLY WHILE PAUSED!)\nF11: FULLSCREEN\n\n\nTOP-LEFT SHIP: Player Number\nTOP-RIGHT SHIP: Hp/HpMax\nBOTTOM-LEFT SHIP: Level\nBOTTOM-RIGHT SHIP: Exp-bar");
+
+	// Score text
 	this->scoreText.setFont(this->font);
 	this->scoreText.setCharacterSize(32);
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
@@ -620,7 +628,7 @@ void Game::Update(const float &dt) {
 
 	// Restart
 	if (!this->playersExistInWorld()) {
-		if (Keyboard::isKeyPressed(Keyboard::F11)) {
+		if (Keyboard::isKeyPressed(Keyboard::F1)) {
 			for (size_t i = 0; i < this->players.Size(); i++)
 			{
 				this->players[i].Reset();
@@ -644,6 +652,10 @@ void Game::Update(const float &dt) {
 			this->enemies.Clear();
 			this->upgrades.Clear();
 			this->pickups.Clear();
+
+			// Reset player
+			this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
+			this->InitUI();
 		}
 	}
 }
