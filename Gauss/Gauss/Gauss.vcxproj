@@ -130,6 +130,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MoveLeftEnemy.cpp" />
+    <ClCompile Include="MoveLeftShootEnemy.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TextTag.cpp" />
@@ -145,7 +146,9 @@
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="dArr.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="MathUtil.h" />
     <ClInclude Include="MoveLeftEnemy.h" />
+    <ClInclude Include="MoveLeftShootEnemy.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TextTag.h" />

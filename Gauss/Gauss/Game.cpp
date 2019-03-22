@@ -737,23 +737,17 @@ void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
 	const int randType = rand() % 3;
 
-	if (randType == 0) {
-		std::cout << "creating new MoveLeftEnemy" << std::endl;
+	switch (randType) {
+	case GameEnums::E_MOVE_LEFT:
 		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
-	}
-	else if (randType == 1) {
-		std::cout << "creating new TrackerEnemy" << std::endl;
+		break;
+	case GameEnums::E_FOLLOW:
 		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
-	}
-	else {
-		this->enemies.Add(Enemy(this->enemyTextures,
-			this->enemyBulletTextures,
-			randType, // Random enemy type
-			this->window->getSize(),
-			this->enemyDirection,
-			this->players[pNum].getLevel(),
-			pNum) // Random player
-		);
+		break;
+	case GameEnums::E_MOVE_LEFT_SHOOT:
+		// COMMENTED OUT UNTIL CLEANUP BULLETS HAPPEN
+		//this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->enemyTextures, this->enemyBulletTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+		break;
 	}
 
 }
