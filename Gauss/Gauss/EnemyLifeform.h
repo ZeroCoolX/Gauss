@@ -48,7 +48,7 @@ public:
 	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
 	inline void updatePlayerFollowNum(int num) { this->playerFollowNum = num; }
 
-	virtual void Update(const float &dt);
+	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	virtual void Draw(RenderTarget &renderTarget);
 	void InitSpritePoisition(const Vector2u windowBounds);
 	void Collision();

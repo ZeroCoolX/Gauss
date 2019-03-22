@@ -30,7 +30,7 @@ public:
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 
 	// Abstract methods
-	virtual void Update(const float &dt) = 0;
+	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f)) = 0;
 	virtual void Draw(RenderTarget &renderTarget) = 0;
 };
 

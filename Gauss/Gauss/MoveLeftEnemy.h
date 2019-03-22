@@ -26,6 +26,6 @@ public:
 	virtual ~MoveLeftEnemy();
 
 	void Draw(RenderTarget &renderTarget);
-	void Update(const float &dt);
+	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 };
 

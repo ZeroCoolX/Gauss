@@ -27,7 +27,7 @@ void EnemyLifeform::Draw(RenderTarget &renderTarget) {
 	renderTarget.draw(this->sprite);
 }
 
-void EnemyLifeform::Update(const float &dt) {
+void EnemyLifeform::Update(const float &dt, Vector2f target) {
 	if (this->damageTimer > 0.f) {
 		this->sprite.setColor(Color::Red);
 		this->damageTimer -= 1.f * dt * DeltaTime::dtMultiplier;

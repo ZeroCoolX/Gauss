@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "MoveLeftEnemy.h"
+#include "TrackerEnemy.h"
 
 class Game
 {

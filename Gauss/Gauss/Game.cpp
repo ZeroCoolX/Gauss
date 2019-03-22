@@ -394,7 +394,7 @@ void Game::Update(const float &dt) {
 
 		for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 		{
-			(*this->enemyLifeforms[i]).Update(dt);
+			(*this->enemyLifeforms[i]).Update(dt, this->players[(*this->enemyLifeforms[i]).getPlayerFollowNum()].getPosition());
 		}
 
 
@@ -697,8 +697,8 @@ void Game::Draw(){
 	// Draw Enemy Lifeform
 	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
-		//this->enemyText.setPosition(this->enemyLifeforms[i].getPosition().x, this->enemyLifeforms[i].getPosition().y - 10.f);
-		//this->enemyText.setString(std::to_string(this->enemyLifeforms[i].getHp()) + "/" + std::to_string(this->enemyLifeforms[i].getHpMax()));
+		this->enemyText.setPosition((*this->enemyLifeforms[i]).getPosition().x, (*this->enemyLifeforms[i]).getPosition().y - 10.f);
+		this->enemyText.setString(std::to_string((*this->enemyLifeforms[i]).getHp()) + "/" + std::to_string((*this->enemyLifeforms[i]).getHpMax()));
 
 		// Draw Enemy Lifeform
 		(*this->enemyLifeforms[i]).Draw(*this->window);
@@ -740,6 +740,10 @@ void Game::_spawnEnemy() {
 	if (randType == 0) {
 		std::cout << "creating new MoveLeftEnemy" << std::endl;
 		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+	}
+	else if (randType == 1) {
+		std::cout << "creating new TrackerEnemy" << std::endl;
+		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
 	}
 	else {
 		this->enemies.Add(Enemy(this->enemyTextures,

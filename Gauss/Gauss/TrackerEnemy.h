@@ -3,20 +3,17 @@
 #include "EnemyLifeform.h"
 #include "Enums.h"
 
-class TrackerEnemy : EnemyLifeform
+class TrackerEnemy : public EnemyLifeform
 {
 private:
-	const int type = GameEnums::E_FOLLOW;
-	const Vector2f scale = Vector2f(0.12f, 0.12f);
-
 	int attackDistance;
+	bool divebombPlayer = false;
 
 public:
 	TrackerEnemy(dArr<Texture> &textures,
-		dArr<Texture> &bulletTextures,
 		Vector2u windowBounds,
 		int playerLvlScaleFactor,
-		int playerFollowNum): EnemyLifeform(playerFollowNum, &textures[this->type], this->scale) {
+		int playerFollowNum): EnemyLifeform(playerFollowNum, &textures[GameEnums::E_FOLLOW], Vector2f(0.12f, 0.12f)) {
 		
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
@@ -33,5 +30,8 @@ public:
 		this->InitSpritePoisition(windowBounds);
 	}
 	virtual ~TrackerEnemy();
+
+	void Draw(RenderTarget &renderTarget);
+	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 };
 

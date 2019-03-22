@@ -15,7 +15,7 @@ void Bullet::Move(const float &dt) {
 	this->sprite.move(this->velocity.x * dt * DeltaTime::dtMultiplier,this->velocity.y * dt * DeltaTime::dtMultiplier);
 }
 
-void Bullet::Update(const float &dt) {
+void Bullet::Update(const float &dt, Vector2f target) {
 	this->Move(dt);
 }
 void Bullet::Draw(RenderTarget &renderTarget) {
