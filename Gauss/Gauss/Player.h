@@ -79,8 +79,8 @@ private:
 	int maneuverability;		// agility
 
 
-	int hp;
-	int hpMax;
+	int hp;//--//
+	int hpMax;//--//
 
 	int damage;
 	int damageMax;
