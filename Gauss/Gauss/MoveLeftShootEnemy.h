@@ -14,11 +14,15 @@ private:
 	dArr<Bullet> bullets;
 
 public:
-	MoveLeftShootEnemy(dArr<Texture> &textures,
+	MoveLeftShootEnemy(RenderWindow *window, 
+		dArr<Texture> &textures,
 		dArr<Texture> &bulletTextures,
 		Vector2u windowBounds,
 		int playerLvlScaleFactor,
 		int playerFollowNum) : EnemyLifeform(playerFollowNum, &textures[GameEnums::E_MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
+
+		// WINDOW
+		this->window = window;
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);

@@ -14,7 +14,7 @@ public:
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
-		this->moveSpeed = rand() % 15 + 5.f;
+		this->moveSpeed = rand() % 15 + 4.f;
 
 		// STATS
 		this->damageRange = Vector2i((rand() % 3 + 1)*playerLvlScaleFactor, (rand() % 2 + 1)*playerLvlScaleFactor);

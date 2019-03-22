@@ -7,6 +7,9 @@ class EnemyLifeform : public GameObject
 protected:
 	const float damageTimerMax = 3.f;
 
+	// Game window
+	RenderWindow *window;
+
 	// STATS
 	int hp;
 	int hpMax;

@@ -25,7 +25,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -259,9 +259,10 @@ void Game::Update(const float &dt) {
 				}
 				else {
 					// Enemy - Bullet Collision check since it still exists in the world
-					for (size_t k = 0; k < this->enemies.Size(); k++)
+					for (size_t k = 0; k < this->enemyLifeforms.Size(); k++)
 					{
-						if (this->players[i].BulletAt(j).getGlobalBounds().intersects(this->enemies[k].getGlobalBounds())) {
+						EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
+						if (this->players[i].BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 								
 							// Health check for damage or destruction
 							int damage = this->players[i].getDamage();
@@ -269,16 +270,16 @@ void Game::Update(const float &dt) {
 							this->textTags.Add(
 								TextTag(
 									&this->font, "-" + std::to_string(damage), Color::Red,
-									Vector2f(this->enemies[k].getPosition().x + this->enemies[k].getGlobalBounds().width / 4,
-										this->enemies[k].getPosition().y - this->enemies[k].getGlobalBounds().height / 2),
+									Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width / 4,
+										currentEnemy->getPosition().y - currentEnemy->getGlobalBounds().height / 2),
 									Vector2f(1.f, 0.f),
 									24, 18.f, true
 								)
 							);
 
-							this->enemies[k].TakeDamage(damage);
+							currentEnemy->TakeDamage(damage);
 
-							if (this->enemies[k].getHp() <= 0) {
+							if (currentEnemy->getHp() <= 0) {
 
 								// Gain score & Reset multiplier timer
 								this->killboxTimer = this->killboxTimerMax;
@@ -286,7 +287,7 @@ void Game::Update(const float &dt) {
 								this->killPerfectionAdder++;
 
 								// Total Score = (EnemyMaxHp + (EnemyMaxHp * KillboxMultiplier)) * PerfectionMultiplier 
-								int score = (this->enemies[k].getHpMax() + (this->enemies[k].getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
+								int score = (currentEnemy->getHpMax() + (currentEnemy->getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
 								this->players[i].gainScore(score);
 
 								// Score text tag
@@ -300,8 +301,8 @@ void Game::Update(const float &dt) {
 								);
 
 								// Player earned some EXP!
-								int exp = this->enemies[k].getHpMax()
-									+ (rand() % this->enemies[k].getHpMax() + 1) * (this->killboxMultiplier + 1);
+								int exp = currentEnemy->getHpMax()
+									+ (rand() % currentEnemy->getHpMax() + 1) * (this->killboxMultiplier + 1);
 
 								// Player leveled up!
 								if (this->players[i].gainExp(exp)) {
@@ -333,7 +334,7 @@ void Game::Update(const float &dt) {
 								if (dropChance > 75) { // 25% chance health is dropped
 									this->pickups.Add(Pickup(
 										this->pickupTextures,
-										this->enemies[k].getPosition(),
+										currentEnemy->getPosition(),
 										0,
 										150.f));
 								}
@@ -341,14 +342,14 @@ void Game::Update(const float &dt) {
 									if (dropChance > 90) { // 10% chance for an upgrade
 										this->upgrades.Add(Upgrade(
 											this->upgradeTextures,
-											this->enemies[k].getPosition(),
+											currentEnemy->getPosition(),
 											rand() % 5,
 											300.f));
 									}
 								}
 
 								// Destroy the enemy
-								this->enemies.Remove(k);
+								this->enemyLifeforms.Remove(k);
 							}
 
 							// Destroy the bullet if not piercing shot
@@ -392,53 +393,42 @@ void Game::Update(const float &dt) {
 			this->killPerfectionAdderMax = (int)std::floor(this->killPerfectionAdderMax * 1.25);
 		}
 
+		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 		{
-			(*this->enemyLifeforms[i]).Update(dt, this->players[(*this->enemyLifeforms[i]).getPlayerFollowNum()].getPosition());
-		}
+			EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
 
-
-		// Update Enemy Movement
-		for (size_t i = 0; i < this->enemies.Size(); i++)
-		{
 			// Safety check in case there are no more players in the world
 			if (!this->playersExistInWorld()){
-				this->enemies[i].updateAttackType(GameEnums::E_MOVE_LEFT);
-				this->enemies[i].Update(dt);
+				return;
 			}
 			else {
 				// Check if we need to update the player this enemy is following incase they died
-				if (this->enemies[i].getPlayerFollowNum() > (int)this->players.Size() - 1) {
-					this->enemies[i].updatePlayerFollowNum(rand()% this->players.Size());
+				if (currentEnemy->getPlayerFollowNum() > (int)this->players.Size() - 1) {
+					currentEnemy->updatePlayerFollowNum(rand()% this->players.Size());
 				}
-				this->enemies[i].Update(dt, this->players[this->enemies[i].getPlayerFollowNum()].getPosition());
-			}
-
-			// Enemy Bullet Update
-			for (size_t j = 0; j < this->enemies[i].getBullets().Size(); j++)
-			{
-				this->enemies[i].getBullets()[j].Update(dt);
+				currentEnemy->Update(dt, this->players[currentEnemy->getPlayerFollowNum()].getPosition());
 			}
 
 			// Enemy Window Bounds check
-			if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBounds().width) {
-				this->enemies.Remove(i);
+			if (currentEnemy->getPosition().x < 0 - currentEnemy->getGlobalBounds().width) {
+				this->enemyLifeforms.Remove(i);
 			}
 			else {
 				// Check Player - Enemy collision
 				for (size_t j = 0; j < this->players.Size(); j++)
 				{
-					if (this->players[j].getGlobalBounds().intersects(this->enemies[i].getGlobalBounds()) 
+					if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds())
 						&& !this->players[j].isDamageCooldown()) {
 						
 						// Damage player		
-						int damage = this->enemies[i].getDamage();
+						int damage = currentEnemy->getDamage();
 						this->players[j].TakeDamage(damage);
 						// Collision resets the perfection streak
 						this->killPerfectionAdder = 0;
 						this->killPerfectionMultiplier = 1;
 
-						this->enemies[i].Collision();
+						currentEnemy->Collision();
 
 						// Player collision damage
 						this->textTags.Add(
@@ -654,8 +644,7 @@ void Game::Update(const float &dt) {
 			// Reset difficulty
 			this->difficulty = 0;
 			this->enemySpawnTimerMax = 35.f; // Also in constructor
-			this->enemies.Clear();
-			this->enemyLifeforms.Clear(); // temporary
+			this->enemyLifeforms.Clear();
 			this->upgrades.Clear();
 			this->pickups.Clear();
 
@@ -697,23 +686,25 @@ void Game::Draw(){
 	// Draw Enemy Lifeform
 	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
-		this->enemyText.setPosition((*this->enemyLifeforms[i]).getPosition().x, (*this->enemyLifeforms[i]).getPosition().y - 10.f);
-		this->enemyText.setString(std::to_string((*this->enemyLifeforms[i]).getHp()) + "/" + std::to_string((*this->enemyLifeforms[i]).getHpMax()));
+		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
+		this->enemyText.setPosition(currentEnemy->getPosition().x, currentEnemy->getPosition().y - 10.f);
+		this->enemyText.setString(std::to_string(currentEnemy->getHp()) + "/" + std::to_string(currentEnemy->getHpMax()));
 
 		// Draw Enemy Lifeform
-		(*this->enemyLifeforms[i]).Draw(*this->window);
+		currentEnemy->Draw(*this->window);
 		// Draw Enemy Lifeform UI
 		this->window->draw(this->enemyText);
 	}
 
 	// Draw enemies
-	for (size_t i = 0; i < this->enemies.Size(); i++)
+	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
-		this->enemyText.setPosition(this->enemies[i].getPosition().x, this->enemies[i].getPosition().y - 10.f);
-		this->enemyText.setString(std::to_string(this->enemies[i].getHp()) + "/" + std::to_string(this->enemies[i].getHpMax()));
+		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
+		this->enemyText.setPosition(currentEnemy->getPosition().x, currentEnemy->getPosition().y - 10.f);
+		this->enemyText.setString(std::to_string(currentEnemy->getHp()) + "/" + std::to_string(currentEnemy->getHpMax()));
 
 		// Draw Enemy
-		this->enemies[i].Draw(*this->window);
+		currentEnemy->Draw(*this->window);
 		// Draw Enemy UI
 		this->window->draw(this->enemyText);
 	}
@@ -745,8 +736,7 @@ void Game::_spawnEnemy() {
 		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
 		break;
 	case GameEnums::E_MOVE_LEFT_SHOOT:
-		// COMMENTED OUT UNTIL CLEANUP BULLETS HAPPEN
-		//this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->enemyTextures, this->enemyBulletTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->enemyTextures, this->enemyBulletTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
 		break;
 	}
 

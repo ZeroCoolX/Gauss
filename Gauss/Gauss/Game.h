@@ -57,7 +57,7 @@ private:
 	dArr<EnemyLifeform*> enemyLifeforms;
 
 	// Enemies
-	dArr<Enemy> enemies;
+	//dArr<Enemy> enemies;
 	std::vector<Enemy> enemiesSaved;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;

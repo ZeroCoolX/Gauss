@@ -47,5 +47,13 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 	for (size_t j = 0; j < this->getBullets().Size(); j++)
 	{
 		this->getBullets()[j].Update(dt);
+
+		// Bullet Window bounds check
+		if (this->getBullets()[j].getPosition().x > this->window->getSize().x
+			|| this->getBullets()[j].getPosition().y > this->window->getSize().y
+			|| this->getBullets()[j].getPosition().x <= 0.f
+			|| this->getBullets()[j].getPosition().y <= 0.f) {
+			this->getBullets().Remove(j);
+		}
 	}
 }
