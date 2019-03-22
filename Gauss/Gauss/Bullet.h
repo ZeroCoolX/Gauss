@@ -44,7 +44,7 @@ public:
 
 	// Functions
 	void Move(const float &dt);
-	virtual void Update(const float &dt);
-	virtual void Draw(RenderTarget &renderTarget);
+	void Update(const float &dt);
+	void Draw(RenderTarget &renderTarget);
 };
 

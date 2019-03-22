@@ -25,7 +25,7 @@ public:
 		this->sprite.setTexture(*this->texture);
 		this->sprite.setScale(spriteScale);
 	}
-	virtual ~GameObject();
+	virtual ~GameObject(){}
 
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 

@@ -39,10 +39,13 @@
     <ClCompile Include="Upgrade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="EnemyLifeform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lifeform.cpp">
+    <ClCompile Include="MoveLeftEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackerEnemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +83,13 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lifeform.h">
+    <ClInclude Include="EnemyLifeform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveLeftEnemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackerEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

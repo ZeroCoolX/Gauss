@@ -2,6 +2,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "MoveLeftEnemy.h"
 
 class Game
 {
@@ -49,6 +50,9 @@ private:
 
 	// Players
 	dArr<Player> players;
+
+	// Temporary while refactoring
+	dArr<EnemyLifeform*> enemyLifeforms;
 
 	// Enemies
 	dArr<Enemy> enemies;

@@ -392,6 +392,11 @@ void Game::Update(const float &dt) {
 			this->killPerfectionAdderMax = (int)std::floor(this->killPerfectionAdderMax * 1.25);
 		}
 
+		for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
+		{
+			(*this->enemyLifeforms[i]).Update(dt);
+		}
+
 
 		// Update Enemy Movement
 		for (size_t i = 0; i < this->enemies.Size(); i++)
@@ -650,6 +655,7 @@ void Game::Update(const float &dt) {
 			this->difficulty = 0;
 			this->enemySpawnTimerMax = 35.f; // Also in constructor
 			this->enemies.Clear();
+			this->enemyLifeforms.Clear(); // temporary
 			this->upgrades.Clear();
 			this->pickups.Clear();
 
@@ -688,6 +694,18 @@ void Game::Draw(){
 		this->players[i].Draw(*this->window);
 	}
 
+	// Draw Enemy Lifeform
+	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
+	{
+		//this->enemyText.setPosition(this->enemyLifeforms[i].getPosition().x, this->enemyLifeforms[i].getPosition().y - 10.f);
+		//this->enemyText.setString(std::to_string(this->enemyLifeforms[i].getHp()) + "/" + std::to_string(this->enemyLifeforms[i].getHpMax()));
+
+		// Draw Enemy Lifeform
+		(*this->enemyLifeforms[i]).Draw(*this->window);
+		// Draw Enemy Lifeform UI
+		this->window->draw(this->enemyText);
+	}
+
 	// Draw enemies
 	for (size_t i = 0; i < this->enemies.Size(); i++)
 	{
@@ -718,13 +736,20 @@ void Game::Draw(){
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
 	const int randType = rand() % 3;
-	this->enemies.Add(Enemy(this->enemyTextures,
-		this->enemyBulletTextures,
-		randType, // Random enemy type
-		this->window->getSize(),
-		this->enemyDirection,
-		this->players[pNum].getLevel(),
-		pNum) // Random player
-	);
+
+	if (randType == 0) {
+		std::cout << "creating new MoveLeftEnemy" << std::endl;
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+	}
+	else {
+		this->enemies.Add(Enemy(this->enemyTextures,
+			this->enemyBulletTextures,
+			randType, // Random enemy type
+			this->window->getSize(),
+			this->enemyDirection,
+			this->players[pNum].getLevel(),
+			pNum) // Random player
+		);
+	}
 
 }

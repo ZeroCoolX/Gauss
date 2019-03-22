@@ -126,27 +126,30 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyLifeform.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Lifeform.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MoveLeftEnemy.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="TextTag.cpp" />
+    <ClCompile Include="TrackerEnemy.cpp" />
     <ClCompile Include="Upgrade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyLifeform.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="dArr.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Lifeform.h" />
+    <ClInclude Include="MoveLeftEnemy.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="TextTag.h" />
+    <ClInclude Include="TrackerEnemy.h" />
     <ClInclude Include="Upgrade.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
