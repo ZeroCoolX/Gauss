@@ -13,6 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\GameObjects">
+      <UniqueIdentifier>{3822830f-6108-4e7b-b5b6-ea3cc32d2d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Consumables">
+      <UniqueIdentifier>{e0bc332c-836f-47da-8328-6129c2c5ddc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects">
+      <UniqueIdentifier>{04d7745a-e6d0-485b-84e2-c90f280a1dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Consumables">
+      <UniqueIdentifier>{6523aed0-c554-410a-9509-53f2fe45cfc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Projectiles">
+      <UniqueIdentifier>{fdf9d440-4a9e-45d7-b8c4-62265eba4e20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Projectiles">
+      <UniqueIdentifier>{b3a139e8-5469-4132-8263-8bd7a6053e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Lifeforms">
+      <UniqueIdentifier>{64d5ae05-ee1f-4ce8-a965-bcfc9f47b7dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Lifeforms\Enemy">
+      <UniqueIdentifier>{ebe5d006-0278-4108-8043-5ebd243f1786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Lifeforms">
+      <UniqueIdentifier>{8dac4c14-99ca-4842-a069-731fd7077294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Lifeforms\Enemy">
+      <UniqueIdentifier>{0cde164d-f380-432d-837e-c8ecb8354af7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Lifeforms\Player">
+      <UniqueIdentifier>{d141b5e2-8bba-4760-869a-4771ed02ceb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Lifeforms\Player">
+      <UniqueIdentifier>{55d48430-b6e2-47c9-958d-ead9298a2c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UIElements">
+      <UniqueIdentifier>{1c9b5caf-2dae-4520-820a-14ce1c1c2d70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UIElements">
+      <UniqueIdentifier>{6b5cedf1-d28c-4f5b-b7e4-da8f709520a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,51 +63,36 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextTag.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Pickup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Upgrade.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EnemyLifeform.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="MoveLeftEnemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TrackerEnemy.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="MoveLeftShootEnemy.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackerEnemy.cpp">
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Upgrade.cpp">
+      <Filter>Source Files\GameObjects\Consumables</Filter>
+    </ClCompile>
+    <ClCompile Include="Pickup.cpp">
+      <Filter>Source Files\GameObjects\Consumables</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files\GameObjects\Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\GameObjects\Lifeforms\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="TextTag.cpp">
+      <Filter>Source Files\UIElements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextTag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dArr.h">
@@ -77,29 +104,38 @@
     <ClInclude Include="DeltaTime.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Pickup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Upgrade.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyLifeform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveLeftEnemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TrackerEnemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveLeftShootEnemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MathUtil.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyLifeform.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveLeftEnemy.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveLeftShootEnemy.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackerEnemy.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Upgrade.h">
+      <Filter>Header Files\GameObjects\Consumables</Filter>
+    </ClInclude>
+    <ClInclude Include="Pickup.h">
+      <Filter>Header Files\GameObjects\Consumables</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\GameObjects\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TextTag.h">
+      <Filter>Header Files\UIElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

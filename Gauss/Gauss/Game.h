@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Player.h"
-#include "Enemy.h"
 #include "MoveLeftEnemy.h"
 #include "TrackerEnemy.h"
 #include "MoveLeftShootEnemy.h"
@@ -53,20 +52,10 @@ private:
 	// Players
 	dArr<Player> players;
 
-	// Temporary while refactoring
-	dArr<EnemyLifeform*> enemyLifeforms;
-
 	// Enemies
-	//dArr<Enemy> enemies;
-	std::vector<Enemy> enemiesSaved;
+	dArr<EnemyLifeform*> enemyLifeforms;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
-
-	// Enemy Spawn Data
-	const Vector2f enemyScale = Vector2f(0.1f, 0.1f);
-	const Vector2f enemyDirection = Vector2f(-1.0f, 0.f);
-	const int enemyHp = rand() % 2 + 1;
-	const Vector2i enemyDamageRange = Vector2i(1, 3);
 	
 	// Pickups
 	dArr<Pickup> pickups;
@@ -96,8 +85,6 @@ public:
 	// Accessors
 	inline RenderWindow& getWindow() { return *this->window; }
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
-
-	// Setters
 
 	// Functions
 	void InitUI();
