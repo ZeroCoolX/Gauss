@@ -201,8 +201,9 @@ void Game::Update(const float &dt) {
 	if (this->paused) {
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
-			if (!this->players[i].isDead()) {
+			if (!this->players[i].isDead() && this->keyTime >= this->keyTimeMax) {
 				this->players[i].ChangeAccessories(dt);
+				this->keyTime = 0.f;
 			}
 		}
 	}
@@ -331,19 +332,19 @@ void Game::Update(const float &dt) {
 								// Change to drop consumable
 								int dropChance = rand() % 100 + 1;
 
-								if (dropChance > 75) { // 25% chance health is dropped
-									this->consumables.Add(new ItemPickup(
-										this->pickupTextures,
-										currentEnemy->getPosition(),
-										GameEnums::ITEM_HEALTH, // health item for now
-										150.f));
-								}
-								else if (dropChance > 90) { // 10% chance for an upgrade
+								if (dropChance > 90) { // 10% chance for an upgrade
 									this->consumables.Add(new ItemUpgrade(
 										this->upgradeTextures,
 										currentEnemy->getPosition(),
 										rand() % 5,
 										300.f));
+								}
+								else if (dropChance > 75) { // 25% chance health is dropped
+									this->consumables.Add(new ItemPickup(
+										this->pickupTextures,
+										currentEnemy->getPosition(),
+										GameEnums::ITEM_HEALTH, // health item for now
+										150.f));
 								}
 
 								// Destroy the enemy
@@ -532,6 +533,7 @@ void Game::Update(const float &dt) {
 			this->consumables.Clear();
 
 			// Reset player
+			Player::playerId = 0;
 			this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
 			this->InitUI();
 		}

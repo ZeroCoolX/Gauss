@@ -117,25 +117,18 @@ bool Player::UpdateLeveling() {
 }
 
 void Player::ChangeAccessories(const float &dt) {
-	if (Keyboard::isKeyPressed(Keyboard::Num1) && this->keyTime >= this->keyTimeMax ) {
+	if (Keyboard::isKeyPressed(Keyboard::Num1)) {
 		lWingSelect = ++lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
 		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
-		this->keyTime = 0;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Num2) && this->keyTime >= this->keyTimeMax) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Num2)) {
 		rWingSelect = ++rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
 		this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
-		this->keyTime = 0;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Num3) && this->keyTime >= this->keyTimeMax) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Num3)) {
 		auraSelect = ++auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
 		this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
-		this->keyTime = 0;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Num4) && this->keyTime >= this->keyTimeMax) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Num4)) {
 		cPitSelect = ++cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
 		this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
-		this->keyTime = 0;
 	}
 }
 
