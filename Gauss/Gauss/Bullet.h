@@ -5,11 +5,15 @@
 class Bullet : public GameObject
 {
 private:
+	bool isGaussShot = false;
+
 	// Movement
 	Vector2f velocity;
 	float maxVelocity;
 	float acceleration;
 	Vector2f direction;
+
+	int damage;
 
 	void _constantMovement(const float &dt);
 	void _accelerationMovement(const float &dt);
@@ -21,7 +25,13 @@ public:
 		Vector2f direction,
 		float initialVelocity,
 		float maxVelocity,
+		int damage,
+		bool gaussShot,
 		float acceleration) : GameObject(texture, scale) {
+
+		// Damage
+		this->damage = damage;
+		this->isGaussShot = gaussShot;
 
 		// Init movement
 		this->maxVelocity = maxVelocity;
@@ -42,6 +52,8 @@ public:
 	// Accessors
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 	inline void setPosition(Vector2f position) { this->sprite.setPosition(position); }
+	inline const int& getDamage() const { return this->damage; }
+	inline const bool& gaussShot() const { return this->isGaussShot; }
 
 	// Functions
 	void Move(const float &dt);

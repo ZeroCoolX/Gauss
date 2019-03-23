@@ -12,6 +12,14 @@ private:
 	unsigned int playerNumber;
 	Text statsText;
 	RectangleShape playerExpBar;
+	RectangleShape playerHealthBar;
+	RectangleShape playerExpBarBox;
+	RectangleShape playerHealthBarBox;
+
+	Color gaussChargingColor;
+	Color gaussReadyColor;
+	CircleShape playerGaussChargeCircle;
+	CircleShape playerGaussChargeCircleBorder;
 
 	Vector2f playerCenter;
 
@@ -38,6 +46,9 @@ private:
 	Texture *laserProjectileTexture;
 	Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
 
+	Texture *gaussCannonProjectileTexture;
+	Vector2f gaussCannonProjectileScale = Vector2f(0.5f, 0.5f);
+
 	float bulletSpeed;
 	float bulletMaxSpeed;
 	float bulletAcceleration;
@@ -58,7 +69,7 @@ private:
 	int auraSelect;
 
 	// Player input controls
-	int controls[5];
+	int controls[6];
 
 	// Movement
 	Vector2f velocity;
@@ -89,6 +100,11 @@ private:
 
 	int currentWeapon;
 
+	int gaussCharge;
+	int gaussChargeMax;
+	float gaussChargeTimer;
+	float gaussChargeTimerMax;
+
 	// Upgrades
 	int mainGunLevel;
 	bool piercingShot;
@@ -102,6 +118,7 @@ private:
 	void _initPlayerSettings();
 	void _recalculatePlayerCenter();
 	void _fireLaser(const Vector2f direction);
+	void _fireGaussCannon(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
 	void _checkBounds(Vector2u windowBounds, bool warpVertical);
@@ -119,7 +136,8 @@ public:
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
 		int RIGHT = Keyboard::D,
-		int FIRE = Keyboard::Space);
+		int FIRE = Keyboard::Space,
+		int GAUSSCANNON = Keyboard::Q);
 	virtual ~Player();
 
 	// Accessors
@@ -130,6 +148,8 @@ public:
 	int getDamage() const;
 	inline const int& getHp() const { return hp; }
 	inline const int& getHpMax() const { return hpMax; }
+	inline const int& getGaussCharge() const { return this->gaussCharge; }
+	inline const int& getGaussChargeMax() const { return this->gaussChargeMax; }
 	inline const bool isDead() const { return this->hp <= 0; }
 	inline const int& getLevel() const { return this->level; }
 	inline const int& getExp() const { return this->exp; }
@@ -137,6 +157,7 @@ public:
 	inline bool gainExp(int exp) { this->exp += exp; return this->UpdateLeveling(); }
 	inline void gainScore(int score) { this->score += score; }
 	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
+	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
 	inline const int getScore() const { return this->score; }
 	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
 	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }

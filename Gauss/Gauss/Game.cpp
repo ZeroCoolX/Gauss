@@ -22,7 +22,7 @@ Game::Game(RenderWindow *window)
 
 	// Init player
 	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift));
+	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift, Keyboard::U));
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -55,6 +55,8 @@ void Game::InitTextures() {
 	this->textureMap[GameEnums::T_LASER01].loadFromFile("Textures/Guns/rayTex01.png");
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
+	this->textureMap.push_back(Texture());
+	this->textureMap[GameEnums::T_GAUSSCANNON01].loadFromFile("Textures/Guns/rayTex03.png");
 
 	// Load Enemy Textures
 	Texture temp;
@@ -262,7 +264,7 @@ void Game::Update(const float &dt) {
 						if (this->players[i].BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 
 							// Health check for damage or destruction
-							int damage = this->players[i].getDamage();
+							int damage = this->players[i].BulletAt(j).getDamage();
 
 							this->textTags.Add(
 								TextTag(
@@ -349,11 +351,11 @@ void Game::Update(const float &dt) {
 							}
 
 							// Destroy the bullet if not piercing shot
-							if (!this->players[i].getPiercingShot()) {
+							if (!this->players[i].getPiercingShot() && !this->players[i].BulletAt(j).gaussShot()) {
 								// Should add effect to indicate it is piercing shots
 								this->players[i].RemoveBullet(j);
 							}
-							else {
+							else if(!this->players[i].BulletAt(j).gaussShot()){
 								// Move to the end of the sprite it hit so that there is only a single point of damage calculation
 								this->players[i].BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, this->players[i].BulletAt(j).getPosition().y));
 							}

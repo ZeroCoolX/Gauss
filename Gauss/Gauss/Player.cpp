@@ -14,7 +14,8 @@ Player::Player(std::vector<Texture> &textureMap,
 	int DOWN,
 	int LEFT, 
 	int RIGHT,
-	int FIRE
+	int FIRE,
+	int GAUSSCANNON
 ) :level(1), exp(0), hp(10), hpMax(10), statPoints(0), cooling(0), maneuverability(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
@@ -56,6 +57,7 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->controls[GameEnums::C_LEFT] = LEFT;
 	this->controls[GameEnums::C_RIGHT] = RIGHT;
 	this->controls[GameEnums::C_FIRE] = FIRE;
+	this->controls[GameEnums::C_GAUSSCANNON] = GAUSSCANNON;
 }
 
 Player::~Player()
@@ -192,9 +194,10 @@ void Player::Movement(const float &dt, Vector2u windowBounds) {
 }
 
 void Player::Combat(const float &dt) {
+	const Vector2f direction = Vector2f(1.f, 0.f);
+
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		const Vector2f direction = Vector2f(1.f, 0.f);
 		switch (this->currentWeapon) {
 			case GameEnums::G_LASER:
 				this->_fireLaser(direction);
@@ -208,6 +211,14 @@ void Player::Combat(const float &dt) {
 		}
 
 		this->shootTimer = 0; // RESET TIMER
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
+		// Fire a deadly gauss cannon shot
+		this->gaussChargeTimer = 0.f;
+		this->playerGaussChargeCircle.setFillColor(this->gaussChargingColor);
+		this->_fireGaussCannon(direction);
+		this->keyTime = 0;
 	}
 
 	if (this->isDamageCooldown()) {
@@ -234,15 +245,31 @@ void Player::UpdateStatsUI() {
 
 	// Stats
 	this->statsText.setPosition(statsPos);
-	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]					" + this->getHpAsString()
+	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]"
 	+ "\n\n\n\n\n\n\n\n\n"
 	+ std::to_string(this->getLevel()));
 
 	// Exp Bar
-	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 45.f)); // Clean up magic numbers
+	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 45.f));
 	this->playerExpBar.setPosition(expBarPos);
 	// Scale based off player experience to create a dynamic bar
 	this->playerExpBar.setScale(static_cast<float>(this->getExp()) / static_cast<float>(getExpNext()), 1.f);
+	this->playerExpBarBox.setPosition(Vector2f(expBarPos.x - 0.5f, expBarPos.y - 0.5f));
+
+	// Health Bar
+	Vector2f healthBarPos = Vector2f(expBarPos.x, expBarPos.y + this->playerExpBar.getGlobalBounds().height * 2.5f);
+	this->playerHealthBar.setPosition(healthBarPos);
+	// Scale based off player experience to create a dynamic bar
+	this->playerHealthBar.setScale(static_cast<float>(this->getHp()) / static_cast<float>(getHpMax()), 1.f);
+	this->playerHealthBarBox.setPosition(Vector2f(healthBarPos.x - 0.5f, healthBarPos.y - 0.5f));
+
+	// Gauss Cannon Charge circle
+	Vector2f gaussChargePos = Vector2f(this->getPosition().x + this->getGlobalBounds().width, (this->getPosition().y - this->getGlobalBounds().height + (this->playerGaussChargeCircleBorder.getRadius() * 2)));
+	this->playerGaussChargeCircle.setPosition(gaussChargePos);
+	// Scale based off player experience to create a dynamic bar
+	float circleScale = this->gaussChargeTimer / this->gaussChargeTimerMax;
+	this->playerGaussChargeCircle.setScale(circleScale, circleScale);
+	playerGaussChargeCircleBorder.setPosition(gaussChargePos);
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
@@ -257,6 +284,13 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
 	}
 
+	if (this->gaussChargeTimer < this->gaussChargeTimerMax) {
+		this->gaussChargeTimer += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+	else {
+		this->playerGaussChargeCircle.setFillColor(this->gaussReadyColor);
+	}
+
 	this->Movement(dt, windowBounds);
 	this->UpdateAccessories(dt);
 	this->Combat(dt);
@@ -266,8 +300,21 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 void Player::DrawUI(RenderTarget &renderTarget) {
 	// Stats
 	renderTarget.draw(this->statsText);
+
+	// Exp bar backing
+	renderTarget.draw(this->playerExpBarBox);
 	// Exp bar
 	renderTarget.draw(this->playerExpBar);
+
+	// Health bar backing
+	renderTarget.draw(this->playerHealthBarBox);
+	// Health bar
+	renderTarget.draw(this->playerHealthBar);
+
+	// Gauss charge circle border
+	renderTarget.draw(this->playerGaussChargeCircleBorder);
+	// Gauss charge circle
+	renderTarget.draw(this->playerGaussChargeCircle);
 }
 
 // Order matters!
@@ -291,8 +338,38 @@ void Player::Draw(RenderTarget &renderTarget) {
 void Player::InitUI(Text t) {
 	this->statsText = t;
 
+	// EXP bad
 	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // TODO: magic numbers need to go away
 	this->playerExpBar.setFillColor(Color(0, 90, 200, 200));
+
+	// Health bar
+	this->playerHealthBar.setSize(Vector2f(90.f, 8.0));
+	this->playerHealthBar.setFillColor(Color(180, 0, 18, 200));
+
+	// Setup Bar Boxes
+	this->playerHealthBarBox.setSize(Vector2f(91.f, 9.5));
+	this->playerHealthBarBox.setFillColor(Color(255, 255, 255, 0));
+	this->playerHealthBarBox.setOutlineThickness(1);
+	this->playerHealthBarBox.setOutlineColor(Color(255, 255, 255, 10));
+
+	this->playerExpBarBox.setSize(Vector2f(91.f, 9.5));
+	this->playerExpBarBox.setFillColor(Color(255, 255, 255, 0));
+	this->playerExpBarBox.setOutlineThickness(1);
+	this->playerExpBarBox.setOutlineColor(Color(255, 255, 255, 10));
+
+	// Gauss cannon circle
+	this->gaussReadyColor = Color(0, 220, 93, 150);
+	this->gaussChargingColor = Color(0, 86, 37, 150);
+
+	this->playerGaussChargeCircle.setRadius(10);
+	this->playerGaussChargeCircle.setFillColor(this->gaussChargingColor);
+	this->playerGaussChargeCircle.setOrigin(Vector2f(this->playerGaussChargeCircle.getRadius(), this->playerGaussChargeCircle.getRadius()));
+
+	this->playerGaussChargeCircleBorder.setRadius(10);
+	this->playerGaussChargeCircleBorder.setFillColor(Color(255, 255, 255, 0));
+	this->playerGaussChargeCircleBorder.setOutlineColor(Color(255, 255, 255, 10));
+	this->playerGaussChargeCircleBorder.setOutlineThickness(1);
+	this->playerGaussChargeCircleBorder.setOrigin(Vector2f(this->playerGaussChargeCircleBorder.getRadius(), this->playerGaussChargeCircleBorder.getRadius()));
 }
 
 Bullet& Player::BulletAt(unsigned index) {
@@ -416,6 +493,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 
 	// Assign bullet properties
 	this->laserProjectileTexture = &textureMap[GameEnums::T_LASER01];
+	this->gaussCannonProjectileTexture = &textureMap[GameEnums::T_GAUSSCANNON01];
 	this->missile01ProjectileTexture = &textureMap[GameEnums::T_MISSILE01];
 
 	// Accessories
@@ -464,6 +542,8 @@ void Player::_initPlayerSettings() {
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 40.f;
 	this->damageTimer = this->damageTimerMax;
+	this->gaussChargeTimerMax = 500.f;
+	this->gaussChargeTimer = 0.f;
 
 	// Movement settings
 	this->maxVelocity = 15.f;
@@ -503,10 +583,24 @@ void Player::_fireLaser(const Vector2f direction) {
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + (i == 0 && yOffset == 30.f ? 50.f : -20), 
 					this->playerCenter.y + (yOffset == 15 ? yOffset : i > 0 ? yOffset : 0.f)),
 				direction,
-				this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f)
+				this->bulletMaxSpeed, this->bulletMaxSpeed, this->getDamage(), false, 0.f)
 		);
 		yOffset *= -1;
 	}
+	// Animate gun
+	this->mainGunSprite.move(-mainGunKickback, 0.f);
+}
+
+// Fires a single round that does 4 times the damage of a normal shot
+void Player::_fireGaussCannon(const Vector2f direction) {
+	this->bullets.Add(
+			Bullet(gaussCannonProjectileTexture,
+				gaussCannonProjectileScale,
+				Vector2f(
+					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2),this->playerCenter.y),
+				direction,
+				this->bulletMaxSpeed * 1.5f, this->bulletMaxSpeed * 1.5f, this->getDamage() * 10, true, 0.f)
+		);
 	// Animate gun
 	this->mainGunSprite.move(-mainGunKickback, 0.f);
 }
@@ -518,7 +612,7 @@ void Player::_fireMissileLight(const Vector2f direction) {
 			missileScale,
 			Vector2f(this->playerCenter.x, this->playerCenter.y - (this->sprite.getGlobalBounds().height / 2)),
 			direction,
-			this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration)
+			this->bulletSpeed, this->bulletMaxSpeed, this->getDamage(), false, this->bulletAcceleration)
 	);
 	if (dualMissiles01) {
 		this->bullets.Add(
@@ -526,7 +620,7 @@ void Player::_fireMissileLight(const Vector2f direction) {
 				missileScale,
 				Vector2f(this->playerCenter.x, this->playerCenter.y + (this->sprite.getGlobalBounds().height / 2)),
 				direction,
-				this->bulletSpeed, this->bulletMaxSpeed, this->bulletAcceleration)
+				this->bulletSpeed, this->bulletMaxSpeed, this->getDamage(), false, this->bulletAcceleration)
 		);
 	}
 }
