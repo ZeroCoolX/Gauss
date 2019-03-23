@@ -30,7 +30,7 @@ public:
 
 		// STATS
 		this->damageRange = Vector2i((rand() % 2 + 1)*playerLvlScaleFactor, (rand() % 1 + 1)*playerLvlScaleFactor);
-		this->hpMax = (rand() % 3 + 1) * playerLvlScaleFactor;
+		this->hpMax = (rand() % 3 + 2) * playerLvlScaleFactor;
 		this->hp = this->hpMax;
 
 		// ATTACK

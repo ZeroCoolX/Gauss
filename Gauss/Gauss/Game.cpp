@@ -329,14 +329,14 @@ void Game::Update(const float &dt) {
 								// Change to drop consumable
 								int dropChance = rand() % 100 + 1;
 
-								if (dropChance > 50) { // 25% chance health is dropped
+								if (dropChance > 75) { // 25% chance health is dropped
 									this->consumables.Add(new ItemPickup(
 										this->pickupTextures,
 										currentEnemy->getPosition(),
 										GameEnums::ITEM_HEALTH, // health item for now
 										150.f));
 								}
-								else if (dropChance < 50) { // 10% chance for an upgrade
+								else if (dropChance > 90) { // 10% chance for an upgrade
 									this->consumables.Add(new ItemUpgrade(
 										this->upgradeTextures,
 										currentEnemy->getPosition(),
@@ -352,6 +352,10 @@ void Game::Update(const float &dt) {
 							if (!this->players[i].getPiercingShot()) {
 								// Should add effect to indicate it is piercing shots
 								this->players[i].RemoveBullet(j);
+							}
+							else {
+								// Move to the end of the sprite it hit so that there is only a single point of damage calculation
+								this->players[i].BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, this->players[i].BulletAt(j).getPosition().y));
 							}
 							break;
 						}
