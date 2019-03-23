@@ -42,7 +42,6 @@ public:
 	}
 	virtual ~EnemyLifeform();
 
-	inline Sprite& getSprite() { return this->sprite; }
 	inline const int getHp() const { return hp; }
 	inline const int getHpMax() const { return this->hpMax; }
 	inline const int getDamage() const { return rand() % this->damageRange.y + this->damageRange.x; }

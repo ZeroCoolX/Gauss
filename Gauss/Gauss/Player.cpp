@@ -258,7 +258,6 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	}
 
 	this->Movement(dt, windowBounds);
-	//?this->ChangeAccessories();
 	this->UpdateAccessories(dt);
 	this->Combat(dt);
 	this->UpdateStatsUI();
@@ -493,60 +492,23 @@ void Player::_recalculatePlayerCenter() {
 }
 
 void Player::_fireLaser(const Vector2f direction) {
-	// Create Laser
-	switch (this->mainGunLevel) {
-		case GameEnums::DEFAULT_LASER:
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			break;
-		case GameEnums::LEVEL_2_LASER:
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y - 15.f),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2), this->playerCenter.y + 15.f),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			break;
-		case GameEnums::LEVEL_3_LASER:
-			std::cout << "Firing 3 bullets " << std::endl;
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y - 30.f),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + 50.f, this->playerCenter.y),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			this->bullets.Add(
-				Bullet(laserProjectileTexture,
-					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 30.f),
-					direction,
-					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
-			);
-			break;
+	float yOffset = this->mainGunLevel == GameEnums::DEFAULT_LASER ? 0.f : this->mainGunLevel > GameEnums::LEVEL_2_LASER ? 30.f : 15.f;
+	std::cout << "yOffset = " << yOffset << std::endl;
+	for (size_t i = 0; i <= this->mainGunLevel; i++)
+	{
+		this->bullets.Add(
+			Bullet(laserProjectileTexture,
+				laserBulletScale,
+				Vector2f(
+					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + (i == 0 && yOffset == 30.f ? 50.f : -20), 
+					this->playerCenter.y + (yOffset == 15 ? yOffset : i > 0 ? yOffset : 0.f)),
+				direction,
+				this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f)
+		);
+		yOffset *= -1;
 	}
 	// Animate gun
-	this->mainGunSprite.move(-mainGunKickback, 0.f); // Should arguably be .setPosition() instead of move...
+	this->mainGunSprite.move(-mainGunKickback, 0.f);
 }
 
 void Player::_fireMissileLight(const Vector2f direction) {

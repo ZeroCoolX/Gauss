@@ -33,9 +33,9 @@ public:
 
 		// Init origin and position
 		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2,
-			this->sprite.getGlobalBounds().height / 2);
+			(this->sprite.getGlobalBounds().height / 2) + 20); // 20 is a compensation...I swear these sprites used to line up perfectly...After refactoring it seems 10 pixels have changed. Idk how....
 		this->sprite.setPosition(position);
-		this->sprite.setRotation(atan2(this->direction.y, this->direction.x) * 180.f / 3.14159265359f);
+		this->sprite.setRotation(atan2(this->direction.y, this->direction.x) * 180.f / MathUtil::PI);
 	}
 	virtual ~Bullet();
 

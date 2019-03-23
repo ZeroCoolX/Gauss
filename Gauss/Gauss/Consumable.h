@@ -31,7 +31,6 @@ public:
 
 	inline const int& getType() const { return this->type; }
 	inline bool canDelete() { return this->lifetimeTimer >= this->lifetimeTimerMax; }
-	inline Sprite& getSprite() { return this->sprite; }
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
 
 	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
