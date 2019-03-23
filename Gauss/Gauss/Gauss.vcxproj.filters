@@ -75,12 +75,6 @@
     <ClCompile Include="TrackerEnemy.cpp">
       <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Upgrade.cpp">
-      <Filter>Source Files\GameObjects\Consumables</Filter>
-    </ClCompile>
-    <ClCompile Include="Pickup.cpp">
-      <Filter>Source Files\GameObjects\Consumables</Filter>
-    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Source Files\GameObjects\Projectiles</Filter>
     </ClCompile>
@@ -89,6 +83,15 @@
     </ClCompile>
     <ClCompile Include="TextTag.cpp">
       <Filter>Source Files\UIElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemPickup.cpp">
+      <Filter>Source Files\GameObjects\Consumables</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemUpgrade.cpp">
+      <Filter>Source Files\GameObjects\Consumables</Filter>
+    </ClCompile>
+    <ClCompile Include="Consumable.cpp">
+      <Filter>Source Files\GameObjects\Consumables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,12 +122,6 @@
     <ClInclude Include="TrackerEnemy.h">
       <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Upgrade.h">
-      <Filter>Header Files\GameObjects\Consumables</Filter>
-    </ClInclude>
-    <ClInclude Include="Pickup.h">
-      <Filter>Header Files\GameObjects\Consumables</Filter>
-    </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Header Files\GameObjects\Projectiles</Filter>
     </ClInclude>
@@ -136,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="TextTag.h">
       <Filter>Header Files\UIElements</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemPickup.h">
+      <Filter>Header Files\GameObjects\Consumables</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemUpgrade.h">
+      <Filter>Header Files\GameObjects\Consumables</Filter>
+    </ClInclude>
+    <ClInclude Include="Consumable.h">
+      <Filter>Header Files\GameObjects\Consumables</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,8 @@
 #include "MoveLeftEnemy.h"
 #include "TrackerEnemy.h"
 #include "MoveLeftShootEnemy.h"
+#include "ItemPickup.h"
+#include "ItemUpgrade.h"
 
 class Game
 {
@@ -19,16 +21,16 @@ private:
 	Clock scoreTimer;
 	int scoreTime;
 	unsigned totalScore;
-		// Increasingly massive multiplier for killing enemies without ever taking damage
-		// Effects the score AFTER the killbox multiplier has been applied
-		// It resets on any damage taken
+	// Increasingly massive multiplier for killing enemies without ever taking damage
+	// Effects the score AFTER the killbox multiplier has been applied
+	// It resets on any damage taken
 	unsigned killPerfectionMultiplier;
 	int killPerfectionAdder;
 	int killPerfectionAdderMax;
-		// Slight multiplier added to each kill for continuously killing enemies 
-		// Multiplier increases as long as you kill within the alotted time
-			// Each multiplier increase you get longer to kill enemies, but you need more and they are more difficult to kill
-		// Everytime the timer runs out the it resets
+	// Slight multiplier added to each kill for continuously killing enemies 
+	// Multiplier increases as long as you kill within the alotted time
+		// Each multiplier increase you get longer to kill enemies, but you need more and they are more difficult to kill
+	// Everytime the timer runs out the it resets
 	unsigned killboxMultiplier;
 	float killboxTimer;
 	float killboxTimerMax;
@@ -56,12 +58,9 @@ private:
 	dArr<EnemyLifeform*> enemyLifeforms;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
-	
-	// Pickups
-	dArr<Pickup> pickups;
 
-	// Upgrades
-	dArr<Upgrade> upgrades;
+	// Consumables
+	dArr<Consumable*> consumables;
 
 	// Textures
 	std::vector<Texture> textureMap;
@@ -81,7 +80,7 @@ private:
 public:
 	Game(RenderWindow *window);
 	virtual ~Game();
-	
+
 	// Accessors
 	inline RenderWindow& getWindow() { return *this->window; }
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }

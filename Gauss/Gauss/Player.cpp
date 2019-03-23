@@ -348,7 +348,7 @@ void Player::Reset() {
 
 	// Reset weapons
 	this->currentWeapon = GameEnums::G_LASER;
-	this->SetGunLevel(GameEnums::DEFAULT_LASER);
+	this->SetGunLevel(GameEnums::MGT_MAIN_GUN03);
 	this->bullets.Clear();
 
 	// Reset Timers
@@ -521,6 +521,7 @@ void Player::_fireLaser(const Vector2f direction) {
 			);
 			break;
 		case GameEnums::LEVEL_3_LASER:
+			std::cout << "Firing 3 bullets " << std::endl;
 			this->bullets.Add(
 				Bullet(laserProjectileTexture,
 					laserBulletScale,
@@ -538,7 +539,7 @@ void Player::_fireLaser(const Vector2f direction) {
 			this->bullets.Add(
 				Bullet(laserProjectileTexture,
 					laserBulletScale,
-					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 3.f),
+					Vector2f(this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) - 20.f, this->playerCenter.y + 30.f),
 					direction,
 					this->bulletMaxSpeed, this->bulletMaxSpeed, 0.f) // No acceleration - only constant velocity
 			);

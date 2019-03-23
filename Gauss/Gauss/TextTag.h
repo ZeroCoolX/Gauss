@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Pickup.h"
+#include "GameObject.h"
 
 class TextTag
 {
@@ -17,7 +17,7 @@ private:
 	float timerMax;
 
 public:
-	TextTag(Font *font, std::string text, const Color color, Vector2f position, Vector2f direction, unsigned int characterSize, float timerMax, bool accelerate = false);
+	TextTag(Font *font, Vector2f position, std::string text = "", const Color color = Color::White, Vector2f direction = Vector2f(0.f, 1.f), unsigned int characterSize = 20, float timerMax = 40.f, bool accelerate = false);
 	virtual ~TextTag();
 
 	// Accessors
@@ -25,5 +25,6 @@ public:
 
 	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
+	void SetTextProperties(std::string text, const Color color, Vector2f direction, unsigned int characterSize, float timerMax, bool accelerate = false);
 };
 

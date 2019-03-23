@@ -1,7 +1,7 @@
 #include "TextTag.h"
 
 
-TextTag::TextTag(Font *font, std::string text, const Color color, Vector2f position, Vector2f direction, unsigned int characterSize, float timerMax, bool accelerate)
+TextTag::TextTag(Font *font, Vector2f position, std::string text, const Color color, Vector2f direction, unsigned int characterSize, float timerMax, bool accelerate)
 {
 	this->text.setFont(*font);
 	this->text.setCharacterSize(characterSize);
@@ -39,4 +39,23 @@ void TextTag::Update(const float &dt) {
 }
 void TextTag::Draw(RenderTarget &renderTarget) {
 	renderTarget.draw(this->text);
+}
+
+void TextTag::SetTextProperties(
+	std::string text,
+	const Color color,
+	Vector2f direction,
+	unsigned int characterSize,
+	float timerMax,
+	bool accelerate)
+{
+	this->text.setCharacterSize(characterSize);
+	this->text.setString(text);
+	this->text.setFillColor(color);
+
+	this->speed = 2.f;
+	this->direction = direction;
+	this->timerMax = timerMax;
+	this->timer = this->timerMax;
+	this->accelerate = accelerate;
 }

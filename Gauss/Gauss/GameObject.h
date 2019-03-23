@@ -9,7 +9,8 @@
 #include <fstream>
 #include "DeltaTime.h"
 #include "dArr.h"
-#include "TextTag.h"
+#include "Enums.h"
+#include "MathUtil.h"
 
 using namespace sf;
 
@@ -25,7 +26,7 @@ public:
 		this->sprite.setTexture(*this->texture);
 		this->sprite.setScale(spriteScale);
 	}
-	virtual ~GameObject(){}
+	virtual ~GameObject() {}
 
 	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 
