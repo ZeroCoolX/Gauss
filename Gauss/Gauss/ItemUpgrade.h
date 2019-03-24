@@ -9,21 +9,25 @@ class ItemUpgrade : public Consumable
 private:
 	std::string text;
 
+	bool _shouldAddUpgrade();
 	void _initText() {
 		switch (this->type) {
-		case GameEnums::UT_DOUBLE_RAY:
+		case GameEnums::UPGRADE_STATPOINT:
+			this->text = "RANDOM STAT POINT UPGRADE";
+			break;
+		case GameEnums::UPGRADE_DOUBLE_RAY:
 			this->text = "DOUBLE RAY UPGRADE";
 			break;
-		case GameEnums::UT_TRIPLE_RAY:
+		case GameEnums::UPGRADE_TRIPLE_RAY:
 			this->text = "TRIPLE RAY UPGRADE";
 			break;
-		case GameEnums::UT_PIERCING_SHOT:
+		case GameEnums::UPGRADE_PIERCING_SHOT:
 			this->text = "PIERCING SHOT UPGRADE";
 			break;
-		case GameEnums::UT_SHEILD:
+		case GameEnums::UPGRADE_SHEILD:
 			this->text = "SHEILD UPGRADE";
 			break;
-		case GameEnums::UT_HEALTH_TANK:
+		case GameEnums::UPGRADE_HEALTH_TANK:
 			this->text = "PERMANANT HEALTH UPGRADE";
 			break;
 		}

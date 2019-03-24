@@ -21,8 +21,27 @@ Game::Game(RenderWindow *window)
 	this->killboxAdderMax = 10;
 
 	// Init player
-	this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-	//this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures, Keyboard::I, Keyboard::K, Keyboard::J, Keyboard::L, Keyboard::RShift, Keyboard::U));
+	this->players.Add(Player(
+		this->textureMap, 
+		this->playerMainGunTextures, 
+		this->lWingTextures, 
+		this->rWingTextures, 
+		this->auraTextures, 
+		this->cockpitTextures));
+
+	/*this->players.Add(Player(
+		this->textureMap, 
+		this->playerMainGunTextures, 
+		this->lWingTextures, 
+		this->rWingTextures, 
+		this->auraTextures, 
+		this->cockpitTextures,
+		Keyboard::I, 
+		Keyboard::K,
+		Keyboard::J, 
+		Keyboard::L, 
+		Keyboard::RShift, 
+		Keyboard::U));*/
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -44,6 +63,7 @@ Game::Game(RenderWindow *window)
 	this->bossEncounterActivated = false;
 
 	this->InitUI();
+	//this->InitMap();
 }
 
 Game::~Game()
@@ -103,8 +123,13 @@ void Game::InitTextures() {
 	this->pickupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
 	this->pickupTextures.Add(Texture(temp));
+	this->numberOfPickups = this->pickupTextures.Size();
 
 	// Init Upgrade textures
+	temp.loadFromFile("Textures/Upgrades/statpoint.png");
+	this->upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/healthtank.png");
+	this->upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/doubleray.png");
 	this->upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/tripleray.png");
@@ -113,9 +138,7 @@ void Game::InitTextures() {
 	this->upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	this->upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/healthtank.png");
-	this->upgradeTextures.Add(Texture(temp));
-
+	this->numberOfUpgrades = this->upgradeTextures.Size();
 
 	// Init Accessories
 	std::string accessoriesBaseDir = "Textures/Accessories/";
@@ -196,25 +219,151 @@ void Game::InitUI() {
 	this->scoreText.setPosition(10.f, 10.f); // top left magic numbers for now
 }
 
+void Game::InitMap() {
+	RectangleShape temp;
+	temp.setSize(Vector2f(100.f, 100.f));
+	temp.setFillColor(Color::White);
+	temp.setPosition(500.f, 500.f);
+
+	this->walls.Add(RectangleShape(temp));
+}
+
 void Game::Update(const float &dt) {
 
 	// Keytime update
+	this->UpdateTimers(dt);
+
+	// Fullscreen check
+	this->ToggleFullscreen();
+
+	// Pause check
+	this->PauseGame();
+
+	// Only allow changing accessories while paused
+	this->UpdateWhilePaused(dt);
+
+	// Update the world
+	if (!this->paused && this->playersExistInWorld()) {
+		// Update timers
+		this->UpdateTimersUnpaused(dt);
+
+		//MAKE GAME HARDER WITH TIME
+		this->UpdateDifficulty();
+
+		// Update score multipliers
+		this->UpdateMultipliers();
+
+		// UPDATE PLAYERS
+		this->UpdatePlayers(dt);
+
+		// UPDATE ENEMIES
+		this->UpdateEnemies(dt);
+
+		// UPDATE CONSUMABLES
+		this->UpdateConsumables(dt);
+
+		// Update Texttags
+		this->UpdateTextTags(dt);
+	}
+	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
+		// Show end game stats
+		this->DisplayGameEnd();
+	}
+
+	// Restart
+	if (!this->playersExistInWorld()) {
+		this->RestartUpdate();
+	}
+}
+
+void Game::RestartUpdate() {
+	if (Keyboard::isKeyPressed(Keyboard::F1)) {
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].Reset();
+		}
+
+		// Reset score and multipliers
+		this->totalScore = 0;
+		this->scoreTime = 0;
+		this->killPerfectionMultiplier = 1;
+		this->killPerfectionAdder = 0;
+		this->killPerfectionAdderMax = 15;
+		this->killboxMultiplier = 1;
+		this->killboxTimerMax = 400.f;
+		this->killboxTimer = this->killboxTimerMax;
+		this->killboxAdder = 0;
+		this->killboxAdderMax = 10;
+
+		// Reset difficulty
+		this->difficulty = 0;
+		this->enemySpawnTimerMax = 35.f; // Also in constructor
+		this->enemyLifeforms.Clear();
+		this->consumables.Clear();
+
+		// Init boss encounter
+		this->bossEncounterActivated = false;
+		this->bosses.Clear();
+
+		// Reset player
+		Player::playerId = 0;
+		this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
+		this->InitUI();
+		this->InitMap();
+	}
+}
+
+void Game::UpdateTimers(const float &dt) {
 	if (this->keyTime < this->keyTimeMax) {
 		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
 	}
+}
 
-	// Fullscreen check
-	if (Keyboard::isKeyPressed(Keyboard::F11) && this->keyTime >= this->keyTimeMax) {
+void Game::UpdateTimersUnpaused(const float &dt) {
+	// Update timers
+	if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * DeltaTime::dtMultiplier; } // 1.f is not needed here
 
+	this->difficultyTimer += 1.f * dt * DeltaTime::dtMultiplier;
+
+	// TODO: deleted code that is now in UpdateDifficulty
+
+	// Update Killbox timer
+	if (this->killboxTimer > 0.f) {
+		this->killboxTimer -= 1.f * dt * DeltaTime::dtMultiplier;
 	}
-
-	// Pause check
-	if (Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
-		this->paused = !this->paused;
-		this->keyTime = 0.f;
+	else {
+		this->killboxTimer = 0.f;
+		this->killboxAdder = 0;
+		this->killboxMultiplier = 1;
 	}
+}
 
-	// Only allow changing accessories while paused
+void Game::UpdateDifficulty() {
+	// Make the game harder with time by decreasing the wait between enemy spawns over time
+	if ((int)this->difficultyTimer % 1000 == 0 && this->enemySpawnTimerMax > 10) {
+		this->enemySpawnTimerMax--;
+		this->difficulty++;
+		this->difficultyTimer = 1.f;
+	}
+}
+
+void Game::UpdateMultipliers() {
+	// Increase the killbox multiplier by 1 everytime the max is reached and raise the max by half the current. Reset the adder
+	if (this->killboxAdder >= this->killboxAdderMax) {
+		this->killboxMultiplier++;
+		this->killboxAdder = 0;
+		this->killboxAdderMax = (int)std::floor(this->killboxAdderMax * 1.5);
+		this->killboxTimer = this->killboxTimerMax;
+	}
+	// Increase the perfection multiplier by factor of 2 everytime the max is reached and reset the adder
+	if (this->killPerfectionAdder >= this->killPerfectionAdderMax) {
+		this->killPerfectionMultiplier *= 2;
+		this->killPerfectionAdder = 0;
+		this->killPerfectionAdderMax = (int)std::floor(this->killPerfectionAdderMax * 1.25);
+	}
+}
+
+void Game::UpdateWhilePaused(const float &dt) {
 	if (this->paused) {
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
@@ -225,39 +374,10 @@ void Game::Update(const float &dt) {
 			}
 		}
 	}
+}
 
-	// Update the world
-	if (!this->paused && this->playersExistInWorld()) {
-		// Update timers
-		if (this->enemySpawnTimer < this->enemySpawnTimerMax) { this->enemySpawnTimer += 1.f * dt * DeltaTime::dtMultiplier; } // 1.f is not needed here
-
-		if (this->enemySpawnTimerMax > 10) {
-			this->difficultyTimer += 1.f * dt * DeltaTime::dtMultiplier;
-		}
-
-		// Make the game harder with time by decreasing the wait between enemy spawns over time
-		if ((int)this->difficultyTimer % 1000 == 0 && this->enemySpawnTimerMax > 10) {
-			this->enemySpawnTimerMax--;
-			this->difficulty++;
-			this->difficultyTimer = 1.f;
-		}
-
-		// Update Killbox timer
-		if (this->killboxTimer > 0.f) {
-			this->killboxTimer -= 1.f * dt * DeltaTime::dtMultiplier;
-		}
-		else {
-			this->killboxTimer = 0.f;
-			this->killboxAdder = 0;
-			this->killboxMultiplier = 1;
-		}
-
-		// Spawn enemies
-		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-			this->_spawnEnemy();
-			this->enemySpawnTimer = 0;
-		}
-
+void Game::UpdatePlayers(const float &dt) {
+	if (this->playersExistInWorld()) {
 		// Reset the total each calculation
 		this->totalScore = 0;
 
@@ -266,298 +386,276 @@ void Game::Update(const float &dt) {
 			// Players update
 			this->players[i].Update(this->window->getSize(), dt);
 
+			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
+			this->UpdateWalls(dt, i);
+
 			// Bullets update
-			for (size_t j = 0; j < this->players[i].getBulletsSize(); j++)
-			{
-				this->players[i].BulletAt(j).Update(dt);
-
-				// Bullet Window bounds check
-				if (this->players[i].BulletAt(j).getPosition().x > this->window->getSize().x) {
-					this->players[i].RemoveBullet(j);
-				}
-				else {
-					// Enemy - Bullet Collision check since it still exists in the world
-					for (size_t k = 0; k < this->enemyLifeforms.Size(); k++)
-					{
-						EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
-						if (this->players[i].BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
-
-							// Health check for damage or destruction
-							int damage = this->players[i].BulletAt(j).getDamage();
-
-							this->textTags.Add(
-								TextTag(
-									&this->font,
-									Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width / 4,
-										currentEnemy->getPosition().y - currentEnemy->getGlobalBounds().height / 2),
-									"-" + std::to_string(damage), Color::Red,
-									Vector2f(1.f, 0.f),
-									24, 18.f, true
-								)
-							);
-
-							currentEnemy->TakeDamage(damage);
-
-							if (currentEnemy->getHp() <= 0) {
-
-								// Gain score & Reset multiplier timer
-								this->killboxTimer = this->killboxTimerMax;
-								this->killboxAdder++;
-								this->killPerfectionAdder++;
-
-								// Total Score = (EnemyMaxHp + (EnemyMaxHp * KillboxMultiplier)) * PerfectionMultiplier 
-								int score = (currentEnemy->getHpMax() + (currentEnemy->getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
-								this->players[i].gainScore(score);
-
-								// Score text tag
-								this->textTags.Add(
-									TextTag(
-										&this->font, Vector2f(100.f, 10.f), "+" + std::to_string(score), Color::White,
-										Vector2f(1.f, 0.f),
-										30, 40.f, true
-									)
-								);
-
-								// Player earned some EXP!
-								int exp = currentEnemy->getHpMax()
-									+ (rand() % currentEnemy->getHpMax() + 1) * (this->killboxMultiplier + 1);
-
-								// Player leveled up!
-								if (this->players[i].gainExp(exp)) {
-									this->textTags.Add(
-										TextTag(
-											&this->font, Vector2f(this->players[i].getPosition().x + this->players[i].getGlobalBounds().width / 4,
-												this->players[i].getPosition().y + this->players[i].getGlobalBounds().height), "LEVEL UP!",
-											Color::Cyan,
-											Vector2f(0.f, 1.f),
-											36, 40.f, true
-										)
-									);
-								}
-								else {
-									this->textTags.Add(
-										TextTag(
-											&this->font, Vector2f(this->players[i].getPosition().x + this->players[i].getGlobalBounds().width / 4,
-												this->players[i].getPosition().y + this->players[i].getGlobalBounds().height),
-											"+" + std::to_string(exp) + " EXP", Color::Cyan,
-											Vector2f(0.f, 1.f),
-											24, 40.f, true
-										)
-									);
-
-								}
-
-								// Change to drop consumable
-								int dropChance = rand() % 100 + 1;
-
-								if (dropChance > 90) { // 10% chance for an upgrade
-									this->consumables.Add(new ItemUpgrade(
-										this->upgradeTextures,
-										currentEnemy->getPosition(),
-										rand() % 5,
-										300.f));
-								}
-								else if (dropChance > 75) { // 25% chance health is dropped
-									this->consumables.Add(new ItemPickup(
-										this->pickupTextures,
-										currentEnemy->getPosition(),
-										GameEnums::ITEM_HEALTH, // health item for now
-										150.f));
-								}
-
-								// Destroy the enemy
-								this->enemyLifeforms.Remove(k);
-							}
-
-							// Destroy the bullet if not piercing shot
-							if (!this->players[i].getPiercingShot() && !this->players[i].BulletAt(j).gaussShot()) {
-								// Should add effect to indicate it is piercing shots
-								this->players[i].RemoveBullet(j);
-							}
-							else if(!this->players[i].BulletAt(j).gaussShot()){
-								// Move to the end of the sprite it hit so that there is only a single point of damage calculation
-								this->players[i].BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, this->players[i].BulletAt(j).getPosition().y));
-							}
-							break;
-						}
-					}
-				}
-			}
+			this->UpdatePlayerBullets(dt, this->players[i]);
 
 			this->totalScore += this->players[i].getScore();
 		}
 
-		// Update Score text
-		this->scoreText.setString(
-			"Score: " + std::to_string(this->totalScore)
-			+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
-			+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
-			+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
-			+ "\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
-			+ "\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
-			+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds())
-			+ "\nDifficulty: " + std::to_string(this->difficulty)
-			+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
+		this->UpdateScoreUI();
+	}
+}
 
-		// Update score multipliers
-		// Increase the killbox multiplier by 1 everytime the max is reached and raise the max by half the current. Reset the adder
-		if (this->killboxAdder >= this->killboxAdderMax) {
-			this->killboxMultiplier++;
-			this->killboxAdder = 0;
-			this->killboxAdderMax = (int)std::floor(this->killboxAdderMax * 1.5);
-			this->killboxTimer = this->killboxTimerMax;
+void Game::UpdateWalls(const float &dt, int playerIndex) {
+	for (size_t i = 0; i < this->walls.Size(); i++)
+	{
+		if (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
+			while (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
+				this->players[playerIndex].move(
+					20.f * -1.f * this->players[playerIndex].getNormDir().x,
+					20.f * -1.f * this->players[playerIndex].getNormDir().y
+				);
+			}
+
+			this->players[playerIndex].resetVelocity();
 		}
-		// Increase the perfection multiplier by factor of 2 everytime the max is reached and reset the adder
-		if (this->killPerfectionAdder >= this->killPerfectionAdderMax) {
-			this->killPerfectionMultiplier *= 2;
-			this->killPerfectionAdder = 0;
-			this->killPerfectionAdderMax = (int)std::floor(this->killPerfectionAdderMax * 1.25);
+	}
+}
+
+void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
+	for (size_t j = 0; j < currentPlayer.getBulletsSize(); j++)
+	{
+		currentPlayer.BulletAt(j).Update(dt);
+
+		// Bullet Window bounds check
+		if (currentPlayer.BulletAt(j).getPosition().x > this->window->getSize().x) {
+			currentPlayer.RemoveBullet(j);
 		}
+		else {
+			// Enemy - Bullet Collision check since it still exists in the world
+			for (size_t k = 0; k < this->enemyLifeforms.Size(); k++)
+			{
+				EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
+				if (currentPlayer.BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 
-		// Update Enemy Movement
-		for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
-		{
-			EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
+					// Health check for damage or destruction
+					int damage = currentPlayer.BulletAt(j).getDamage();
 
-			// Safety check in case there are no more players in the world
-			if (!this->playersExistInWorld()) {
-				return;
-			}
-			else {
-				// Check if we need to update the player this enemy is following incase they died
-				if (currentEnemy->getPlayerFollowNum() > (int)this->players.Size() - 1) {
-					currentEnemy->updatePlayerFollowNum(rand() % this->players.Size());
-				}
-				currentEnemy->Update(dt, this->players[currentEnemy->getPlayerFollowNum()].getPosition());
-			}
+					this->textTags.Add(
+						TextTag(
+							&this->font,
+							Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width / 4,
+								currentEnemy->getPosition().y - currentEnemy->getGlobalBounds().height / 2),
+							"-" + std::to_string(damage), Color::Red,
+							Vector2f(1.f, 0.f),
+							24, 18.f, true
+						)
+					);
 
-			// Enemy Window Bounds check
-			if (currentEnemy->getPosition().x < 0 - currentEnemy->getGlobalBounds().width) {
-				this->enemyLifeforms.Remove(i);
-			}
-			else {
-				// Check Player - Enemy collision
-				for (size_t j = 0; j < this->players.Size(); j++)
-				{
-					if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds())
-						&& !this->players[j].isDamageCooldown()) {
+					currentEnemy->TakeDamage(damage);
 
-						// Damage player		
-						int damage = currentEnemy->getDamage();
-						this->players[j].TakeDamage(damage);
-						// Collision resets the perfection streak
-						this->killPerfectionAdder = 0;
-						this->killPerfectionMultiplier = 1;
+					if (currentEnemy->getHp() <= 0) {
 
-						currentEnemy->Collision();
+						// Gain score & Reset multiplier timer
+						this->killboxTimer = this->killboxTimerMax;
+						this->killboxAdder++;
+						this->killPerfectionAdder++;
 
-						// Player collision damage
+						// Total Score = (EnemyMaxHp + (EnemyMaxHp * KillboxMultiplier)) * PerfectionMultiplier 
+						int score = (currentEnemy->getHpMax() + (currentEnemy->getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
+						currentPlayer.gainScore(score);
+
+						// Score text tag
 						this->textTags.Add(
 							TextTag(
-								&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
-									this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
-								"-" + std::to_string(damage), Color::Red,
-								Vector2f(-1.f, 0.f),
-								28, 30.f, true
+								&this->font, Vector2f(100.f, 10.f), "+" + std::to_string(score), Color::White,
+								Vector2f(1.f, 0.f),
+								30, 40.f, true
 							)
 						);
 
-						// Check for player death
-						if (players[j].isDead()) {
-							this->players.Remove(j);
-							return;
+						// Player earned some EXP!
+						int exp = currentEnemy->getHpMax()
+							+ (rand() % currentEnemy->getHpMax() + 1) * (this->killboxMultiplier + 1);
+
+						// Player leveled up!
+						if (currentPlayer.gainExp(exp)) {
+							this->textTags.Add(
+								TextTag(
+									&this->font, Vector2f(currentPlayer.getPosition().x + currentPlayer.getGlobalBounds().width / 4,
+										currentPlayer.getPosition().y + currentPlayer.getGlobalBounds().height), "LEVEL UP!",
+									Color::Cyan,
+									Vector2f(0.f, 1.f),
+									36, 40.f, true
+								)
+							);
 						}
-						break;
+						else {
+							this->textTags.Add(
+								TextTag(
+									&this->font, Vector2f(currentPlayer.getPosition().x + currentPlayer.getGlobalBounds().width / 4,
+										currentPlayer.getPosition().y + currentPlayer.getGlobalBounds().height),
+									"+" + std::to_string(exp) + " EXP", Color::Cyan,
+									Vector2f(0.f, 1.f),
+									24, 40.f, true
+								)
+							);
+
+						}
+
+						// Change to drop consumable
+						int dropChance = rand() % 100 + 1;
+						int uType = 0;
+
+						if (dropChance > 90) { // 10% chance for an upgrade
+
+							// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
+							uType = rand() % this->numberOfUpgrades;
+							for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
+							{
+								if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
+									uType = rand() % 1;
+								}
+							}
+
+							this->consumables.Add(new ItemUpgrade(
+								this->upgradeTextures,
+								currentEnemy->getPosition(),
+								uType,
+								300.f));
+						}
+						else if (dropChance > 75) { // 25% chance health is dropped
+							this->consumables.Add(new ItemPickup(
+								this->pickupTextures,
+								currentEnemy->getPosition(),
+								GameEnums::ITEM_HEALTH, // health item for now
+								150.f));
+						}
+
+						// Destroy the enemy
+						this->enemyLifeforms.Remove(k);
 					}
-				}
-			}
-		}
 
-		// UPDATE CONSUMABLES
-		for (size_t i = 0; i < this->consumables.Size(); i++)
-		{
-			Consumable *currentItem = this->consumables[i];
-
-			currentItem->Update(dt);
-
-			if (currentItem->canDelete()) {
-				this->consumables.Remove(i);
-				continue;
-			}
-
-			for (size_t j = 0; j < this->players.Size(); j++)
-			{
-				if (currentItem->CollidesWith(this->players[j].getGlobalBounds())) {
-
-					currentItem->Consume(this->textTags, &this->font, &this->players[j]);
-					this->consumables.Remove(i);
-
+					// Destroy the bullet if not piercing shot
+					if (!currentPlayer.getPiercingShot() && !currentPlayer.BulletAt(j).gaussShot()) {
+						// Should add effect to indicate it is piercing shots
+						currentPlayer.RemoveBullet(j);
+					}
+					else if (!currentPlayer.BulletAt(j).gaussShot()) {
+						// Move to the end of the sprite it hit so that there is only a single point of damage calculation
+						currentPlayer.BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, currentPlayer.BulletAt(j).getPosition().y));
+					}
 					break;
 				}
 			}
 		}
+	}
+}
 
-		// Update Texttags
-		for (size_t i = 0; i < this->textTags.Size(); i++)
-		{
-			this->textTags[i].Update(dt);
+void Game::UpdateScoreUI() {
+	this->scoreText.setString(
+		"Score: " + std::to_string(this->totalScore)
+		+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
+		+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
+		+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
+		+ "\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
+		+ "\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
+		+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds())
+		+ "\nDifficulty: " + std::to_string(this->difficulty)
+		+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
+}
 
-			if (this->textTags[i].getTimer() <= 0.f) {
-				this->textTags.Remove(i);
+void Game::UpdateEnemies(const float &dt) {
+	// Spawn enemies
+	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
+		this->_spawnEnemy();
+		this->enemySpawnTimer = 0;
+	}
+
+	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
+	{
+		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
+
+		// Safety check in case there are no more players in the world
+		if (!this->playersExistInWorld()) {
+			return;
+		}
+		else {
+			// Check if we need to update the player this enemy is following incase they died
+			if (currentEnemy->getPlayerFollowNum() > (int)this->players.Size() - 1) {
+				currentEnemy->updatePlayerFollowNum(rand() % this->players.Size());
 			}
+			currentEnemy->Update(dt, this->players[currentEnemy->getPlayerFollowNum()].getPosition());
 		}
-	}
-	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
-		this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
 
-		this->gameOverText.setString("Game Over (X___X)\nScore: " +
-			std::to_string(this->totalScore) +
-			"\nTime: " +
-			std::to_string(this->scoreTime) +
-			"\n Score/Second: " +
-			std::to_string(std::ceil((double)this->totalScore / (double)this->scoreTime)) +
-			"\nF1 to Restart"
-		);
-
-		if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
-			this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
+		// Enemy Window Bounds check
+		if (currentEnemy->getPosition().x < 0 - currentEnemy->getGlobalBounds().width) {
+			this->enemyLifeforms.Remove(i);
 		}
-	}
-
-	// Restart
-	if (!this->playersExistInWorld()) {
-		if (Keyboard::isKeyPressed(Keyboard::F1)) {
-			for (size_t i = 0; i < this->players.Size(); i++)
+		else {
+			// Check Player - Enemy collision
+			for (size_t j = 0; j < this->players.Size(); j++)
 			{
-				this->players[i].Reset();
+				if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds())
+					&& !this->players[j].isDamageCooldown()) {
+
+					// Damage player		
+					int damage = currentEnemy->getDamage();
+					this->players[j].TakeDamage(damage);
+					// Collision resets the perfection streak
+					this->killPerfectionAdder = 0;
+					this->killPerfectionMultiplier = 1;
+
+					currentEnemy->Collision();
+
+					// Player collision damage
+					this->textTags.Add(
+						TextTag(
+							&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+								this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
+							"-" + std::to_string(damage), Color::Red,
+							Vector2f(-1.f, 0.f),
+							28, 30.f, true
+						)
+					);
+
+					// Check for player death
+					if (players[j].isDead()) {
+						this->players.Remove(j);
+						return;
+					}
+					break;
+				}
 			}
+		}
+	}
+}
 
-			// Reset score and multipliers
-			this->totalScore = 0;
-			this->scoreTime = 0;
-			this->killPerfectionMultiplier = 1;
-			this->killPerfectionAdder = 0;
-			this->killPerfectionAdderMax = 15;
-			this->killboxMultiplier = 1;
-			this->killboxTimerMax = 400.f;
-			this->killboxTimer = this->killboxTimerMax;
-			this->killboxAdder = 0;
-			this->killboxAdderMax = 10;
+void Game::UpdateTextTags(const float &dt) {
+	for (size_t i = 0; i < this->textTags.Size(); i++)
+	{
+		this->textTags[i].Update(dt);
 
-			// Reset difficulty
-			this->difficulty = 0;
-			this->enemySpawnTimerMax = 35.f; // Also in constructor
-			this->enemyLifeforms.Clear();
-			this->consumables.Clear();
+		if (this->textTags[i].getTimer() <= 0.f) {
+			this->textTags.Remove(i);
+		}
+	}
+}
 
-			// Init boss encounter
-			this->bossEncounterActivated = false;
-			this->bosses.Clear();
+void Game::UpdateConsumables(const float &dt) {
+	for (size_t i = 0; i < this->consumables.Size(); i++)
+	{
+		Consumable *currentItem = this->consumables[i];
 
-			// Reset player
-			Player::playerId = 0;
-			this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
-			this->InitUI();
+		currentItem->Update(dt);
+
+		if (currentItem->canDelete()) {
+			this->consumables.Remove(i);
+			continue;
+		}
+
+		for (size_t j = 0; j < this->players.Size(); j++)
+		{
+			if (currentItem->CollidesWith(this->players[j].getGlobalBounds())) {
+
+				currentItem->Consume(this->textTags, &this->font, &this->players[j]);
+				this->consumables.Remove(i);
+
+				break;
+			}
 		}
 	}
 }
@@ -582,15 +680,7 @@ void Game::DrawUI() {
 	}
 }
 
-void Game::Draw() {
-	this->window->clear();
-
-	// Draw Players
-	for (size_t i = 0; i < this->players.Size(); ++i) {
-		this->players[i].Draw(*this->window);
-	}
-
-	// Draw Enemy Lifeform
+void Game::DrawEnemyUI() {
 	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
 		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
@@ -602,18 +692,23 @@ void Game::Draw() {
 		// Draw Enemy Lifeform UI
 		this->window->draw(this->enemyText);
 	}
+}
 
-	// Draw enemies
-	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
+void Game::Draw() {
+	this->window->clear();
+
+	// Draw Players
+	for (size_t i = 0; i < this->players.Size(); ++i) {
+		this->players[i].Draw(*this->window);
+	}
+
+	// Draw Enemy Lifeform
+	this->DrawEnemyUI();
+
+	// Draw Walls
+	for (size_t i = 0; i < this->walls.Size(); i++)
 	{
-		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
-		this->enemyText.setPosition(currentEnemy->getPosition().x, currentEnemy->getPosition().y - 10.f);
-		this->enemyText.setString(std::to_string(currentEnemy->getHp()) + "/" + std::to_string(currentEnemy->getHpMax()));
-
-		// Draw Enemy
-		currentEnemy->Draw(*this->window);
-		// Draw Enemy UI
-		this->window->draw(this->enemyText);
+		this->window->draw(this->walls[i]);
 	}
 
 	// Draw Consumables
@@ -626,6 +721,42 @@ void Game::Draw() {
 
 	this->window->display();
 }
+
+void Game::ToggleFullscreen() {
+	if (Keyboard::isKeyPressed(Keyboard::F11) && this->keyTime >= this->keyTimeMax) {
+		this->keyTime = 0.f;
+
+		this->window->close();
+		this->fullscreen = !this->fullscreen;
+		this->window->create(sf::VideoMode(1920, 1080), "Gauss", this->fullscreen ? Style::Fullscreen : Style::Default);
+	}
+}
+
+void Game::PauseGame() {
+	if (Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
+		this->paused = !this->paused;
+		this->keyTime = 0.f;
+	}
+}
+
+void Game::DisplayGameEnd() {
+	this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
+
+	this->gameOverText.setString("Game Over (X___X)\nScore: " +
+		std::to_string(this->totalScore) +
+		"\nTime: " +
+		std::to_string(this->scoreTime) +
+		"\n Score/Second: " +
+		std::to_string(std::ceil((double)this->totalScore / (double)this->scoreTime)) +
+		"\nF1 to Restart"
+	);
+
+	if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
+		this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
+	}
+}
+
+
 
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();

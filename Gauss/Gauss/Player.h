@@ -33,8 +33,8 @@ private:
 
 	// Accessories
 	Sprite mainGunSprite;
-	float mainGunKickback = 30.f;
-	float mainGunReturnSpeed = 2.f;
+	float mainGunKickback = 30.f; // TODO: checkout what 40 looks like
+	float mainGunReturnSpeed = 2.f; // TODO: maybe change to 5 - see what that looks like
 
 	dArr<Bullet> bullets;
 	dArr<Texture> *mainGunTextureMap;
@@ -92,6 +92,7 @@ private:
 
 	int hp;//--//
 	int hpMax;//--//
+	int hpAdded;
 
 	int damage;
 	int damageMax;
@@ -106,6 +107,7 @@ private:
 	float gaussChargeTimerMax;
 
 	// Upgrades
+	dArr<int> upgradesAcquired;
 	int mainGunLevel;
 	bool piercingShot;
 	bool sheild;
@@ -169,9 +171,18 @@ public:
 	inline void enableSheild() { this->sheild = true; }
 	inline void enableDualMissile01() { this->dualMissiles01 = true; }
 	inline void enableDualMissile02() { this->dualMissiles02 = true; }
-	inline void upgradeHP() { this->hpMax += 10; this->hp = this->hpMax; }
+	inline void upgradeHP() { 
+		this->hpAdded += 10; 
+		this->UpdateStats();
+		this->hp = this->hpMax; 
+	}
 	inline bool getPiercingShot() const { return this->piercingShot; }
 	inline const int& getGunLevel() const { return this->mainGunLevel; }
+	inline const void addStatPoint() { this->statPoints++; }
+	inline void resetVelocity() { this->velocity = Vector2f(0.f, 0.f); }
+	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
+	inline const Vector2f& getNormDir() const { return this->normalizedDir; }
+	inline dArr<int>& getAcquiredUpgrades() { return this->upgradesAcquired; }
 
 	// Functions
 	void Reset();
@@ -189,6 +200,8 @@ public:
 	void RemoveBullet(unsigned index);
 	void TakeDamage(int damage);
 	void SetGunLevel(int gunLevel);
+	void UpdateStats();
+	void AddStatPointRandom();
 
 	// Statics
 	static unsigned playerId;

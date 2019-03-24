@@ -52,6 +52,9 @@ private:
 	// Texttags
 	dArr<TextTag> textTags;
 
+	// MAP
+	dArr<RectangleShape> walls;
+
 	// Players
 	dArr<Player> players;
 
@@ -80,7 +83,9 @@ private:
 	dArr<Texture> enemyBulletTextures;
 
 	// Consumable Textures
+	unsigned numberOfPickups;
 	dArr<Texture> pickupTextures;
+	unsigned numberOfUpgrades;
 	dArr<Texture> upgradeTextures;
 
 	// Boss textures
@@ -101,12 +106,32 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
-	void InitUI();
 	void InitTextures();
+	void InitUI();
+	void InitMap();
+
 	void Update(const float &dt);
+	void RestartUpdate();
+	void UpdateTimers(const float &dt);
+	void UpdateTimersUnpaused(const float &dt);
+	void UpdateDifficulty();
+	void UpdateMultipliers();
+	void UpdateWhilePaused(const float &dt);
+	void UpdatePlayers(const float &dt);
+	void UpdateWalls(const float &dt, int playerIndex);
+	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
+	void UpdateScoreUI();
+	void UpdateEnemies(const float &dt);
+	void UpdateTextTags(const float &dt);
+	void UpdateConsumables(const float &dt);
+
 	void DrawUI();
 	void Draw();
+	void DrawEnemyUI();
+
 	void ToggleFullscreen();
+	void PauseGame();
+	void DisplayGameEnd();
 
 };
 

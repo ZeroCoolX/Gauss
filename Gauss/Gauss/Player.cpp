@@ -16,7 +16,7 @@ Player::Player(std::vector<Texture> &textureMap,
 	int RIGHT,
 	int FIRE,
 	int GAUSSCANNON
-) :level(1), exp(0), hp(10), hpMax(10), statPoints(0), cooling(0), maneuverability(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
 	// Formula courtesy of Suraj Sharma and Tibia
@@ -93,6 +93,8 @@ void Player::TakeDamage(int damage) {
 bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
 		this->level++;
+		this->addStatPoint();
+
 		this->exp -= this->expNext;
 		this->expNext = static_cast<int>(
 			(50 / 3)
@@ -100,20 +102,24 @@ bool Player::UpdateLeveling() {
 				* pow(level, 2)) + 17
 				* level - 12)
 			);
+
 		this->cooling++;
 		this->plating++;
 		this->power++;
 		this->maneuverability++;
 
-		this->hpMax = 10 + (this->plating * 5);
-		this->damageMax = 2 + (this->power * 2);
-		this->damage = 1 + power;
-
+		this->UpdateStats();
 		this->hp = this->hpMax;
-		
+
 		return true;
 	}
 	return false;
+}
+
+void Player::UpdateStats() {
+	this->hpMax = this->hpAdded + (this->plating * 5);
+	this->damageMax = 2 + (this->power * 2);
+	this->damage = 1 + power;
 }
 
 bool Player::ChangeAccessories(const float &dt) {
@@ -243,7 +249,7 @@ void Player::UpdateStatsUI() {
 
 	// Stats
 	this->statsText.setPosition(statsPos);
-	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]"
+	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]					" + this->getHpAsString()
 	+ "\n\n\n\n\n\n\n\n\n"
 	+ std::to_string(this->getLevel()));
 
@@ -430,6 +436,26 @@ void Player::Reset() {
 	this->damageTimer = this->damageTimerMax;
 }
 
+void Player::AddStatPointRandom() {
+	int r = rand() % 4;
+	switch (r) {
+	case 0:
+		this->power++;
+		break;
+	case 1:
+		this->maneuverability++;
+		break;
+	case 2:
+		this->cooling++;
+		break;
+	case 3:
+		this->plating++;
+		break;
+	}
+
+	this->UpdateStats();
+}
+
 
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
@@ -589,7 +615,6 @@ void Player::_fireLaser(const Vector2f direction) {
 	this->mainGunSprite.move(-mainGunKickback, 0.f);
 }
 
-// Fires a single round that does 4 times the damage of a normal shot
 void Player::_fireGaussCannon(const Vector2f direction) {
 	this->bullets.Add(
 			Bullet(gaussCannonProjectileTexture,
@@ -597,7 +622,7 @@ void Player::_fireGaussCannon(const Vector2f direction) {
 				Vector2f(
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2),this->playerCenter.y),
 				direction,
-				this->bulletMaxSpeed * 1.5f, this->bulletMaxSpeed * 1.5f, this->getDamage() * 10, true, 0.f)
+				this->bulletMaxSpeed, this->bulletMaxSpeed, this->getDamage() * 10, true, 0.f)
 		);
 	// Animate gun
 	this->mainGunSprite.move(-mainGunKickback, 0.f);
