@@ -40,6 +40,9 @@ Game::Game(RenderWindow *window)
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
 
+	// Init boss encounter
+	this->bossEncounterActivated = false;
+
 	this->InitUI();
 }
 
@@ -48,7 +51,7 @@ Game::~Game()
 }
 
 void Game::InitTextures() {
-	// Init textures
+	// Init player textures
 	this->textureMap.push_back(Texture());
 	this->textureMap[GameEnums::T_SHIP].loadFromFile("Textures/ship.png");
 	this->textureMap.push_back(Texture());
@@ -70,6 +73,20 @@ void Game::InitTextures() {
 	// Load Enemy Bullet Textures
 	temp.loadFromFile("Textures/Guns/roundBulletRed.png");
 	this->enemyBulletTextures.Add(Texture(temp));
+
+	// Boss textures
+	// Body
+	temp.loadFromFile("Textures/Bosses/Body/boss01.png");
+	this->bossBodyTextures.Add(Texture(temp));
+	// Gun
+	temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
+	this->bossGunTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
+	this->bossGunTextures.Add(Texture(temp));
+	// Bullets
+	temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
+	this->bossBodyTextures.Add(Texture(temp));
+
 
 	// Init player Main gun textures
 	temp.loadFromFile("Textures/Guns/gun01.png");
@@ -202,8 +219,9 @@ void Game::Update(const float &dt) {
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
 			if (!this->players[i].isDead() && this->keyTime >= this->keyTimeMax) {
-				this->players[i].ChangeAccessories(dt);
-				this->keyTime = 0.f;
+				if (this->players[i].ChangeAccessories(dt)) {
+					this->keyTime = 0.f;
+				}
 			}
 		}
 	}
@@ -531,6 +549,10 @@ void Game::Update(const float &dt) {
 			this->enemySpawnTimerMax = 35.f; // Also in constructor
 			this->enemyLifeforms.Clear();
 			this->consumables.Clear();
+
+			// Init boss encounter
+			this->bossEncounterActivated = false;
+			this->bosses.Clear();
 
 			// Reset player
 			Player::playerId = 0;

@@ -176,7 +176,7 @@ public:
 	// Functions
 	void Reset();
 	bool UpdateLeveling();
-	void ChangeAccessories(const float &dt);
+	bool ChangeAccessories(const float &dt);
 	void UpdateAccessories(const float &dt);
 	void Combat(const float &dt);
 	void Movement(const float &dt, Vector2u windowBounds);

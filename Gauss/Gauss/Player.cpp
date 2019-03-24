@@ -116,20 +116,25 @@ bool Player::UpdateLeveling() {
 	return false;
 }
 
-void Player::ChangeAccessories(const float &dt) {
+bool Player::ChangeAccessories(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Num1)) {
 		lWingSelect = ++lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
 		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
+		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Num2)) {
 		rWingSelect = ++rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
 		this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
+		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Num3)) {
 		auraSelect = ++auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
 		this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
+		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Num4)) {
 		cPitSelect = ++cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
 		this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
+		return true;
 	}
+	return false;
 }
 
 void Player::UpdateAccessories(const float &dt) {

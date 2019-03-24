@@ -6,6 +6,7 @@
 #include "MoveLeftShootEnemy.h"
 #include "ItemPickup.h"
 #include "ItemUpgrade.h"
+#include "Boss.h"
 
 class Game
 {
@@ -59,20 +60,34 @@ private:
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 
+	// Bosses
+	bool bossEncounterActivated;
+	dArr<Boss> bosses;
+
 	// Consumables
 	dArr<Consumable*> consumables;
 
-	// Textures
+	// Player Textures
 	std::vector<Texture> textureMap;
 	dArr<Texture> playerMainGunTextures;
-	dArr<Texture> enemyTextures;
-	dArr<Texture> enemyBulletTextures;
 	dArr<Texture> lWingTextures;
 	dArr<Texture> rWingTextures;
 	dArr<Texture> cockpitTextures;
 	dArr<Texture> auraTextures;
+
+	// Enemy Textures
+	dArr<Texture> enemyTextures;
+	dArr<Texture> enemyBulletTextures;
+
+	// Consumable Textures
 	dArr<Texture> pickupTextures;
 	dArr<Texture> upgradeTextures;
+
+	// Boss textures
+	dArr<Texture> bossBodyTextures;
+	dArr<Texture> bossGunTextures;
+	dArr<Texture> bossBulletTextures;
+
 
 	// Utility Functions
 	void _spawnEnemy();

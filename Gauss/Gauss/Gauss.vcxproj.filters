@@ -55,6 +55,12 @@
     <Filter Include="Source Files\UIElements">
       <UniqueIdentifier>{6b5cedf1-d28c-4f5b-b7e4-da8f709520a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GameObjects\Lifeforms\Bosses">
+      <UniqueIdentifier>{7add12e5-a0cf-434f-ab0f-3e26ceba7521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects\Lifeforms\Bosses">
+      <UniqueIdentifier>{0c717e49-9330-464c-a513-a95aa154cbd3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,6 +99,9 @@
     <ClCompile Include="Consumable.cpp">
       <Filter>Source Files\GameObjects\Consumables</Filter>
     </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>Source Files\GameObjects\Lifeforms\Bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -122,9 +131,6 @@
     <ClInclude Include="TrackerEnemy.h">
       <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
-      <Filter>Header Files\GameObjects\Projectiles</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Header Files\GameObjects\Lifeforms\Player</Filter>
     </ClInclude>
@@ -142,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="Consumable.h">
       <Filter>Header Files\GameObjects\Consumables</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files\GameObjects\Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Bosses</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
