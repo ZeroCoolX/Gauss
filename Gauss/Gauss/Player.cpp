@@ -259,7 +259,7 @@ void Player::UpdateStatsUI() {
 
 	// Stats
 	this->statsText.setPosition(statsPos);
-	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]					" + this->getHpAsString()
+	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]"
 	+ "\n\n\n\n\n\n\n\n\n"
 	+ std::to_string(this->getLevel()));
 
@@ -452,6 +452,7 @@ void Player::Reset() {
 	this->cooling = 0;
 	this->power = 0;
 	this->plating = 0;
+	this->score = 0;
 
 	// Reset upgrades
 	this->dualMissiles01 = false;
@@ -494,7 +495,8 @@ bool Player::PlayerShowStatsIsPressed() {
 }
 
 std::string Player::GetStatsAsString() {
-	return "Level: " + std::to_string(this->level) +
+	return 
+		"Level: " + std::to_string(this->level) +
 		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
 		"\nStatpoints: " + std::to_string(this->statPoints) +
 		"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
