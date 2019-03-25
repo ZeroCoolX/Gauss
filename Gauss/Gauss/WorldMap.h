@@ -6,6 +6,6 @@ class WorldMap
 {
 public:
 	WorldMap();
-	~WorldMap();
+	virtual ~WorldMap();
 };
 

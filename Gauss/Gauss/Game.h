@@ -109,7 +109,6 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
-	void Init();
 	void InitMapTextures();
 	void InitTextures();
 	void InitPlayerTextures();

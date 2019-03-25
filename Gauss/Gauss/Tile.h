@@ -27,6 +27,7 @@ public:
 	inline const FloatRect getBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const bool isDamageType() const { return this->damageType; }
 	inline const bool isColliderType() const { return this->colliderType; }
+	inline void setPos(float x, float y) { this->sprite.setPosition(Vector2f(x, y)); }
 
 	void Update();
 	void Draw(RenderTarget &renderTarget);

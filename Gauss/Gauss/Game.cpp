@@ -4,7 +4,7 @@ Game::Game(RenderWindow *window)
 {
 	this->window = window;
 
-	this->Init();
+	this->InitTextures();
 
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -52,6 +52,9 @@ Game::Game(RenderWindow *window)
 
 	// Init boss encounter
 	this->bossEncounterActivated = false;
+
+	this->InitUI();
+	this->InitMap();
 }
 
 Game::~Game()
@@ -59,13 +62,6 @@ Game::~Game()
 }
 
 
-void Game::Init() {
-	this->InitTextures();
-	this->InitPlayerTextures();
-	this->InitMapTextures();
-	this->InitUI();
-	this->InitMap();
-}
 
 void Game::InitPlayerTextures() {
 	Texture temp;
@@ -128,6 +124,8 @@ void Game::InitMapTextures() {
 }
 
 void Game::InitTextures() {
+	this->InitPlayerTextures();
+
 	Texture temp;
 
 	// Load Enemy Textures
@@ -178,6 +176,8 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
+
+	this->InitMapTextures();
 }
 
 void Game::InitUI() {
@@ -409,7 +409,7 @@ void Game::UpdatePlayers(const float &dt) {
 			this->players[i].Update(this->window->getSize(), dt);
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
-			this->UpdateWallColliders(dt, i);
+			//this->UpdateWallColliders(dt, i);
 
 			// Bullets update
 			this->UpdatePlayerBullets(dt, this->players[i]);
