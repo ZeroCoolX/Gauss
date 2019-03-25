@@ -23,7 +23,7 @@ Game::Game(RenderWindow *window)
 	// Init player
 	this->players.Add(Player());
 
-	this->players.Add(Player(Keyboard::I, 
+	/*this->players.Add(Player(Keyboard::I, 
 		Keyboard::K,
 		Keyboard::J, 
 		Keyboard::L, 
@@ -33,7 +33,7 @@ Game::Game(RenderWindow *window)
 		Keyboard::Num7,
 		Keyboard::Num8,
 		Keyboard::Num9,
-		Keyboard::Num0));
+		Keyboard::Num0));*/
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -118,6 +118,10 @@ void Game::InitPlayerTextures() {
 	}
 }
 
+void Game::InitMapTextures() {
+	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
+}
+
 void Game::InitTextures() {
 	this->InitPlayerTextures();
 
@@ -171,6 +175,8 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
+
+	this->InitMapTextures();
 }
 
 void Game::InitUI() {
@@ -219,12 +225,12 @@ void Game::InitUI() {
 }
 
 void Game::InitMap() {
-	RectangleShape temp;
-	temp.setSize(Vector2f(100.f, 100.f));
-	temp.setFillColor(Color::White);
-	temp.setPosition(500.f, 500.f);
+	Tile tile(IntRect(0, 0, 50, 50), 
+		Vector2f(200.f, 300.f), 
+		true, 
+		false);
 
-	this->walls.Add(RectangleShape(temp));
+	this->tiles.Add(tile);
 }
 
 void Game::Update(const float &dt) {
@@ -415,19 +421,19 @@ void Game::UpdatePlayers(const float &dt) {
 }
 
 void Game::UpdateWalls(const float &dt, int playerIndex) {
-	for (size_t i = 0; i < this->walls.Size(); i++)
-	{
-		if (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
-			while (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
-				this->players[playerIndex].move(
-					20.f * -1.f * this->players[playerIndex].getNormDir().x,
-					20.f * -1.f * this->players[playerIndex].getNormDir().y
-				);
-			}
+	//for (size_t i = 0; i < this->walls.Size(); i++)
+	//{
+	//	if (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
+	//		while (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
+	//			this->players[playerIndex].move(
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
+	//			);
+	//		}
 
-			this->players[playerIndex].resetVelocity();
-		}
-	}
+	//		this->players[playerIndex].resetVelocity();
+	//	}
+	//}
 }
 
 void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
@@ -709,31 +715,45 @@ void Game::DrawEnemyUI() {
 	}
 }
 
-void Game::Draw() {
-	this->window->clear();
-
-	// Draw Players
+void Game::DrawPlayers() {
 	for (size_t i = 0; i < this->players.Size(); ++i) {
 		this->players[i].Draw(*this->window);
 	}
+}
 
-	// Draw Enemy Lifeform
-	this->DrawEnemyUI();
-
-	// Draw Walls
-	for (size_t i = 0; i < this->walls.Size(); i++)
+void Game::DrawMap() {
+	for (size_t i = 0; i < this->tiles.Size(); i++)
 	{
-		this->window->draw(this->walls[i]);
+		this->tiles[i].Draw(*this->window);
 	}
+}
 
-	// Draw Consumables
+void Game::DrawConsumables() {
 	for (size_t i = 0; i < this->consumables.Size(); ++i) {
 		Consumable *currentItem = this->consumables[i];
 		currentItem->Draw(*this->window);
 	}
+}
 
+void Game::Draw() {
+	this->window->clear();
+
+	// Draw Players
+	this->DrawPlayers();
+
+	// Draw Enemy Lifeform
+	this->DrawEnemyUI();
+
+	// Draw Map
+	this->DrawMap();
+
+	// Draw Consumables
+	this->DrawConsumables();
+
+	// Draw UI
 	this->DrawUI();
 
+	// Draw everything to the window
 	this->window->display();
 }
 

@@ -61,6 +61,12 @@
     <Filter Include="Header Files\GameObjects\Lifeforms\Bosses">
       <UniqueIdentifier>{0c717e49-9330-464c-a513-a95aa154cbd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\WorldElements">
+      <UniqueIdentifier>{4a5fff81-4ebf-4d61-a0f4-9d1782c6006a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WorldElements">
+      <UniqueIdentifier>{5d67cb94-7bec-451b-a7ac-435d83cfbe29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -101,6 +107,15 @@
     </ClCompile>
     <ClCompile Include="Boss.cpp">
       <Filter>Source Files\GameObjects\Lifeforms\Bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>Source Files\WorldElements</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMap.cpp">
+      <Filter>Source Files\WorldElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files\WorldElements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +169,15 @@
     </ClInclude>
     <ClInclude Include="Boss.h">
       <Filter>Header Files\GameObjects\Lifeforms\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMap.h">
+      <Filter>Header Files\WorldElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Header Files\WorldElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>Header Files\WorldElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

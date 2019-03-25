@@ -135,8 +135,11 @@
     <ClCompile Include="MoveLeftEnemy.cpp" />
     <ClCompile Include="MoveLeftShootEnemy.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextTag.cpp" />
+    <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TrackerEnemy.cpp" />
+    <ClCompile Include="WorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
@@ -154,8 +157,11 @@
     <ClInclude Include="MoveLeftEnemy.h" />
     <ClInclude Include="MoveLeftShootEnemy.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="TextTag.h" />
+    <ClInclude Include="Tile.h" />
     <ClInclude Include="TrackerEnemy.h" />
+    <ClInclude Include="WorldMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

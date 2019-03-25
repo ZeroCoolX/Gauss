@@ -7,6 +7,7 @@
 #include "ItemPickup.h"
 #include "ItemUpgrade.h"
 #include "Boss.h"
+#include "WorldMap.h"
 
 class Game
 {
@@ -53,7 +54,8 @@ private:
 	dArr<TextTag> textTags;
 
 	// MAP
-	dArr<RectangleShape> walls;
+	WorldMap worldMap;
+	dArr<Tile> tiles;
 
 	// Players
 	dArr<Player> players;
@@ -108,6 +110,7 @@ public:
 
 	// Functions
 	void InitPlayerTextures();
+	void InitMapTextures();
 	void InitTextures();
 	void InitUI();
 	void InitMap();
@@ -130,6 +133,9 @@ public:
 	void DrawUI();
 	void Draw();
 	void DrawEnemyUI();
+	void DrawPlayers();
+	void DrawMap();
+	void DrawConsumables();
 
 	void ToggleFullscreen();
 	void PauseGame();
