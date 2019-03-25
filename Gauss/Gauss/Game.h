@@ -109,9 +109,10 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
-	void InitPlayerTextures();
+	void Init();
 	void InitMapTextures();
 	void InitTextures();
+	void InitPlayerTextures();
 	void InitUI();
 	void InitMap();
 
@@ -123,7 +124,8 @@ public:
 	void UpdateMultipliers();
 	void UpdateWhilePaused(const float &dt);
 	void UpdatePlayers(const float &dt);
-	void UpdateWalls(const float &dt, int playerIndex);
+	void UpdateMap(const float &dt, int playerIndex);
+	void UpdateWallColliders(const float &dt, int playerIndex);
 	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdateScoreUI();
 	void UpdateEnemies(const float &dt);

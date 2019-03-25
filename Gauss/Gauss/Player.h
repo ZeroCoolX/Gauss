@@ -149,10 +149,11 @@ public:
 
 	// Positional
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
-	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); } // TODO: rename to getBounds()
 	inline void resetVelocity() { this->velocity = Vector2f(0.f, 0.f); }
 	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
 	inline const Vector2f& getNormDir() const { return this->normalizedDir; }
+	inline const bool collidesWith(FloatRect other) const { return this->sprite.getGlobalBounds().intersects(other); }
 
 	// Life
 	inline const bool isDead() const { return this->hp <= 0; }

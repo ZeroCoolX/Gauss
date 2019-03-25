@@ -4,11 +4,10 @@ Game::Game(RenderWindow *window)
 {
 	this->window = window;
 
+	this->Init();
+
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
-
-	// Init textures
-	this->InitTextures();
 
 	// Init scoring multipliers
 	this->killPerfectionMultiplier = 1;
@@ -53,13 +52,19 @@ Game::Game(RenderWindow *window)
 
 	// Init boss encounter
 	this->bossEncounterActivated = false;
-
-	this->InitUI();
-	this->InitMap();
 }
 
 Game::~Game()
 {
+}
+
+
+void Game::Init() {
+	this->InitTextures();
+	this->InitPlayerTextures();
+	this->InitMapTextures();
+	this->InitUI();
+	this->InitMap();
 }
 
 void Game::InitPlayerTextures() {
@@ -123,8 +128,6 @@ void Game::InitMapTextures() {
 }
 
 void Game::InitTextures() {
-	this->InitPlayerTextures();
-
 	Texture temp;
 
 	// Load Enemy Textures
@@ -175,8 +178,6 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
-
-	this->InitMapTextures();
 }
 
 void Game::InitUI() {
@@ -408,7 +409,7 @@ void Game::UpdatePlayers(const float &dt) {
 			this->players[i].Update(this->window->getSize(), dt);
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
-			this->UpdateWalls(dt, i);
+			this->UpdateWallColliders(dt, i);
 
 			// Bullets update
 			this->UpdatePlayerBullets(dt, this->players[i]);
@@ -420,20 +421,24 @@ void Game::UpdatePlayers(const float &dt) {
 	}
 }
 
-void Game::UpdateWalls(const float &dt, int playerIndex) {
-	//for (size_t i = 0; i < this->walls.Size(); i++)
-	//{
-	//	if (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
-	//		while (this->players[playerIndex].getGlobalBounds().intersects(this->walls[i].getGlobalBounds())) {
-	//			this->players[playerIndex].move(
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
-	//			);
-	//		}
+void Game::UpdateMap(const float &dt, int playerIndex) {
+	
+}
 
-	//		this->players[playerIndex].resetVelocity();
-	//	}
-	//}
+void Game::UpdateWallColliders(const float &dt, int playerIndex) {
+	for (size_t i = 0; i < this->tiles.Size(); i++)
+	{
+		if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+			while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+				this->players[playerIndex].move(
+					20.f * -1.f * this->players[playerIndex].getNormDir().x,
+					20.f * -1.f * this->players[playerIndex].getNormDir().y
+				);
+			}
+
+			this->players[playerIndex].resetVelocity();
+		}
+	}
 }
 
 void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
@@ -738,14 +743,14 @@ void Game::DrawConsumables() {
 void Game::Draw() {
 	this->window->clear();
 
+	// Draw Map
+	this->DrawMap();
+
 	// Draw Players
 	this->DrawPlayers();
 
 	// Draw Enemy Lifeform
 	this->DrawEnemyUI();
-
-	// Draw Map
-	this->DrawMap();
 
 	// Draw Consumables
 	this->DrawConsumables();
