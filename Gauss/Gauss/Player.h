@@ -16,6 +16,9 @@ private:
 	RectangleShape playerExpBarBox;
 	RectangleShape playerHealthBarBox;
 
+	Text playerStatsHudText;
+	RectangleShape playerStatsTextBox;
+
 	Color gaussChargingColor;
 	Color gaussReadyColor;
 	CircleShape playerGaussChargeCircle;
@@ -69,7 +72,7 @@ private:
 	int auraSelect;
 
 	// Player input controls
-	int controls[6];
+	dArr<int> controls;
 
 	// Movement
 	Vector2f velocity;
@@ -139,50 +142,68 @@ public:
 		int LEFT = Keyboard::A, 
 		int RIGHT = Keyboard::D,
 		int FIRE = Keyboard::Space,
-		int GAUSSCANNON = Keyboard::Q);
+		int GAUSSCANNON = Keyboard::Q,
+		int TOGGLESTATS = Keyboard::Tab,
+		int CHANGE_LWING = Keyboard::Num1,
+		int CHANGE_CPIT = Keyboard::Num2,
+		int CHANGE_RWING = Keyboard::Num3,
+		int CHANGE_AURA = Keyboard::Num4);
 	virtual ~Player();
 
 	// Accessors
-	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
+	// Weapons
 	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
-	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
-	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
-	int getDamage() const;
-	inline const int& getHp() const { return hp; }
-	inline const int& getHpMax() const { return hpMax; }
 	inline const int& getGaussCharge() const { return this->gaussCharge; }
 	inline const int& getGaussChargeMax() const { return this->gaussChargeMax; }
+	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
+
+	// Positional
+	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
+	inline void resetVelocity() { this->velocity = Vector2f(0.f, 0.f); }
+	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
+	inline const Vector2f& getNormDir() const { return this->normalizedDir; }
+
+	// Life
 	inline const bool isDead() const { return this->hp <= 0; }
+	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
+	inline const int& getHp() const { return hp; }
+	inline const int& getHpMax() const { return hpMax; }
+	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
+	inline void upgradeHP() {
+		this->hpAdded += 10;
+		this->UpdateStats();
+		this->hp = this->hpMax;
+	}
+
+	// Experience
 	inline const int& getLevel() const { return this->level; }
 	inline const int& getExp() const { return this->exp; }
 	inline const int& getExpNext() const { return this->expNext; }
 	inline bool gainExp(int exp) { this->exp += exp; return this->UpdateLeveling(); }
 	inline void gainScore(int score) { this->score += score; }
-	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
-	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
 	inline const int getScore() const { return this->score; }
+	inline const int& getGunLevel() const { return this->mainGunLevel; }
+	inline const void addStatPoint() { this->statPoints++; }
+	inline dArr<int>& getAcquiredUpgrades() { return this->upgradesAcquired; }
+
+	// Damage/Attack
+	int getDamage() const;
 	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
+	inline bool getPiercingShot() const { return this->piercingShot; }
+	inline void enablePiercingShot() { this->piercingShot = true; }
+	inline void enableSheild() { this->sheild = true; }
+	inline void enableDualMissile01() { this->dualMissiles01 = true; }
+	inline void enableDualMissile02() { this->dualMissiles02 = true; }
+
+	// Vector Utility
 	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
 	inline Vector2f normalize(Vector2f v, float length) {
 		if (length == 0) { return Vector2f(0.f, 0.f); }
 		return (v / length);
 	}
-	inline void enablePiercingShot() { this->piercingShot = true; }
-	inline void enableSheild() { this->sheild = true; }
-	inline void enableDualMissile01() { this->dualMissiles01 = true; }
-	inline void enableDualMissile02() { this->dualMissiles02 = true; }
-	inline void upgradeHP() { 
-		this->hpAdded += 10; 
-		this->UpdateStats();
-		this->hp = this->hpMax; 
-	}
-	inline bool getPiercingShot() const { return this->piercingShot; }
-	inline const int& getGunLevel() const { return this->mainGunLevel; }
-	inline const void addStatPoint() { this->statPoints++; }
-	inline void resetVelocity() { this->velocity = Vector2f(0.f, 0.f); }
-	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
-	inline const Vector2f& getNormDir() const { return this->normalizedDir; }
-	inline dArr<int>& getAcquiredUpgrades() { return this->upgradesAcquired; }
+
+
 
 	// Functions
 	void Reset();
@@ -195,13 +216,15 @@ public:
 	void DrawUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();
 	void Update(Vector2u windowBounds, const float &dt);
+	void UpdateStats();
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
 	void TakeDamage(int damage);
 	void SetGunLevel(int gunLevel);
-	void UpdateStats();
 	void AddStatPointRandom();
+	bool PlayerShowStatsIsPressed();
+	std::string GetStatsAsString();
 
 	// Statics
 	static unsigned playerId;

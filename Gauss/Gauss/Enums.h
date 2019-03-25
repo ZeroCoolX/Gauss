@@ -2,7 +2,7 @@
 
 namespace GameEnums
 {
-	enum control_index { C_UP = 0, C_DOWN, C_LEFT, C_RIGHT, C_FIRE, C_GAUSSCANNON};
+	enum control_index { C_UP = 0, C_DOWN, C_LEFT, C_RIGHT, C_FIRE, C_GAUSSCANNON,TOGGLE_STATS, CHANGE_LWING, CHANGE_CPIT, CHANGE_RWING, CHANGE_AURA};
 	enum texture_index { T_SHIP = 0, T_LASER01, T_MISSILE01, T_GAUSSCANNON01 };
 	enum main_gun_type { MGT_MAIN_GUN, MGT_MAIN_GUN02, MGT_MAIN_GUN03 };
 	enum gun_index { G_LASER = 0, G_MISSILE01, G_MISSILE02 };

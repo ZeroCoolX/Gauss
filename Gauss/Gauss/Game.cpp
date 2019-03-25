@@ -41,7 +41,12 @@ Game::Game(RenderWindow *window)
 		Keyboard::J, 
 		Keyboard::L, 
 		Keyboard::RShift, 
-		Keyboard::U));*/
+		Keyboard::U,
+		Keyboard::Return,
+		Keyboard::Num7,
+		Keyboard::Num8,
+		Keyboard::Num9,
+		Keyboard::Num0));*/
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -216,7 +221,7 @@ void Game::InitUI() {
 	this->scoreText.setCharacterSize(32);
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setString("Score: 0");
-	this->scoreText.setPosition(10.f, 10.f); // top left magic numbers for now
+	this->scoreText.setPosition(10.f, 10.f);
 }
 
 void Game::InitMap() {

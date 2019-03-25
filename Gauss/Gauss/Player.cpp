@@ -15,7 +15,12 @@ Player::Player(std::vector<Texture> &textureMap,
 	int LEFT, 
 	int RIGHT,
 	int FIRE,
-	int GAUSSCANNON
+	int GAUSSCANNON,
+	int TOGGLESTATS,
+	int CHANGE_LWING,
+	int CHANGE_CPIT,
+	int CHANGE_RWING,
+	int CHANGE_AURA
 ) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
@@ -52,12 +57,17 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->_initPlayerSettings();
 
 	// Set player controls
-	this->controls[GameEnums::C_UP] = UP;
-	this->controls[GameEnums::C_DOWN] = DOWN;
-	this->controls[GameEnums::C_LEFT] = LEFT;
-	this->controls[GameEnums::C_RIGHT] = RIGHT;
-	this->controls[GameEnums::C_FIRE] = FIRE;
-	this->controls[GameEnums::C_GAUSSCANNON] = GAUSSCANNON;
+	this->controls.Add(UP);
+	this->controls.Add(DOWN);
+	this->controls.Add(LEFT);
+	this->controls.Add(RIGHT);
+	this->controls.Add(FIRE);
+	this->controls.Add(GAUSSCANNON);
+	this->controls.Add(TOGGLESTATS);
+	this->controls.Add(CHANGE_LWING);
+	this->controls.Add(CHANGE_CPIT);
+	this->controls.Add(CHANGE_RWING);
+	this->controls.Add(CHANGE_AURA);
 }
 
 Player::~Player()
@@ -123,20 +133,20 @@ void Player::UpdateStats() {
 }
 
 bool Player::ChangeAccessories(const float &dt) {
-	if (Keyboard::isKeyPressed(Keyboard::Num1)) {
-		lWingSelect = ++lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_LWING]))) {
+		this->lWingSelect = ++this->lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
 		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Num2)) {
-		rWingSelect = ++rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_RWING]))) {
+		this->rWingSelect = ++this->rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
 		this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Num3)) {
-		auraSelect = ++auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_AURA]))) {
+		this->auraSelect = ++this->auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
 		this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Num4)) {
-		cPitSelect = ++cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_CPIT]))) {
+		this->cPitSelect = ++this->cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
 		this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
 		return true;
 	}
@@ -274,6 +284,13 @@ void Player::UpdateStatsUI() {
 	float circleScale = this->gaussChargeTimer / this->gaussChargeTimerMax;
 	this->playerGaussChargeCircle.setScale(circleScale, circleScale);
 	playerGaussChargeCircleBorder.setPosition(gaussChargePos);
+
+	if (this->PlayerShowStatsIsPressed()) {
+		this->playerStatsHudText.setString(this->GetStatsAsString());
+		this->playerStatsTextBox.setPosition(this->getPosition().x, this->getPosition().y + 150.f);
+		this->playerStatsTextBox.setSize(Vector2f(this->playerStatsHudText.getGlobalBounds().width, this->playerStatsHudText.getGlobalBounds().height));
+		this->playerStatsHudText.setPosition(this->playerStatsTextBox.getPosition());
+	}
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
@@ -319,6 +336,11 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 	renderTarget.draw(this->playerGaussChargeCircleBorder);
 	// Gauss charge circle
 	renderTarget.draw(this->playerGaussChargeCircle);
+
+	if (this->PlayerShowStatsIsPressed()) {
+		renderTarget.draw(this->playerStatsTextBox);
+		renderTarget.draw(this->playerStatsHudText);
+	}
 }
 
 // Order matters!
@@ -374,6 +396,17 @@ void Player::InitUI(Text t) {
 	this->playerGaussChargeCircleBorder.setOutlineColor(Color(255, 255, 255, 10));
 	this->playerGaussChargeCircleBorder.setOutlineThickness(1);
 	this->playerGaussChargeCircleBorder.setOrigin(Vector2f(this->playerGaussChargeCircleBorder.getRadius(), this->playerGaussChargeCircleBorder.getRadius()));
+
+	// Stats HUD text
+	this->playerStatsHudText.setFont(*this->statsText.getFont());
+	this->playerStatsHudText.setFillColor(Color::White);
+	this->playerStatsHudText.setCharacterSize(16);
+	this->playerStatsHudText.setString("NONE");
+
+	this->playerStatsTextBox.setFillColor(Color(50, 50, 50, 100));
+	this->playerStatsTextBox.setOutlineThickness(1.f);
+	this->playerStatsTextBox.setOutlineColor(Color(255, 255, 255, 200));
+
 }
 
 Bullet& Player::BulletAt(unsigned index) {
@@ -428,7 +461,7 @@ void Player::Reset() {
 
 	// Reset weapons
 	this->currentWeapon = GameEnums::G_LASER;
-	this->SetGunLevel(GameEnums::MGT_MAIN_GUN03);
+	this->SetGunLevel(GameEnums::DEFAULT_LASER);
 	this->bullets.Clear();
 
 	// Reset Timers
@@ -455,6 +488,25 @@ void Player::AddStatPointRandom() {
 
 	this->UpdateStats();
 }
+
+bool Player::PlayerShowStatsIsPressed() {
+	return Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::TOGGLE_STATS]));
+}
+
+std::string Player::GetStatsAsString() {
+	return "Level: " + std::to_string(this->level) +
+		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
+		"\nStatpoints: " + std::to_string(this->statPoints) +
+		"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
+		"\nDamage: " + std::to_string(this->damage) + "/" + std::to_string(this->damageMax) +
+		"\nScore: " + std::to_string(this->score) +
+		"\nPower: " + std::to_string(this->power) +
+		"\nPlating: " + std::to_string(this->plating) +
+		"\nManeuverability: " + std::to_string(this->maneuverability) +
+		"\nCooling: " + std::to_string(this->cooling);
+
+}
+
 
 
 void Player::_processPlayerInput(const float &dt) {
