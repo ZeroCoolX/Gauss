@@ -4,12 +4,15 @@
 
 unsigned Player::playerId = 0;
 
-Player::Player(std::vector<Texture> &textureMap,
-	dArr<Texture> &mainGunTextureMap,
-	dArr<Texture> &lWingTextureMap,
-	dArr<Texture> &rWingTextureMap,
-	dArr<Texture> &auraTextureMap,
-	dArr<Texture> &cPitTextureMap,
+dArr<Texture> Player::shipBulletTextures;
+dArr<Texture> Player::shipBodyTextures;
+dArr<Texture> Player::shipMainGunTextures;
+dArr<Texture> Player::shipLWingTextures;
+dArr<Texture> Player::shipRWingTextures;
+dArr<Texture> Player::shipCockpitTextures;
+dArr<Texture> Player::shipAuraTextures;
+
+Player::Player(
 	int UP, 
 	int DOWN,
 	int LEFT, 
@@ -37,15 +40,6 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->keyTimeMax = 8.f;
 	this->keyTime = this->keyTimeMax;
 
-	// Accesory Textures
-	this->lWingTextureMap = &lWingTextureMap;
-	this->rWingTextureMap = &rWingTextureMap;
-	this->auraTextureMap = &auraTextureMap;
-	this->cPitTextureMap = &cPitTextureMap;
-
-	// Main Gun Textures
-	this->mainGunTextureMap = &mainGunTextureMap;
-
 	// Selectors
 	this->lWingSelect = 1;
 	this->rWingSelect = 1;
@@ -53,7 +47,7 @@ Player::Player(std::vector<Texture> &textureMap,
 	this->auraSelect = 0;
 
 
-	this->_initTextures(textureMap);
+	this->_initTextures();
 	this->_initPlayerSettings();
 
 	// Set player controls
@@ -134,20 +128,20 @@ void Player::UpdateStats() {
 
 bool Player::ChangeAccessories(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_LWING]))) {
-		this->lWingSelect = ++this->lWingSelect % ((int)(*this->lWingTextureMap).Size() - 1);
-		this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
+		this->lWingSelect = ++this->lWingSelect % ((int)Player::shipLWingTextures.Size() - 1);
+		this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
 		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_RWING]))) {
-		this->rWingSelect = ++this->rWingSelect % ((int)(*this->rWingTextureMap).Size() - 1);
-		this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
+		this->rWingSelect = ++this->rWingSelect % ((int)Player::shipRWingTextures.Size() - 1);
+		this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
 		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_AURA]))) {
-		this->auraSelect = ++this->auraSelect % ((int)(*this->auraTextureMap).Size() - 1);
-		this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
+		this->auraSelect = ++this->auraSelect % ((int)Player::shipAuraTextures.Size() - 1);
+		this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
 		return true;
 	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_CPIT]))) {
-		this->cPitSelect = ++this->cPitSelect % ((int)(*this->cPitTextureMap).Size() - 1);
-		this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
+		this->cPitSelect = ++this->cPitSelect % ((int)Player::shipCockpitTextures.Size() - 1);
+		this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
 		return true;
 	}
 	return false;
@@ -425,11 +419,11 @@ void Player::RemoveBullet(unsigned index) {
 
 void Player::SetGunLevel(int gunLevel) {
 	this->mainGunLevel = gunLevel;
-	if (this->mainGunLevel >= (int)(*this->mainGunTextureMap).Size()) {
+	if (this->mainGunLevel >= (int)Player::shipMainGunTextures.Size()) {
 		std::cout << "ERROR! No texture for gun level " << gunLevel << std::endl;
 	}
 	else {
-		this->mainGunSprite.setTexture((*this->mainGunTextureMap)[this->mainGunLevel]);
+		this->mainGunSprite.setTexture(Player::shipMainGunTextures[this->mainGunLevel]);
 		// Hack right now since I don't like how the level 3 gun looks
 		if (this->mainGunLevel == GameEnums::LEVEL_3_LASER) {
 			this->mainGunSprite.setScale(0.75f, 0.75f);
@@ -556,27 +550,27 @@ void Player::_processPlayerInput(const float &dt) {
 	}
 }
 
-void Player::_initTextures(std::vector <Texture> &textureMap) {
+void Player::_initTextures() {
 	// Assign ship
-	this->sprite.setTexture(textureMap[GameEnums::T_SHIP]);
+	this->sprite.setTexture(Player::shipBodyTextures[GameEnums::T_SHIP]);
 	this->sprite.setScale(0.1f, 0.1f);
 	this->sprite.setColor(Color(10, 10, 10, 255));
 
 	// Assign main gun
-	this->mainGunSprite.setTexture((*this->mainGunTextureMap)[GameEnums::MGT_MAIN_GUN]);
+	this->mainGunSprite.setTexture(Player::shipMainGunTextures[GameEnums::MGT_MAIN_GUN]);
 	this->mainGunSprite.setOrigin(
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
 	this->mainGunSprite.rotate(90);
 
 	// Assign bullet properties
-	this->laserProjectileTexture = &textureMap[GameEnums::T_LASER01];
-	this->gaussCannonProjectileTexture = &textureMap[GameEnums::T_GAUSSCANNON01];
-	this->missile01ProjectileTexture = &textureMap[GameEnums::T_MISSILE01];
+	//this->laserProjectileTexture = &Player::shipBulletTextures[GameEnums::T_LASER01];
+	//this->gaussCannonProjectileTexture = &Player::shipBulletTextures[GameEnums::T_GAUSSCANNON01];
+	//this->missile01ProjectileTexture = &Player::shipBulletTextures[GameEnums::T_MISSILE01];
 
 	// Accessories
 	// Left wing
-	this->lWing.setTexture((*this->lWingTextureMap)[this->lWingSelect]);
+	this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
 	this->lWing.setOrigin(this->lWing.getGlobalBounds().width / 2,
 		this->lWing.getGlobalBounds().height / 2);
 	this->lWing.setPosition(this->playerCenter);
@@ -584,7 +578,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->lWing.setScale(0.7f, 0.7f);
 
 	// Right wing
-	this->rWing.setTexture((*this->rWingTextureMap)[this->rWingSelect]);
+	this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
 	this->rWing.setOrigin(this->rWing.getGlobalBounds().width / 2,
 		this->rWing.getGlobalBounds().height / 2);
 	this->rWing.setPosition(this->playerCenter);
@@ -592,7 +586,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->rWing.setScale(0.7f, 0.7f);
 
 	// Aura
-	this->aura.setTexture((*this->auraTextureMap)[this->auraSelect]);
+	this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
 	this->aura.setOrigin(this->aura.getGlobalBounds().width / 2,
 		this->aura.getGlobalBounds().height / 2);
 	this->aura.setPosition(this->playerCenter);
@@ -600,7 +594,7 @@ void Player::_initTextures(std::vector <Texture> &textureMap) {
 	this->aura.setScale(0.7f, 0.7f);
 
 	// Cockpit
-	this->cPit.setTexture((*this->cPitTextureMap)[this->cPitSelect]);
+	this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
 	this->cPit.setOrigin(this->cPit.getGlobalBounds().width / 2,
 		this->cPit.getGlobalBounds().height / 2);
 	this->cPit.setPosition(this->playerCenter);
@@ -655,7 +649,7 @@ void Player::_fireLaser(const Vector2f direction) {
 	for (int i = 0; i <= this->mainGunLevel; i++)
 	{
 		this->bullets.Add(
-			Bullet(laserProjectileTexture,
+			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_LASER],
 				laserBulletScale,
 				Vector2f(
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + (i == 0 && yOffset == 30.f ? 50.f : -20), 
@@ -671,7 +665,7 @@ void Player::_fireLaser(const Vector2f direction) {
 
 void Player::_fireGaussCannon(const Vector2f direction) {
 	this->bullets.Add(
-			Bullet(gaussCannonProjectileTexture,
+			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_GAUSS_CANNON],
 				gaussCannonProjectileScale,
 				Vector2f(
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2),this->playerCenter.y),
@@ -685,7 +679,7 @@ void Player::_fireGaussCannon(const Vector2f direction) {
 void Player::_fireMissileLight(const Vector2f direction) {
 	// Create Missile
 	this->bullets.Add(
-		Bullet(missile01ProjectileTexture,
+		Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_MISSILE],
 			missileScale,
 			Vector2f(this->playerCenter.x, this->playerCenter.y - (this->sprite.getGlobalBounds().height / 2)),
 			direction,
@@ -693,7 +687,7 @@ void Player::_fireMissileLight(const Vector2f direction) {
 	);
 	if (dualMissiles01) {
 		this->bullets.Add(
-			Bullet(missile01ProjectileTexture,
+			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_MISSILE],
 				missileScale,
 				Vector2f(this->playerCenter.x, this->playerCenter.y + (this->sprite.getGlobalBounds().height / 2)),
 				direction,

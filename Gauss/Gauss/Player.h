@@ -5,31 +5,35 @@
 class Player
 {
 private:
-	// Stops keyspamming
+	// INPUT
 	float keyTimeMax;
 	float keyTime;
 
 	unsigned int playerNumber;
+
+	// POSITIONING
+	Vector2f playerCenter;
+
+	// UI/HUD
 	Text statsText;
 	RectangleShape playerExpBar;
 	RectangleShape playerHealthBar;
 	RectangleShape playerExpBarBox;
 	RectangleShape playerHealthBarBox;
-
 	Text playerStatsHudText;
 	RectangleShape playerStatsTextBox;
-
 	Color gaussChargingColor;
 	Color gaussReadyColor;
 	CircleShape playerGaussChargeCircle;
 	CircleShape playerGaussChargeCircleBorder;
 
-	Vector2f playerCenter;
-
+	// TIMERS
 	float shootTimer;
 	float shootTimerMax;
 	float damageTimer;
 	float damageTimerMax;
+	float gaussChargeTimer;
+	float gaussChargeTimerMax;
 
 	Sprite sprite;
 	RectangleShape hitBox;
@@ -40,16 +44,13 @@ private:
 	float mainGunReturnSpeed = 2.f; // TODO: maybe change to 5 - see what that looks like
 
 	dArr<Bullet> bullets;
-	dArr<Texture> *mainGunTextureMap;
+	//dArr<Texture> *mainGunTextureMap;
 
-	Texture *missile01ProjectileTexture;
-	Texture *missile02ProjectileTexture;
 	Vector2f missileScale = Vector2f(0.05f, 0.05f);
 
-	Texture *laserProjectileTexture;
 	Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
 
-	Texture *gaussCannonProjectileTexture;
+	//Texture *gaussCannonProjectileTexture;
 	Vector2f gaussCannonProjectileScale = Vector2f(0.5f, 0.5f);
 
 	float bulletSpeed;
@@ -57,10 +58,6 @@ private:
 	float bulletAcceleration;
 
 	// Accessories
-	dArr<Texture>* lWingTextureMap;
-	dArr<Texture>* rWingTextureMap;
-	dArr<Texture>* auraTextureMap;
-	dArr<Texture>* cPitTextureMap;
 	Sprite lWing;
 	Sprite rWing;
 	Sprite aura;
@@ -106,8 +103,6 @@ private:
 
 	int gaussCharge;
 	int gaussChargeMax;
-	float gaussChargeTimer;
-	float gaussChargeTimerMax;
 
 	// Upgrades
 	dArr<int> upgradesAcquired;
@@ -119,7 +114,7 @@ private:
 
 	// Utility Functions
 	void _processPlayerInput(const float &dt);
-	void _initTextures(std::vector <Texture> &textureMap);
+	void _initTextures();
 	void _initPlayerSettings();
 	void _recalculatePlayerCenter();
 	void _fireLaser(const Vector2f direction);
@@ -131,12 +126,7 @@ private:
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
-	Player(std::vector<Texture> &textureMap,
-		dArr<Texture> &mainGunTextureMap,
-		dArr<Texture> &lWingTextureMap,
-		dArr<Texture> &rWingTextureMap,
-		dArr<Texture> &auraTextureMap,
-		dArr<Texture> &cPitTextureMap,
+	Player(
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
@@ -189,7 +179,7 @@ public:
 
 	// Damage/Attack
 	int getDamage() const;
-	bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
+	inline bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
 	inline bool getPiercingShot() const { return this->piercingShot; }
 	inline void enablePiercingShot() { this->piercingShot = true; }
 	inline void enableSheild() { this->sheild = true; }
@@ -228,5 +218,13 @@ public:
 
 	// Statics
 	static unsigned playerId;
+	// Textures
+	static dArr<Texture> shipBodyTextures;
+	static dArr<Texture> shipBulletTextures;
+	static dArr<Texture> shipMainGunTextures;
+	static dArr<Texture> shipLWingTextures;
+	static dArr<Texture> shipRWingTextures;
+	static dArr<Texture> shipCockpitTextures;
+	static dArr<Texture> shipAuraTextures;
 };
 

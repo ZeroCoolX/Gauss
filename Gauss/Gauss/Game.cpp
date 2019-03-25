@@ -21,22 +21,9 @@ Game::Game(RenderWindow *window)
 	this->killboxAdderMax = 10;
 
 	// Init player
-	this->players.Add(Player(
-		this->textureMap, 
-		this->playerMainGunTextures, 
-		this->lWingTextures, 
-		this->rWingTextures, 
-		this->auraTextures, 
-		this->cockpitTextures));
+	this->players.Add(Player());
 
-	/*this->players.Add(Player(
-		this->textureMap, 
-		this->playerMainGunTextures, 
-		this->lWingTextures, 
-		this->rWingTextures, 
-		this->auraTextures, 
-		this->cockpitTextures,
-		Keyboard::I, 
+	this->players.Add(Player(Keyboard::I, 
 		Keyboard::K,
 		Keyboard::J, 
 		Keyboard::L, 
@@ -46,7 +33,7 @@ Game::Game(RenderWindow *window)
 		Keyboard::Num7,
 		Keyboard::Num8,
 		Keyboard::Num9,
-		Keyboard::Num0));*/
+		Keyboard::Num0));
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -68,26 +55,75 @@ Game::Game(RenderWindow *window)
 	this->bossEncounterActivated = false;
 
 	this->InitUI();
-	//this->InitMap();
+	this->InitMap();
 }
 
 Game::~Game()
 {
 }
 
+void Game::InitPlayerTextures() {
+	Texture temp;
+
+	// Body textures
+	temp.loadFromFile("Textures/ship.png");
+	Player::shipBodyTextures.Add(temp);
+
+	// Bullet textures
+	temp.loadFromFile("Textures/Guns/rayTex01.png");
+	Player::shipBulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/missileTex01.png");
+	Player::shipBulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/rayTex03.png");
+	Player::shipBulletTextures.Add(temp);
+
+	// Main Gun textures
+	temp.loadFromFile("Textures/Guns/gun01.png");
+	Player::shipMainGunTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/gun02.png");
+	Player::shipMainGunTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/gun03.png");
+	Player::shipMainGunTextures.Add(temp);
+
+	// Ship Parts textures
+	std::string accessoriesBaseDir = "Textures/Accessories/";
+	std::string accessories[] = {
+	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
+
+	std::ifstream in;
+	std::string accessoryFileName;
+	for (int i = 0; i < 4; ++i)
+	{
+		in.open(accessoriesBaseDir + accessories[i]);
+		if (in.is_open()) {
+			while (getline(in, accessoryFileName)) {
+				temp.loadFromFile(accessoryFileName);
+				switch (i) {
+				case 0:
+					Player::shipLWingTextures.Add(Texture(temp));
+					break;
+				case 1:
+					Player::shipRWingTextures.Add(Texture(temp));
+					break;
+				case 2:
+					Player::shipAuraTextures.Add(Texture(temp));
+					break;
+				case 3:
+					Player::shipCockpitTextures.Add(Texture(temp));
+					break;
+				}
+			}
+		}
+		in.close();
+	}
+}
+
 void Game::InitTextures() {
-	// Init player textures
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_SHIP].loadFromFile("Textures/ship.png");
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_LASER01].loadFromFile("Textures/Guns/rayTex01.png");
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_MISSILE01].loadFromFile("Textures/Guns/missileTex01.png");
-	this->textureMap.push_back(Texture());
-	this->textureMap[GameEnums::T_GAUSSCANNON01].loadFromFile("Textures/Guns/rayTex03.png");
+	this->InitPlayerTextures();
+
+	Texture temp;
 
 	// Load Enemy Textures
-	Texture temp;
 	temp.loadFromFile("Textures/Ships/enemyMoveLeft.png");
 	this->enemyTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Ships/enemyFollow.png");
@@ -112,15 +148,6 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
 	this->bossBodyTextures.Add(Texture(temp));
 
-
-	// Init player Main gun textures
-	temp.loadFromFile("Textures/Guns/gun01.png");
-	this->playerMainGunTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Guns/gun02.png");
-	this->playerMainGunTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Guns/gun03.png");
-	this->playerMainGunTextures.Add(Texture(temp));
-
 	// Init pickups textures
 	temp.loadFromFile("Textures/Pickups/hpSupply.png");
 	this->pickupTextures.Add(Texture(temp));
@@ -144,39 +171,6 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
-
-	// Init Accessories
-	std::string accessoriesBaseDir = "Textures/Accessories/";
-	std::string accessories[] = {
-	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
-
-	std::ifstream in;
-	std::string accessoryFileName;
-	for (int i = 0; i < 4; ++i)
-	{
-		in.open(accessoriesBaseDir + accessories[i]);
-		if (in.is_open()) {
-			while (getline(in, accessoryFileName)) {
-				Texture temp;
-				temp.loadFromFile(accessoryFileName);
-				switch (i) {
-				case 0:
-					this->lWingTextures.Add(Texture(temp));
-					break;
-				case 1:
-					this->rWingTextures.Add(Texture(temp));
-					break;
-				case 2:
-					this->auraTextures.Add(Texture(temp));
-					break;
-				case 3:
-					this->cockpitTextures.Add(Texture(temp));
-					break;
-				}
-			}
-		}
-		in.close();
-	}
 }
 
 void Game::InitUI() {
@@ -311,8 +305,24 @@ void Game::RestartUpdate() {
 		this->bosses.Clear();
 
 		// Reset player
+		const int nrOfPlayers = Player::playerId;
 		Player::playerId = 0;
-		this->players.Add(Player(this->textureMap, this->playerMainGunTextures, this->lWingTextures, this->rWingTextures, this->auraTextures, this->cockpitTextures));
+		this->players.Add(Player());
+		// If there was a player 2 add them back in as well
+		if (nrOfPlayers > 1) {
+			this->players.Add(Player(Keyboard::I,
+				Keyboard::K,
+				Keyboard::J,
+				Keyboard::L,
+				Keyboard::RShift,
+				Keyboard::U,
+				Keyboard::Return,
+				Keyboard::Num7,
+				Keyboard::Num8,
+				Keyboard::Num9,
+				Keyboard::Num0));
+		}
+
 		this->InitUI();
 		this->InitMap();
 	}

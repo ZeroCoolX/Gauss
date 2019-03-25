@@ -71,7 +71,8 @@ private:
 	dArr<Consumable*> consumables;
 
 	// Player Textures
-	std::vector<Texture> textureMap;
+	dArr<Texture> playerBulletTextures;
+	dArr<Texture> playerBodyTextures;
 	dArr<Texture> playerMainGunTextures;
 	dArr<Texture> lWingTextures;
 	dArr<Texture> rWingTextures;
@@ -106,6 +107,7 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
+	void InitPlayerTextures();
 	void InitTextures();
 	void InitUI();
 	void InitMap();
