@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Tile.h"
+#include "TileArr.h"
 
 class Stage
 {
 private:
 	long stageSizeX;
 	long stageSizeY;
-	dArr< dArr<Tile> > tileMatrix;
-	
+	TileArr<TileArr<Tile>> tileMatrix;
+
 	// Optimization
 	int fromCol, toCol;
 	int fromRow, toRow;
@@ -17,7 +17,7 @@ public:
 	Stage();
 	virtual ~Stage();
 
-	inline dArr<dArr<Tile>> getTiles() { return this->tileMatrix; }
+	inline TileArr<TileArr<Tile>>& getTiles() { return this->tileMatrix; }
 	
 	void Update();
 	void Draw(RenderTarget &renderTarget, View &view);

@@ -7,7 +7,10 @@
 
 int Stage::gridSize = 50;
 
-Stage::Stage()
+Stage::Stage() 
+	:stageSizeX(100), 
+	stageSizeY(100), 
+	tileMatrix(stageSizeX)
 {
 	this->stageSizeX = 100;
 	this->stageSizeY = 100;
@@ -19,11 +22,7 @@ Stage::Stage()
 
 	for (int i = 0; i < this->stageSizeX; i++)
 	{
-		this->tileMatrix.Add(dArr<Tile>());
-		for (int j = 0; j < this->stageSizeY; j++)
-		{
-			this->tileMatrix[i].Add(Tile(IntRect(0,0,50,50), Vector2f(static_cast<float>(i * Stage::gridSize), static_cast<float>(j * Stage::gridSize)), 0, 0));
-		}
+		this->tileMatrix.Add(TileArr<Tile>(this->stageSizeY), i);
 	}
 }
 
@@ -76,7 +75,9 @@ void Stage::Draw(RenderTarget &renderTarget, View &view) {
 	{
 		for (int j = this->fromRow; j < this->toRow; j++)
 		{
-			this->tileMatrix[i][j].Draw(renderTarget);
+			if (!this->tileMatrix[i].IsNull(j)) {
+				this->tileMatrix[i][j].Draw(renderTarget);
+			}
 		}
 	}
 }

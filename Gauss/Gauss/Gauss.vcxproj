@@ -160,6 +160,7 @@
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextTag.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileArr.h" />
     <ClInclude Include="TrackerEnemy.h" />
     <ClInclude Include="WorldMap.h" />
   </ItemGroup>
