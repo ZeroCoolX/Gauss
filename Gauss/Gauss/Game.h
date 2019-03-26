@@ -14,6 +14,7 @@ class Game
 private:
 	// Game
 	RenderWindow *window;
+	View mainView;
 	bool paused;
 	float keyTimeMax;
 	float keyTime;
@@ -55,7 +56,7 @@ private:
 
 	// MAP
 	WorldMap worldMap;
-	dArr<Tile> tiles;
+	Stage stage;
 
 	// Players
 	dArr<Player> players;
@@ -109,12 +110,14 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
+	void InitView();
 	void InitMapTextures();
 	void InitTextures();
 	void InitPlayerTextures();
 	void InitUI();
 	void InitMap();
 
+	void UpdateView();
 	void Update(const float &dt);
 	void RestartUpdate();
 	void UpdateTimers(const float &dt);

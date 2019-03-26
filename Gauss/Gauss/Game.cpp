@@ -4,6 +4,8 @@ Game::Game(RenderWindow *window)
 {
 	this->window = window;
 
+	this->InitView();
+
 	this->InitTextures();
 
 	// Init fonts
@@ -62,6 +64,9 @@ Game::~Game()
 }
 
 
+void Game::InitView() {
+	this->mainView.setSize(Vector2f(this->window->getSize()));
+}
 
 void Game::InitPlayerTextures() {
 	Texture temp;
@@ -226,12 +231,11 @@ void Game::InitUI() {
 }
 
 void Game::InitMap() {
-	Tile tile(IntRect(0, 0, 50, 50), 
-		Vector2f(200.f, 300.f), 
-		true, 
-		false);
 
-	this->tiles.Add(tile);
+}
+
+void Game::UpdateView() {
+	//this->mainView.setCenter(this->players[0].getPosition());
 }
 
 void Game::Update(const float &dt) {
@@ -241,6 +245,9 @@ void Game::Update(const float &dt) {
 
 	// Fullscreen check
 	this->ToggleFullscreen();
+
+	// view update
+	this->UpdateView();
 
 	// Pause check
 	this->PauseGame();
@@ -422,23 +429,23 @@ void Game::UpdatePlayers(const float &dt) {
 }
 
 void Game::UpdateMap(const float &dt, int playerIndex) {
-	
+
 }
 
 void Game::UpdateWallColliders(const float &dt, int playerIndex) {
-	for (size_t i = 0; i < this->tiles.Size(); i++)
-	{
-		if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-			while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-				this->players[playerIndex].move(
-					20.f * -1.f * this->players[playerIndex].getNormDir().x,
-					20.f * -1.f * this->players[playerIndex].getNormDir().y
-				);
-			}
+	//for (size_t i = 0; i < this->tiles.Size(); i++)
+	//{
+	//	if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+	//		while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+	//			this->players[playerIndex].move(
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
+	//			);
+	//		}
 
-			this->players[playerIndex].resetVelocity();
-		}
-	}
+	//		this->players[playerIndex].resetVelocity();
+	//	}
+	//}
 }
 
 void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
@@ -727,10 +734,7 @@ void Game::DrawPlayers() {
 }
 
 void Game::DrawMap() {
-	for (size_t i = 0; i < this->tiles.Size(); i++)
-	{
-		this->tiles[i].Draw(*this->window);
-	}
+	this->stage.Draw(*this->window, this->mainView);
 }
 
 void Game::DrawConsumables() {
@@ -742,6 +746,9 @@ void Game::DrawConsumables() {
 
 void Game::Draw() {
 	this->window->clear();
+
+	// Set View
+	this->window->setView(this->mainView);
 
 	// Draw Map
 	this->DrawMap();

@@ -4,6 +4,8 @@
 
 class WorldMap
 {
+private:
+
 public:
 	WorldMap();
 	virtual ~WorldMap();

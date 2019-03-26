@@ -5,8 +5,13 @@
 class Stage
 {
 private:
+	long stageSizeX;
+	long stageSizeY;
 	dArr< dArr<Tile> > tileMatrix;
-
+	
+	// Optimization
+	int fromCol, toCol;
+	int fromRow, toRow;
 
 public:
 	Stage();
@@ -15,9 +20,9 @@ public:
 	inline dArr<dArr<Tile>> getTiles() { return this->tileMatrix; }
 	
 	void Update();
-	void Draw(RenderTarget &renderTarget, 
-		int fromCol, int toCol, 
-		int fromRow, int toRow);
+	void Draw(RenderTarget &renderTarget, View &view);
 
+	// Statics
+	static int gridSize;
 };
 
