@@ -2,11 +2,9 @@
 
 dArr<Texture> Particle::particleTextures;
 
-Particle::Particle(float posX,
-	float posY,
+Particle::Particle(Vector2f pos,
 	int textureIndex,
-	float dirX,
-	float dirY,
+	Vector2f dir,
 	float maxVelocity,
 	float maxRotation,
 	float lifetime)
@@ -14,11 +12,10 @@ Particle::Particle(float posX,
 	this->maxVelocity = maxVelocity;
 	this->maxRotation = maxRotation;
 	this->lifetime = lifetime;
-	this->dir.x = dirX;
-	this->dir.y = dirY;
+	this->dir = dir;
 
 	this->sprite.setTexture(Particle::particleTextures[textureIndex]);
-	this->sprite.setPosition(Vector2f(posX, posY));
+	this->sprite.setPosition(pos);
 	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2, this->sprite.getGlobalBounds().height / 2);
 }
 

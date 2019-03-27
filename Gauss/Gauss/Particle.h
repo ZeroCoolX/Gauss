@@ -11,11 +11,9 @@ class Particle {
 		float lifetime;
 
 		Particle(
-			float posX,
-			float posY,
+			Vector2f pos,
 			int textureIndex,
-			float dirX,
-			float dirY,
+			Vector2f dir,
 			float maxVelocity,
 			float maxRotation,
 			float lifetime);

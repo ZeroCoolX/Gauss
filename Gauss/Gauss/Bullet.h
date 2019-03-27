@@ -54,6 +54,14 @@ public:
 	inline void setPosition(Vector2f position) { this->sprite.setPosition(position); }
 	inline const int& getDamage() const { return this->damage; }
 	inline const bool& gaussShot() const { return this->isGaussShot; }
+	inline const Vector2f getNormDir() { return this->normalize(this->velocity, this->vectorLength(this->velocity)); }
+
+	// Vector Utility
+	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
+	inline Vector2f normalize(Vector2f v, float length) {
+		if (length == 0) { return Vector2f(0.f, 0.f); }
+		return (v / length);
+	}
 
 	// Functions
 	void Move(const float &dt);

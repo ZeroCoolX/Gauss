@@ -239,7 +239,7 @@ void Game::InitMap() {
 }
 
 void Game::UpdateView() {
-	//this->mainView.setCenter(this->players[0].getPosition());
+	this->mainView.setCenter(this->players[0].getPosition());
 }
 
 void Game::Update(const float &dt) {
@@ -470,6 +470,14 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 			{
 				EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
 				if (currentPlayer.BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
+
+					// Add particle effect for hit
+					this->particles.Add(Particle(currentEnemy->getPosition(),
+						0,
+						currentPlayer.BulletAt(j).getNormDir(),
+						10.f,
+						0.f,
+						50.f));
 
 					// Health check for damage or destruction
 					int damage = currentPlayer.BulletAt(j).getDamage();
