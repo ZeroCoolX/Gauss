@@ -13,11 +13,11 @@ Particle::Particle(Vector2f pos,
 	this->sprite.setTexture(Particle::particleTextures[textureIndex]);
 	this->sprite.setPosition(pos);
 	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2, this->sprite.getGlobalBounds().height / 2);
-	this->sprite.setScale(Vector2f(rand() % 2 + 1, rand() % 2 + 1));
+	this->sprite.setScale(Vector2f(static_cast<float>(rand() % 2 + 1), static_cast<float>(rand() % 2 + 1)));
 
 	// Normalize random dir
-	this->dir.x = (rand() % 20 + static_cast<int>(dir.x)) - 10;
-	this->dir.y = (rand() % 20 + static_cast<int>(dir.y)) - 10;
+	this->dir.x = static_cast<float>((rand() % 20 + static_cast<int>(dir.x)) - 10);
+	this->dir.y = static_cast<float>((rand() % 20 + static_cast<int>(dir.y)) - 10);
 	this->dir = this->normalize(this->dir, this->vectorLength(this->dir));
 
 	// Movement data
@@ -43,7 +43,7 @@ void Particle::Update(const float &dt) {
 
 		// Reduce the alpha over time
 		if (this->sprite.getColor().a > 0) {
-			this->sprite.setColor(Color(255, 255, 255, this->sprite.getColor().a - (rand()%4+1)));
+			this->sprite.setColor(Color(255, 255, 255, this->sprite.getColor().a - 1));
 			// Once it drops below 0 it goes above 255 because unsigned int
 			if (this->sprite.getColor().a > 255) {
 				this->sprite.setColor(Color(255, 255, 255, 0));

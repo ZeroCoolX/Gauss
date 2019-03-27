@@ -66,6 +66,9 @@ Game::~Game()
 
 void Game::InitView() {
 	this->mainView.setSize(Vector2f(this->window->getSize()));
+	this->mainView.setCenter(Vector2f(
+		this->window->getSize().x / 2.f,
+		this->window->getSize().y / 2.f));
 }
 
 void Game::InitPlayerTextures() {
@@ -239,7 +242,7 @@ void Game::InitMap() {
 }
 
 void Game::UpdateView() {
-	this->mainView.setCenter(this->players[0].getPosition());
+	//this->mainView.setCenter(this->players[0].getPosition());
 }
 
 void Game::Update(const float &dt) {
@@ -471,16 +474,16 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 				EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
 				if (currentPlayer.BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 
-					// Add particle effect for hit
-					const int nrOfParticles = rand() % 5 + 10;
-					for (size_t m = 0; m < nrOfParticles; m++)
+					// Add random particle effect for hit
+					const int nrOfParticles = rand() % 10 + 3;
+					for (int m = 0; m < nrOfParticles; m++)
 					{
 						this->particles.Add(Particle(currentEnemy->getPosition(),
 							0,
 							currentPlayer.BulletAt(j).getVelocity(),
-							rand() % 30 + 10,
-							rand() % 15,
-							30.f));
+							static_cast<float>(rand() % 40 + 10),
+							static_cast<float>(rand() % 20),
+							40.f));
 					}
 
 					// Health check for damage or destruction

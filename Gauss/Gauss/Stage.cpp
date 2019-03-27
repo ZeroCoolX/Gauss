@@ -37,8 +37,8 @@ void Stage::Update() {
 
 // Dependent on the view
 void Stage::Draw(RenderTarget &renderTarget, View &view) {
-	// TODO: can probably refactor this
-	this->fromCol = (view.getCenter().x - view.getSize().x / 2) / Stage::gridSize;
+	// TODO: IF THINGS BREAK ITS THE STATIC_CAST<INT>
+	this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Stage::gridSize);
 	if (this->fromCol <= 0) {
 		this->fromCol = 0;
 	}
@@ -46,7 +46,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view) {
 		this->fromCol = this->stageSizeX;
 	}
 
-	this->toCol = (view.getCenter().x + view.getSize().x / 2) / Stage::gridSize + 1;
+	this->toCol = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / Stage::gridSize + 1);
 	if (this->toCol <= 0) {
 		this->toCol = 0;
 	}
@@ -55,7 +55,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view) {
 	}
 
 
-	this->fromRow = (view.getCenter().y - view.getSize().y / 2) / Stage::gridSize;
+	this->fromRow = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / Stage::gridSize);
 	if (this->fromRow <= 0) {
 		this->fromRow = 0;
 	}
@@ -63,7 +63,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view) {
 		this->fromRow = this->stageSizeY;
 	}
 
-	this->toRow = (view.getCenter().y + view.getSize().y / 2) / Stage::gridSize + 1;
+	this->toRow = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / Stage::gridSize + 1);
 	if (this->toRow <= 0) {
 		this->toRow = 0;
 	}
