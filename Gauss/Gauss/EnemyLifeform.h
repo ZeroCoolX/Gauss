@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Bullet.h"
 
 class EnemyLifeform : public GameObject
 {
@@ -55,5 +56,7 @@ public:
 	void InitSpritePoisition(const Vector2u windowBounds);
 	void Collision();
 	void TakeDamage(int damage);
+
+	static dArr<Bullet> bullets;
 };
 

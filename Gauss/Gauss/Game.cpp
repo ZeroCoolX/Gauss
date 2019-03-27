@@ -682,6 +682,30 @@ void Game::UpdateEnemies(const float &dt) {
 			}
 		}
 	}
+
+	// Update Enemy Bullets
+	for (size_t i = 0; i < EnemyLifeform::bullets.Size(); i++)
+	{
+		EnemyLifeform::bullets[i].Update(dt);
+
+		// Bullet Window bounds check
+		if (EnemyLifeform::bullets[i].getPosition().x > this->window->getSize().x
+			|| EnemyLifeform::bullets[i].getPosition().y > this->window->getSize().y
+			|| EnemyLifeform::bullets[i].getPosition().x <= 0.f
+			|| EnemyLifeform::bullets[i].getPosition().y <= 0.f) {
+			EnemyLifeform::bullets.Remove(i);
+			break;
+		}
+
+		// Bullet Player collision check
+		for (size_t j = 0; j < this->players.Size(); j++)
+		{
+			if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
+				EnemyLifeform::bullets.Remove(j);
+				break;
+			}
+		}
+	}
 }
 
 void Game::UpdateTextTags(const float &dt) {
@@ -724,6 +748,11 @@ void Game::UpdateParticles(const float &dt) {
 	for (size_t i = 0; i < this->particles.Size(); i++)
 	{
 		this->particles[i].Update(dt);
+
+		if (this->particles[i].canDelete()) {
+			this->particles.Remove(i);
+			continue;
+		}
 	}
 }
 
@@ -758,6 +787,12 @@ void Game::DrawEnemyUI() {
 		currentEnemy->Draw(*this->window);
 		// Draw Enemy Lifeform UI
 		this->window->draw(this->enemyText);
+	}
+
+	// Draw Enemy bullets
+	for (size_t i = 0; i < EnemyLifeform::bullets.Size(); i++)
+	{
+		EnemyLifeform::bullets[i].Draw(*this->window);
 	}
 }
 

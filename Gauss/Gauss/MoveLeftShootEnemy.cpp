@@ -7,12 +7,6 @@ MoveLeftShootEnemy::~MoveLeftShootEnemy()
 
 void MoveLeftShootEnemy::Draw(RenderTarget &renderTarget) {
 	EnemyLifeform::Draw(renderTarget);
-
-	// Draw bullets
-	for (size_t i = 0; i < this->bullets.Size(); i++)
-	{
-		this->bullets[i].Draw(renderTarget);
-	}
 }
 
 void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
@@ -33,7 +27,7 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 	// Shoot bullet
 	if (this->shootTimer >= this->shootTimerMax) {
 		this->shootTimer = 0.f;
-		this->bullets.Add(
+		MoveLeftShootEnemy::bullets.Add(
 			Bullet(&(*this->bulletTextures)[GameEnums::EB_DEFAULT],
 				Vector2f(0.2f, 0.2f),
 				this->sprite.getPosition(),
@@ -43,17 +37,4 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 	}
 
 	EnemyLifeform::Update(dt);
-
-	for (size_t j = 0; j < this->getBullets().Size(); j++)
-	{
-		this->getBullets()[j].Update(dt);
-
-		// Bullet Window bounds check
-		if (this->getBullets()[j].getPosition().x > this->window->getSize().x
-			|| this->getBullets()[j].getPosition().y > this->window->getSize().y
-			|| this->getBullets()[j].getPosition().x <= 0.f
-			|| this->getBullets()[j].getPosition().y <= 0.f) {
-			this->getBullets().Remove(j);
-		}
-	}
 }

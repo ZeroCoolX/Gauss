@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EnemyLifeform.h"
-#include "Bullet.h"
 #include "Enums.h"
 
 class MoveLeftShootEnemy : public EnemyLifeform
@@ -11,7 +10,6 @@ private:
 	float shootTimerMax;
 
 	dArr<Texture> *bulletTextures;
-	dArr<Bullet> bullets;
 
 public:
 	MoveLeftShootEnemy(RenderWindow *window, 
@@ -40,8 +38,6 @@ public:
 		this->InitSpritePoisition(windowBounds);
 	}
 	virtual ~MoveLeftShootEnemy();
-
-	inline dArr<Bullet>& getBullets() { return this->bullets; }
 
 	void Draw(RenderTarget &renderTarget);
 	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));

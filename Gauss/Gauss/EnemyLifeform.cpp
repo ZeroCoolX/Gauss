@@ -1,5 +1,6 @@
 #include "EnemyLifeform.h"
 
+dArr<Bullet> EnemyLifeform::bullets;
 
 
 EnemyLifeform::~EnemyLifeform()
