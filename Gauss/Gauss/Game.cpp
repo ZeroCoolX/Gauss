@@ -684,6 +684,10 @@ void Game::UpdateEnemies(const float &dt) {
 	}
 
 	// Update Enemy Bullets
+	this->UpdateEnemyBullets(dt);
+}
+
+void Game::UpdateEnemyBullets(const float &dt) {
 	for (size_t i = 0; i < EnemyLifeform::bullets.Size(); i++)
 	{
 		EnemyLifeform::bullets[i].Update(dt);
@@ -701,7 +705,33 @@ void Game::UpdateEnemies(const float &dt) {
 		for (size_t j = 0; j < this->players.Size(); j++)
 		{
 			if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
-				EnemyLifeform::bullets.Remove(j);
+
+				// Damage player		
+				int damage = EnemyLifeform::bullets[i].getDamage();
+				EnemyLifeform::bullets.Remove(i);
+
+				this->players[j].TakeDamage(damage);
+				// Collision resets the perfection streak - not right now because that seems unfair, but maybe...
+				//this->killPerfectionAdder = 0;
+				//this->killPerfectionMultiplier = 1;
+
+				// Player collision damage
+				this->textTags.Add(
+					TextTag(
+						&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+							this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
+						"-" + std::to_string(damage), Color::Red,
+						Vector2f(-1.f, 0.f),
+						28, 30.f, true
+					)
+				);
+
+
+				// Check for player death
+				if (players[j].isDead()) {
+					this->players.Remove(j);
+					return;
+				}
 				break;
 			}
 		}
@@ -776,7 +806,7 @@ void Game::DrawUI() {
 	}
 }
 
-void Game::DrawEnemyUI() {
+void Game::DrawEnemy() {
 	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
 		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
@@ -833,7 +863,7 @@ void Game::Draw() {
 	this->DrawPlayers();
 
 	// Draw Enemy Lifeform
-	this->DrawEnemyUI();
+	this->DrawEnemy();
 
 	// Draw Consumables
 	this->DrawConsumables();

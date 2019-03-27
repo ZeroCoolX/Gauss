@@ -135,13 +135,14 @@ public:
 	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdateScoreUI();
 	void UpdateEnemies(const float &dt);
+	void UpdateEnemyBullets(const float &dt);
 	void UpdateTextTags(const float &dt);
 	void UpdateConsumables(const float &dt);
 	void UpdateParticles(const float &dt);
 
 	void DrawUI();
 	void Draw();
-	void DrawEnemyUI();
+	void DrawEnemy();
 	void DrawPlayers();
 	void DrawMap();
 	void DrawConsumables();
