@@ -9,14 +9,26 @@ Particle::Particle(Vector2f pos,
 	float maxRotation,
 	float lifetime)
 {
-	this->maxVelocity = maxVelocity;
-	this->maxRotation = maxRotation;
-	this->lifetime = lifetime;
-	this->dir = dir;
-
+	// Sprite
 	this->sprite.setTexture(Particle::particleTextures[textureIndex]);
 	this->sprite.setPosition(pos);
 	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2, this->sprite.getGlobalBounds().height / 2);
+	this->sprite.setScale(Vector2f(rand() % 2 + 1, rand() % 2 + 1));
+
+	// Normalize random dir
+	this->dir.x = (rand() % 20 + static_cast<int>(dir.x)) - 10;
+	this->dir.y = (rand() % 20 + static_cast<int>(dir.y)) - 10;
+	this->dir = this->normalize(this->dir, this->vectorLength(this->dir));
+
+	// Movement data
+	this->deceleration = 0.2f;
+	this->maxVelocity = maxVelocity;
+	this->velocity.x = this->maxVelocity * this->dir.x;
+	this->velocity.y = this->maxVelocity * this->dir.y;
+	this->maxRotation = maxRotation;
+
+	// Lifetime
+	this->lifetime = lifetime;
 }
 
 
@@ -31,15 +43,21 @@ void Particle::Update(const float &dt) {
 
 		// Reduce the alpha over time
 		if (this->sprite.getColor().a > 0) {
-			this->sprite.setColor(Color(255, 255, 255, this->sprite.getColor().a - 1 * dt * DeltaTime::dtMultiplier));
+			this->sprite.setColor(Color(255, 255, 255, this->sprite.getColor().a - (rand()%4+1)));
 			// Once it drops below 0 it goes above 255 because unsigned int
 			if (this->sprite.getColor().a > 255) {
 				this->sprite.setColor(Color(255, 255, 255, 0));
 			}
 		}
-		//Movement - TODO: Can multiply dt by whole vector
-		this->sprite.move(this->maxVelocity * this->dir.x * dt * DeltaTime::dtMultiplier,
-			this->maxVelocity * this->dir.y * dt * DeltaTime::dtMultiplier);
+		//Movement
+		// Slow down
+		this->velocity.x += this->deceleration * -this->dir.x * dt * DeltaTime::dtMultiplier;
+		this->velocity.y += this->deceleration * -this->dir.y * dt * DeltaTime::dtMultiplier;
+		// Move
+		this->sprite.move(
+			this->velocity.x * dt * DeltaTime::dtMultiplier,
+			this->velocity.y * dt * DeltaTime::dtMultiplier);
+		// Rotate
 		this->sprite.rotate(this->maxRotation * dt * DeltaTime::dtMultiplier);
 	}
 }

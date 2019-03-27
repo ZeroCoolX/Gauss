@@ -472,12 +472,16 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 				if (currentPlayer.BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 
 					// Add particle effect for hit
-					this->particles.Add(Particle(currentEnemy->getPosition(),
-						0,
-						currentPlayer.BulletAt(j).getNormDir(),
-						10.f,
-						0.f,
-						50.f));
+					const int nrOfParticles = rand() % 5 + 10;
+					for (size_t m = 0; m < nrOfParticles; m++)
+					{
+						this->particles.Add(Particle(currentEnemy->getPosition(),
+							0,
+							currentPlayer.BulletAt(j).getVelocity(),
+							rand() % 30 + 10,
+							rand() % 15,
+							30.f));
+					}
 
 					// Health check for damage or destruction
 					int damage = currentPlayer.BulletAt(j).getDamage();
