@@ -33,7 +33,7 @@ public:
 
 		// ATTACK
 		this->bulletTextures = &bulletTextures;
-		this->shootTimerMax = 50.f;
+		this->shootTimerMax = rand() % 150 + 50.f;
 
 		this->InitSpritePoisition(windowBounds);
 	}

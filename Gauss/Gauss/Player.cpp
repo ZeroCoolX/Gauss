@@ -162,10 +162,10 @@ void Player::Combat(const float &dt) {
 	}
 
 	// SHIELD
-	if (this->shieldCharged() || this->shieldActive) {
-		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD])) && this->shieldChargeTimer > 0;
+	if (this->shieldCharged()) {
 		this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
 	}
+	this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD])) && this->shieldChargeTimer > 0;
 
 	if (this->isDamageCooldown()) {
 		if ((int)this->damageTimer % 2 == 0) {
@@ -217,7 +217,7 @@ void Player::UpdateStatsUI() {
 	float gaussCharge = this->gaussChargeTimer / this->gaussChargeTimerMax;
 	this->playerGaussBar.setScale(1.f, gaussCharge);
 
-	// Gauss Cannon Charge circle
+	// Shield Charge circle
 	Vector2f shieldChargePos = Vector2f(this->getPosition().x + this->getGlobalBounds().width, (this->getPosition().y - this->getGlobalBounds().height + (this->playerShieldChargeCircleBorder.getRadius() * 2)));
 	this->playerShieldChargeCircle.setPosition(shieldChargePos);
 	// Scale based off player experience to create a dynamic bar
@@ -256,7 +256,6 @@ void Player::UpdateAccessories(const float &dt) {
 	if (shieldScale > 1.f) {
 		shieldScale = 1.f;
 	}
-	std::cout << "shield scale: " << shieldScale << std::endl;
 	this->deflectorShield.setScale(shieldScale, shieldScale);
 	this->deflectorShield.setPosition(this->playerCenter);
 
@@ -311,6 +310,7 @@ void Player::UpdateStats() {
 	this->hpMax = this->hpAdded + (this->plating * 5);
 	this->damageMax = 2 + (this->power * 2);
 	this->damage = 1 + power;
+	this->shieldChargeTimerMax = 100.f + this->cooling + (this->maneuverability / 2);
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
@@ -336,7 +336,8 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	if (shieldActive) {
 		this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - 1.f * dt * DeltaTime::dtMultiplier);
 	}
-	else {
+	// Make sure they let go of the key
+	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD]))){
 		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + 0.5f * dt * DeltaTime::dtMultiplier);
 		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
@@ -670,7 +671,7 @@ void Player::_initPlayerSettings() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
-	this->shieldChargeTimerMax = 100.f;
+	this->shieldChargeTimerMax = 100.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 
 	// Movement settings

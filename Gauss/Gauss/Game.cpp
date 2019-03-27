@@ -715,7 +715,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
 				// Damage player		
-				int damage = EnemyLifeform::bullets[i].getDamage();
+				int damage = EnemyLifeform::bullets[i].getDamage() / 3;
 
 				EnemyLifeform::bullets.Remove(i);
 

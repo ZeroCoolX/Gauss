@@ -27,12 +27,15 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 	// Shoot bullet
 	if (this->shootTimer >= this->shootTimerMax) {
 		this->shootTimer = 0.f;
+		const float bulletSpeed = rand() % 15 + 10.f;
 		MoveLeftShootEnemy::bullets.Add(
 			Bullet(&(*this->bulletTextures)[GameEnums::EB_DEFAULT],
 				Vector2f(0.2f, 0.2f),
 				this->sprite.getPosition(),
 				this->normalizedLookDirection,
-				15.f, 15, this->getDamage(), false, 0.f) // No acceleration - only constant velocity
+				bulletSpeed,
+				static_cast<int>(bulletSpeed),
+				this->getDamage(), false, 0.f) // No acceleration - only constant velocity
 		);
 	}
 
