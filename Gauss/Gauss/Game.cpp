@@ -30,6 +30,7 @@ Game::Game(RenderWindow *window)
 		Keyboard::L, 
 		Keyboard::RShift, 
 		Keyboard::U,
+		Keyboard::RControl,
 		Keyboard::Return,
 		Keyboard::Num7,
 		Keyboard::Num8,
@@ -93,6 +94,10 @@ void Game::InitPlayerTextures() {
 	Player::shipMainGunTextures.Add(temp);
 	temp.loadFromFile("Textures/Guns/gun03.png");
 	Player::shipMainGunTextures.Add(temp);
+
+	// Sheild texutures
+	temp.loadFromFile("Textures/shield.png");
+	Player::shipShieldTextures.Add(temp);
 
 	// Ship Parts textures
 	std::string accessoriesBaseDir = "Textures/Accessories/";

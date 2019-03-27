@@ -16,16 +16,22 @@ private:
 
 	// UI/HUD
 	Text statsText;
+	// EXP
 	RectangleShape playerExpBar;
-	RectangleShape playerHealthBar;
 	RectangleShape playerExpBarBox;
+	// HEALTH
+	RectangleShape playerHealthBar;
 	RectangleShape playerHealthBarBox;
+	// STATS HUD
 	Text playerStatsHudText;
 	RectangleShape playerStatsTextBox;
+	// GAUSS CHARGE
 	Color gaussChargingColor;
 	Color gaussReadyColor;
 	CircleShape playerGaussChargeCircle;
 	CircleShape playerGaussChargeCircleBorder;
+	// SHIELD
+	RectangleShape playerShieldBar;
 
 	// TIMERS
 	float shootTimer;
@@ -34,6 +40,8 @@ private:
 	float damageTimerMax;
 	float gaussChargeTimer;
 	float gaussChargeTimerMax;
+	float shieldChargeTimerMax;
+	float shieldChargeTimer;
 
 	Sprite sprite;
 	RectangleShape hitBox;
@@ -44,10 +52,8 @@ private:
 	float mainGunReturnSpeed = 2.f; // TODO: maybe change to 5 - see what that looks like
 
 	dArr<Bullet> bullets;
-	//dArr<Texture> *mainGunTextureMap;
 
 	Vector2f missileScale = Vector2f(0.05f, 0.05f);
-
 	Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
 
 	//Texture *gaussCannonProjectileTexture;
@@ -56,6 +62,9 @@ private:
 	float bulletSpeed;
 	float bulletMaxSpeed;
 	float bulletAcceleration;
+
+	Sprite deflectorShield;
+	bool shieldActive;
 
 	// Accessories
 	Sprite lWing;
@@ -133,6 +142,7 @@ public:
 		int RIGHT = Keyboard::D,
 		int FIRE = Keyboard::Space,
 		int GAUSSCANNON = Keyboard::Q,
+		int SHIELD = Keyboard::RAlt,
 		int TOGGLESTATS = Keyboard::Tab,
 		int CHANGE_LWING = Keyboard::Num1,
 		int CHANGE_CPIT = Keyboard::Num2,
@@ -146,6 +156,7 @@ public:
 	inline const int& getGaussCharge() const { return this->gaussCharge; }
 	inline const int& getGaussChargeMax() const { return this->gaussChargeMax; }
 	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
+	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
 
 	// Positional
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
@@ -227,5 +238,6 @@ public:
 	static dArr<Texture> shipRWingTextures;
 	static dArr<Texture> shipCockpitTextures;
 	static dArr<Texture> shipAuraTextures;
+	static dArr<Texture> shipShieldTextures;
 };
 

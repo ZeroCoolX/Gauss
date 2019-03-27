@@ -11,6 +11,7 @@ dArr<Texture> Player::shipLWingTextures;
 dArr<Texture> Player::shipRWingTextures;
 dArr<Texture> Player::shipCockpitTextures;
 dArr<Texture> Player::shipAuraTextures;
+dArr<Texture> Player::shipShieldTextures;
 
 Player::Player(
 	int UP, 
@@ -19,6 +20,7 @@ Player::Player(
 	int RIGHT,
 	int FIRE,
 	int GAUSSCANNON,
+	int SHIELD,
 	int TOGGLESTATS,
 	int CHANGE_LWING,
 	int CHANGE_CPIT,
@@ -57,6 +59,7 @@ Player::Player(
 	this->controls.Add(RIGHT);
 	this->controls.Add(FIRE);
 	this->controls.Add(GAUSSCANNON);
+	this->controls.Add(SHIELD);
 	this->controls.Add(TOGGLESTATS);
 	this->controls.Add(CHANGE_LWING);
 	this->controls.Add(CHANGE_CPIT);
@@ -94,38 +97,6 @@ void Player::TakeDamage(int damage) {
 	this->velocity.y += -this->normalizedDir.y * 10.f; // knockback amount
 }
 
-bool Player::UpdateLeveling() {
-	if (this->exp >= this->expNext) {
-		this->level++;
-		this->addStatPoint();
-
-		this->exp -= this->expNext;
-		this->expNext = static_cast<int>(
-			(50 / 3)
-			*((pow(level, 3) - 6
-				* pow(level, 2)) + 17
-				* level - 12)
-			);
-
-		this->cooling++;
-		this->plating++;
-		this->power++;
-		this->maneuverability++;
-
-		this->UpdateStats();
-		this->hp = this->hpMax;
-
-		return true;
-	}
-	return false;
-}
-
-void Player::UpdateStats() {
-	this->hpMax = this->hpAdded + (this->plating * 5);
-	this->damageMax = 2 + (this->power * 2);
-	this->damage = 1 + power;
-}
-
 bool Player::ChangeAccessories(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_LWING]))) {
 		this->lWingSelect = ++this->lWingSelect % ((int)Player::shipLWingTextures.Size() - 1);
@@ -145,45 +116,6 @@ bool Player::ChangeAccessories(const float &dt) {
 		return true;
 	}
 	return false;
-}
-
-void Player::UpdateAccessories(const float &dt) {
-	// Update the position of the gun to track the player
-	this->mainGunSprite.setPosition(
-		this->mainGunSprite.getPosition().x,
-		this->playerCenter.y);
-
-	// Compensate after fire kickback
-	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
-	if (this->mainGunSprite.getPosition().x < origin) {
-		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
-
-	}
-	if (this->mainGunSprite.getPosition().x > origin) {
-		this->mainGunSprite.setPosition(
-			origin,
-			this->playerCenter.y);
-	}
-
-	// Left Wing
-	float xMovement = (this->velocity.x < 0 ? -abs(this->velocity.x) : abs(this->velocity.x/3));
-	float yMovement = (this->velocity.x < 0 ? abs(this->velocity.x) : -abs(this->velocity.x / 4));
-
-	this->lWing.setPosition(
-		this->playerCenter.x + xMovement,
-		this->playerCenter.y - yMovement);
-
-	// Right Wing
-	this->rWing.setPosition(
-		this->playerCenter.x + xMovement,
-		this->playerCenter.y + yMovement);
-
-	// Aura
-	this->aura.setPosition(this->playerCenter.x, this->playerCenter.y);
-	this->aura.rotate(5.f * dt * DeltaTime::dtMultiplier);
-
-	// Cockpit
-	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
 }
 
 void Player::Movement(const float &dt, Vector2u windowBounds) {
@@ -227,6 +159,11 @@ void Player::Combat(const float &dt) {
 		this->playerGaussChargeCircle.setFillColor(this->gaussChargingColor);
 		this->_fireGaussCannon(direction);
 		this->keyTime = 0;
+	}
+
+	// SHIELD
+	if (this->shieldCharged() || this->shieldActive) {
+		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD])) && this->shieldChargeTimer > 0;
 	}
 
 	if (this->isDamageCooldown()) {
@@ -287,6 +224,86 @@ void Player::UpdateStatsUI() {
 	}
 }
 
+void Player::UpdateAccessories(const float &dt) {
+	// Update the position of the gun to track the player
+	this->mainGunSprite.setPosition(
+		this->mainGunSprite.getPosition().x,
+		this->playerCenter.y);
+
+	// Compensate after fire kickback
+	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
+	if (this->mainGunSprite.getPosition().x < origin) {
+		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
+
+	}
+	if (this->mainGunSprite.getPosition().x > origin) {
+		this->mainGunSprite.setPosition(
+			origin,
+			this->playerCenter.y);
+	}
+
+	// Shield
+	float shieldScale = ((this->shieldChargeTimer + (this->shieldChargeTimerMax / 2)) / this->shieldChargeTimerMax);
+	if (shieldScale > 1.f) {
+		shieldScale = 1.f;
+	}
+	std::cout << "shield scale: " << shieldScale << std::endl;
+	this->deflectorShield.setScale(shieldScale, shieldScale);
+	this->deflectorShield.setPosition(this->playerCenter);
+
+	// Left Wing
+	float xMovement = (this->velocity.x < 0 ? -abs(this->velocity.x) : abs(this->velocity.x / 3));
+	float yMovement = (this->velocity.x < 0 ? abs(this->velocity.x) : -abs(this->velocity.x / 4));
+
+	this->lWing.setPosition(
+		this->playerCenter.x + xMovement,
+		this->playerCenter.y - yMovement);
+
+	// Right Wing
+	this->rWing.setPosition(
+		this->playerCenter.x + xMovement,
+		this->playerCenter.y + yMovement);
+
+	// Aura
+	this->aura.setPosition(this->playerCenter.x, this->playerCenter.y);
+	this->aura.rotate(5.f * dt * DeltaTime::dtMultiplier);
+
+	// Cockpit
+	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
+}
+
+bool Player::UpdateLeveling() {
+	if (this->exp >= this->expNext) {
+		this->level++;
+		this->addStatPoint();
+
+		this->exp -= this->expNext;
+		this->expNext = static_cast<int>(
+			(50 / 3)
+			*((pow(level, 3) - 6
+				* pow(level, 2)) + 17
+				* level - 12)
+			);
+
+		this->cooling++;
+		this->plating++;
+		this->power++;
+		this->maneuverability++;
+
+		this->UpdateStats();
+		this->hp = this->hpMax;
+
+		return true;
+	}
+	return false;
+}
+
+void Player::UpdateStats() {
+	this->hpMax = this->hpAdded + (this->plating * 5);
+	this->damageMax = 2 + (this->power * 2);
+	this->damage = 1 + power;
+}
+
 void Player::Update(Vector2u windowBounds, const float &dt) {
 	// Update timers
 	if (this->shootTimer < this->shootTimerMax) {
@@ -304,6 +321,16 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	}
 	else {
 		this->playerGaussChargeCircle.setFillColor(this->gaussReadyColor);
+	}
+
+	// Depletes at rate n. Charges at rate n/2
+	if (shieldActive) {
+		this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - 1.f * dt * DeltaTime::dtMultiplier);
+		//std::cout << "Depleting shield/sheildMax : " << std::to_string(this->shieldChargeTimer) << " / " << std::to_string(this->shieldChargeTimerMax) << std::endl;
+	}
+	else {
+		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + 0.5f * dt * DeltaTime::dtMultiplier);
+		//std::cout << "Charging shield/sheildMax : " << std::to_string(this->shieldChargeTimer) << " / " << std::to_string(this->shieldChargeTimerMax) << std::endl;
 	}
 
 	this->Movement(dt, windowBounds);
@@ -347,6 +374,9 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 	renderTarget.draw(this->mainGunSprite);
 	renderTarget.draw(this->sprite);
+	if (this->shieldActive) {
+		renderTarget.draw(this->deflectorShield);
+	}
 
 	renderTarget.draw(this->cPit);
 	renderTarget.draw(this->lWing);
@@ -452,6 +482,7 @@ void Player::Reset() {
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
 	this->sheild = false;
+	this->shieldActive = false;
 	this->piercingShot = false;
 
 	// Reset weapons
@@ -568,6 +599,10 @@ void Player::_initTextures() {
 	//this->gaussCannonProjectileTexture = &Player::shipBulletTextures[GameEnums::T_GAUSSCANNON01];
 	//this->missile01ProjectileTexture = &Player::shipBulletTextures[GameEnums::T_MISSILE01];
 
+	this->deflectorShield.setTexture(Player::shipShieldTextures[0]);
+	this->deflectorShield.setOrigin(this->deflectorShield.getGlobalBounds().width / 2.f, this->deflectorShield.getGlobalBounds().height / 2.f);
+	this->deflectorShield.setPosition(this->sprite.getPosition());
+
 	// Accessories
 	// Left wing
 	this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
@@ -616,6 +651,8 @@ void Player::_initPlayerSettings() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
+	this->shieldChargeTimerMax = 100.f;
+	this->shieldChargeTimer = this->shieldChargeTimerMax;
 
 	// Movement settings
 	this->maxVelocity = 15.f;
@@ -631,6 +668,7 @@ void Player::_initPlayerSettings() {
 	this->dualMissiles02 = false;
 	this->sheild = false;
 	this->piercingShot = false;
+	this->shieldActive = false;
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;
