@@ -96,7 +96,7 @@ void Game::InitPlayerTextures() {
 	Player::shipMainGunTextures.Add(temp);
 
 	// Sheild texutures
-	temp.loadFromFile("Textures/shield.png");
+	temp.loadFromFile("Textures/shield02.png");
 	Player::shipShieldTextures.Add(temp);
 
 	// Ship Parts textures

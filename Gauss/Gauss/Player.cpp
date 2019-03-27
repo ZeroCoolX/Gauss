@@ -156,7 +156,7 @@ void Player::Combat(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
 		// Fire a deadly gauss cannon shot
 		this->gaussChargeTimer = 0.f;
-		this->playerGaussChargeCircle.setFillColor(this->gaussChargingColor);
+		this->playerGaussBar.setFillColor(this->gaussChargingColor);
 		this->_fireGaussCannon(direction);
 		this->keyTime = 0;
 	}
@@ -164,6 +164,7 @@ void Player::Combat(const float &dt) {
 	// SHIELD
 	if (this->shieldCharged() || this->shieldActive) {
 		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD])) && this->shieldChargeTimer > 0;
+		this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
 	}
 
 	if (this->isDamageCooldown()) {
@@ -208,13 +209,21 @@ void Player::UpdateStatsUI() {
 	this->playerHealthBar.setScale(static_cast<float>(this->getHp()) / static_cast<float>(getHpMax()), 1.f);
 	this->playerHealthBarBox.setPosition(Vector2f(healthBarPos.x - 0.5f, healthBarPos.y - 0.5f));
 
+	// Gauss Charge bar
+	Vector2f gaussChargeBarPos = Vector2f(
+		healthBarPos.x - this->playerGaussBar.getGlobalBounds().width - 10.f,
+		healthBarPos.y + this->playerHealthBar.getGlobalBounds().height);
+	this->playerGaussBar.setPosition(gaussChargeBarPos);
+	float gaussCharge = this->gaussChargeTimer / this->gaussChargeTimerMax;
+	this->playerGaussBar.setScale(1.f, gaussCharge);
+
 	// Gauss Cannon Charge circle
-	Vector2f gaussChargePos = Vector2f(this->getPosition().x + this->getGlobalBounds().width, (this->getPosition().y - this->getGlobalBounds().height + (this->playerGaussChargeCircleBorder.getRadius() * 2)));
-	this->playerGaussChargeCircle.setPosition(gaussChargePos);
+	Vector2f shieldChargePos = Vector2f(this->getPosition().x + this->getGlobalBounds().width, (this->getPosition().y - this->getGlobalBounds().height + (this->playerShieldChargeCircleBorder.getRadius() * 2)));
+	this->playerShieldChargeCircle.setPosition(shieldChargePos);
 	// Scale based off player experience to create a dynamic bar
-	float circleScale = this->gaussChargeTimer / this->gaussChargeTimerMax;
-	this->playerGaussChargeCircle.setScale(circleScale, circleScale);
-	playerGaussChargeCircleBorder.setPosition(gaussChargePos);
+	float circleScale = this->shieldChargeTimer / this->shieldChargeTimerMax;
+	this->playerShieldChargeCircle.setScale(circleScale, circleScale);
+	playerShieldChargeCircleBorder.setPosition(shieldChargePos);
 
 	if (this->PlayerShowStatsIsPressed()) {
 		this->playerStatsHudText.setString(this->GetStatsAsString());
@@ -320,17 +329,16 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 		this->gaussChargeTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	}
 	else {
-		this->playerGaussChargeCircle.setFillColor(this->gaussReadyColor);
+		this->playerGaussBar.setFillColor(this->gaussReadyColor);
 	}
 
 	// Depletes at rate n. Charges at rate n/2
 	if (shieldActive) {
 		this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - 1.f * dt * DeltaTime::dtMultiplier);
-		//std::cout << "Depleting shield/sheildMax : " << std::to_string(this->shieldChargeTimer) << " / " << std::to_string(this->shieldChargeTimerMax) << std::endl;
 	}
 	else {
 		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + 0.5f * dt * DeltaTime::dtMultiplier);
-		//std::cout << "Charging shield/sheildMax : " << std::to_string(this->shieldChargeTimer) << " / " << std::to_string(this->shieldChargeTimerMax) << std::endl;
+		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
 
 	this->Movement(dt, windowBounds);
@@ -353,10 +361,13 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 	// Health bar
 	renderTarget.draw(this->playerHealthBar);
 
-	// Gauss charge circle border
-	renderTarget.draw(this->playerGaussChargeCircleBorder);
-	// Gauss charge circle
-	renderTarget.draw(this->playerGaussChargeCircle);
+	// Gauss Charge bar
+	renderTarget.draw(this->playerGaussBar);
+
+	// Shield charge circle border
+	renderTarget.draw(this->playerShieldChargeCircleBorder);
+	// Shield charge circle
+	renderTarget.draw(this->playerShieldChargeCircle);
 
 	if (this->PlayerShowStatsIsPressed()) {
 		renderTarget.draw(this->playerStatsTextBox);
@@ -407,19 +418,27 @@ void Player::InitUI(Text t) {
 	this->playerExpBarBox.setOutlineThickness(1);
 	this->playerExpBarBox.setOutlineColor(Color(255, 255, 255, 10));
 
-	// Gauss cannon circle
+
+	// Gauss cannon charge bar
 	this->gaussReadyColor = Color(0, 220, 93, 150);
 	this->gaussChargingColor = Color(0, 86, 37, 150);
 
-	this->playerGaussChargeCircle.setRadius(10);
-	this->playerGaussChargeCircle.setFillColor(this->gaussChargingColor);
-	this->playerGaussChargeCircle.setOrigin(Vector2f(this->playerGaussChargeCircle.getRadius(), this->playerGaussChargeCircle.getRadius()));
+	this->playerGaussBar.setSize(Vector2f(8.5f, -30.f));
+	this->playerGaussBar.setFillColor(this->gaussChargingColor);
 
-	this->playerGaussChargeCircleBorder.setRadius(10);
-	this->playerGaussChargeCircleBorder.setFillColor(Color(255, 255, 255, 0));
-	this->playerGaussChargeCircleBorder.setOutlineColor(Color(255, 255, 255, 10));
-	this->playerGaussChargeCircleBorder.setOutlineThickness(1);
-	this->playerGaussChargeCircleBorder.setOrigin(Vector2f(this->playerGaussChargeCircleBorder.getRadius(), this->playerGaussChargeCircleBorder.getRadius()));
+	// Shield charge circle
+	this->shieldReadyColor = Color(250, 17, 200, 150);
+	this->shieldChargingColor = Color(145, 49, 125, 150);
+
+	this->playerShieldChargeCircle.setRadius(10);
+	this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
+	this->playerShieldChargeCircle.setOrigin(Vector2f(this->playerShieldChargeCircle.getRadius(), this->playerShieldChargeCircle.getRadius()));
+
+	this->playerShieldChargeCircleBorder.setRadius(10);
+	this->playerShieldChargeCircleBorder.setFillColor(Color(255, 255, 255, 0));
+	this->playerShieldChargeCircleBorder.setOutlineColor(Color(255, 255, 255, 10));
+	this->playerShieldChargeCircleBorder.setOutlineThickness(1);
+	this->playerShieldChargeCircleBorder.setOrigin(Vector2f(this->playerShieldChargeCircleBorder.getRadius(), this->playerShieldChargeCircleBorder.getRadius()));
 
 	// Stats HUD text
 	this->playerStatsHudText.setFont(*this->statsText.getFont());
