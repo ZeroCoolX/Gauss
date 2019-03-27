@@ -134,6 +134,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MoveLeftEnemy.cpp" />
     <ClCompile Include="MoveLeftShootEnemy.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextTag.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="MoveLeftEnemy.h" />
     <ClInclude Include="MoveLeftShootEnemy.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextTag.h" />

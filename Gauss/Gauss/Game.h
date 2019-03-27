@@ -8,6 +8,7 @@
 #include "ItemUpgrade.h"
 #include "Boss.h"
 #include "WorldMap.h"
+#include "Particle.h"
 
 class Game
 {
@@ -73,6 +74,9 @@ private:
 	// Consumables
 	dArr<Consumable*> consumables;
 
+	// Particles
+	dArr<Particle> particles;
+
 	// Player Textures
 	dArr<Texture> playerBulletTextures;
 	dArr<Texture> playerBodyTextures;
@@ -133,6 +137,7 @@ public:
 	void UpdateEnemies(const float &dt);
 	void UpdateTextTags(const float &dt);
 	void UpdateConsumables(const float &dt);
+	void UpdateParticles(const float &dt);
 
 	void DrawUI();
 	void Draw();
@@ -140,6 +145,7 @@ public:
 	void DrawPlayers();
 	void DrawMap();
 	void DrawConsumables();
+	void DrawParticles();
 
 	void ToggleFullscreen();
 	void PauseGame();

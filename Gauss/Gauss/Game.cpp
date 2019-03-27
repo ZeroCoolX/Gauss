@@ -182,6 +182,10 @@ void Game::InitTextures() {
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
 
+	// Particle Textures
+	temp.loadFromFile("Textures/Particles/particle01.png");
+	Particle::particleTextures.Add(Texture(temp));
+
 	this->InitMapTextures();
 }
 
@@ -277,6 +281,9 @@ void Game::Update(const float &dt) {
 
 		// Update Texttags
 		this->UpdateTextTags(dt);
+
+		// Update Particles 
+		this->UpdateParticles(dt);
 	}
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
 		// Show end game stats
@@ -693,6 +700,13 @@ void Game::UpdateConsumables(const float &dt) {
 	}
 }
 
+void Game::UpdateParticles(const float &dt) {
+	for (size_t i = 0; i < this->particles.Size(); i++)
+	{
+		this->particles[i].Update(dt);
+	}
+}
+
 void Game::DrawUI() {
 	// Draw Texttags
 	for (size_t i = 0; i < this->textTags.Size(); i++)
@@ -744,6 +758,13 @@ void Game::DrawConsumables() {
 	}
 }
 
+void Game::DrawParticles() {
+	for (size_t i = 0; i < this->particles.Size(); i++)
+	{
+		this->particles[i].Draw(*this->window);
+	}
+}
+
 void Game::Draw() {
 	this->window->clear();
 
@@ -762,7 +783,11 @@ void Game::Draw() {
 	// Draw Consumables
 	this->DrawConsumables();
 
-	// Draw UI
+	// Draw Particles
+	this->DrawParticles();
+
+	// Draw UI - update view
+	this->window->setView(this->window->getDefaultView());
 	this->DrawUI();
 
 	// Draw everything to the window

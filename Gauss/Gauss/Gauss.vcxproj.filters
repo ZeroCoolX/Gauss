@@ -117,6 +117,9 @@
     <ClCompile Include="Tile.cpp">
       <Filter>Source Files\WorldElements</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="TileArr.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
