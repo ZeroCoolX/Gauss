@@ -704,16 +704,22 @@ void Game::UpdateEnemyBullets(const float &dt) {
 		// Bullet Player collision check
 		for (size_t j = 0; j < this->players.Size(); j++)
 		{
-			if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
+			if (this->players[j].isShielding()) {
+				if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getDeflectorShield().getGlobalBounds())
+					 || EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
+
+					// Reflect bullet
+					this->players[j].getDeflectorShield().setColor(Color::Red);
+					EnemyLifeform::bullets[i].reverseDirection();
+				}
+			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
 				// Damage player		
 				int damage = EnemyLifeform::bullets[i].getDamage();
+
 				EnemyLifeform::bullets.Remove(i);
 
 				this->players[j].TakeDamage(damage);
-				// Collision resets the perfection streak - not right now because that seems unfair, but maybe...
-				//this->killPerfectionAdder = 0;
-				//this->killPerfectionMultiplier = 1;
 
 				// Player collision damage
 				this->textTags.Add(
@@ -725,7 +731,6 @@ void Game::UpdateEnemyBullets(const float &dt) {
 						28, 30.f, true
 					)
 				);
-
 
 				// Check for player death
 				if (players[j].isDead()) {

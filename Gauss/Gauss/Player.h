@@ -153,13 +153,14 @@ public:
 		int CHANGE_AURA = Keyboard::Num4);
 	virtual ~Player();
 
-	// Accessors
-	// Weapons
+	// Accessories
 	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
 	inline const int& getGaussCharge() const { return this->gaussCharge; }
 	inline const int& getGaussChargeMax() const { return this->gaussChargeMax; }
 	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
 	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
+	inline const bool isShielding() const { return this->shieldActive; }
+	inline Sprite getDeflectorShield() { return this->deflectorShield; }
 
 	// Positional
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }

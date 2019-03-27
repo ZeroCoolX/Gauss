@@ -56,6 +56,7 @@ public:
 	inline const bool& gaussShot() const { return this->isGaussShot; }
 	inline Vector2f getNormDir() { return this->normalize(this->velocity, this->vectorLength(this->velocity)); }
 	inline Vector2f getVelocity() { return this->velocity; }
+	inline void reverseDirection() { this->velocity.x *= -1; this->velocity.y *= -1; }
 
 	// Vector Utility
 	inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
