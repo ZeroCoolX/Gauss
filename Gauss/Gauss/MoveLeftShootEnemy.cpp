@@ -34,7 +34,7 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 				this->sprite.getPosition(),
 				this->normalizedLookDirection,
 				bulletSpeed,
-				static_cast<int>(bulletSpeed),
+				bulletSpeed,
 				this->getDamage(), false, 0.f) // No acceleration - only constant velocity
 		);
 	}

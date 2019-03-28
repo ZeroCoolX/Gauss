@@ -191,9 +191,7 @@ void Player::UpdateStatsUI() {
 
 	// Stats
 	this->statsText.setPosition(statsPos);
-	this->statsText.setString("[ " + std::to_string(this->playerNumber) + " ]"
-	+ "\n\n\n\n\n\n\n\n\n"
-	+ std::to_string(this->getLevel()));
+	this->statsText.setString("[ " + std::to_string(this->getLevel()) + " ]");
 
 	// Exp Bar
 	Vector2f expBarPos = Vector2f(this->getPosition().x + 15.f, (this->getPosition().y + this->getGlobalBounds().height + 45.f));

@@ -104,6 +104,7 @@ private:
 
 	// Utility Functions
 	void _spawnEnemy();
+	void _generateParticles(Vector2f pos, Vector2f velocity, bool dead);
 
 public:
 	Game(RenderWindow *window);

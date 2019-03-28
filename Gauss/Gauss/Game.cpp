@@ -479,18 +479,6 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 				EnemyLifeform *currentEnemy = this->enemyLifeforms[k];
 				if (currentPlayer.BulletAt(j).getGlobalBounds().intersects(currentEnemy->getGlobalBounds())) {
 
-					// Add random particle effect for hit
-					const int nrOfParticles = rand() % 10 + 3;
-					for (int m = 0; m < nrOfParticles; m++)
-					{
-						this->particles.Add(Particle(currentEnemy->getPosition(),
-							0,
-							currentPlayer.BulletAt(j).getVelocity(),
-							static_cast<float>(rand() % 40 + 10),
-							static_cast<float>(rand() % 20),
-							40.f));
-					}
-
 					// Health check for damage or destruction
 					int damage = currentPlayer.BulletAt(j).getDamage();
 
@@ -507,7 +495,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 
 					currentEnemy->TakeDamage(damage);
 
-					if (currentEnemy->getHp() <= 0) {
+					this->_generateParticles(currentEnemy->getPosition(), currentPlayer.BulletAt(j).getVelocity(), currentEnemy->getHp() <= 0);
+
+					if (currentEnemy->getHp() <= 0){
 
 						// Gain score & Reset multiplier timer
 						this->killboxTimer = this->killboxTimerMax;
@@ -936,4 +926,29 @@ void Game::_spawnEnemy() {
 		break;
 	}
 
+}
+
+void Game::_generateParticles(Vector2f pos, Vector2f direction, bool dead) {
+	int nrOfParticles = rand() % 10 + 3;
+	int rotation = 20;
+	int velocity = 30;
+	float lifetime = 30.f;
+
+	if (dead) {
+		nrOfParticles = rand() % 20 + 10;
+		rotation = 40;
+		velocity = 40;
+		lifetime = 40.f;
+	}
+
+	// Generate particles
+	for (int m = 0; m < nrOfParticles; m++)
+	{
+		this->particles.Add(Particle(pos,
+			0,
+			direction,
+			static_cast<float>(rand() % velocity + 10),
+			static_cast<float>(rand() % rotation),
+			lifetime));
+	}
 }
