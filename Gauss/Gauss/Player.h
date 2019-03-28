@@ -192,6 +192,15 @@ public:
 	inline const int& getGunLevel() const { return this->mainGunLevel; }
 	inline const void addStatPoint() { this->statPoints++; }
 	inline dArr<int>& getAcquiredUpgrades() { return this->upgradesAcquired; }
+	inline bool hasUpgrade(int type) {
+		for (size_t i = 0; i < this->upgradesAcquired.Size(); i++)
+		{
+			if (type == this->upgradesAcquired[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	// Damage/Attack
 	int getDamage() const;

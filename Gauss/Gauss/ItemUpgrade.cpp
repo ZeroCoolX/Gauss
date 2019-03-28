@@ -14,7 +14,7 @@ void ItemUpgrade::Draw(RenderTarget &renderTarget) {
 
 void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 	// Add the upgrade if we need to
-	if (_shouldAddUpgrade()) {
+	if (_shouldAddUpgrade() && !player->hasUpgrade(this->type)) {
 		player->getAcquiredUpgrades().Add(this->type);
 	}
 

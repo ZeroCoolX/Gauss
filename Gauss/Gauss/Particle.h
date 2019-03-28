@@ -11,6 +11,7 @@ class Particle {
 		float deceleration;
 		float maxRotation;
 		float lifetime;
+		Color color;
 
 		Particle(
 			Vector2f pos,
@@ -18,7 +19,8 @@ class Particle {
 			Vector2f dir,
 			float maxVelocity,
 			float maxRotation,
-			float lifetime);
+			float lifetime,
+			Color color = Color::White);
 		~Particle();
 
 		inline bool canDelete() const { return this->lifetime <= 0.f; }

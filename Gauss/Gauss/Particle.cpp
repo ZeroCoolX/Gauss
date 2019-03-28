@@ -7,13 +7,17 @@ Particle::Particle(Vector2f pos,
 	Vector2f dir,
 	float maxVelocity,
 	float maxRotation,
-	float lifetime)
+	float lifetime,
+	Color color)
 {
 	// Sprite
 	this->sprite.setTexture(Particle::particleTextures[textureIndex]);
 	this->sprite.setPosition(pos);
 	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2, this->sprite.getGlobalBounds().height / 2);
 	this->sprite.setScale(Vector2f(static_cast<float>(rand() % 2 + 1), static_cast<float>(rand() % 2 + 1)));
+	this->sprite.setColor(color);
+
+	this->color = color;
 
 	// Normalize random dir
 	this->dir.x = static_cast<float>((rand() % 20 + static_cast<int>(dir.x)) - 10);
@@ -43,10 +47,20 @@ void Particle::Update(const float &dt) {
 
 		// Reduce the alpha over time
 		if (this->sprite.getColor().a > 0) {
-			this->sprite.setColor(Color(255, 255, 255, this->sprite.getColor().a - 1));
+			this->sprite.setColor(Color(
+				this->color.r, 
+				this->color.g, 
+				this->color.b, 
+				this->sprite.getColor().a - 1)
+			);
 			// Once it drops below 0 it goes above 255 because unsigned int
 			if (this->sprite.getColor().a > 255) {
-				this->sprite.setColor(Color(255, 255, 255, 0));
+				this->sprite.setColor(Color(
+					this->color.r, 
+					this->color.g, 
+					this->color.b, 
+					0)
+				);
 			}
 		}
 		//Movement

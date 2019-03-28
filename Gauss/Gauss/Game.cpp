@@ -505,7 +505,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								currentPlayer.BulletAt(j).getVelocity(),
 								rand () % 40 + 10.f,
 								rand() % 30 + 1.f,
-								40.f));
+								50.f));
 						}
 					}
 					else {
@@ -517,7 +517,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								currentPlayer.BulletAt(j).getVelocity(),
 								rand() % 30 + 10.f,
 								rand() % 20 + 1.f,
-								30.f));
+								40.f));
 						}
 					}
 
@@ -603,12 +603,12 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						this->enemyLifeforms.Remove(k);
 					}
 
-					// Destroy the bullet if not piercing shot
+					// Destroy the bullet if not piercing shot && not gauss shot
 					if (!currentPlayer.getPiercingShot() && !currentPlayer.BulletAt(j).gaussShot()) {
 						// Should add effect to indicate it is piercing shots
 						currentPlayer.RemoveBullet(j);
 					}
-					else if (!currentPlayer.BulletAt(j).gaussShot()) {
+					else if (currentPlayer.getPiercingShot()) {
 						// Move to the end of the sprite it hit so that there is only a single point of damage calculation
 						currentPlayer.BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, currentPlayer.BulletAt(j).getPosition().y));
 					}
@@ -741,7 +741,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 				}
 
 				// Damage player		
-				int damage = EnemyLifeform::bullets[i].getDamage() / 3;
+				int damage = (rand() % 2 + 1) + (this->players[j].getLevel() / 2);// /*As level increases this got rediculous*/ EnemyLifeform::bullets[i].getDamage() / 3;
 
 				EnemyLifeform::bullets.Remove(i);
 
