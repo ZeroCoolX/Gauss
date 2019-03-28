@@ -27,10 +27,12 @@ void Bullet::_constantMovement(const float &dt) {
 }
 
 void Bullet::_accelerationMovement(const float &dt) {
-	if (this->velocity.x < this->maxVelocity) {
+	if (this->velocity.x < this->maxVelocity && this->direction.x > 0.f
+		|| this->velocity.x > -this->maxVelocity && this->direction.x < 0.f) {
 		this->velocity.x += this->acceleration * this->direction.x * dt * DeltaTime::dtMultiplier;
 	}
-	if (this->velocity.y < this->maxVelocity) {
+	if (this->velocity.y < this->maxVelocity && this->direction.y > 0.f
+		|| this->velocity.y > -this->maxVelocity && this->direction.y < 0.f) {
 		this->velocity.y += this->acceleration * this->direction.y * dt * DeltaTime::dtMultiplier;
 	}
 }
