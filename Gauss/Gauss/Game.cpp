@@ -494,8 +494,32 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					);
 
 					currentEnemy->TakeDamage(damage);
-
-					this->_generateParticles(currentEnemy->getPosition(), currentPlayer.BulletAt(j).getVelocity(), currentEnemy->getHp() <= 0);
+					
+					// Generate particles based on how alive enemy is
+					if (currentEnemy->getHp() <= 0) {
+						const int nrOfPatricles = rand() % 20 + 10;
+						for (int m = 0; m < nrOfPatricles; m++)
+						{
+							this->particles.Add(Particle(currentEnemy->getPosition(),
+								0,
+								currentPlayer.BulletAt(j).getVelocity(),
+								rand () % 40 + 10.f,
+								rand() % 30 + 1.f,
+								40.f));
+						}
+					}
+					else {
+						const int nrOfPatricles = rand() % 10 + 3;
+						for (int m = 0; m < nrOfPatricles; m++)
+						{
+							this->particles.Add(Particle(currentEnemy->getPosition(),
+								0,
+								currentPlayer.BulletAt(j).getVelocity(),
+								rand() % 30 + 10.f,
+								rand() % 20 + 1.f,
+								30.f));
+						}
+					}
 
 					if (currentEnemy->getHp() <= 0){
 
@@ -703,6 +727,18 @@ void Game::UpdateEnemyBullets(const float &dt) {
 					EnemyLifeform::bullets[i].reverseDirection();
 				}
 			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
+
+				// Generate a few collision particles
+				const int nrOfPatricles = rand() % 5 + 2;
+				for (int m = 0; m < nrOfPatricles; m++)
+				{
+					this->particles.Add(Particle(EnemyLifeform::bullets[i].getPosition(),
+						0,
+						EnemyLifeform::bullets[i].getVelocity(),
+						rand() % 20 + 5.f,
+						rand() % 20 + 1.f,
+						30.f));
+				}
 
 				// Damage player		
 				int damage = EnemyLifeform::bullets[i].getDamage() / 3;
@@ -926,29 +962,4 @@ void Game::_spawnEnemy() {
 		break;
 	}
 
-}
-
-void Game::_generateParticles(Vector2f pos, Vector2f direction, bool dead) {
-	int nrOfParticles = rand() % 10 + 3;
-	int rotation = 20;
-	int velocity = 30;
-	float lifetime = 30.f;
-
-	if (dead) {
-		nrOfParticles = rand() % 20 + 10;
-		rotation = 40;
-		velocity = 40;
-		lifetime = 40.f;
-	}
-
-	// Generate particles
-	for (int m = 0; m < nrOfParticles; m++)
-	{
-		this->particles.Add(Particle(pos,
-			0,
-			direction,
-			static_cast<float>(rand() % velocity + 10),
-			static_cast<float>(rand() % rotation),
-			lifetime));
-	}
 }
