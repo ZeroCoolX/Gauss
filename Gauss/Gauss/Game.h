@@ -9,6 +9,7 @@
 #include "Boss.h"
 #include "WorldMap.h"
 #include "Particle.h"
+#include "Powerup.h"
 
 class Game
 {
@@ -76,15 +77,6 @@ private:
 
 	// Particles
 	dArr<Particle> particles;
-
-	// Player Textures
-	dArr<Texture> playerBulletTextures;
-	dArr<Texture> playerBodyTextures;
-	dArr<Texture> playerMainGunTextures;
-	dArr<Texture> lWingTextures;
-	dArr<Texture> rWingTextures;
-	dArr<Texture> cockpitTextures;
-	dArr<Texture> auraTextures;
 
 	// Enemy Textures
 	dArr<Texture> enemyTextures;

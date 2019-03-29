@@ -502,6 +502,7 @@ void Player::Reset() {
 	this->sheild = false;
 	this->shieldActive = false;
 	this->piercingShot = false;
+	this->upgradesAcquired.Clear();
 
 	// Reset weapons
 	this->currentWeapon = GameEnums::G_LASER;

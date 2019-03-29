@@ -190,6 +190,12 @@ void Game::InitTextures() {
 	this->upgradeTextures.Add(Texture(temp));
 	this->numberOfUpgrades = this->upgradeTextures.Size();
 
+	// Init powerups
+	temp.loadFromFile("Textures/Powerups/powerupRF.png");
+	Powerup::powerupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Powerups/powerupXP.png");
+	Powerup::powerupTextures.Add(Texture(temp));
+
 	// Particle Textures
 	temp.loadFromFile("Textures/Particles/particle01.png");
 	Particle::particleTextures.Add(Texture(temp));
@@ -326,8 +332,12 @@ void Game::RestartUpdate() {
 		// Reset difficulty
 		this->difficulty = 0;
 		this->enemySpawnTimerMax = 35.f; // Also in constructor
+
+		// Reset collections
 		this->enemyLifeforms.Clear();
 		this->consumables.Clear();
+		this->particles.Clear();
+		this->textTags.Clear();
 
 		// Init boss encounter
 		this->bossEncounterActivated = false;
