@@ -5,7 +5,7 @@
 class ItemPickup : public Consumable
 {
 public:
-	ItemPickup(dArr<Texture> &textures, Vector2f position, int type, float lifetime) : Consumable(&textures[0], Vector2f(1.f, 1.f)) {
+	ItemPickup(Vector2f position, int type, float lifetime) : Consumable(&pickupTextures[0], Vector2f(1.f, 1.f)) {
 		this->type = type;
 
 		this->sprite.setPosition(position);
@@ -26,5 +26,9 @@ public:
 	void Consume(dArr<TextTag> &tags, Font *font, Player *player);
 	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	void Draw(RenderTarget &renderTarget);
+
+	// Statics
+	static dArr<Texture> pickupTextures;
+	static int numberOfPickups;
 };
 

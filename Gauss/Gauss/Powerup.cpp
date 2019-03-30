@@ -1,6 +1,7 @@
 #include "Powerup.h"
 
 dArr<Texture> Powerup::powerupTextures;
+int Powerup::numberOfPowerups;
 
 Powerup::~Powerup()
 {
@@ -16,4 +17,12 @@ void Powerup::Draw(RenderTarget &renderTarget) {
 
 void Powerup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 	std::cout << "Powerup acquired" << std::endl;
+	switch (this->type) {
+		case RF:
+
+			break;
+		case XP2:
+
+			break;
+	}
 }

@@ -34,7 +34,7 @@ private:
 	}
 
 public:
-	ItemUpgrade(dArr<Texture> &textures, Vector2f position, int type, float lifetime) : Consumable(&textures[type], Vector2f(0.75f, 0.75f)) {
+	ItemUpgrade(Vector2f position, int type, float lifetime) : Consumable(&upgradeTextures[type], Vector2f(0.75f, 0.75f)) {
 		this->type = type;
 		this->sprite.setPosition(position);
 
@@ -56,5 +56,9 @@ public:
 	void Consume(dArr<TextTag> &tags, Font *font, Player *player);
 	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	void Draw(RenderTarget &renderTarget);
+
+	// Statics
+	static dArr<Texture> upgradeTextures;
+	static int numberOfUpgrades;
 };
 

@@ -168,33 +168,35 @@ void Game::InitTextures() {
 
 	// Init pickups textures
 	temp.loadFromFile("Textures/Pickups/hpSupply.png");
-	this->pickupTextures.Add(Texture(temp));
+	ItemPickup::pickupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Pickups/missileSupply.png");
-	this->pickupTextures.Add(Texture(temp));
+	ItemPickup::pickupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
-	this->pickupTextures.Add(Texture(temp));
-	this->numberOfPickups = this->pickupTextures.Size();
+	ItemPickup::pickupTextures.Add(Texture(temp));
+	ItemPickup::numberOfPickups = ItemPickup::pickupTextures.Size();
+
 
 	// Init Upgrade textures
 	temp.loadFromFile("Textures/Upgrades/statpoint.png");
-	this->upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/healthtank.png");
-	this->upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/doubleray.png");
-	this->upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/tripleray.png");
-	this->upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/piercingshot.png");
-	this->upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/shield.png");
-	this->upgradeTextures.Add(Texture(temp));
-	this->numberOfUpgrades = this->upgradeTextures.Size();
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::numberOfUpgrades = ItemUpgrade::upgradeTextures.Size();
 
 	// Init powerups
 	temp.loadFromFile("Textures/Powerups/powerupRF.png");
 	Powerup::powerupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Powerups/powerupXP.png");
 	Powerup::powerupTextures.Add(Texture(temp));
+	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
 
 	// Particle Textures
 	temp.loadFromFile("Textures/Particles/particle01.png");
@@ -580,33 +582,51 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 
 						}
 
-						// Change to drop consumable
+						// Change to drop consumable - perhaps revisit this
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
-
-						if (dropChance > 90) { // 10% chance for an upgrade
-
-							// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
-							uType = rand() % this->numberOfUpgrades;
-							for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
+						int consumableType = rand() % 3 + 1;
+						switch (consumableType) {
+							case 1:
 							{
-								if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
-									uType = rand() % 1;
-								}
-							}
+								if (dropChance > 90) { // 10% chance for an upgrade
 
-							this->consumables.Add(new ItemUpgrade(
-								this->upgradeTextures,
-								currentEnemy->getPosition(),
-								uType,
-								300.f));
-						}
-						else if (dropChance > 75) { // 25% chance health is dropped
-							this->consumables.Add(new ItemPickup(
-								this->pickupTextures,
-								currentEnemy->getPosition(),
-								GameEnums::ITEM_HEALTH, // health item for now
-								150.f));
+									// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
+									uType = rand() % ItemUpgrade::numberOfUpgrades;
+									for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
+									{
+										if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
+											uType = rand() % 1;
+										}
+									}
+
+									this->consumables.Add(new ItemUpgrade(
+										currentEnemy->getPosition(),
+										uType,
+										300.f));
+								}
+								break;
+							}
+							case 2: {
+								if (dropChance > 75) { // 25% chance health is dropped
+									this->consumables.Add(new ItemPickup(
+										currentEnemy->getPosition(),
+										GameEnums::ITEM_HEALTH, // health item for now
+										150.f));
+								}
+								break;
+							}
+							case 3:
+							{
+								uType = rand() % Powerup::numberOfPowerups;
+								if (dropChance > 95) { // 5% chance powerup is dropped
+									this->consumables.Add(new Powerup(
+										currentEnemy->getPosition(),
+										uType,
+										100.f));
+								}
+								break;
+							}
 						}
 
 						// Destroy the enemy

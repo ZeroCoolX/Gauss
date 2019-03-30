@@ -1,5 +1,8 @@
 #include "ItemPickup.h"
 
+dArr<Texture> ItemPickup::pickupTextures;
+int ItemPickup::numberOfPickups;
+
 ItemPickup::~ItemPickup()
 {
 }

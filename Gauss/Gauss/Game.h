@@ -82,12 +82,6 @@ private:
 	dArr<Texture> enemyTextures;
 	dArr<Texture> enemyBulletTextures;
 
-	// Consumable Textures
-	unsigned numberOfPickups;
-	dArr<Texture> pickupTextures;
-	unsigned numberOfUpgrades;
-	dArr<Texture> upgradeTextures;
-
 	// Boss textures
 	dArr<Texture> bossBodyTextures;
 	dArr<Texture> bossGunTextures;

@@ -7,10 +7,10 @@ enum powerup_types {RF = 0, XP2};
 class Powerup : public Consumable
 {
 public:
-	Powerup(float lifeTimeMax , int type, Vector2f pos) : Consumable(&powerupTextures[type], Vector2f(1.f, 1.f)) {
-		this->sprite.setPosition(pos);
+	Powerup(Vector2f position, int type, float lifetime) : Consumable(&powerupTextures[type], Vector2f(0.75f, 0.75f)) {
+		this->sprite.setPosition(position);
 
-		this->lifetimeTimerMax = lifeTimeMax;
+		this->lifetimeTimerMax = lifetime;
 		this->lifetimeTimer = 0.f;
 	}
 	virtual ~Powerup();
@@ -21,5 +21,6 @@ public:
 
 	// Statics
 	static dArr<Texture> powerupTextures;
+	static int numberOfPowerups;
 };
 

@@ -1,5 +1,8 @@
 #include "ItemUpgrade.h"
 
+dArr<Texture> ItemUpgrade::upgradeTextures;
+int ItemUpgrade::numberOfUpgrades;
+
 ItemUpgrade::~ItemUpgrade()
 {
 }

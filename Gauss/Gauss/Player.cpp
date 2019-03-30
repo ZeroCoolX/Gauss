@@ -702,7 +702,6 @@ void Player::_recalculatePlayerCenter() {
 
 void Player::_fireLaser(const Vector2f direction) {
 	float yOffset = this->mainGunLevel == GameEnums::DEFAULT_LASER ? 0.f : this->mainGunLevel > GameEnums::LEVEL_2_LASER ? 30.f : 15.f;
-	std::cout << "yOffset = " << yOffset << std::endl;
 	for (int i = 0; i <= this->mainGunLevel; i++)
 	{
 		this->bullets.Add(
