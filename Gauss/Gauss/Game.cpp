@@ -95,6 +95,12 @@ void Game::InitPlayerTextures() {
 	temp.loadFromFile("Textures/Guns/gun03.png");
 	Player::shipMainGunTextures.Add(temp);
 
+	// Powerup indication textures
+	temp.loadFromFile("Textures/Powerups/powerupRFIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
+	temp.loadFromFile("Textures/Powerups/powerupXPIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
+
 	// Sheild texutures
 	temp.loadFromFile("Textures/shield02.png");
 	Player::shipShieldTextures.Add(temp);
@@ -556,6 +562,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						// Player earned some EXP!
 						int exp = currentEnemy->getHpMax()
 							+ (rand() % currentEnemy->getHpMax() + 1) * (this->killboxMultiplier + 1);
+						if (currentPlayer.getPowerupXP()) {
+							exp *= 2;
+						}
 
 						// Player leveled up!
 						if (currentPlayer.gainExp(exp)) {
@@ -589,7 +598,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 							case 1:
 							{
-								if (dropChance > 90) { // 10% chance for an upgrade
+								if (dropChance > 95) { // 10% chance for an upgrade
 
 									// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 									uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -608,7 +617,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								break;
 							}
 							case 2: {
-								if (dropChance > 75) { // 25% chance health is dropped
+								if (dropChance > 80) { // 25% chance health is dropped
 									this->consumables.Add(new ItemPickup(
 										currentEnemy->getPosition(),
 										GameEnums::ITEM_HEALTH, // health item for now
@@ -619,11 +628,11 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							case 3:
 							{
 								uType = rand() % Powerup::numberOfPowerups;
-								if (dropChance > 95) { // 5% chance powerup is dropped
+								if (dropChance > 90) { // 5% chance powerup is dropped
 									this->consumables.Add(new Powerup(
 										currentEnemy->getPosition(),
 										uType,
-										100.f));
+										300.f));
 								}
 								break;
 							}

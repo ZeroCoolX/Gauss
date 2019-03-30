@@ -12,6 +12,7 @@ dArr<Texture> Player::shipRWingTextures;
 dArr<Texture> Player::shipCockpitTextures;
 dArr<Texture> Player::shipAuraTextures;
 dArr<Texture> Player::shipShieldTextures;
+dArr<Texture> Player::powerupIndicatorTextures;
 
 Player::Player(
 	int UP, 
@@ -223,6 +224,13 @@ void Player::UpdateStatsUI() {
 	this->playerShieldChargeCircle.setScale(circleScale, circleScale);
 	playerShieldChargeCircleBorder.setPosition(shieldChargePos);
 
+	// Powerup Indicator - TODO: the center is a teeny bit off
+	if (this->getPowerupRF() || this->getPowerupXP()) {
+		this->powerupSprite.setPosition(this->playerCenter);
+		const float indicatorAlpha = (this->powerupTimer / this->powerupTimerMax) * 255.f;
+		this->powerupSprite.setColor(Color(this->powerupSprite.getColor().r, this->powerupSprite.getColor().g, this->powerupSprite.getColor().b, static_cast<int>(indicatorAlpha)));
+	}
+
 	if (this->PlayerShowStatsIsPressed()) {
 		this->playerStatsHudText.setString(this->GetStatsAsString());
 		this->playerStatsTextBox.setPosition(this->getPosition().x, this->getPosition().y + 150.f);
@@ -278,6 +286,13 @@ void Player::UpdateAccessories(const float &dt) {
 	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
 }
 
+void Player::UpdatePowerups(const float &dt) {
+	if (this->powerupTimer <= 0.f) {
+		this->powerupRF = false;
+		this->powerupXP = false;
+	}
+}
+
 bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
 		this->level++;
@@ -312,6 +327,8 @@ void Player::UpdateStats() {
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
+	this->shootTimerMax = this->getCalculatedShootTimer();
+
 	// Update timers
 	if (this->shootTimer < this->shootTimerMax) {
 		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
@@ -321,6 +338,10 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 	}
 	if (this->keyTime < this->keyTimeMax) {
 		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+
+	if (this->powerupTimer >= 0.f) {
+		this->powerupTimer -= 1.f * dt * DeltaTime::dtMultiplier;
 	}
 
 	if (this->gaussChargeTimer < this->gaussChargeTimerMax) {
@@ -342,6 +363,7 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 
 	this->Movement(dt, windowBounds);
 	this->UpdateAccessories(dt);
+	this->UpdatePowerups(dt);
 	this->Combat(dt);
 	this->UpdateStatsUI();
 }
@@ -391,6 +413,10 @@ void Player::Draw(RenderTarget &renderTarget) {
 	renderTarget.draw(this->cPit);
 	renderTarget.draw(this->lWing);
 	renderTarget.draw(this->rWing);
+
+	if (this->getPowerupRF() || this->getPowerupXP()) {
+		renderTarget.draw(this->powerupSprite);
+	}
 
 	this->DrawUI(renderTarget);
 }
@@ -502,6 +528,8 @@ void Player::Reset() {
 	this->sheild = false;
 	this->shieldActive = false;
 	this->piercingShot = false;
+	this->powerupRF = false;
+	this->powerupXP = false;
 	this->upgradesAcquired.Clear();
 
 	// Reset weapons
@@ -512,6 +540,7 @@ void Player::Reset() {
 	// Reset Timers
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimer = this->damageTimerMax;
+	this->powerupTimer = this->powerupTimerMax;
 }
 
 void Player::AddStatPointRandom() {
@@ -664,7 +693,7 @@ void Player::_initPlayerSettings() {
 	this->bulletAcceleration = 1.f;
 
 	// Setup timers
-	this->shootTimerMax = 20.f;
+	this->shootTimerMax = this->getCalculatedShootTimer();
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 40.f;
 	this->damageTimer = this->damageTimerMax;
@@ -672,6 +701,9 @@ void Player::_initPlayerSettings() {
 	this->gaussChargeTimer = 0.f;
 	this->shieldChargeTimerMax = 100.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
+	// Powerups Timer
+	this->powerupTimerMax = 500.f;
+	this->powerupTimer = this->powerupTimerMax;
 
 	// Movement settings
 	this->maxVelocity = 15.f;
@@ -688,6 +720,8 @@ void Player::_initPlayerSettings() {
 	this->sheild = false;
 	this->piercingShot = false;
 	this->shieldActive = false;
+	this->powerupRF = false;
+	this->powerupXP = false;
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;

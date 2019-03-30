@@ -34,6 +34,8 @@ private:
 	CircleShape playerShieldChargeCircleBorder;
 	Color shieldChargingColor;
 	Color shieldReadyColor;
+	// POWERUPS
+	Sprite powerupSprite;
 
 
 	// TIMERS
@@ -45,14 +47,16 @@ private:
 	float gaussChargeTimerMax;
 	float shieldChargeTimerMax;
 	float shieldChargeTimer;
+	float powerupTimerMax;
+	float powerupTimer;
 
 	Sprite sprite;
 	RectangleShape hitBox;
 
 	// Accessories
 	Sprite mainGunSprite;
-	float mainGunKickback = 30.f; // TODO: checkout what 40 looks like
-	float mainGunReturnSpeed = 2.f; // TODO: maybe change to 5 - see what that looks like
+	float mainGunKickback = 40.f;
+	float mainGunReturnSpeed = 5.f;
 
 	dArr<Bullet> bullets;
 
@@ -123,6 +127,10 @@ private:
 	bool sheild;
 	bool dualMissiles01;
 	bool dualMissiles02;
+	
+	// Powerups
+	bool powerupRF;
+	bool powerupXP;
 
 	// Utility Functions
 	void _processPlayerInput(const float &dt);
@@ -155,12 +163,29 @@ public:
 
 	// Accessories
 	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
-	inline const int& getGaussCharge() const { return this->gaussCharge; }
-	inline const int& getGaussChargeMax() const { return this->gaussChargeMax; }
-	inline void gainGaussCharge(int charge) { this->gaussCharge = std::min(this->gaussCharge + charge, this->gaussChargeMax); }
 	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
 	inline const bool isShielding() const { return this->shieldActive; }
 	inline Sprite getDeflectorShield() { return this->deflectorShield; }
+
+	// Powerups
+	inline void enablePowerupRF() { 
+		this->powerupRF = true; 
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[0]); 
+		this->setupPowerupSprite();
+	}
+	inline void enablePowerupXP() { 
+		this->powerupXP = true;
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[1]);
+		this->setupPowerupSprite();
+	}
+	inline void setupPowerupSprite() {
+		this->powerupTimer = this->powerupTimerMax;
+		this->powerupSprite.setScale(0.75f, 0.75f);
+		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
+	}
+	inline bool getPowerupRF() const { return this->powerupRF; }
+	inline bool getPowerupXP() const { return this->powerupXP; }
+	inline float getCalculatedShootTimer() const { return this->powerupRF ? 10.f : 20.f; }
 
 	// Positional
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
@@ -225,6 +250,7 @@ public:
 	bool UpdateLeveling();
 	bool ChangeAccessories(const float &dt);
 	void UpdateAccessories(const float &dt);
+	void UpdatePowerups(const float &dt);
 	void Combat(const float &dt);
 	void Movement(const float &dt, Vector2u windowBounds);
 	void Draw(RenderTarget &renderTarget);
@@ -252,5 +278,6 @@ public:
 	static dArr<Texture> shipCockpitTextures;
 	static dArr<Texture> shipAuraTextures;
 	static dArr<Texture> shipShieldTextures;
+	static dArr<Texture> powerupIndicatorTextures;
 };
 
