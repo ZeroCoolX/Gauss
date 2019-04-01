@@ -4,16 +4,15 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 {
 	this->window = window;
 
-	this->InitView();
-
-	this->InitTextures();
-
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
-
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
+
+	this->InitView();
+
+	this->InitTextures();
 
 	this->InitUI();
 	this->InitMap();
@@ -40,21 +39,52 @@ void GameMapEditor::InitTextures() {
 }
 
 void GameMapEditor::InitUI() {
-	
+	this->selector.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
+	this->selector.setFillColor(Color::Transparent);
+	this->selector.setOutlineColor(Color::Red);
+	this->selector.setOutlineThickness(2.f);
 }
 
 void GameMapEditor::InitMap() {
 
 }
 
-void GameMapEditor::UpdateView() {
-	//this->mainView.setCenter(this->players[0].getPosition());
+void GameMapEditor::UpdateMousePosition() {
+	this->mousePosWindow = Mouse::getPosition(*this->window);
+	this->mousePosWorld = this->window->mapPixelToCoords(this->mousePosWindow);
+#pragma warning(push)
+#pragma warning(disable:4244)
+	this->mousePosGrid = Vector2i(
+		std::max(0.f, this->mousePosWorld.x / Gauss::GRID_SIZE), 
+		std::max(0.f, this->mousePosWorld.y / Gauss::GRID_SIZE)
+	);
+#pragma warning(pop)
+}
+
+void GameMapEditor::UpdateView(const float &dt) {
+	if (Keyboard::isKeyPressed(Keyboard::W)) {
+		this->mainView.move(0.f, -10.f * dt * DeltaTime::dtMultiplier);
+	}else if (Keyboard::isKeyPressed(Keyboard::S)) {
+		this->mainView.move(0.f, 10.f * dt * DeltaTime::dtMultiplier);
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::A)) {
+		this->mainView.move(-10.f * dt * DeltaTime::dtMultiplier, 0.f);
+	}else if (Keyboard::isKeyPressed(Keyboard::D)) {
+		this->mainView.move(10.f * dt * DeltaTime::dtMultiplier, 0.f);
+	}
+}
+
+void GameMapEditor::UpdateUI() {
+	this->selector.setPosition(this->mousePosGrid.x * static_cast<float>(Gauss::GRID_SIZE), this->mousePosGrid.y * static_cast<float>(Gauss::GRID_SIZE));
 }
 
 void GameMapEditor::Update(const float &dt) {
-
 	// Keytime update
 	this->UpdateTimers(dt);
+
+	// Mouse update
+	this->UpdateMousePosition();
 
 	// Fullscreen check
 	this->ToggleFullscreen();
@@ -62,8 +92,11 @@ void GameMapEditor::Update(const float &dt) {
 	// Update Map
 	this->UpdateMap();
 
+	// Update UI
+	this->UpdateUI();
+
 	// view update
-	this->UpdateView();
+	this->UpdateView(dt);
 }
 
 void GameMapEditor::UpdateTimers(const float &dt) {
@@ -92,6 +125,10 @@ void GameMapEditor::UpdateWallColliders(const float &dt, int playerIndex) {
 	//}
 }
 
+void GameMapEditor::DrawUI() {
+	this->window->draw(this->selector);
+}
+
 void GameMapEditor::DrawMap() {
 	this->stage.Draw(*this->window, this->mainView);
 }
@@ -107,6 +144,11 @@ void GameMapEditor::Draw() {
 
 	// Draw UI - update view
 	this->window->setView(this->window->getDefaultView());
+
+	this->DrawUI();
+
+	// Set View
+	this->window->setView(this->mainView);
 
 	// Draw everything to the window
 	this->window->display();

@@ -21,7 +21,15 @@ private:
 	float keyTime;
 	bool fullscreen;
 
+	// MOUSE 
+	Vector2i mousePosWindow;
+	Vector2f mousePosWorld;
+	Vector2i mousePosGrid;
+
 	// UI
+	RectangleShape selector;
+
+	// TEXT
 	Font font;
 
 	// MAP
@@ -42,13 +50,16 @@ public:
 	void InitUI();
 	void InitMap();
 
-	void UpdateView();
+	void UpdateMousePosition();
+	void UpdateView(const float &dt);
+	void UpdateUI();
 	void Update(const float &dt);
 	void UpdateTimers(const float &dt);
 	void UpdateMap();
 	void UpdateWallColliders(const float &dt, int playerIndex);
 
 	void Draw();
+	void DrawUI();
 	void DrawMap();
 
 	void ToggleFullscreen();

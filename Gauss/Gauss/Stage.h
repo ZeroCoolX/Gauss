@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TileArr.h"
+#include "Gauss.h"
 
 class Stage
 {
@@ -21,8 +22,5 @@ public:
 	
 	void Update();
 	void Draw(RenderTarget &renderTarget, View &view);
-
-	// Statics
-	static int gridSize;
 };
 

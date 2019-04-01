@@ -130,6 +130,7 @@
     <ClCompile Include="EnemyLifeform.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMapEditor.cpp" />
+    <ClCompile Include="Gauss.cpp" />
     <ClCompile Include="ItemPickup.cpp" />
     <ClCompile Include="ItemUpgrade.cpp" />
     <ClCompile Include="main.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="dArr.h" />
     <ClInclude Include="GameMapEditor.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Gauss.h" />
     <ClInclude Include="ItemPickup.h" />
     <ClInclude Include="ItemUpgrade.h" />
     <ClInclude Include="MathUtil.h" />
