@@ -180,7 +180,7 @@ public:
 	}
 	inline void setupPowerupSprite() {
 		this->powerupTimer = this->powerupTimerMax;
-		this->powerupSprite.setScale(0.75f, 0.75f);
+		this->powerupSprite.setScale(0.3f, 0.3f);
 		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
 	}
 	inline bool getPowerupRF() const { return this->powerupRF; }

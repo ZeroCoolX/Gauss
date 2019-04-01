@@ -628,7 +628,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							case 3:
 							{
 								uType = rand() % Powerup::numberOfPowerups;
-								if (dropChance > 90) { // 5% chance powerup is dropped
+								if (dropChance > 10) { // 5% chance powerup is dropped
 									this->consumables.Add(new Powerup(
 										currentEnemy->getPosition(),
 										uType,

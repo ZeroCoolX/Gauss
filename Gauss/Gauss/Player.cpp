@@ -226,7 +226,8 @@ void Player::UpdateStatsUI() {
 
 	// Powerup Indicator - TODO: the center is a teeny bit off
 	if (this->getPowerupRF() || this->getPowerupXP()) {
-		this->powerupSprite.setPosition(this->playerCenter);
+		Vector2f powerupSpritePos = Vector2f(shieldChargePos.x - 45.f, shieldChargePos.y - 7.f);
+		this->powerupSprite.setPosition(powerupSpritePos);
 		const float indicatorAlpha = (this->powerupTimer / this->powerupTimerMax) * 255.f;
 		this->powerupSprite.setColor(Color(this->powerupSprite.getColor().r, this->powerupSprite.getColor().g, this->powerupSprite.getColor().b, static_cast<int>(indicatorAlpha)));
 	}
