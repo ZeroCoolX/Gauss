@@ -324,7 +324,7 @@ void Player::UpdateStats() {
 	this->hpMax = this->hpAdded + (this->plating * 5);
 	this->damageMax = 2 + (this->power * 2);
 	this->damage = 1 + power;
-	this->shieldChargeTimerMax = 100.f + this->cooling + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 100.f + (this->cooling * (this->maneuverability / 2));
 }
 
 void Player::Update(Vector2u windowBounds, const float &dt) {
@@ -579,7 +579,8 @@ std::string Player::GetStatsAsString() {
 		"\nPower: " + std::to_string(this->power) +
 		"\nPlating: " + std::to_string(this->plating) +
 		"\nManeuverability: " + std::to_string(this->maneuverability) +
-		"\nCooling: " + std::to_string(this->cooling);
+		"\nCooling: " + std::to_string(this->cooling) + 
+		"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax);
 
 }
 

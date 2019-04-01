@@ -1,6 +1,9 @@
 #include "Game.h"
+#include "GameMapEditor.h"
 
 using namespace sf;
+
+bool MAPEDITOR = true;
 
 int main() {
 
@@ -12,6 +15,7 @@ int main() {
 	float dt = 0.f;
 
 	Game game(&window);
+	GameMapEditor mapEditor(&window);
 
 	//Game Loop
 	while (window.isOpen()) {
@@ -25,8 +29,14 @@ int main() {
 
 		dt = clock.restart().asSeconds();
 
-		game.Update(dt);
-		game.Draw();
+		if (MAPEDITOR) {
+			mapEditor.Update(dt);
+			mapEditor.Draw();
+		}
+		else {
+			game.Update(dt);
+			game.Draw();
+		}
 	}
 
 	return 0;
