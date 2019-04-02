@@ -58,7 +58,7 @@ private:
 
 	// MAP
 	WorldMap worldMap;
-	Stage stage;
+	Stage *stage;
 
 	// Players
 	dArr<Player> players;

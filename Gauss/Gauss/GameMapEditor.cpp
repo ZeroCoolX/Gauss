@@ -7,8 +7,10 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
-	this->keyTimeMax = 10.f;
+	this->keyTimeMax = 5.f;
 	this->keyTime = this->keyTimeMax;
+
+	this->stage = nullptr;
 
 	this->InitView();
 
@@ -20,6 +22,7 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 
 GameMapEditor::~GameMapEditor()
 {
+	delete this->stage;
 }
 
 
@@ -46,7 +49,7 @@ void GameMapEditor::InitUI() {
 }
 
 void GameMapEditor::InitMap() {
-
+	this->stage = new Stage(10, 10);
 }
 
 void GameMapEditor::UpdateMousePosition() {
@@ -59,6 +62,13 @@ void GameMapEditor::UpdateMousePosition() {
 		std::max(0.f, this->mousePosWorld.y / Gauss::GRID_SIZE)
 	);
 #pragma warning(pop)
+	// Max bounds check
+	if (this->mousePosGrid.x >= this->stage->getSizeX()) {
+		this->mousePosGrid.x = this->stage->getSizeX() - 1;
+	}
+	if (this->mousePosGrid.y >= this->stage->getSizeY()) {
+		this->mousePosGrid.y = this->stage->getSizeY() - 1;
+	}
 }
 
 void GameMapEditor::UpdateView(const float &dt) {
@@ -92,6 +102,9 @@ void GameMapEditor::Update(const float &dt) {
 	// Update Map
 	this->UpdateMap();
 
+	// Update Selector
+	this->UpdateSelector();
+
 	// Update UI
 	this->UpdateUI();
 
@@ -107,6 +120,17 @@ void GameMapEditor::UpdateTimers(const float &dt) {
 
 void GameMapEditor::UpdateMap() {
 
+}
+
+void GameMapEditor::UpdateSelector() {
+	if (Mouse::isButtonPressed(Mouse::Left) && this->keyTime >= this->keyTimeMax) {
+		this->keyTime = 0.f;
+
+		this->stage->AddTile(
+			Tile(IntRect(0, 0, Gauss::GRID_SIZE, Gauss::GRID_SIZE), this->selector.getPosition(), false, false), 
+			this->mousePosGrid.x, 
+			this->mousePosGrid.y);
+	}
 }
 
 void GameMapEditor::UpdateWallColliders(const float &dt, int playerIndex) {
@@ -125,12 +149,16 @@ void GameMapEditor::UpdateWallColliders(const float &dt, int playerIndex) {
 	//}
 }
 
-void GameMapEditor::DrawUI() {
+void GameMapEditor::DrawUIWindow() {
+
+}
+
+void GameMapEditor::DrawUIView() {
 	this->window->draw(this->selector);
 }
 
 void GameMapEditor::DrawMap() {
-	this->stage.Draw(*this->window, this->mainView);
+	this->stage->Draw(*this->window, this->mainView);
 }
 
 void GameMapEditor::Draw() {
@@ -145,10 +173,14 @@ void GameMapEditor::Draw() {
 	// Draw UI - update view
 	this->window->setView(this->window->getDefaultView());
 
-	this->DrawUI();
+	// Draw the window
+	this->DrawUIWindow();
 
 	// Set View
 	this->window->setView(this->mainView);
+
+	// Draw the view
+	this->DrawUIView();
 
 	// Draw everything to the window
 	this->window->display();

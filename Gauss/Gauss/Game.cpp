@@ -48,6 +48,9 @@ Game::Game(RenderWindow *window)
 	this->difficulty = 0;
 	this->difficultyTimer = 0;
 
+	// Init stage
+	this->stage = nullptr;
+
 	// Init Game controls
 	this->paused = true;
 	this->keyTimeMax = 10.f;
@@ -62,6 +65,7 @@ Game::Game(RenderWindow *window)
 
 Game::~Game()
 {
+	delete this->stage;
 }
 
 
@@ -257,7 +261,7 @@ void Game::InitUI() {
 }
 
 void Game::InitMap() {
-
+	this->stage = new Stage(100, 100);
 }
 
 void Game::UpdateView() {
@@ -903,7 +907,7 @@ void Game::DrawPlayers() {
 }
 
 void Game::DrawMap() {
-	this->stage.Draw(*this->window, this->mainView);
+	this->stage->Draw(*this->window, this->mainView);
 }
 
 void Game::DrawConsumables() {

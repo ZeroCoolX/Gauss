@@ -33,8 +33,7 @@ private:
 	Font font;
 
 	// MAP
-	WorldMap worldMap;
-	Stage stage;
+	Stage *stage;
 
 public:
 	GameMapEditor(RenderWindow *window);
@@ -50,6 +49,7 @@ public:
 	void InitUI();
 	void InitMap();
 
+	void UpdateSelector();
 	void UpdateMousePosition();
 	void UpdateView(const float &dt);
 	void UpdateUI();
@@ -59,7 +59,8 @@ public:
 	void UpdateWallColliders(const float &dt, int playerIndex);
 
 	void Draw();
-	void DrawUI();
+	void DrawUIWindow();
+	void DrawUIView();
 	void DrawMap();
 
 	void ToggleFullscreen();

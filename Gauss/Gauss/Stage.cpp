@@ -5,13 +5,13 @@
 // rect rect rect rect pos pos bool bool
 // Texturerect, vector2fPosition, colliderType, damageType 
 
-Stage::Stage() 
-	:stageSizeX(100), 
-	stageSizeY(100), 
+Stage::Stage(unsigned long sizeX, unsigned long sizeY)
+	:stageSizeX(sizeX),
+	stageSizeY(sizeY),
 	tileMatrix(stageSizeX)
 {
-	this->stageSizeX = 100;
-	this->stageSizeY = 100;
+	this->stageSizeX = sizeX;
+	this->stageSizeY = sizeY;
 
 	this->fromCol = 0;
 	this->toCol = 0;
@@ -27,6 +27,18 @@ Stage::Stage()
 
 Stage::~Stage()
 {
+}
+
+void Stage::AddTile(const Tile tile, unsigned row, unsigned col) {
+	if (row >= this->stageSizeX || col >= this->stageSizeY) {
+		throw("Error: OUT OF BOUNDS: Stage::AddTile()");
+	}
+	if (this->tileMatrix[row].IsNull(col)) {
+		this->tileMatrix[row].Add(tile, col);
+	}
+	else {
+		std::cout << "Alread tile existing at [" << row << "][" << col << "]" << std::endl;
+	}
 }
 
 void Stage::Update() {
