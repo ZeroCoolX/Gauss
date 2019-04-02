@@ -40,6 +40,17 @@ void Stage::AddTile(const Tile tile, long row, long col) {
 		std::cout << "Alread tile existing at [" << row << "][" << col << "]" << std::endl;
 	}
 }
+void Stage::RemoveTile(long row, long col) {
+	if (row >= this->stageSizeX || col >= this->stageSizeY) {
+		throw("Error: OUT OF BOUNDS: Stage::RemoveTile()");
+	}
+	if (!this->tileMatrix[row].IsNull(col)) {
+		this->tileMatrix[row].Remove(col);
+	}
+	else {
+		std::cout << "No tile existing at [" << row << "][" << col << "]" << std::endl;
+	}
+}
 
 void Stage::Update() {
 

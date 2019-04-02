@@ -26,5 +26,6 @@ public:
 	void Draw(RenderTarget &renderTarget, View &view);
 
 	void AddTile(const Tile tile, long row, long col);
+	void RemoveTile(long row, long col);
 };
 

@@ -27,10 +27,12 @@ private:
 	Vector2i mousePosGrid;
 
 	// UI
-	bool showTextureSelectUI;
 	RectangleShape selector;
 
+	bool showTextureSelectUI;
 	Sprite textureSelector;
+	int textureSelectedX;
+	int textureSelectedY;
 
 	// TEXT
 	Font font;
@@ -52,13 +54,14 @@ public:
 	void InitUI();
 	void InitMap();
 
-	void UpdateSelector();
+	void UpdateAddRemoveTiles();
 	void UpdateMousePosition();
 	void UpdateView(const float &dt);
 	void UpdateUI();
 	void Update(const float &dt);
 	void UpdateTimers(const float &dt);
 	void UpdateMap();
+	void UpdateControls();
 	void UpdateWallColliders(const float &dt, int playerIndex);
 
 	void Draw();

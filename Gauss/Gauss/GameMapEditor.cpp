@@ -7,7 +7,7 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
-	this->keyTimeMax = 5.f;
+	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
 
 	this->stage = nullptr;
@@ -43,6 +43,9 @@ void GameMapEditor::InitTextures() {
 
 void GameMapEditor::InitUI() {
 	this->showTextureSelectUI = true;
+
+	this->textureSelectedX = 0;
+	this->textureSelectedY = 0;
 
 	this->selector.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
 	this->selector.setFillColor(Color::Transparent);
@@ -114,31 +117,6 @@ void GameMapEditor::UpdateUI() {
 	}
 }
 
-void GameMapEditor::Update(const float &dt) {
-	// Keytime update
-	this->UpdateTimers(dt);
-
-	// Mouse update
-	this->UpdateMousePosition();
-
-	// Fullscreen check
-	this->ToggleFullscreen();
-
-	// Update Map
-	this->UpdateMap();
-
-	if (!this->showTextureSelectUI) {
-		// Update Selector
-		this->UpdateSelector();
-	}
-
-	// Update UI
-	this->UpdateUI();
-
-	// view update
-	this->UpdateView(dt);
-}
-
 void GameMapEditor::UpdateTimers(const float &dt) {
 	if (this->keyTime < this->keyTimeMax) {
 		this->keyTime += 1.f * dt * DeltaTime::dtMultiplier;
@@ -149,19 +127,40 @@ void GameMapEditor::UpdateMap() {
 
 }
 
-void GameMapEditor::UpdateSelector() {
+void GameMapEditor::UpdateControls() {
+	if (Keyboard::isKeyPressed(Keyboard::Tab) && this->keyTime >= this->keyTimeMax) {
+		this->keyTime = 0.f;
+		this->showTextureSelectUI = !this->showTextureSelectUI;
+	}
+	if (this->showTextureSelectUI) {
+		// Texture select
+		if (Mouse::isButtonPressed(Mouse::Left)) {
+			this->textureSelectedX = this->mousePosGrid.x * (Gauss::GRID_SIZE + 1);
+			this->textureSelectedY = this->mousePosGrid.y * (Gauss::GRID_SIZE + 1);
+		}
+	}
+	else {
+		// Update Selector
+		this->UpdateAddRemoveTiles();
+	}
+}
+
+void GameMapEditor::UpdateAddRemoveTiles() {
 	if (Mouse::isButtonPressed(Mouse::Left)) {
 		this->keyTime = 0.f;
 
 		this->stage->AddTile(
 			Tile(
-				IntRect(0, 0, Gauss::GRID_SIZE, Gauss::GRID_SIZE), 
+				IntRect(this->textureSelectedX, this->textureSelectedY, Gauss::GRID_SIZE, Gauss::GRID_SIZE), 
 				Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)), 
 				false, 
 				false
 			),
 			this->mousePosGrid.x, 
 			this->mousePosGrid.y);
+	}
+	else if (Mouse::isButtonPressed(Mouse::Right)) {
+		this->stage->RemoveTile(this->mousePosGrid.x, this->mousePosGrid.y);
 	}
 }
 
@@ -179,6 +178,29 @@ void GameMapEditor::UpdateWallColliders(const float &dt, int playerIndex) {
 	//		this->players[playerIndex].resetVelocity();
 	//	}
 	//}
+}
+
+void GameMapEditor::Update(const float &dt) {
+	// Keytime update
+	this->UpdateTimers(dt);
+
+	// Mouse update
+	this->UpdateMousePosition();
+
+	// Fullscreen check
+	this->ToggleFullscreen();
+
+	// Update Map
+	this->UpdateMap();
+
+	// General controls
+	this->UpdateControls();
+
+	// Update UI
+	this->UpdateUI();
+
+	// view update
+	this->UpdateView(dt);
 }
 
 void GameMapEditor::DrawUIWindow() {
