@@ -29,7 +29,7 @@ Stage::~Stage()
 {
 }
 
-void Stage::AddTile(const Tile tile, unsigned row, unsigned col) {
+void Stage::AddTile(const Tile tile, long row, long col) {
 	if (row >= this->stageSizeX || col >= this->stageSizeY) {
 		throw("Error: OUT OF BOUNDS: Stage::AddTile()");
 	}

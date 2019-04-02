@@ -123,11 +123,16 @@ void GameMapEditor::UpdateMap() {
 }
 
 void GameMapEditor::UpdateSelector() {
-	if (Mouse::isButtonPressed(Mouse::Left) && this->keyTime >= this->keyTimeMax) {
+	if (Mouse::isButtonPressed(Mouse::Left)) {
 		this->keyTime = 0.f;
 
 		this->stage->AddTile(
-			Tile(IntRect(0, 0, Gauss::GRID_SIZE, Gauss::GRID_SIZE), this->selector.getPosition(), false, false), 
+			Tile(
+				IntRect(0, 0, Gauss::GRID_SIZE, Gauss::GRID_SIZE), 
+				Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)), 
+				false, 
+				false
+			),
 			this->mousePosGrid.x, 
 			this->mousePosGrid.y);
 	}
