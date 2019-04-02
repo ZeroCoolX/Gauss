@@ -42,10 +42,14 @@ void GameMapEditor::InitTextures() {
 }
 
 void GameMapEditor::InitUI() {
+	this->showTextureSelectUI = true;
+
 	this->selector.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
 	this->selector.setFillColor(Color::Transparent);
 	this->selector.setOutlineColor(Color::Red);
 	this->selector.setOutlineThickness(2.f);
+
+	this->textureSelector.setTexture(Tile::tileTextures);
 }
 
 void GameMapEditor::InitMap() {
@@ -55,19 +59,31 @@ void GameMapEditor::InitMap() {
 void GameMapEditor::UpdateMousePosition() {
 	this->mousePosWindow = Mouse::getPosition(*this->window);
 	this->mousePosWorld = this->window->mapPixelToCoords(this->mousePosWindow);
+
+	if (this->showTextureSelectUI) {
 #pragma warning(push)
 #pragma warning(disable:4244)
-	this->mousePosGrid = Vector2i(
-		std::max(0.f, this->mousePosWorld.x / Gauss::GRID_SIZE), 
-		std::max(0.f, this->mousePosWorld.y / Gauss::GRID_SIZE)
-	);
+		this->mousePosGrid = Vector2i(
+			this->mousePosWindow.x / (Gauss::GRID_SIZE + 1),
+			this->mousePosWindow.y / (Gauss::GRID_SIZE + 1)
+		);
 #pragma warning(pop)
-	// Max bounds check
-	if (this->mousePosGrid.x >= this->stage->getSizeX()) {
-		this->mousePosGrid.x = this->stage->getSizeX() - 1;
 	}
-	if (this->mousePosGrid.y >= this->stage->getSizeY()) {
-		this->mousePosGrid.y = this->stage->getSizeY() - 1;
+	else {
+#pragma warning(push)
+#pragma warning(disable:4244)
+		this->mousePosGrid = Vector2i(
+			std::max(0.f, this->mousePosWorld.x / Gauss::GRID_SIZE),
+			std::max(0.f, this->mousePosWorld.y / Gauss::GRID_SIZE)
+		);
+#pragma warning(pop)
+		// Max bounds check
+		if (this->mousePosGrid.x >= this->stage->getSizeX()) {
+			this->mousePosGrid.x = this->stage->getSizeX() - 1;
+		}
+		if (this->mousePosGrid.y >= this->stage->getSizeY()) {
+			this->mousePosGrid.y = this->stage->getSizeY() - 1;
+		}
 	}
 }
 
@@ -86,7 +102,16 @@ void GameMapEditor::UpdateView(const float &dt) {
 }
 
 void GameMapEditor::UpdateUI() {
-	this->selector.setPosition(this->mousePosGrid.x * static_cast<float>(Gauss::GRID_SIZE), this->mousePosGrid.y * static_cast<float>(Gauss::GRID_SIZE));
+	if (this->showTextureSelectUI) {
+		this->selector.setPosition(
+			this->mousePosGrid.x * static_cast<float>(Gauss::GRID_SIZE + 1),
+			this->mousePosGrid.y * static_cast<float>(Gauss::GRID_SIZE + 1));
+	}
+	else {
+		this->selector.setPosition(
+			this->mousePosGrid.x * static_cast<float>(Gauss::GRID_SIZE),
+			this->mousePosGrid.y * static_cast<float>(Gauss::GRID_SIZE));
+	}
 }
 
 void GameMapEditor::Update(const float &dt) {
@@ -102,8 +127,10 @@ void GameMapEditor::Update(const float &dt) {
 	// Update Map
 	this->UpdateMap();
 
-	// Update Selector
-	this->UpdateSelector();
+	if (!this->showTextureSelectUI) {
+		// Update Selector
+		this->UpdateSelector();
+	}
 
 	// Update UI
 	this->UpdateUI();
@@ -155,7 +182,8 @@ void GameMapEditor::UpdateWallColliders(const float &dt, int playerIndex) {
 }
 
 void GameMapEditor::DrawUIWindow() {
-
+	this->window->draw(this->textureSelector);
+	this->window->draw(this->selector);
 }
 
 void GameMapEditor::DrawUIView() {
@@ -175,17 +203,18 @@ void GameMapEditor::Draw() {
 	// Draw Map
 	this->DrawMap();
 
-	// Draw UI - update view
-	this->window->setView(this->window->getDefaultView());
-
 	// Draw the window
-	this->DrawUIWindow();
-
-	// Set View
-	this->window->setView(this->mainView);
-
-	// Draw the view
-	this->DrawUIView();
+	if (this->showTextureSelectUI) {
+		// Draw UI - update view
+		this->window->setView(this->window->getDefaultView());
+		this->DrawUIWindow();
+	}
+	else {
+		// Set View
+		this->window->setView(this->mainView);
+		// Draw the view
+		this->DrawUIView();
+	}
 
 	// Draw everything to the window
 	this->window->display();

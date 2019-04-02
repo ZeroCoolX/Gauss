@@ -27,7 +27,10 @@ private:
 	Vector2i mousePosGrid;
 
 	// UI
+	bool showTextureSelectUI;
 	RectangleShape selector;
+
+	Sprite textureSelector;
 
 	// TEXT
 	Font font;
