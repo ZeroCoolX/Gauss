@@ -136,3 +136,7 @@ void TileArr<T>::_initialize(unsigned from) {
 		this->tiles[i] = nullptr;
 	}
 }
+
+// Resize
+
+// ResizeClear

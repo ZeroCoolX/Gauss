@@ -56,6 +56,7 @@ void GameMapEditor::InitUI() {
 }
 
 void GameMapEditor::InitMap() {
+	this->stageName = "EMPTY";
 	this->stage = new Stage(10, 10);
 }
 
@@ -91,16 +92,21 @@ void GameMapEditor::UpdateMousePosition() {
 }
 
 void GameMapEditor::UpdateView(const float &dt) {
+	float mapMoveSpeed = 10.f;
+	if (Keyboard::isKeyPressed(Keyboard::LShift)) {
+		mapMoveSpeed = 30.f;
+	}
+
 	if (Keyboard::isKeyPressed(Keyboard::W)) {
-		this->mainView.move(0.f, -10.f * dt * DeltaTime::dtMultiplier);
+		this->mainView.move(0.f, -mapMoveSpeed * dt * DeltaTime::dtMultiplier);
 	}else if (Keyboard::isKeyPressed(Keyboard::S)) {
-		this->mainView.move(0.f, 10.f * dt * DeltaTime::dtMultiplier);
+		this->mainView.move(0.f, mapMoveSpeed * dt * DeltaTime::dtMultiplier);
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::A)) {
-		this->mainView.move(-10.f * dt * DeltaTime::dtMultiplier, 0.f);
+		this->mainView.move(-mapMoveSpeed * dt * DeltaTime::dtMultiplier, 0.f);
 	}else if (Keyboard::isKeyPressed(Keyboard::D)) {
-		this->mainView.move(10.f * dt * DeltaTime::dtMultiplier, 0.f);
+		this->mainView.move(mapMoveSpeed * dt * DeltaTime::dtMultiplier, 0.f);
 	}
 }
 
@@ -128,10 +134,12 @@ void GameMapEditor::UpdateMap() {
 }
 
 void GameMapEditor::UpdateControls() {
+	// Show tilemap editor
 	if (Keyboard::isKeyPressed(Keyboard::Tab) && this->keyTime >= this->keyTimeMax) {
 		this->keyTime = 0.f;
 		this->showTextureSelectUI = !this->showTextureSelectUI;
 	}
+
 	if (this->showTextureSelectUI) {
 		// Texture select
 		if (Mouse::isButtonPressed(Mouse::Left)) {
@@ -139,9 +147,14 @@ void GameMapEditor::UpdateControls() {
 			this->textureSelectedY = this->mousePosGrid.y * (Gauss::GRID_SIZE + 1);
 		}
 	}
+	// Update Selector
 	else {
-		// Update Selector
 		this->UpdateAddRemoveTiles();
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::N) && this->keyTime >= this->keyTimeMax) {
+		this->NewMap();
+		this->keyTime = 0.f;
 	}
 }
 
@@ -250,5 +263,25 @@ void GameMapEditor::ToggleFullscreen() {
 		this->fullscreen = !this->fullscreen;
 		this->window->create(sf::VideoMode(1920, 1080), "Map Editor", this->fullscreen ? Style::Fullscreen : Style::Default);
 	}
+}
+
+void GameMapEditor::NewMap() {
+	unsigned mapSizeX = 0;
+	unsigned mapSizeY = 0;
+	std::cout << "New Map\n\n" << std::endl;
+
+	std::cout << "Map Name :>";
+	std::getline(std::cin, this->stageName);
+
+	std::cout << "Map size X :>";
+	std::cin >> mapSizeX;
+
+	std::cout << "Map size Y :>";
+	std::cin >> mapSizeY;
+
+	delete this->stage;
+	this->stage = new Stage(mapSizeX, mapSizeY);
+
+	std::cin.ignore(100, '\n');
 }
 

@@ -38,6 +38,7 @@ private:
 	Font font;
 
 	// MAP
+	std::string stageName;
 	Stage *stage;
 
 public:
@@ -70,5 +71,6 @@ public:
 	void DrawMap();
 
 	void ToggleFullscreen();
+	void NewMap();
 };
 

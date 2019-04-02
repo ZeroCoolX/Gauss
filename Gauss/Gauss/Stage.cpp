@@ -40,6 +40,7 @@ void Stage::AddTile(const Tile tile, long row, long col) {
 		std::cout << "Alread tile existing at [" << row << "][" << col << "]" << std::endl;
 	}
 }
+
 void Stage::RemoveTile(long row, long col) {
 	if (row >= this->stageSizeX || col >= this->stageSizeY) {
 		throw("Error: OUT OF BOUNDS: Stage::RemoveTile()");
@@ -49,6 +50,27 @@ void Stage::RemoveTile(long row, long col) {
 	}
 	else {
 		std::cout << "No tile existing at [" << row << "][" << col << "]" << std::endl;
+	}
+}
+
+void Stage::SaveStage(std::string filename) {
+
+}
+
+void Stage::LoadStage(std::string filename) {
+	// Load map size
+
+	// Set tilearr size
+	
+	// Load backgrounds
+
+	// Load tiles
+}
+
+void Stage::UpdateBackground(const float &dt, Vector2f relativeOrigin) {
+	for (size_t i = 0; i < this->backgrounds.Size(); i++)
+	{
+		//meow
 	}
 }
 
