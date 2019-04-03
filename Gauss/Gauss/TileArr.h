@@ -27,6 +27,10 @@ public:
 	bool IsNull(const unsigned index);
 	void Add(const T tile, const unsigned index);
 	void Remove(const unsigned index);
+
+	void Clear();
+	void Resize(unsigned newMax);
+	void ResizeClear(unsigned newMax);
 };
 
 template<typename T>
@@ -74,7 +78,6 @@ T& TileArr<T>::operator[](const unsigned index) {
 		throw "ERROR: Out of bounds TileArr::operator[]";
 	}
 
-	// RETURNS POINTER
 	return *this->tiles[index];
 }
 
@@ -137,6 +140,56 @@ void TileArr<T>::_initialize(unsigned from) {
 	}
 }
 
-// Resize
+template<typename T>
+void TileArr<T>::Clear() {
+	for (size_t i = 0; i < this->max; i++)
+	{
+		delete this->tiles[i];
+	}
+	this->numOfTiles = 0;
 
-// ResizeClear
+	this->_initialize(0);
+}
+
+template<typename T>
+void TileArr<T>::Resize(unsigned newMax) {
+	if (newMax <= 0) {
+		throw("Error: Invalid newMax. TileArr<T>::Resize");
+	}
+
+	T* *tempArr = new T*[newMax];
+
+	for (size_t i = 0; i < this->max; i++)
+	{
+		tempArr[i] = this->tiles[i];
+	}
+
+	for (size_t i = this->max; i < newMax; i++)
+	{
+		tempArr[i] = nullptr;
+	}
+
+	this->max = newMax;
+
+	delete[] this->tiles;
+	this->tiles = tempArr;
+}
+
+template<typename T>
+void TileArr<T>::ResizeClear(unsigned newMax) {
+	if (newMax <= 0) {
+		throw("Error: Invalid newMax. TileArr<T>::ResizeClear");
+	}
+
+	for (size_t i = 0; i < this->max; i++)
+	{
+		delete this->tiles[i];
+	}
+	delete[] this->tiles;
+
+	this->max = newMax;
+	this->numOfTiles = 0;
+	this->tiles = new T*[this->max];
+	this->_initialize(0);
+
+}

@@ -6,10 +6,13 @@
 class Stage
 {
 private:
+	const std::string MAP_FILE_DELIM = " ";
 	long stageSizeX;
 	long stageSizeY;
 	TileArr<TileArr<Tile>> tileMatrix;
-	dArr<Sprite> backgrounds;
+	Texture backgroundTexture;
+	Sprite background1;
+	Sprite background2;
 
 	// Optimization
 	int fromCol, toCol;
@@ -30,7 +33,7 @@ public:
 	void AddTile(const Tile tile, long row, long col);
 	void RemoveTile(long row, long col);
 	void SaveStage(std::string fileName);
-	void LoadStage(std::string fileName);
+	bool LoadStage(std::string fileName);
 };
 
 

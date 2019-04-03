@@ -54,24 +54,112 @@ void Stage::RemoveTile(long row, long col) {
 }
 
 void Stage::SaveStage(std::string filename) {
+	std::ofstream fout;
+	fout.open(filename.c_str());
+	if (fout.is_open()) {
+		// Save map size
+		fout << std::to_string(this->stageSizeX) << MAP_FILE_DELIM;
+		fout << std::to_string(this->stageSizeY) << MAP_FILE_DELIM;
 
+		// Save background path
+		fout << "NONE" << MAP_FILE_DELIM;
+
+		for (int i = 0; i < this->stageSizeX; i++)
+		{
+			for (int j = 0; j < this->stageSizeY; j++)
+			{
+				if (!this->tileMatrix[i].IsNull(j)) {
+					fout << this->tileMatrix[i][j].GetAsString() << MAP_FILE_DELIM;
+				}
+			}
+		}
+	}
+	else {
+		std::cout << "Could not open map file: " << filename << std::endl;
+	}
+
+	fout.close();
 }
 
-void Stage::LoadStage(std::string filename) {
+bool Stage::LoadStage(std::string filename) {
+	std::ifstream fin;
+	bool successLoading = false;
+
+	// Open file
+	fin.open("Stages/" + filename);
+	if (fin.is_open()) {
+		unsigned sizeX = 0;
+		unsigned sizeY = 0;
+		std::string backgroundPath;
+
+		int rectLeft = 0;
+		int rectTop = 0;
+		int rectWidth = 0;
+		int rectHeight = 0;
+		int gridPosX = 0;
+		int gridPosY = 0;
+		bool isCollider = 0;
+		bool isDamaging = 0;
+		int damage = 0;
+
+		fin >> sizeX;
+		this->stageSizeX = sizeX;
+		fin >> sizeY;
+		this->stageSizeY = sizeY;
+
+		fin.ignore();
+
+		fin >> backgroundPath;
+		this->backgroundTexture.loadFromFile(backgroundPath);
+		this->background1.setTexture(this->backgroundTexture);
+		this->background2.setTexture(this->backgroundTexture);
+
+		// Clear the old stage
+		this->tileMatrix.ResizeClear(this->stageSizeX);
+		for (size_t i = 0; i < this->stageSizeX; i++)
+		{
+			this->tileMatrix.Add(TileArr<Tile>(stageSizeY), i);
+		}
+
+		// Load new Stage
+		while (
+			fin >> rectLeft >> rectTop
+			>> rectWidth >> rectHeight
+			>> gridPosX >> gridPosY
+			>> isCollider >> isDamaging >> damage
+			) {
+
+			this->tileMatrix[gridPosX].Add(
+				Tile(
+					IntRect(rectLeft, rectTop, rectWidth, rectHeight), 
+					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE), 
+					isCollider, 
+					isDamaging), gridPosY
+			);
+		}
+		fin.ignore();
+		successLoading = true;
+		std::cout << "Success loading" << std::endl;
+	}
+	else {
+		std::cout << "File failed to open " << std::endl;
+		successLoading = false;
+	}
+	
 	// Load map size
 
 	// Set tilearr size
-	
+
 	// Load backgrounds
 
 	// Load tiles
+
+	fin.close();
+	return successLoading;
 }
 
 void Stage::UpdateBackground(const float &dt, Vector2f relativeOrigin) {
-	for (size_t i = 0; i < this->backgrounds.Size(); i++)
-	{
-		//meow
-	}
+
 }
 
 void Stage::Update() {

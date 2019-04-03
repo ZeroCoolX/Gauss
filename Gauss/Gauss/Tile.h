@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Gauss.h"
 
 class Tile
 {
@@ -32,6 +33,7 @@ public:
 	inline void setDamageType(bool damageType) { this->damageType = damageType; }
 	inline void setColliderType(bool colliderType) { this->colliderType = colliderType; }
 
+	std::string GetAsString() const;
 	void Update();
 	void Draw(RenderTarget &renderTarget);
 

@@ -153,7 +153,17 @@ void GameMapEditor::UpdateControls() {
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::N) && this->keyTime >= this->keyTimeMax) {
-		this->NewMap();
+		this->NewStage();
+		this->keyTime = 0.f;
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::S) && this->keyTime >= this->keyTimeMax) {
+		this->SaveStage();
+		this->keyTime = 0.f;
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::L) && this->keyTime >= this->keyTimeMax) {
+		this->LoadStage();
 		this->keyTime = 0.f;
 	}
 }
@@ -265,23 +275,92 @@ void GameMapEditor::ToggleFullscreen() {
 	}
 }
 
-void GameMapEditor::NewMap() {
+void GameMapEditor::NewStage() {
 	unsigned mapSizeX = 0;
 	unsigned mapSizeY = 0;
-	std::cout << "New Map\n\n" << std::endl;
+	std::cout << "New Stage\n\n" << std::endl;
 
-	std::cout << "Map Name :>";
+	std::cout << "Stage Name :>";
 	std::getline(std::cin, this->stageName);
+	this->stageName.append(".smap");
 
-	std::cout << "Map size X :>";
+
+	std::cout << "Stage size X :>";
 	std::cin >> mapSizeX;
+	while (std::cin.fail() || mapSizeX <= 0) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
 
-	std::cout << "Map size Y :>";
+		std::cout << "Stage size X :>";
+		std::cin >> mapSizeX;
+	}
+	std::cin.ignore(100, '\n');
+	std::cout << "\n";
+
+
+	std::cout << "Stage size Y :>";
 	std::cin >> mapSizeY;
+	while (std::cin.fail() || mapSizeY <= 0) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Stage size Y :>";
+		std::cin >> mapSizeY;
+	}
 
 	delete this->stage;
 	this->stage = new Stage(mapSizeX, mapSizeY);
+}
 
-	std::cin.ignore(100, '\n');
+void GameMapEditor::SaveStage() {
+	std::cout << "Saving Stage: " << this->stageName << std::endl;
+	
+	std::ifstream fin;
+	const std::string stagePath = MAP_FILEPATH + this->stageName;
+
+	fin.open(stagePath);
+	if (fin.is_open()) {
+		std::cout << "File already exists. Overwrite? (1)YES / (0)NO:>";
+
+		int overwrite = 0;
+		// Function-ize
+		std::cin >> overwrite;
+		while (std::cin.fail() || overwrite > 1) {
+			std::cout << "Invalid input...\n";
+			std::cin.clear();
+			std::cin.ignore(100, '\n');
+
+			std::cout << "File already exists. Overwrite? (1)YES / (0)NO:>";
+			std::cin >> overwrite;
+		}
+		std::cin.ignore(100, '\n');
+		std::cout << "\n";
+
+		if (overwrite) {
+			std::cout << "Overwriting stage..." << std::endl;
+			this->stage->SaveStage(stagePath);
+		}
+		else {
+			std::cout << "Do not overwrite!" << std::endl;
+		}
+	}else {
+		std::cout << "Saving stage..." << std::endl;
+		this->stage->SaveStage(stagePath);
+	}
+
+	fin.close();
+}
+
+void GameMapEditor::LoadStage() {
+
+	std::string loadFilename = "";
+	std::cout << "File name (with extention) :>";
+	std::getline(std::cin, loadFilename);
+	this->stageName = loadFilename;
+	std::cout << "Loading Stage: " << this->stageName << std::endl;
+
+	this->stage->LoadStage(loadFilename);
 }
 

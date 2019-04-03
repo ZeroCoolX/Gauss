@@ -154,7 +154,7 @@ void Game::InitTextures() {
 	// Load Enemy Textures
 	temp.loadFromFile("Textures/Ships/enemyMoveLeft.png");
 	this->enemyTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Ships/enemyFollow.png");
+	temp.loadFromFile("Textures/Ships/enemyFollow_v2.png");
 	this->enemyTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot.png");
 	this->enemyTextures.Add(Texture(temp));
@@ -678,7 +678,7 @@ void Game::UpdateScoreUI() {
 void Game::UpdateEnemies(const float &dt) {
 	// Spawn enemies
 	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-		this->_spawnEnemy();
+		//this->_spawnEnemy();
 		this->enemySpawnTimer = 0;
 	}
 

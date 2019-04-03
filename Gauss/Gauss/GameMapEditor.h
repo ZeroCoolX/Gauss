@@ -14,6 +14,8 @@
 class GameMapEditor
 {
 private:
+	const std::string MAP_FILEPATH = "Stages/";
+
 	// GameEditor
 	RenderWindow *window;
 	View mainView;
@@ -71,6 +73,8 @@ public:
 	void DrawMap();
 
 	void ToggleFullscreen();
-	void NewMap();
+	void NewStage();
+	void SaveStage();
+	void LoadStage();
 };
 
