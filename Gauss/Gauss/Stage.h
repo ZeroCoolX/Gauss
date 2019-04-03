@@ -10,6 +10,12 @@ private:
 	long stageSizeX;
 	long stageSizeY;
 	TileArr<TileArr<Tile>> tileMatrix;
+
+	// Background
+	Image backgroundTileImage;
+	Sprite backgroundTileSprite;
+	Texture backgroundTileTexture;
+
 	Texture backgroundTexture;
 	Sprite background1;
 	Sprite background2;
