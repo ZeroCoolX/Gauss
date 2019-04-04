@@ -1,5 +1,5 @@
 #include "Stage.h"
-
+#include <sstream>
 
 // Save format
 // rect rect rect rect pos pos bool bool
@@ -86,10 +86,13 @@ void Stage::SaveStage(std::string filename) {
 		fout << std::to_string(this->stageSizeY) << MAP_FILE_DELIM;
 
 		// Save background path
-		fout << "NONE" << MAP_FILE_DELIM;
+		fout << "NONE";
+
+		fout << "\n";//breaker
 
 		for (int i = 0; i < this->stageSizeX; i++)
 		{
+			// Foreground tiles
 			for (int j = 0; j < this->stageSizeY; j++)
 			{
 				if (!this->tileMatrix[i].IsNull(j)) {
@@ -97,6 +100,21 @@ void Stage::SaveStage(std::string filename) {
 				}
 			}
 		}
+
+		fout << "\n";// breaker
+
+		// Background tiles
+		for (int i = 0; i < this->stageSizeX; i++)
+		{
+			// Background tiles
+			for (int j = 0; j < this->stageSizeY; j++)
+			{
+				if (!this->backgroundTiles[i].IsNull(j)) {
+					fout << this->backgroundTiles[i][j].GetAsString() << MAP_FILE_DELIM;
+				}
+			}
+		}
+
 	}
 	else {
 		std::cout << "Could not open map file: " << filename << std::endl;
@@ -108,13 +126,42 @@ void Stage::SaveStage(std::string filename) {
 bool Stage::LoadStage(std::string filename) {
 	std::ifstream fin;
 	bool successLoading = false;
+	std::stringstream ss;
+	std::string line;
+	unsigned sizeX = 0;
+	unsigned sizeY = 0;
+	std::string backgroundPath;
 
 	// Open file
 	fin.open("Stages/" + filename);
 	if (fin.is_open()) {
-		unsigned sizeX = 0;
-		unsigned sizeY = 0;
-		std::string backgroundPath;
+
+		// Load the header - LINE 1
+		std::getline(fin, line);
+		ss.str(line);
+
+		ss >> sizeX;
+		this->stageSizeX = sizeX;
+		ss >> sizeY;
+		this->stageSizeY = sizeY;
+
+		ss >> backgroundPath;
+		this->backgroundTexture.loadFromFile(backgroundPath);
+		this->background1.setTexture(this->backgroundTexture);
+		this->background2.setTexture(this->backgroundTexture);
+
+		// Clear and Resize map to size
+		this->tileMatrix.ResizeClear(this->stageSizeX);
+		this->backgroundTiles.ResizeClear(this->stageSizeX);
+
+		for (int i = 0; i < this->stageSizeX; i++)
+		{
+			this->tileMatrix.Add(TileArr<Tile>(stageSizeY), i);
+			this->backgroundTiles.Add(TileArr<Tile>(stageSizeY), i);
+		}
+
+		line.clear();
+		ss.clear();
 
 		int rectLeft = 0;
 		int rectTop = 0;
@@ -126,26 +173,11 @@ bool Stage::LoadStage(std::string filename) {
 		bool isDamaging = 0;
 		int damage = 0;
 
-		fin >> sizeX;
-		this->stageSizeX = sizeX;
-		fin >> sizeY;
-		this->stageSizeY = sizeY;
-
-		fin >> backgroundPath;
-		this->backgroundTexture.loadFromFile(backgroundPath);
-		this->background1.setTexture(this->backgroundTexture);
-		this->background2.setTexture(this->backgroundTexture);
-
-		// Clear the old stage
-		this->tileMatrix.ResizeClear(this->stageSizeX);
-		for (int i = 0; i < this->stageSizeX; i++)
-		{
-			this->tileMatrix.Add(TileArr<Tile>(stageSizeY), i);
-		}
-
-		// Load new Stage
+		// Load the foreground - LINE 2
+		std::getline(fin, line);
+		ss.str(line);
 		while (
-			fin >> rectLeft >> rectTop
+			ss >> rectLeft >> rectTop
 			>> rectWidth >> rectHeight
 			>> gridPosX >> gridPosY
 			>> isCollider >> isDamaging >> damage
@@ -153,13 +185,36 @@ bool Stage::LoadStage(std::string filename) {
 
 			this->tileMatrix[gridPosX].Add(
 				Tile(
-					IntRect(rectLeft, rectTop, rectWidth, rectHeight), 
-					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE), 
-					isCollider, 
+					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
+					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE),
+					isCollider,
 					isDamaging), gridPosY
 			);
 		}
-		fin.ignore();
+
+		line.clear();
+		ss.clear();
+
+		// Load the background - LINE 3
+		std::getline(fin, line);
+		ss.str(line);
+		while (
+			ss >> rectLeft >> rectTop
+			>> rectWidth >> rectHeight
+			>> gridPosX >> gridPosY
+			>> isCollider >> isDamaging >> damage
+			) {
+
+			this->backgroundTiles[gridPosX].Add(
+				Tile(
+					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
+					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE),
+					isCollider,
+					isDamaging), gridPosY
+			);
+			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Color(100, 100, 100, 255));
+		}
+
 		successLoading = true;
 		std::cout << "Success loading" << std::endl;
 	}
@@ -223,9 +278,9 @@ void Stage::Update(const float &dt, Vector2f relativeOrigin, int offset) {
 	{
 		for (int j = this->fromRow; j < this->toRow; j++)
 		{
-			//if (!this->backgroundTiles[i].IsNull(j)) {
-			//	this->backgroundTiles[i][j].Update(dt);
-			//}
+			if (!this->backgroundTiles[i].IsNull(j)) {
+				this->backgroundTiles[i][j].Update(dt);
+			}
 
 			if (!this->tileMatrix[i].IsNull(j)) {
 				this->tileMatrix[i][j].Update(dt);
