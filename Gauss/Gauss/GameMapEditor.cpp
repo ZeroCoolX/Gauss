@@ -10,6 +10,8 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
 
+	this->backgroundTile = false;
+
 	this->stage = nullptr;
 
 	this->InitView();
@@ -129,8 +131,8 @@ void GameMapEditor::UpdateTimers(const float &dt) {
 	}
 }
 
-void GameMapEditor::UpdateMap() {
-
+void GameMapEditor::UpdateMap(const float &dt) {
+	this->stage->Update(dt, this->mainView.getCenter(), 5);
 }
 
 void GameMapEditor::UpdateControls() {
@@ -152,8 +154,13 @@ void GameMapEditor::UpdateControls() {
 		this->UpdateAddRemoveTiles();
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::N) && this->keyTime >= this->keyTimeMax) {
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::N) && this->keyTime >= this->keyTimeMax) {
 		this->NewStage();
+		this->keyTime = 0.f;
+	}
+
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::B) && this->keyTime >= this->keyTimeMax) {
+		this->backgroundTile = !this->backgroundTile;
 		this->keyTime = 0.f;
 	}
 
@@ -180,10 +187,10 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 				false
 			),
 			this->mousePosGrid.x, 
-			this->mousePosGrid.y);
+			this->mousePosGrid.y, this->backgroundTile);
 	}
 	else if (Mouse::isButtonPressed(Mouse::Right)) {
-		this->stage->RemoveTile(this->mousePosGrid.x, this->mousePosGrid.y);
+		this->stage->RemoveTile(this->mousePosGrid.x, this->mousePosGrid.y, this->backgroundTile);
 	}
 }
 
@@ -214,7 +221,7 @@ void GameMapEditor::Update(const float &dt) {
 	this->ToggleFullscreen();
 
 	// Update Map
-	this->UpdateMap();
+	this->UpdateMap(dt);
 
 	// General controls
 	this->UpdateControls();
@@ -295,9 +302,6 @@ void GameMapEditor::NewStage() {
 		std::cout << "Stage size X :>";
 		std::cin >> mapSizeX;
 	}
-	std::cin.ignore(100, '\n');
-	std::cout << "\n";
-
 
 	std::cout << "Stage size Y :>";
 	std::cin >> mapSizeY;
@@ -310,8 +314,13 @@ void GameMapEditor::NewStage() {
 		std::cin >> mapSizeY;
 	}
 
+	std::cin.ignore(100, '\n');
+	std::cout << "\n";
+
 	delete this->stage;
 	this->stage = new Stage(mapSizeX, mapSizeY);
+
+	std::cout << "Stage " << this->stageName << " created!" << "\n\n";
 }
 
 void GameMapEditor::SaveStage() {
@@ -322,7 +331,7 @@ void GameMapEditor::SaveStage() {
 
 	fin.open(stagePath);
 	if (fin.is_open()) {
-		std::cout << "File already exists. Overwrite? (1)YES / (0)NO:>";
+		std::cout << "File " << this->stageName << " already exists. Overwrite? (1)YES / (0)NO:>";
 
 		int overwrite = 0;
 		// Function-ize
@@ -339,15 +348,15 @@ void GameMapEditor::SaveStage() {
 		std::cout << "\n";
 
 		if (overwrite) {
-			std::cout << "Overwriting stage..." << std::endl;
 			this->stage->SaveStage(stagePath);
+			std::cout << "Stage " << this->stageName << " overwritten and saved successfully." << std::endl;
 		}
 		else {
 			std::cout << "Do not overwrite!" << std::endl;
 		}
 	}else {
-		std::cout << "Saving stage..." << std::endl;
 		this->stage->SaveStage(stagePath);
+		std::cout << "Stage " << this->stageName << " saved successfully." << std::endl;
 	}
 
 	fin.close();
@@ -356,11 +365,16 @@ void GameMapEditor::SaveStage() {
 void GameMapEditor::LoadStage() {
 
 	std::string loadFilename = "";
-	std::cout << "File name (with extention) :>";
+	std::cout << "File name (without extention) :>";
 	std::getline(std::cin, loadFilename);
-	this->stageName = loadFilename;
-	std::cout << "Loading Stage: " << this->stageName << std::endl;
+	loadFilename.append(".smap");
 
-	this->stage->LoadStage(loadFilename);
+	if (this->stage->LoadStage(loadFilename)) {
+		this->stageName = loadFilename;
+		std::cout << "Stage: " << this->stageName << " successfully loaded" << std::endl;
+	}
+	else {
+		std::cout << "Failed to load stage " << loadFilename << std::endl;
+	}
 }
 

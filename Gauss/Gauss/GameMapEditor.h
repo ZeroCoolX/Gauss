@@ -22,6 +22,7 @@ private:
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
+	bool backgroundTile;
 
 	// MOUSE 
 	Vector2i mousePosWindow;
@@ -63,7 +64,7 @@ public:
 	void UpdateUI();
 	void Update(const float &dt);
 	void UpdateTimers(const float &dt);
-	void UpdateMap();
+	void UpdateMap(const float &dt);
 	void UpdateControls();
 	void UpdateWallColliders(const float &dt, int playerIndex);
 

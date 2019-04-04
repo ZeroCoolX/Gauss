@@ -40,7 +40,7 @@ std::string Tile::GetAsString() const {
 }
 
 
-void Tile::Update() {
+void Tile::Update(const float &dt) {
 
 }
 

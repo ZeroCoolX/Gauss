@@ -10,11 +10,7 @@ private:
 	long stageSizeX;
 	long stageSizeY;
 	TileArr<TileArr<Tile>> tileMatrix;
-
-	// Background
-	Image backgroundTileImage;
-	Sprite backgroundTileSprite;
-	Texture backgroundTileTexture;
+	TileArr<TileArr<Tile>> backgroundTiles;
 
 	Texture backgroundTexture;
 	Sprite background1;
@@ -33,11 +29,11 @@ public:
 	inline long getSizeY() const { return this->stageSizeY; }
 
 	void UpdateBackground(const float &dt, Vector2f relativeOrigin);
-	void Update();
+	void Update(const float &dt, Vector2f relativeOrigin, int offset);
 	void Draw(RenderTarget &renderTarget, View &view);
 
-	void AddTile(const Tile tile, long row, long col);
-	void RemoveTile(long row, long col);
+	void AddTile(const Tile tile, long row, long col, bool bkg = false);
+	void RemoveTile(long row, long col, bool bkg = false);
 	void SaveStage(std::string fileName);
 	bool LoadStage(std::string fileName);
 };
