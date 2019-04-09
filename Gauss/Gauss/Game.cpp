@@ -152,11 +152,11 @@ void Game::InitTextures() {
 	Texture temp;
 
 	// Load Enemy Textures
-	temp.loadFromFile("Textures/Ships/enemyMoveLeft.png");
+	temp.loadFromFile("Textures/Ships/enemyMoveLeft_v2.png");
 	this->enemyTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Ships/enemyFollow_v2.png");
 	this->enemyTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot.png");
+	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot_v2.png");
 	this->enemyTextures.Add(Texture(temp));
 
 	// Load Enemy Bullet Textures
@@ -261,8 +261,8 @@ void Game::InitUI() {
 }
 
 void Game::InitMap() {
-	this->stage = new Stage(10, 10);
-	this->stage->LoadStage("lel2.smap");
+	this->stage = new Stage(50, 50);
+	//this->stage->LoadStage("cooper2.smap");
 }
 
 void Game::UpdateView() {
@@ -603,7 +603,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 							case 1:
 							{
-								if (dropChance > 95) { // 10% chance for an upgrade
+								if (dropChance > 50) { // 10% chance for an upgrade
 
 									// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 									uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -679,7 +679,7 @@ void Game::UpdateScoreUI() {
 void Game::UpdateEnemies(const float &dt) {
 	// Spawn enemies
 	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-		//this->_spawnEnemy();
+		this->_spawnEnemy();
 		this->enemySpawnTimer = 0;
 	}
 

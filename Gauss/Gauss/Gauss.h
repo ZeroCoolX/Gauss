@@ -10,5 +10,6 @@ public:
 
 	// Statics
 	static int GRID_SIZE;
+	static Color BACKGROUND_COLOR;
 };
 

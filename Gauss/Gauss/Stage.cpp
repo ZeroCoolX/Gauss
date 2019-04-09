@@ -212,7 +212,7 @@ bool Stage::LoadStage(std::string filename) {
 					isCollider,
 					isDamaging), gridPosY
 			);
-			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Color(100, 100, 100, 255));
+			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Gauss::BACKGROUND_COLOR);
 		}
 
 		successLoading = true;
