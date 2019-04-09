@@ -15,7 +15,7 @@ public:
 	MoveLeftShootEnemy(RenderWindow *window, 
 		dArr<Texture> &textures,
 		dArr<Texture> &bulletTextures,
-		Vector2u windowBounds,
+		View& view,
 		int playerLvlScaleFactor,
 		int playerFollowNum) : EnemyLifeform(playerFollowNum, &textures[GameEnums::E_MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
 
@@ -35,7 +35,7 @@ public:
 		this->bulletTextures = &bulletTextures;
 		this->shootTimerMax = rand() % 200 + 100.f;
 
-		this->InitSpritePoisition(windowBounds);
+		this->InitSpritePoisition(view);
 	}
 	virtual ~MoveLeftShootEnemy();
 

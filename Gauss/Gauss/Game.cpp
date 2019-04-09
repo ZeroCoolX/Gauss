@@ -999,13 +999,13 @@ void Game::_spawnEnemy() {
 
 	switch (randType) {
 	case GameEnums::E_MOVE_LEFT:
-		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	case GameEnums::E_FOLLOW:
-		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	case GameEnums::E_MOVE_LEFT_SHOOT:
-		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->enemyTextures, this->enemyBulletTextures, this->window->getSize(), this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->enemyTextures, this->enemyBulletTextures, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	}
 

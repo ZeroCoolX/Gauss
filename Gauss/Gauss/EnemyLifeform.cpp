@@ -7,9 +7,9 @@ EnemyLifeform::~EnemyLifeform()
 {
 }
 
-void EnemyLifeform::InitSpritePoisition(const Vector2u windowBounds) {
-	const float xPos((float)windowBounds.x);
-	const float yPos((float)(rand() % windowBounds.y - this->sprite.getGlobalBounds().height));
+void EnemyLifeform::InitSpritePoisition(const View& view) {
+	const float xPos((float)view.getCenter().x + (view.getSize().x / 2));
+	const float yPos((float)(rand() % static_cast<int>((view.getCenter().y + view.getSize().y)) + static_cast<int>((view.getCenter().y - view.getSize().y))));
 	this->sprite.setPosition(xPos, yPos);
 }
 

@@ -11,7 +11,7 @@ private:
 
 public:
 	TrackerEnemy(dArr<Texture> &textures,
-		Vector2u windowBounds,
+		View& view,
 		int playerLvlScaleFactor,
 		int playerFollowNum): EnemyLifeform(playerFollowNum, &textures[GameEnums::E_FOLLOW], Vector2f(0.12f, 0.12f)) {
 		
@@ -27,7 +27,7 @@ public:
 		// ATTACK
 		this->attackDistance = rand() % 700 + 300;
 
-		this->InitSpritePoisition(windowBounds);
+		this->InitSpritePoisition(view);
 	}
 	virtual ~TrackerEnemy();
 
