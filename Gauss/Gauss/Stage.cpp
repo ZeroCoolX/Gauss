@@ -186,7 +186,7 @@ bool Stage::LoadStage(std::string filename) {
 			this->tileMatrix[gridPosX].Add(
 				Tile(
 					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
-					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE),
+					Vector2f(static_cast<float>(gridPosX * Gauss::GRID_SIZE), static_cast<float>(gridPosY * Gauss::GRID_SIZE)),
 					isCollider,
 					isDamaging), gridPosY
 			);
@@ -208,7 +208,7 @@ bool Stage::LoadStage(std::string filename) {
 			this->backgroundTiles[gridPosX].Add(
 				Tile(
 					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
-					Vector2f(gridPosX * Gauss::GRID_SIZE, gridPosY * Gauss::GRID_SIZE),
+					Vector2f(static_cast<float>(gridPosX * Gauss::GRID_SIZE), static_cast<float>(gridPosY * Gauss::GRID_SIZE)),
 					isCollider,
 					isDamaging), gridPosY
 			);
