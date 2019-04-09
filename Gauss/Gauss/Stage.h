@@ -9,10 +9,10 @@ private:
 	const std::string MAP_FILE_DELIM = " ";
 	long stageSizeX;
 	long stageSizeY;
+	float stageSpeed;
 	TileArr<TileArr<Tile>> tileMatrix;
 	TileArr<TileArr<Tile>> backgroundTiles;
 
-	Texture backgroundTexture;
 	Sprite background1;
 	Sprite background2;
 
@@ -28,9 +28,9 @@ public:
 	inline long getSizeX() const { return this->stageSizeX; }
 	inline long getSizeY() const { return this->stageSizeY; }
 
-	void UpdateBackground(const float &dt, Vector2f relativeOrigin);
-	void Update(const float &dt, Vector2f relativeOrigin, int offset);
-	void Draw(RenderTarget &renderTarget, View &view);
+	void UpdateBackground(const float &dt, int row, int col);
+	void Update(const float &dt, View &view, bool editor);
+	void Draw(RenderTarget &renderTarget, View &view, bool editor);
 
 	void AddTile(const Tile tile, long row, long col, bool bkg = false);
 	void RemoveTile(long row, long col, bool bkg = false);

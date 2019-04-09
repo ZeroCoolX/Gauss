@@ -24,7 +24,7 @@ Game::Game(RenderWindow *window)
 	// Init player
 	this->players.Add(Player());
 
-	/*this->players.Add(Player(Keyboard::I, 
+	this->players.Add(Player(Keyboard::I, 
 		Keyboard::K,
 		Keyboard::J, 
 		Keyboard::L, 
@@ -35,7 +35,7 @@ Game::Game(RenderWindow *window)
 		Keyboard::Num7,
 		Keyboard::Num8,
 		Keyboard::Num9,
-		Keyboard::Num0));*/
+		Keyboard::Num0));
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -262,7 +262,7 @@ void Game::InitUI() {
 
 void Game::InitMap() {
 	this->stage = new Stage(50, 50);
-	//this->stage->LoadStage("cooper2.smap");
+	this->stage->LoadStage("lel.smap");
 }
 
 void Game::UpdateView() {
@@ -296,6 +296,9 @@ void Game::Update(const float &dt) {
 
 		// Update score multipliers
 		this->UpdateMultipliers();
+
+		// Update Map
+		this->UpdateMap(dt);
 
 		// UPDATE PLAYERS
 		this->UpdatePlayers(dt);
@@ -466,8 +469,8 @@ void Game::UpdatePlayers(const float &dt) {
 	}
 }
 
-void Game::UpdateMap(const float &dt, int playerIndex) {
-
+void Game::UpdateMap(const float &dt) {
+	this->stage->Update(dt, this->mainView, false);
 }
 
 void Game::UpdateWallColliders(const float &dt, int playerIndex) {
@@ -908,7 +911,7 @@ void Game::DrawPlayers() {
 }
 
 void Game::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView);
+	this->stage->Draw(*this->window, this->mainView, false);
 }
 
 void Game::DrawConsumables() {

@@ -141,7 +141,7 @@ private:
 	void _fireGaussCannon(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
-	void _checkBounds(Vector2u windowBounds, bool warpVertical);
+	void _checkBounds(Vector2u windowBounds, bool warpVertical = false);
 
 
 public:

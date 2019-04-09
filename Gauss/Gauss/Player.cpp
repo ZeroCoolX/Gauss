@@ -131,7 +131,7 @@ void Player::Movement(const float &dt, Vector2u windowBounds) {
 	this->_recalculatePlayerCenter();
 
 	// Bounds check for window collision
-	this->_checkBounds(windowBounds, true);
+	this->_checkBounds(windowBounds);
 }
 
 void Player::Combat(const float &dt) {

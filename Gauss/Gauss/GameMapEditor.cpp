@@ -132,7 +132,7 @@ void GameMapEditor::UpdateTimers(const float &dt) {
 }
 
 void GameMapEditor::UpdateMap(const float &dt) {
-	this->stage->Update(dt, this->mainView.getCenter(), 5);
+	this->stage->Update(dt, this->mainView, true);
 }
 
 void GameMapEditor::UpdateControls() {
@@ -243,7 +243,7 @@ void GameMapEditor::DrawUIView() {
 }
 
 void GameMapEditor::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView);
+	this->stage->Draw(*this->window, this->mainView, true);
 }
 
 void GameMapEditor::Draw() {

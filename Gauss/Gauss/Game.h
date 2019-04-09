@@ -116,7 +116,7 @@ public:
 	void UpdateMultipliers();
 	void UpdateWhilePaused(const float &dt);
 	void UpdatePlayers(const float &dt);
-	void UpdateMap(const float &dt, int playerIndex);
+	void UpdateMap(const float &dt);
 	void UpdateWallColliders(const float &dt, int playerIndex);
 	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdateScoreUI();
