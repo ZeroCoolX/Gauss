@@ -24,7 +24,7 @@ Game::Game(RenderWindow *window)
 	// Init player
 	this->players.Add(Player());
 
-	this->players.Add(Player(Keyboard::I, 
+	/*this->players.Add(Player(Keyboard::I, 
 		Keyboard::K,
 		Keyboard::J, 
 		Keyboard::L, 
@@ -35,7 +35,7 @@ Game::Game(RenderWindow *window)
 		Keyboard::Num7,
 		Keyboard::Num8,
 		Keyboard::Num9,
-		Keyboard::Num0));
+		Keyboard::Num0));*/
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -266,7 +266,7 @@ void Game::InitMap() {
 }
 
 void Game::UpdateView() {
-	//this->mainView.setCenter(this->players[0].getPosition());
+	this->mainView.move(0.5f, 0.f);
 }
 
 void Game::Update(const float &dt) {
@@ -276,9 +276,6 @@ void Game::Update(const float &dt) {
 
 	// Fullscreen check
 	this->ToggleFullscreen();
-
-	// view update
-	this->UpdateView();
 
 	// Pause check
 	this->PauseGame();
@@ -290,6 +287,9 @@ void Game::Update(const float &dt) {
 	if (!this->paused && this->playersExistInWorld()) {
 		// Update timers
 		this->UpdateTimersUnpaused(dt);
+
+		// view update
+		this->UpdateView();
 
 		//MAKE GAME HARDER WITH TIME
 		this->UpdateDifficulty();
@@ -454,7 +454,7 @@ void Game::UpdatePlayers(const float &dt) {
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
-			this->players[i].Update(this->window->getSize(), dt);
+			this->players[i].Update(this->mainView, dt);
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
 			//this->UpdateWallColliders(dt, i);
@@ -495,7 +495,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 		currentPlayer.BulletAt(j).Update(dt);
 
 		// Bullet Window bounds check
-		if (currentPlayer.BulletAt(j).getPosition().x > this->window->getSize().x) {
+		if (currentPlayer.BulletAt(j).getPosition().x > this->mainView.getCenter().x + (this->mainView.getSize().x / 2)) {
 			currentPlayer.RemoveBullet(j);
 		}
 		else {
@@ -703,7 +703,7 @@ void Game::UpdateEnemies(const float &dt) {
 		}
 
 		// Enemy Window Bounds check
-		if (currentEnemy->getPosition().x < 0 - currentEnemy->getGlobalBounds().width) {
+		if (currentEnemy->getPosition().x < (this->mainView.getCenter().x - (this->mainView.getSize().x / 2)) - currentEnemy->getGlobalBounds().width) {
 			this->enemyLifeforms.Remove(i);
 		}
 		else {
@@ -754,10 +754,10 @@ void Game::UpdateEnemyBullets(const float &dt) {
 		EnemyLifeform::bullets[i].Update(dt);
 
 		// Bullet Window bounds check
-		if (EnemyLifeform::bullets[i].getPosition().x > this->window->getSize().x
-			|| EnemyLifeform::bullets[i].getPosition().y > this->window->getSize().y
-			|| EnemyLifeform::bullets[i].getPosition().x <= 0.f
-			|| EnemyLifeform::bullets[i].getPosition().y <= 0.f) {
+		if (EnemyLifeform::bullets[i].getPosition().x > (this->mainView.getCenter().x + (this->mainView.getSize().x / 2))
+			|| EnemyLifeform::bullets[i].getPosition().y > (this->mainView.getCenter().y + (this->mainView.getSize().y / 2))
+			|| EnemyLifeform::bullets[i].getPosition().x <= this->mainView.getCenter().x - (this->mainView.getSize().x / 2)
+			|| EnemyLifeform::bullets[i].getPosition().y <= this->mainView.getCenter().y - (this->mainView.getSize().y / 2)) {
 			EnemyLifeform::bullets.Remove(i);
 			break;
 		}

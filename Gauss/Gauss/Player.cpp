@@ -119,7 +119,7 @@ bool Player::ChangeAccessories(const float &dt) {
 	return false;
 }
 
-void Player::Movement(const float &dt, Vector2u windowBounds) {
+void Player::Movement(const float &dt, View &view) {
 	// Update normalized direction
 	this->normalizedDir = this->normalize(this->velocity, this->vectorLength(this->velocity));
 
@@ -131,7 +131,7 @@ void Player::Movement(const float &dt, Vector2u windowBounds) {
 	this->_recalculatePlayerCenter();
 
 	// Bounds check for window collision
-	this->_checkBounds(windowBounds);
+	this->_checkBounds(view);
 }
 
 void Player::Combat(const float &dt) {
@@ -327,7 +327,7 @@ void Player::UpdateStats() {
 	this->shieldChargeTimerMax = 100.f + (this->cooling * (this->maneuverability / 2));
 }
 
-void Player::Update(Vector2u windowBounds, const float &dt) {
+void Player::Update(View &view, const float &dt) {
 	this->shootTimerMax = this->getCalculatedShootTimer();
 
 	// Update timers
@@ -362,7 +362,7 @@ void Player::Update(Vector2u windowBounds, const float &dt) {
 		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
 
-	this->Movement(dt, windowBounds);
+	this->Movement(dt, view);
 	this->UpdateAccessories(dt);
 	this->UpdatePowerups(dt);
 	this->Combat(dt);
@@ -794,31 +794,37 @@ void Player::_fireMissileHeavy(const Vector2f direction) {
 	}
 }
 
-void Player::_checkBounds(Vector2u windowBounds, bool warpVertical) {
-	if (this->getPosition().x <= 0) {// LEFT BOUNDS
-		this->sprite.setPosition(0.f, this->sprite.getPosition().y);
+void Player::_checkBounds(View &view, bool warpVertical) {
+	float viewLeft = view.getCenter().x - (view.getSize().x / 2.f);
+	float viewRight = view.getCenter().x + (view.getSize().x / 2.f);
+
+	if (this->getPosition().x <= viewLeft) {// LEFT BOUNDS
+		this->sprite.setPosition(viewLeft + 50.f/*offset so the player is not pinned to wall*/, this->sprite.getPosition().y);
 		this->velocity.x = 0.f;
 	}
-	else if (this->getPosition().x + this->sprite.getGlobalBounds().width >= windowBounds.x) { // RIGHT BOUNDS
-		this->sprite.setPosition(windowBounds.x - this->sprite.getGlobalBounds().width, this->sprite.getPosition().y);
+	else if (this->getPosition().x + this->sprite.getGlobalBounds().width >= viewRight) { // RIGHT BOUNDS
+		this->sprite.setPosition(viewRight - this->sprite.getGlobalBounds().width, this->sprite.getPosition().y);
 		this->velocity.x = 0.f;
 	}
 
+	float viewTop = view.getCenter().y - (view.getSize().y/ 2.f);
+	float viewBottom = view.getCenter().y + (view.getSize().y / 2.f);
+
 	if (warpVertical) {
-		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= 0) { // TOP BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, (float)windowBounds.y);
+		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= viewTop) { // TOP BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, viewTop);
 		}
-		else if (this->getPosition().y >= windowBounds.y) { // BOTTOM BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, 0.f - this->sprite.getGlobalBounds().height);
+		else if (this->getPosition().y >= viewBottom) { // BOTTOM BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, viewBottom - this->sprite.getGlobalBounds().height);
 		}
 	}
 	else {
-		if (this->getPosition().y <= 0) { // TOP BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, 0.f);
+		if (this->getPosition().y <= viewTop) { // TOP BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, viewTop);
 			this->velocity.y = 0.f;
 		}
-		else if (this->getPosition().y + this->sprite.getGlobalBounds().height >= windowBounds.y) { // BOTTOM BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, windowBounds.y - this->sprite.getGlobalBounds().height);
+		else if (this->getPosition().y + this->sprite.getGlobalBounds().height >= viewBottom) { // BOTTOM BOUNDS
+			this->sprite.setPosition(this->sprite.getPosition().x, viewBottom - this->sprite.getGlobalBounds().height);
 			this->velocity.y = 0.f;
 		}
 	}

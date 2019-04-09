@@ -141,7 +141,7 @@ private:
 	void _fireGaussCannon(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
-	void _checkBounds(Vector2u windowBounds, bool warpVertical = false);
+	void _checkBounds(View &view, bool warpVertical = false);
 
 
 public:
@@ -252,11 +252,11 @@ public:
 	void UpdateAccessories(const float &dt);
 	void UpdatePowerups(const float &dt);
 	void Combat(const float &dt);
-	void Movement(const float &dt, Vector2u windowBounds);
+	void Movement(const float &dt, View &view);
 	void Draw(RenderTarget &renderTarget);
 	void DrawUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();
-	void Update(Vector2u windowBounds, const float &dt);
+	void Update(View &view, const float &dt);
 	void UpdateStats();
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);

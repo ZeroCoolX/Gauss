@@ -242,7 +242,7 @@ void Stage::UpdateBackground(const float &dt, int row, int col) {
 		this->backgroundTiles[row][col].move(this->stageSpeed / 2 * dt * DeltaTime::dtMultiplier, 0.f);
 
 		if (this->backgroundTiles[row][col].getPos().x <= (0 - this->backgroundTiles[row][col].getBounds().width)) {
-			this->backgroundTiles[row][col].setPos(this->stageSizeX * Gauss::GRID_SIZE, this->backgroundTiles[row][col].getPos().y);
+			this->backgroundTiles[row][col].setPos(static_cast<float>(this->stageSizeX * Gauss::GRID_SIZE), this->backgroundTiles[row][col].getPos().y);
 		}
 	}
 }
