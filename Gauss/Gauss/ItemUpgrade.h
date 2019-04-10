@@ -59,6 +59,8 @@ public:
 
 	// Statics
 	static dArr<Texture> upgradeTextures;
+	static void InitTextures();
+
 	static int numberOfUpgrades;
 };
 

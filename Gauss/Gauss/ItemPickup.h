@@ -29,6 +29,8 @@ public:
 
 	// Statics
 	static dArr<Texture> pickupTextures;
+	static void InitTextures();
+
 	static int numberOfPickups;
 };
 

@@ -21,6 +21,8 @@ public:
 
 	// Statics
 	static dArr<Texture> powerupTextures;
+	static void InitTextures();
+
 	static int numberOfPowerups;
 };
 

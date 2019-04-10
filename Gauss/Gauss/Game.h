@@ -82,11 +82,6 @@ private:
 	dArr<Texture> enemyTextures;
 	dArr<Texture> enemyBulletTextures;
 
-	// Boss textures
-	dArr<Texture> bossBodyTextures;
-	dArr<Texture> bossGunTextures;
-	dArr<Texture> bossBulletTextures;
-
 
 	// Utility Functions
 	void _spawnEnemy();
@@ -106,6 +101,10 @@ public:
 	void InitPlayerTextures();
 	void InitUI();
 	void InitMap();
+	void InitConsumableTextures();
+	void InitEnemyTextures();
+	void InitBossTextures();
+	void InitParticleTextures();
 
 	void UpdateView();
 	void Update(const float &dt);

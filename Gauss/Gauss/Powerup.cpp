@@ -1,6 +1,16 @@
 #include "Powerup.h"
 
 dArr<Texture> Powerup::powerupTextures;
+void Powerup::InitTextures() {
+	Texture temp;
+
+	temp.loadFromFile("Textures/Powerups/powerupRF.png");
+	Powerup::powerupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Powerups/powerupXP.png");
+	Powerup::powerupTextures.Add(Texture(temp));
+	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
+}
+
 int Powerup::numberOfPowerups;
 
 Powerup::~Powerup()

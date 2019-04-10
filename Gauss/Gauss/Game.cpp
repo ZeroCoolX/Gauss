@@ -145,12 +145,19 @@ void Game::InitMapTextures() {
 	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
 }
 
-void Game::InitTextures() {
-	this->InitPlayerTextures();
+void Game::InitConsumableTextures() {
+	// Init pickups textures
+	ItemPickup::InitTextures();
 
+	// Init Upgrade textures
+	ItemUpgrade::InitTextures();
+
+	// Init powerups
+	Powerup::InitTextures();
+}
+
+void Game::InitEnemyTextures() {
 	Texture temp;
-
-	// Load Enemy Textures
 	temp.loadFromFile("Textures/Ships/enemyMoveLeft_v2.png");
 	this->enemyTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Ships/enemyFollow_v2.png");
@@ -158,58 +165,50 @@ void Game::InitTextures() {
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot_v2.png");
 	this->enemyTextures.Add(Texture(temp));
 
+}
+
+void Game::InitBossTextures() {
+	// Body
+	//Texture temp;
+	//temp.loadFromFile("Textures/Bosses/Body/boss01.png");
+	//this->bossBodyTextures.Add(Texture(temp));
+	//// Gun
+	//temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
+	//this->bossGunTextures.Add(Texture(temp));
+	//temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
+	//this->bossGunTextures.Add(Texture(temp));
+	//// Bullets
+	//temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
+	//this->bossBodyTextures.Add(Texture(temp));
+}
+
+void Game::InitParticleTextures() {
+	Texture temp;
+	temp.loadFromFile("Textures/Particles/particle01.png");
+	Particle::particleTextures.Add(Texture(temp));
+}
+
+
+void Game::InitTextures() {
+	this->InitPlayerTextures();
+
+	Texture temp;
+
+	// Load Enemy Textures
+	this->InitEnemyTextures();
+
 	// Load Enemy Bullet Textures
 	temp.loadFromFile("Textures/Guns/roundBulletRed.png");
 	this->enemyBulletTextures.Add(Texture(temp));
 
-	// Boss textures
-	// Body
-	temp.loadFromFile("Textures/Bosses/Body/boss01.png");
-	this->bossBodyTextures.Add(Texture(temp));
-	// Gun
-	temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
-	this->bossGunTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
-	this->bossGunTextures.Add(Texture(temp));
-	// Bullets
-	temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
-	this->bossBodyTextures.Add(Texture(temp));
+	// Load Boss textures
+	this->InitBossTextures();
 
-	// Init pickups textures
-	temp.loadFromFile("Textures/Pickups/hpSupply.png");
-	ItemPickup::pickupTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Pickups/missileSupply.png");
-	ItemPickup::pickupTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
-	ItemPickup::pickupTextures.Add(Texture(temp));
-	ItemPickup::numberOfPickups = ItemPickup::pickupTextures.Size();
+	// Load Consumables
+	this->InitConsumableTextures();
 
-
-	// Init Upgrade textures
-	temp.loadFromFile("Textures/Upgrades/statpoint.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/healthtank.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/doubleray.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/tripleray.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/piercingshot.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/shield.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	ItemUpgrade::numberOfUpgrades = ItemUpgrade::upgradeTextures.Size();
-
-	// Init powerups
-	temp.loadFromFile("Textures/Powerups/powerupRF.png");
-	Powerup::powerupTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Powerups/powerupXP.png");
-	Powerup::powerupTextures.Add(Texture(temp));
-	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
-
-	// Particle Textures
-	temp.loadFromFile("Textures/Particles/particle01.png");
-	Particle::particleTextures.Add(Texture(temp));
+	// Load Particle Textures
+	this->InitParticleTextures();
 
 	this->InitMapTextures();
 }

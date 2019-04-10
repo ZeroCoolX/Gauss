@@ -1,6 +1,24 @@
 #include "ItemUpgrade.h"
 
 dArr<Texture> ItemUpgrade::upgradeTextures;
+void ItemUpgrade::InitTextures() {
+	Texture temp;
+
+	temp.loadFromFile("Textures/Upgrades/statpoint.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/healthtank.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/doubleray.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/tripleray.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/piercingshot.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/shield.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	ItemUpgrade::numberOfUpgrades = ItemUpgrade::upgradeTextures.Size();
+}
+
 int ItemUpgrade::numberOfUpgrades;
 
 ItemUpgrade::~ItemUpgrade()

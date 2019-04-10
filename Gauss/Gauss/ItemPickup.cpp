@@ -1,6 +1,21 @@
 #include "ItemPickup.h"
 
+// Static define
 dArr<Texture> ItemPickup::pickupTextures;
+
+void ItemPickup::InitTextures() {
+	Texture temp;
+
+	// Init pickups textures
+	temp.loadFromFile("Textures/Pickups/hpSupply.png");
+	ItemPickup::pickupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Pickups/missileSupply.png");
+	ItemPickup::pickupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Pickups/missileHSupply.png");
+	ItemPickup::pickupTextures.Add(Texture(temp));
+	ItemPickup::numberOfPickups = ItemPickup::pickupTextures.Size();
+}
+
 int ItemPickup::numberOfPickups;
 
 ItemPickup::~ItemPickup()
