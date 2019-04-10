@@ -397,7 +397,6 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 	}
 }
 
-// Order matters!
 void Player::Draw(RenderTarget &renderTarget) {
 	renderTarget.draw(this->aura);
 
@@ -407,13 +406,14 @@ void Player::Draw(RenderTarget &renderTarget) {
 
 	renderTarget.draw(this->mainGunSprite);
 	renderTarget.draw(this->sprite);
-	if (this->shieldActive) {
-		renderTarget.draw(this->deflectorShield);
-	}
 
 	renderTarget.draw(this->cPit);
 	renderTarget.draw(this->lWing);
 	renderTarget.draw(this->rWing);
+
+	if (this->shieldActive) {
+		renderTarget.draw(this->deflectorShield);
+	}
 
 	if (this->getPowerupRF() || this->getPowerupXP()) {
 		renderTarget.draw(this->powerupSprite);

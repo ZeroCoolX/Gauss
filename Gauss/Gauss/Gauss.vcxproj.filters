@@ -67,14 +67,14 @@
     <Filter Include="Source Files\WorldElements">
       <UniqueIdentifier>{5d67cb94-7bec-451b-a7ac-435d83cfbe29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GameControl">
+      <UniqueIdentifier>{d424e370-8519-4bce-b2e0-e26f8868d3c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameControl">
+      <UniqueIdentifier>{c72a04cb-a394-4ee7-9170-2baa083a14c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EnemyLifeform.cpp">
       <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClCompile>
@@ -123,17 +123,23 @@
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="GameMapEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Gauss.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EnemySpawner.cpp">
+      <Filter>Source Files\GameControl</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\GameControl</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMapEditor.cpp">
+      <Filter>Source Files\GameControl</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\GameControl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dArr.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -200,11 +206,17 @@
     <ClInclude Include="Particle.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="GameMapEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Gauss.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawner.h">
+      <Filter>Header Files\GameControl</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\GameControl</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMapEditor.h">
+      <Filter>Header Files\GameControl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

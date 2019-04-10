@@ -2,6 +2,7 @@
 
 #include "TileArr.h"
 #include "Gauss.h"
+#include "EnemySpawner.h"
 
 class Stage
 {
@@ -12,6 +13,7 @@ private:
 	float scrollSpeed;
 	TileArr<TileArr<Tile>> tileMatrix;
 	TileArr<TileArr<Tile>> backgroundTiles;
+	TileArr<TileArr<Tile>> enemySpawners;
 
 	Sprite background1;
 	Sprite background2;

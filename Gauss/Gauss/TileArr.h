@@ -49,7 +49,7 @@ TileArr<T>::TileArr(const TileArr& obj) {
 	this->max = obj.max;
 	this->numOfTiles = obj.numOfTiles;
 
-	this->tiles = new Tile*[this->max];
+	this->tiles = new T*[this->max];
 
 	for (size_t i = 0; i < this->max; i++)
 	{

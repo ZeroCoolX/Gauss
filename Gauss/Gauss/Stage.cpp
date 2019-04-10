@@ -9,7 +9,8 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 	:stageSizeX(sizeX),
 	stageSizeY(sizeY),
 	tileMatrix(stageSizeX),
-	backgroundTiles(stageSizeX)
+	backgroundTiles(stageSizeX),
+	enemySpawners(stageSizeX)
 {
 	this->stageSizeX = sizeX;
 	this->stageSizeY = sizeY;
@@ -24,6 +25,7 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 	{
 		this->tileMatrix.Add(TileArr<Tile>(this->stageSizeY), i);
 		this->backgroundTiles.Add(TileArr<Tile>(this->stageSizeY), i);
+		this->enemySpawners.Add(TileArr<Tile>(this->stageSizeY), i);
 	}
 }
 
@@ -151,11 +153,13 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		// Clear and Resize map to size
 		this->tileMatrix.ResizeClear(this->stageSizeX);
 		this->backgroundTiles.ResizeClear(this->stageSizeX);
+		this->enemySpawners.ResizeClear(this->stageSizeX);
 
 		for (int i = 0; i < this->stageSizeX; i++)
 		{
 			this->tileMatrix.Add(TileArr<Tile>(stageSizeY), i);
 			this->backgroundTiles.Add(TileArr<Tile>(stageSizeY), i);
+			this->enemySpawners.Add(TileArr<Tile>(stageSizeY), i);
 		}
 
 		line.clear();
@@ -212,6 +216,19 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			);
 			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Gauss::BACKGROUND_COLOR);
 		}
+
+		//line.clear();
+		//ss.clear();
+
+		//// Load the enemy spawners
+		//std::getline(fin, line);
+		//ss.str(line);
+		//while (
+		//	) {
+
+		//	this->enemySpawners[gridPosX].Add(
+		//	);
+		//}
 
 		successLoading = true;
 		std::cout << "Success loading" << std::endl;
@@ -290,6 +307,11 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	//			this->tileMatrix[i][j].Update(dt);
 	//		}
 
+	//		// Update enemy Spawners tiles
+	//		if (!this->enemySpawners[i].IsNull(j)) {
+	//			this->enemySpawners[i][j].Update(dt);
+	//		}
+
 	//		//this->UpdateBackground(dt, view, i, j);
 	//	}
 	//}
@@ -343,6 +365,11 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 			// Draw foreground tiles
 			if (!this->tileMatrix[i].IsNull(j)) {
 				this->tileMatrix[i][j].Draw(renderTarget);
+			}
+
+			// Draw enemy spawners tiles
+			if (!this->enemySpawners[i].IsNull(j)) {
+				this->enemySpawners[i][j].Draw(renderTarget);
 			}
 		}
 	}
