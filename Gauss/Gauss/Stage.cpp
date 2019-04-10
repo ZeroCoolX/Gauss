@@ -13,7 +13,7 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 {
 	this->stageSizeX = sizeX;
 	this->stageSizeY = sizeY;
-	this->stageSpeed = -4.f;
+	this->scrollSpeed = 0.1f;
 
 	this->fromCol = 0;
 	this->toCol = 0;
@@ -124,7 +124,7 @@ void Stage::SaveStage(std::string filename) {
 	fout.close();
 }
 
-bool Stage::LoadStage(std::string filename) {
+bool Stage::LoadStage(std::string filename, View &view) {
 	std::ifstream fin;
 	bool successLoading = false;
 	std::stringstream ss;
@@ -147,9 +147,6 @@ bool Stage::LoadStage(std::string filename) {
 		this->stageSizeY = sizeY;
 
 		ss >> backgroundPath;
-		//this->backgroundTexture.loadFromFile(backgroundPath);
-		//this->background1.setTexture(this->backgroundTexture);
-		//this->background2.setTexture(this->backgroundTexture);
 
 		// Clear and Resize map to size
 		this->tileMatrix.ResizeClear(this->stageSizeX);
@@ -192,6 +189,10 @@ bool Stage::LoadStage(std::string filename) {
 					isDamaging), gridPosY
 			);
 		}
+
+		this->backgroundRenderTex.create(view.getSize().x, view.getSize().y);
+		this->background1.setPosition(0.f, 0.f);
+		this->background2.setPosition(this->backgroundRenderTex.getTexture().getSize().x, 0.f);
 
 		line.clear();
 		ss.clear();
@@ -236,14 +237,15 @@ bool Stage::LoadStage(std::string filename) {
 	return successLoading;
 }
 
-void Stage::UpdateBackground(const float &dt, int row, int col) {
-	// Cycle tiles to they're infinite
-	if (!this->backgroundTiles[row].IsNull(col)) {
-		this->backgroundTiles[row][col].move(this->stageSpeed / 2 * dt * DeltaTime::dtMultiplier, 0.f);
+void Stage::UpdateBackground(const float &dt, View &view) {
+	this->background1.move(-this->scrollSpeed * 20 * dt * DeltaTime::dtMultiplier, 0.f);
+	this->background2.move(-this->scrollSpeed * 20 * dt * DeltaTime::dtMultiplier, 0.f);
 
-		if (this->backgroundTiles[row][col].getPos().x <= (0 - this->backgroundTiles[row][col].getBounds().width)) {
-			this->backgroundTiles[row][col].setPos(static_cast<float>(this->stageSizeX * Gauss::GRID_SIZE), this->backgroundTiles[row][col].getPos().y);
-		}
+	if (this->background1.getPosition().x + this->background1.getGlobalBounds().width <= view.getCenter().x - view.getSize().x / 2) {
+		this->background1.setPosition(this->background2.getPosition().x + this->background2.getGlobalBounds().width, 0.f);
+	}
+	if (this->background2.getPosition().x + this->background2.getGlobalBounds().width <= view.getCenter().x - view.getSize().x / 2) {
+		this->background2.setPosition(this->background1.getPosition().x + this->background1.getGlobalBounds().width, 0.f);
 	}
 }
 
@@ -293,11 +295,11 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 			if (!this->backgroundTiles[i].IsNull(j)) {
 				this->backgroundTiles[i][j].Update(dt);
 			}
-
-			if (!editor) {
-				this->UpdateBackground(dt, i, j);
-			}
 		}
+	}
+
+	if (!editor) {
+		this->UpdateBackground(dt, view);
 	}
 }
 
@@ -342,10 +344,24 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 	{
 		for (int j = this->fromRow; j < this->toRow; j++)
 		{
-			if (!this->backgroundTiles[i].IsNull(j)) {
-				this->backgroundTiles[i][j].Draw(renderTarget);
+			if (!editor) {
+				if (!this->backgroundTiles[i].IsNull(j)) {
+					this->backgroundTiles[i][j].Draw(this->backgroundRenderTex);
+				}
+			}
+			else {
+				if (!this->backgroundTiles[i].IsNull(j)) {
+					this->backgroundTiles[i][j].Draw(renderTarget);
+				}
 			}
 		}
+	}
+
+	if (!editor) {
+		this->background1.setTexture(this->backgroundRenderTex.getTexture());
+		renderTarget.draw(this->background1);
+		this->background2.setTexture(this->backgroundRenderTex.getTexture());
+		renderTarget.draw(this->background2);
 	}
 
 	// Draw foreground tiles

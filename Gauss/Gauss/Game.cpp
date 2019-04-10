@@ -3,8 +3,11 @@
 Game::Game(RenderWindow *window)
 {
 	this->window = window;
+	// Init stage
+	this->stage = nullptr;
 
 	this->InitView();
+	this->InitMap();
 
 	this->InitTextures();
 
@@ -48,9 +51,6 @@ Game::Game(RenderWindow *window)
 	this->difficulty = 0;
 	this->difficultyTimer = 0;
 
-	// Init stage
-	this->stage = nullptr;
-
 	// Init Game controls
 	this->paused = true;
 	this->keyTimeMax = 10.f;
@@ -60,7 +60,6 @@ Game::Game(RenderWindow *window)
 	this->bossEncounterActivated = false;
 
 	this->InitUI();
-	this->InitMap();
 }
 
 Game::~Game()
@@ -261,12 +260,12 @@ void Game::InitUI() {
 }
 
 void Game::InitMap() {
-	this->stage = new Stage(50, 50);
-	this->stage->LoadStage("lel.smap");
+	this->stage = new Stage(10, 10);
+	this->stage->LoadStage("lel.smap", this->mainView);
 }
 
 void Game::UpdateView() {
-	this->mainView.move(0.5f, 0.f);
+	this->mainView.move(this->stage->getScrollSpeed(), 0.f);
 }
 
 void Game::Update(const float &dt) {
@@ -276,6 +275,9 @@ void Game::Update(const float &dt) {
 
 	// Fullscreen check
 	this->ToggleFullscreen();
+
+	// view update
+	this->UpdateView();
 
 	// Pause check
 	this->PauseGame();
@@ -287,9 +289,6 @@ void Game::Update(const float &dt) {
 	if (!this->paused && this->playersExistInWorld()) {
 		// Update timers
 		this->UpdateTimersUnpaused(dt);
-
-		// view update
-		this->UpdateView();
 
 		//MAKE GAME HARDER WITH TIME
 		this->UpdateDifficulty();

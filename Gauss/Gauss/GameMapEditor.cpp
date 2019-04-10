@@ -369,7 +369,7 @@ void GameMapEditor::LoadStage() {
 	std::getline(std::cin, loadFilename);
 	loadFilename.append(".smap");
 
-	if (this->stage->LoadStage(loadFilename)) {
+	if (this->stage->LoadStage(loadFilename, this->mainView)) {
 		this->stageName = loadFilename;
 		std::cout << "Stage: " << this->stageName << " successfully loaded" << std::endl;
 	}
