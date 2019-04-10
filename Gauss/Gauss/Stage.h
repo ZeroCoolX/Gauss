@@ -13,8 +13,6 @@ private:
 	TileArr<TileArr<Tile>> tileMatrix;
 	TileArr<TileArr<Tile>> backgroundTiles;
 
-	RenderTexture backgroundRenderTex;
-
 	Sprite background1;
 	Sprite background2;
 
@@ -31,7 +29,7 @@ public:
 	inline long getSizeY() const { return this->stageSizeY; }
 	inline float getScrollSpeed() const { return this->scrollSpeed; }
 
-	void UpdateBackground(const float &dt, View &view);
+	void UpdateBackground(const float &dt, View &view, unsigned row, unsigned col);
 	void Update(const float &dt, View &view, bool editor);
 	void Draw(RenderTarget &renderTarget, View &view, bool editor);
 

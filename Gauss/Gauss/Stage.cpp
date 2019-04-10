@@ -190,10 +190,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			);
 		}
 
-		this->backgroundRenderTex.create(view.getSize().x, view.getSize().y);
-		this->background1.setPosition(0.f, 0.f);
-		this->background2.setPosition(this->backgroundRenderTex.getTexture().getSize().x, 0.f);
-
 		line.clear();
 		ss.clear();
 
@@ -237,75 +233,69 @@ bool Stage::LoadStage(std::string filename, View &view) {
 	return successLoading;
 }
 
-void Stage::UpdateBackground(const float &dt, View &view) {
-	this->background1.move(-this->scrollSpeed * 20 * dt * DeltaTime::dtMultiplier, 0.f);
-	this->background2.move(-this->scrollSpeed * 20 * dt * DeltaTime::dtMultiplier, 0.f);
-
-	if (this->background1.getPosition().x + this->background1.getGlobalBounds().width <= view.getCenter().x - view.getSize().x / 2) {
-		this->background1.setPosition(this->background2.getPosition().x + this->background2.getGlobalBounds().width, 0.f);
-	}
-	if (this->background2.getPosition().x + this->background2.getGlobalBounds().width <= view.getCenter().x - view.getSize().x / 2) {
-		this->background2.setPosition(this->background1.getPosition().x + this->background1.getGlobalBounds().width, 0.f);
+void Stage::UpdateBackground(const float &dt, View &view, unsigned row, unsigned col) {
+	// Update background tiles
+	if (!this->backgroundTiles[row].IsNull(col)) {
+		this->backgroundTiles[row][col].move(this->scrollSpeed / 2, 0.f);
 	}
 }
 
 void Stage::Update(const float &dt, View &view, bool editor) {
-	// TODO: IF THINGS BREAK ITS THE STATIC_CAST<INT>
-	this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Gauss::GRID_SIZE);
-	if (this->fromCol <= 0) {
-		this->fromCol = 0;
-	}
-	if (this->fromCol >= this->stageSizeX) {
-		this->fromCol = this->stageSizeX;
-	}
+	//this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Gauss::GRID_SIZE);
+	//if (this->fromCol <= 0) {
+	//	this->fromCol = 0;
+	//}
+	//if (this->fromCol >= this->stageSizeX) {
+	//	this->fromCol = this->stageSizeX;
+	//}
 
-	this->toCol = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / Gauss::GRID_SIZE);
-	if (this->toCol <= 0) {
-		this->toCol = 0;
-	}
-	if (this->toCol >= this->stageSizeX) {
-		this->toCol = this->stageSizeX;
-	}
+	//this->toCol = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / Gauss::GRID_SIZE + 1);
+	//if (this->toCol <= 0) {
+	//	this->toCol = 0;
+	//}
+	//if (this->toCol >= this->stageSizeX) {
+	//	this->toCol = this->stageSizeX;
+	//}
 
 
-	this->fromRow = static_cast<int>((view.getCenter().y - view.getSize().x / 2) / Gauss::GRID_SIZE);
-	if (this->fromRow <= 0) {
-		this->fromRow = 0;
-	}
-	if (this->fromRow >= this->stageSizeY) {
-		this->fromRow = this->stageSizeY;
-	}
+	//this->fromRow = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / Gauss::GRID_SIZE);
+	//if (this->fromRow <= 0) {
+	//	this->fromRow = 0;
+	//}
+	//if (this->fromRow >= this->stageSizeY) {
+	//	this->fromRow = this->stageSizeY;
+	//}
 
-	this->toRow = static_cast<int>((view.getCenter().y + view.getSize().x / 2) / Gauss::GRID_SIZE);
-	if (this->toRow <= 0) {
-		this->toRow = 0;
-	}
-	if (this->toRow >= this->stageSizeY) {
-		this->toRow = this->stageSizeY;
-	}
+	//this->toRow = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / Gauss::GRID_SIZE + 1);
+	//if (this->toRow <= 0) {
+	//	this->toRow = 0;
+	//}
+	//if (this->toRow >= this->stageSizeY) {
+	//	this->toRow = this->stageSizeY;
+	//}
 
-	for (int i = this->fromCol; i < this->toCol; i++)
-	{
-		for (int j = this->fromRow; j < this->toRow; j++)
-		{
-			if (!this->tileMatrix[i].IsNull(j)) {
-				this->tileMatrix[i][j].Update(dt);
-			}
 
-			if (!this->backgroundTiles[i].IsNull(j)) {
-				this->backgroundTiles[i][j].Update(dt);
-			}
-		}
-	}
+	//// Update tiles
+	//for (int i = this->fromCol; i < this->toCol; i++)
+	//{
+	//	for (int j = this->fromRow; j < this->toRow; j++)
+	//	{
+	//		// Update background tiles
+	//		if (!this->backgroundTiles[i].IsNull(j)) {
+	//			this->backgroundTiles[i][j].Update(dt);
+	//		}
 
-	if (!editor) {
-		this->UpdateBackground(dt, view);
-	}
+	//		// Update foreground tiles
+	//		if (!this->tileMatrix[i].IsNull(j)) {
+	//			this->tileMatrix[i][j].Update(dt);
+	//		}
+
+	//		//this->UpdateBackground(dt, view, i, j);
+	//	}
+	//}
 }
 
-// Dependent on the view
 void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
-	// TODO: IF THINGS BREAK ITS THE STATIC_CAST<INT>
 	this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Gauss::GRID_SIZE);
 	if (this->fromCol <= 0) {
 		this->fromCol = 0;
@@ -339,36 +329,18 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 		this->toRow = this->stageSizeY;
 	}
 
-	// Draw background tiles
+
+	// Draw tiles
 	for (int i = this->fromCol; i < this->toCol; i++)
 	{
 		for (int j = this->fromRow; j < this->toRow; j++)
 		{
-			if (!editor) {
-				if (!this->backgroundTiles[i].IsNull(j)) {
-					this->backgroundTiles[i][j].Draw(this->backgroundRenderTex);
-				}
+			// Draw background tiles
+			if (!this->backgroundTiles[i].IsNull(j)) {
+				this->backgroundTiles[i][j].Draw(renderTarget);
 			}
-			else {
-				if (!this->backgroundTiles[i].IsNull(j)) {
-					this->backgroundTiles[i][j].Draw(renderTarget);
-				}
-			}
-		}
-	}
 
-	if (!editor) {
-		this->background1.setTexture(this->backgroundRenderTex.getTexture());
-		renderTarget.draw(this->background1);
-		this->background2.setTexture(this->backgroundRenderTex.getTexture());
-		renderTarget.draw(this->background2);
-	}
-
-	// Draw foreground tiles
-	for (int i = this->fromCol; i < this->toCol; i++)
-	{
-		for (int j = this->fromRow; j < this->toRow; j++)
-		{
+			// Draw foreground tiles
 			if (!this->tileMatrix[i].IsNull(j)) {
 				this->tileMatrix[i][j].Draw(renderTarget);
 			}
