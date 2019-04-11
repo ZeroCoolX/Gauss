@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EnemyLifeform.h"
-#include "Enums.h"
 
 class MoveLeftShootEnemy : public EnemyLifeform
 {

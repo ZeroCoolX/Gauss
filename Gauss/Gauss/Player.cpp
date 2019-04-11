@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Player.h"
-#include "Enums.h"
 
 unsigned Player::playerId = 0;
 
@@ -157,19 +156,19 @@ void Player::TakeDamage(int damage) {
 }
 
 bool Player::ChangeAccessories(const float &dt) {
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_LWING]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_LWING]))) {
 		this->lWingSelect = ++this->lWingSelect % ((int)Player::shipLWingTextures.Size() - 1);
 		this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_RWING]))) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_RWING]))) {
 		this->rWingSelect = ++this->rWingSelect % ((int)Player::shipRWingTextures.Size() - 1);
 		this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_AURA]))) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_AURA]))) {
 		this->auraSelect = ++this->auraSelect % ((int)Player::shipAuraTextures.Size() - 1);
 		this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::CHANGE_CPIT]))) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_CPIT]))) {
 		this->cPitSelect = ++this->cPitSelect % ((int)Player::shipCockpitTextures.Size() - 1);
 		this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
 		return true;
@@ -195,7 +194,7 @@ void Player::Movement(const float &dt, View &view) {
 void Player::Combat(const float &dt) {
 	const Vector2f direction = Vector2f(1.f, 0.f);
 
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
 		switch (this->currentWeapon) {
 			case Player::LASER_GUN:
@@ -212,7 +211,7 @@ void Player::Combat(const float &dt) {
 		this->shootTimer = 0; // RESET TIMER
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
 		// Fire a deadly gauss cannon shot
 		this->gaussChargeTimer = 0.f;
 		this->playerGaussBar.setFillColor(this->gaussChargingColor);
@@ -224,7 +223,7 @@ void Player::Combat(const float &dt) {
 	if (this->shieldCharged()) {
 		this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
 	}
-	this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD])) && this->shieldChargeTimer > 0;
+	this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD])) && this->shieldChargeTimer > 0;
 
 	if (this->isDamageCooldown()) {
 		if ((int)this->damageTimer % 2 == 0) {
@@ -415,7 +414,7 @@ void Player::Update(View &view, const float &dt) {
 		this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - 1.f * dt * DeltaTime::dtMultiplier);
 	}
 	// Make sure they let go of the key
-	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::SHIELD]))){
+	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD]))){
 		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + 0.5f * dt * DeltaTime::dtMultiplier);
 		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
@@ -558,7 +557,7 @@ void Player::SetGunLevel(int gunLevel) {
 	else {
 		this->mainGunSprite.setTexture(Player::shipMainGunTextures[this->mainGunLevel]);
 		// Hack right now since I don't like how the level 3 gun looks
-		if (this->mainGunLevel == GameEnums::LEVEL_3_LASER) {
+		if (this->mainGunLevel == LaserLevels::LEVEL_3_LASER) {
 			this->mainGunSprite.setScale(0.75f, 0.75f);
 		}
 	}
@@ -593,7 +592,7 @@ void Player::Reset() {
 
 	// Reset weapons
 	this->currentWeapon = Player::LASER_GUN;
-	this->SetGunLevel(GameEnums::DEFAULT_LASER);
+	this->SetGunLevel(Player::DEFAULT_LASER);
 	this->bullets.Clear();
 
 	// Reset Timers
@@ -623,7 +622,7 @@ void Player::AddStatPointRandom() {
 }
 
 bool Player::PlayerShowStatsIsPressed() {
-	return Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::TOGGLE_STATS]));
+	return Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_TOGGLE_STATS]));
 }
 
 std::string Player::GetStatsAsString() {
@@ -646,25 +645,25 @@ std::string Player::GetStatsAsString() {
 
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_UP]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
 		this->direction.y = -1;
 		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
 			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_DOWN]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
 		this->direction.y = 1;
 		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
 			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_LEFT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
 			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_RIGHT]))) {
+	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_RIGHT]))) {
 		this->direction.x = 1;
 		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
 			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
@@ -691,23 +690,18 @@ void Player::_processPlayerInput(const float &dt) {
 
 void Player::_initTextures() {
 	// Assign ship
-	this->sprite.setTexture(Player::shipBodyTextures[GameEnums::T_SHIP]);
+	this->sprite.setTexture(Player::shipBodyTextures[Player::DEFAULT_SHIP_BODY]);
 	this->sprite.setScale(0.1f, 0.1f);
 	this->sprite.setColor(Color(10, 10, 10, 255));
 
 	// Assign main gun
-	this->mainGunSprite.setTexture(Player::shipMainGunTextures[GameEnums::MGT_MAIN_GUN]);
+	this->mainGunSprite.setTexture(Player::shipMainGunTextures[Player::DEFAULT_LASER]);
 	this->mainGunSprite.setOrigin(
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
 	this->mainGunSprite.rotate(90);
 
-	// Assign bullet properties
-	//this->laserProjectileTexture = &Player::shipBulletTextures[GameEnums::T_LASER01];
-	//this->gaussCannonProjectileTexture = &Player::shipBulletTextures[GameEnums::T_GAUSSCANNON01];
-	//this->missile01ProjectileTexture = &Player::shipBulletTextures[GameEnums::T_MISSILE01];
-
-	this->deflectorShield.setTexture(Player::shipShieldTextures[0]);
+	this->deflectorShield.setTexture(Player::shipShieldTextures[Player::DEFAULT_SHIELD]);
 	this->deflectorShield.setOrigin(this->deflectorShield.getGlobalBounds().width / 2.f, this->deflectorShield.getGlobalBounds().height / 2.f);
 	this->deflectorShield.setPosition(this->sprite.getPosition());
 
@@ -774,7 +768,7 @@ void Player::_initPlayerSettings() {
 	this->currentWeapon = Player::LASER_GUN;
 
 	// UPGRADES
-	this->SetGunLevel(GameEnums::DEFAULT_LASER);
+	this->SetGunLevel(Player::DEFAULT_LASER);
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
 	this->sheild = false;
@@ -795,7 +789,7 @@ void Player::_recalculatePlayerCenter() {
 }
 
 void Player::_fireLaser(const Vector2f direction) {
-	float yOffset = this->mainGunLevel == GameEnums::DEFAULT_LASER ? 0.f : this->mainGunLevel > GameEnums::LEVEL_2_LASER ? 30.f : 15.f;
+	float yOffset = this->mainGunLevel == Player::DEFAULT_LASER ? 0.f : this->mainGunLevel > Player::LEVEL_2_LASER ? 30.f : 15.f;
 	for (int i = 0; i <= this->mainGunLevel; i++)
 	{
 		this->bullets.Add(

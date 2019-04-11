@@ -32,5 +32,12 @@ public:
 	static void InitTextures();
 
 	static int numberOfPickups;
+
+	enum Type { 
+		HEALTH = 0, 
+		MISSILE, 
+		MISSILE_HEAVY 
+	};
+
 };
 

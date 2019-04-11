@@ -152,7 +152,6 @@
     <ClInclude Include="Consumable.h" />
     <ClInclude Include="EnemyLifeform.h" />
     <ClInclude Include="EnemySpawner.h" />
-    <ClInclude Include="Enums.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="dArr.h" />

@@ -271,7 +271,6 @@ public:
 	static unsigned playerId;
 	// Textures
 	static dArr<Texture> shipBodyTextures;
-	//static dArr<Texture> shipBulletTextures;
 	static dArr<Texture> shipMainGunTextures;
 	static dArr<Texture> shipLWingTextures;
 	static dArr<Texture> shipRWingTextures;
@@ -282,7 +281,36 @@ public:
 
 	static void InitTextures();
 
-	enum Weapon { LASER_GUN = 0, MISSILE_LIGHT_GUN, MISSILE_HEAVY_GUN };
+	enum Weapon { 
+		LASER_GUN = 0, 
+		MISSILE_LIGHT_GUN, 
+		MISSILE_HEAVY_GUN 
+	};
+	enum Controls { 
+		CONTROL_UP = 0, 
+		CONTROL_DOWN, 
+		CONTROL_LEFT, 
+		CONTROL_RIGHT, 
+		CONTROL_FIRE, 
+		CONTROL_GAUSSCANNON, 
+		CONTROL_SHIELD, 
+		CONTROL_TOGGLE_STATS, 
+		CONTROL_CHANGE_LWING, 
+		CONTROL_CHANGE_CPIT, 
+		CONTROL_CHANGE_RWING, 
+		CONTROL_CHANGE_AURA 
+	};
+	enum ShipBody { 
+		DEFAULT_SHIP_BODY = 0 
+	};
 
+	enum LaserLevels {
+		DEFAULT_LASER = 0, 
+		LEVEL_2_LASER, 
+		LEVEL_3_LASER
+	};
+	enum Sheild {
+		DEFAULT_SHIELD = 0
+	};
 };
 

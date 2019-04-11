@@ -143,9 +143,6 @@
     <ClInclude Include="dArr.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enums.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="DeltaTime.h">
       <Filter>Resource Files</Filter>
     </ClInclude>

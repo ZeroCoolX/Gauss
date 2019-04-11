@@ -9,7 +9,6 @@
 #include <fstream>
 #include "DeltaTime.h"
 #include "dArr.h"
-#include "Enums.h"
 #include "MathUtil.h"
 
 using namespace sf;

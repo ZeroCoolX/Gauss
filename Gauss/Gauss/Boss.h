@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Enums.h"
 #include "Bullet.h"
 
 enum body_texture { BODY01 = 0 };

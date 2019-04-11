@@ -40,32 +40,32 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 	}
 
 	switch (this->type) {
-	case GameEnums::UPGRADE_STATPOINT:
+	case ItemUpgrade::STATPOINT:
 		player->AddStatPointRandom();
 		break;
-	case GameEnums::UPGRADE_DOUBLE_RAY:
-		if (player->getGunLevel() < GameEnums::MGT_MAIN_GUN02) {
-			player->SetGunLevel(GameEnums::MGT_MAIN_GUN02);
+	case ItemUpgrade::DOUBLE_RAY:
+		if (player->getGunLevel() < Player::LEVEL_2_LASER) {
+			player->SetGunLevel(Player::LEVEL_2_LASER);
 		}
 		else {
 			return;
 		}
 		break;
-	case GameEnums::UPGRADE_TRIPLE_RAY:
-		if (player->getGunLevel() < GameEnums::MGT_MAIN_GUN03) {
-			player->SetGunLevel(GameEnums::MGT_MAIN_GUN03);
+	case ItemUpgrade::TRIPLE_RAY:
+		if (player->getGunLevel() < Player::LEVEL_3_LASER) {
+			player->SetGunLevel(Player::LEVEL_3_LASER);
 		}
 		else {
 			return;
 		}
 		break;
-	case GameEnums::UPGRADE_PIERCING_SHOT:
+	case ItemUpgrade::PIERCING_SHOT:
 		player->enablePiercingShot();
 		break;
-	case GameEnums::UPGRADE_SHEILD:
+	case ItemUpgrade::SHEILD:
 		player->enableSheild();
 		break;
-	case GameEnums::UPGRADE_HEALTH_TANK:
+	case ItemUpgrade::HEALTH_TANK:
 		player->upgradeHP();
 		break;
 	}
@@ -82,6 +82,6 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 }
 
 bool ItemUpgrade::_shouldAddUpgrade() {
-	return this->type != GameEnums::UPGRADE_STATPOINT && this->type != GameEnums::UPGRADE_HEALTH_TANK;
+	return this->type != ItemUpgrade::STATPOINT && this->type != ItemUpgrade::HEALTH_TANK;
 }
 

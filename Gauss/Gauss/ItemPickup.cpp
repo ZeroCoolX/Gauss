@@ -33,7 +33,7 @@ void ItemPickup::Draw(RenderTarget &renderTarget) {
 
 void ItemPickup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 	switch (this->type) {
-		case GameEnums::ITEM_HEALTH:
+		case ItemPickup::HEALTH:
 		{
 			const int gainedHp = player->getHpMax() / 5;
 			if (player->gainHp(gainedHp)) {
@@ -73,11 +73,11 @@ void ItemPickup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 			}
 			break;
 		}
-		case GameEnums::ITEM_MISSILE:
+		case ItemPickup::MISSILE:
 		{
 			break;
 		}
-		case GameEnums::ITEM_MISSILE_HEAVY:
+		case ItemPickup::MISSILE_HEAVY:
 		{
 			break;
 		}

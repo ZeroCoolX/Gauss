@@ -12,22 +12,22 @@ private:
 	bool _shouldAddUpgrade();
 	void _initText() {
 		switch (this->type) {
-		case GameEnums::UPGRADE_STATPOINT:
+		case ItemUpgrade::STATPOINT:
 			this->text = "RANDOM STAT POINT UPGRADE";
 			break;
-		case GameEnums::UPGRADE_DOUBLE_RAY:
+		case ItemUpgrade::DOUBLE_RAY:
 			this->text = "DOUBLE RAY UPGRADE";
 			break;
-		case GameEnums::UPGRADE_TRIPLE_RAY:
+		case ItemUpgrade::TRIPLE_RAY:
 			this->text = "TRIPLE RAY UPGRADE";
 			break;
-		case GameEnums::UPGRADE_PIERCING_SHOT:
+		case ItemUpgrade::PIERCING_SHOT:
 			this->text = "PIERCING SHOT UPGRADE";
 			break;
-		case GameEnums::UPGRADE_SHEILD:
+		case ItemUpgrade::SHEILD:
 			this->text = "SHEILD UPGRADE";
 			break;
-		case GameEnums::UPGRADE_HEALTH_TANK:
+		case ItemUpgrade::HEALTH_TANK:
 			this->text = "PERMANANT HEALTH UPGRADE";
 			break;
 		}
@@ -62,5 +62,14 @@ public:
 	static void InitTextures();
 
 	static int numberOfUpgrades;
+
+	enum Type { 
+		STATPOINT = 0, 
+		HEALTH_TANK, 
+		DOUBLE_RAY, 
+		TRIPLE_RAY, 
+		PIERCING_SHOT, 
+		SHEILD 
+	};
 };
 
