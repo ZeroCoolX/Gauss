@@ -4,7 +4,7 @@
 
 unsigned Player::playerId = 0;
 
-dArr<Texture> Player::shipBulletTextures;
+//dArr<Texture> Player::shipBulletTextures;
 dArr<Texture> Player::shipBodyTextures;
 dArr<Texture> Player::shipMainGunTextures;
 dArr<Texture> Player::shipLWingTextures;
@@ -13,6 +13,64 @@ dArr<Texture> Player::shipCockpitTextures;
 dArr<Texture> Player::shipAuraTextures;
 dArr<Texture> Player::shipShieldTextures;
 dArr<Texture> Player::powerupIndicatorTextures;
+
+void Player::InitTextures() {
+	Texture temp;
+
+	// Body textures
+	temp.loadFromFile("Textures/ship.png");
+	Player::shipBodyTextures.Add(temp);
+
+	// Main Gun textures
+	temp.loadFromFile("Textures/Guns/gun01.png");
+	Player::shipMainGunTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/gun02.png");
+	Player::shipMainGunTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/gun03.png");
+	Player::shipMainGunTextures.Add(temp);
+
+	// Powerup indication textures
+	temp.loadFromFile("Textures/Powerups/powerupRFIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
+	temp.loadFromFile("Textures/Powerups/powerupXPIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
+
+	// Sheild texutures
+	temp.loadFromFile("Textures/shield02.png");
+	Player::shipShieldTextures.Add(temp);
+
+	// Ship Parts textures
+	std::string accessoriesBaseDir = "Textures/Accessories/";
+	std::string accessories[] = {
+	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
+
+	std::ifstream in;
+	std::string accessoryFileName;
+	for (int i = 0; i < 4; ++i)
+	{
+		in.open(accessoriesBaseDir + accessories[i]);
+		if (in.is_open()) {
+			while (getline(in, accessoryFileName)) {
+				temp.loadFromFile(accessoryFileName);
+				switch (i) {
+				case 0:
+					Player::shipLWingTextures.Add(Texture(temp));
+					break;
+				case 1:
+					Player::shipRWingTextures.Add(Texture(temp));
+					break;
+				case 2:
+					Player::shipAuraTextures.Add(Texture(temp));
+					break;
+				case 3:
+					Player::shipCockpitTextures.Add(Texture(temp));
+					break;
+				}
+			}
+		}
+		in.close();
+	}
+}
 
 Player::Player(
 	int UP, 
@@ -76,13 +134,13 @@ int Player::getDamage() const {
 	int damage = rand() % this->damageMax + this->damage;
 
 	switch (this->currentWeapon) {
-		case GameEnums::G_LASER:
+		case Player::LASER_GUN:
 			// Accept regular damage
 			break;
-		case GameEnums::G_MISSILE01:
+		case Player::MISSILE_LIGHT_GUN:
 			damage *= 2;
 			break;
-		case GameEnums::G_MISSILE02:
+		case Player::MISSILE_HEAVY_GUN:
 			damage *= 4;
 			break;
 	}
@@ -140,13 +198,13 @@ void Player::Combat(const float &dt) {
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[GameEnums::C_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
 		switch (this->currentWeapon) {
-			case GameEnums::G_LASER:
+			case Player::LASER_GUN:
 				this->_fireLaser(direction);
 				break;
-			case GameEnums::G_MISSILE01:
+			case Player::MISSILE_LIGHT_GUN:
 				this->_fireMissileLight(direction);
 				break;
-			case GameEnums::G_MISSILE02:
+			case Player::MISSILE_HEAVY_GUN:
 				this->_fireMissileHeavy(direction);
 				break;
 		}
@@ -534,7 +592,7 @@ void Player::Reset() {
 	this->upgradesAcquired.Clear();
 
 	// Reset weapons
-	this->currentWeapon = GameEnums::G_LASER;
+	this->currentWeapon = Player::LASER_GUN;
 	this->SetGunLevel(GameEnums::DEFAULT_LASER);
 	this->bullets.Clear();
 
@@ -713,7 +771,7 @@ void Player::_initPlayerSettings() {
 	this->stabalizingForce = 0.3f;
 
 	// WEAPON
-	this->currentWeapon = GameEnums::G_LASER;
+	this->currentWeapon = Player::LASER_GUN;
 
 	// UPGRADES
 	this->SetGunLevel(GameEnums::DEFAULT_LASER);
@@ -741,7 +799,7 @@ void Player::_fireLaser(const Vector2f direction) {
 	for (int i = 0; i <= this->mainGunLevel; i++)
 	{
 		this->bullets.Add(
-			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_LASER],
+			Bullet(Bullet::LASER,
 				laserBulletScale,
 				Vector2f(
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2) + (i == 0 && yOffset == 30.f ? 50.f : -20), 
@@ -757,7 +815,7 @@ void Player::_fireLaser(const Vector2f direction) {
 
 void Player::_fireGaussCannon(const Vector2f direction) {
 	this->bullets.Add(
-			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_GAUSS_CANNON],
+			Bullet(Bullet::GAUSS_CANNON,
 				gaussCannonProjectileScale,
 				Vector2f(
 					this->playerCenter.x + (this->mainGunSprite.getGlobalBounds().width / 2),this->playerCenter.y),
@@ -771,7 +829,7 @@ void Player::_fireGaussCannon(const Vector2f direction) {
 void Player::_fireMissileLight(const Vector2f direction) {
 	// Create Missile
 	this->bullets.Add(
-		Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_MISSILE],
+		Bullet(Bullet::MISSILE,
 			missileScale,
 			Vector2f(this->playerCenter.x, this->playerCenter.y - (this->sprite.getGlobalBounds().height / 2)),
 			direction,
@@ -779,7 +837,7 @@ void Player::_fireMissileLight(const Vector2f direction) {
 	);
 	if (dualMissiles01) {
 		this->bullets.Add(
-			Bullet(&Player::shipBulletTextures[GameEnums::SHIP_B_MISSILE],
+			Bullet(Bullet::MISSILE,
 				missileScale,
 				Vector2f(this->playerCenter.x, this->playerCenter.y + (this->sprite.getGlobalBounds().height / 2)),
 				direction,

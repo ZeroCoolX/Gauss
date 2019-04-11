@@ -271,7 +271,7 @@ public:
 	static unsigned playerId;
 	// Textures
 	static dArr<Texture> shipBodyTextures;
-	static dArr<Texture> shipBulletTextures;
+	//static dArr<Texture> shipBulletTextures;
 	static dArr<Texture> shipMainGunTextures;
 	static dArr<Texture> shipLWingTextures;
 	static dArr<Texture> shipRWingTextures;
@@ -279,5 +279,10 @@ public:
 	static dArr<Texture> shipAuraTextures;
 	static dArr<Texture> shipShieldTextures;
 	static dArr<Texture> powerupIndicatorTextures;
+
+	static void InitTextures();
+
+	enum Weapon { LASER_GUN = 0, MISSILE_LIGHT_GUN, MISSILE_HEAVY_GUN };
+
 };
 

@@ -1,5 +1,21 @@
 #include "Bullet.h"
 
+dArr<Texture> Bullet::bulletTextures;
+
+void Bullet::InitTextures() {
+	Texture temp;
+	temp.loadFromFile("Textures/Guns/rayTex01.png");
+	Bullet::bulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/missileTex01.png");
+	Bullet::bulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/rayTex03.png");
+	Bullet::bulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/missileHTex01.png");
+	Bullet::bulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/orbRedBullet.png");
+	Bullet::bulletTextures.Add(temp);
+}
+
 Bullet::~Bullet()
 {
 }

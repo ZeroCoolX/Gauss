@@ -9,15 +9,11 @@ private:
 	float shootTimer;
 	float shootTimerMax;
 
-	dArr<Texture> *bulletTextures;
-
 public:
 	MoveLeftShootEnemy(RenderWindow *window, 
-		dArr<Texture> &textures,
-		dArr<Texture> &bulletTextures,
 		View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &textures[GameEnums::E_MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
+		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
 		this->window = window;
@@ -32,7 +28,6 @@ public:
 		this->hp = this->hpMax;
 
 		// ATTACK
-		this->bulletTextures = &bulletTextures;
 		this->shootTimerMax = rand() % 200 + 100.f;
 
 		this->InitSpritePoisition(view);

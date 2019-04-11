@@ -1,7 +1,17 @@
 #include "EnemyLifeform.h"
 
 dArr<Bullet> EnemyLifeform::bullets;
+dArr<Texture> EnemyLifeform::enemyTextures;
 
+void EnemyLifeform::InitializeTextures() {
+	Texture temp;
+	temp.loadFromFile("Textures/Ships/enemyMoveLeft_v2.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/enemyFollow_v2.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot_v2.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+}
 
 EnemyLifeform::~EnemyLifeform()
 {

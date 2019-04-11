@@ -42,6 +42,8 @@ public:
 
 	// Statics
 	static Texture tileTextures;
+	static void InitTextures();
 
+	static int numberOfTiles;
 };
 

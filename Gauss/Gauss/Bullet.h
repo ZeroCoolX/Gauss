@@ -13,13 +13,15 @@ private:
 	float acceleration;
 	Vector2f direction;
 
+	int type;
+
 	int damage;
 
 	void _constantMovement(const float &dt);
 	void _accelerationMovement(const float &dt);
 
 public:
-	Bullet(Texture *texture,
+	Bullet(int type,
 		Vector2f scale,
 		Vector2f position,
 		Vector2f direction,
@@ -27,7 +29,9 @@ public:
 		float maxVelocity,
 		int damage,
 		bool gaussShot,
-		float acceleration) : GameObject(texture, scale) {
+		float acceleration) : GameObject(&bulletTextures[type], scale) {
+
+		this->type = type;
 
 		// Damage
 		this->damage = damage;
@@ -69,5 +73,17 @@ public:
 	void Move(const float &dt);
 	void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	void Draw(RenderTarget &renderTarget);
+
+	// Statics
+	enum BulletTypes{ 
+		LASER = 0, 
+		MISSILE, 
+		GAUSS_CANNON, 
+		MISSILE_HEAVY, 
+		ORB_RED 
+	};
+	static dArr<Texture> bulletTextures;
+
+	static void InitTextures();
 };
 

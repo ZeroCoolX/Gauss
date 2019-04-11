@@ -34,6 +34,7 @@ class Particle {
 		void Update(const float &dt);
 		void Draw(RenderTarget &renderTarget);
 
+		// Static define
 		static dArr<Texture> particleTextures;
-
+		static void InitTextures();
 };

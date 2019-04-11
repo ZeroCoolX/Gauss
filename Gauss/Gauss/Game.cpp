@@ -75,77 +75,35 @@ void Game::InitView() {
 		this->window->getSize().y / 2.f));
 }
 
-void Game::InitPlayerTextures() {
-	Texture temp;
+//void Game::InitBossTextures() {
+//	// Body
+//	//Texture temp;
+//	//temp.loadFromFile("Textures/Bosses/Body/boss01.png");
+//	//this->bossBodyTextures.Add(Texture(temp));
+//	//// Gun
+//	//temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
+//	//this->bossGunTextures.Add(Texture(temp));
+//	//temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
+//	//this->bossGunTextures.Add(Texture(temp));
+//	//// Bullets
+//	//temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
+//	//this->bossBodyTextures.Add(Texture(temp));
+//}
 
-	// Body textures
-	temp.loadFromFile("Textures/ship.png");
-	Player::shipBodyTextures.Add(temp);
 
-	// Bullet textures
-	temp.loadFromFile("Textures/Guns/rayTex01.png");
-	Player::shipBulletTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/missileTex01.png");
-	Player::shipBulletTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/rayTex03.png");
-	Player::shipBulletTextures.Add(temp);
+void Game::InitTextures() {
+	// Player Textures
+	Player::InitTextures();
 
-	// Main Gun textures
-	temp.loadFromFile("Textures/Guns/gun01.png");
-	Player::shipMainGunTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/gun02.png");
-	Player::shipMainGunTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/gun03.png");
-	Player::shipMainGunTextures.Add(temp);
+	// Bullet Textures
+	Bullet::InitTextures();
 
-	// Powerup indication textures
-	temp.loadFromFile("Textures/Powerups/powerupRFIndicator.png");
-	Player::powerupIndicatorTextures.Add(temp);
-	temp.loadFromFile("Textures/Powerups/powerupXPIndicator.png");
-	Player::powerupIndicatorTextures.Add(temp);
+	// Load Enemy Textures
+	EnemyLifeform::InitializeTextures();
 
-	// Sheild texutures
-	temp.loadFromFile("Textures/shield02.png");
-	Player::shipShieldTextures.Add(temp);
+	// Load Boss textures
+	//this->InitBossTextures();
 
-	// Ship Parts textures
-	std::string accessoriesBaseDir = "Textures/Accessories/";
-	std::string accessories[] = {
-	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
-
-	std::ifstream in;
-	std::string accessoryFileName;
-	for (int i = 0; i < 4; ++i)
-	{
-		in.open(accessoriesBaseDir + accessories[i]);
-		if (in.is_open()) {
-			while (getline(in, accessoryFileName)) {
-				temp.loadFromFile(accessoryFileName);
-				switch (i) {
-				case 0:
-					Player::shipLWingTextures.Add(Texture(temp));
-					break;
-				case 1:
-					Player::shipRWingTextures.Add(Texture(temp));
-					break;
-				case 2:
-					Player::shipAuraTextures.Add(Texture(temp));
-					break;
-				case 3:
-					Player::shipCockpitTextures.Add(Texture(temp));
-					break;
-				}
-			}
-		}
-		in.close();
-	}
-}
-
-void Game::InitMapTextures() {
-	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
-}
-
-void Game::InitConsumableTextures() {
 	// Init pickups textures
 	ItemPickup::InitTextures();
 
@@ -154,63 +112,11 @@ void Game::InitConsumableTextures() {
 
 	// Init powerups
 	Powerup::InitTextures();
-}
-
-void Game::InitEnemyTextures() {
-	Texture temp;
-	temp.loadFromFile("Textures/Ships/enemyMoveLeft_v2.png");
-	this->enemyTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Ships/enemyFollow_v2.png");
-	this->enemyTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot_v2.png");
-	this->enemyTextures.Add(Texture(temp));
-
-}
-
-void Game::InitBossTextures() {
-	// Body
-	//Texture temp;
-	//temp.loadFromFile("Textures/Bosses/Body/boss01.png");
-	//this->bossBodyTextures.Add(Texture(temp));
-	//// Gun
-	//temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
-	//this->bossGunTextures.Add(Texture(temp));
-	//temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
-	//this->bossGunTextures.Add(Texture(temp));
-	//// Bullets
-	//temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
-	//this->bossBodyTextures.Add(Texture(temp));
-}
-
-void Game::InitParticleTextures() {
-	Texture temp;
-	temp.loadFromFile("Textures/Particles/particle01.png");
-	Particle::particleTextures.Add(Texture(temp));
-}
-
-
-void Game::InitTextures() {
-	this->InitPlayerTextures();
-
-	Texture temp;
-
-	// Load Enemy Textures
-	this->InitEnemyTextures();
-
-	// Load Enemy Bullet Textures
-	temp.loadFromFile("Textures/Guns/roundBulletRed.png");
-	this->enemyBulletTextures.Add(Texture(temp));
-
-	// Load Boss textures
-	this->InitBossTextures();
-
-	// Load Consumables
-	this->InitConsumableTextures();
 
 	// Load Particle Textures
-	this->InitParticleTextures();
+	Particle::InitTextures();
 
-	this->InitMapTextures();
+	Tile::InitTextures();
 }
 
 void Game::InitUI() {
@@ -863,12 +769,6 @@ void Game::UpdateParticles(const float &dt) {
 }
 
 void Game::DrawUI() {
-	// Draw Texttags
-	for (size_t i = 0; i < this->textTags.Size(); i++)
-	{
-		this->textTags[i].Draw(*this->window);
-	}
-
 	// Draw Game Over Text - if needed
 	if (!this->playersExistInWorld()) {
 		this->window->draw(this->gameOverText);
@@ -879,6 +779,13 @@ void Game::DrawUI() {
 
 	if (this->paused) {
 		this->window->draw(this->controlsText);
+	}
+}
+
+void Game::DrawTextTags() {
+	for (size_t i = 0; i < this->textTags.Size(); i++)
+	{
+		this->textTags[i].Draw(*this->window);
 	}
 }
 
@@ -947,6 +854,9 @@ void Game::Draw() {
 	// Draw Particles
 	this->DrawParticles();
 
+	// Draw Text tags
+	this->DrawTextTags();
+
 	// Draw UI - update view
 	this->window->setView(this->window->getDefaultView());
 	this->DrawUI();
@@ -996,14 +906,14 @@ void Game::_spawnEnemy() {
 	const int randType = rand() % 3;
 
 	switch (randType) {
-	case GameEnums::E_MOVE_LEFT:
-		this->enemyLifeforms.Add(new MoveLeftEnemy(this->enemyTextures, this->mainView, this->players[pNum].getLevel(), pNum));
+	case EnemyLifeform::MOVE_LEFT:
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
-	case GameEnums::E_FOLLOW:
-		this->enemyLifeforms.Add(new TrackerEnemy(this->enemyTextures, this->mainView, this->players[pNum].getLevel(), pNum));
+	case EnemyLifeform::FOLLOW:
+		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
-	case GameEnums::E_MOVE_LEFT_SHOOT:
-		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->enemyTextures, this->enemyBulletTextures, this->mainView, this->players[pNum].getLevel(), pNum));
+	case EnemyLifeform::MOVE_LEFT_SHOOT:
+		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	}
 

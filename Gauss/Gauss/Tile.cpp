@@ -1,6 +1,12 @@
 #include "Tile.h"
 
 Texture Tile::tileTextures;
+int Tile::numberOfTiles;
+
+void Tile::InitTextures() {
+	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
+	Tile::numberOfTiles = 1;
+}
 
 Tile::Tile(IntRect textureRect,
 	Vector2f position,

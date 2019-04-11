@@ -7,10 +7,9 @@ class MoveLeftEnemy : public EnemyLifeform
 {
 
 public:
-	MoveLeftEnemy(dArr<Texture> &textures,
-		View& view,
+	MoveLeftEnemy(View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &textures[GameEnums::E_MOVE_LEFT], Vector2f(0.175f, 0.175f)) {
+		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT], Vector2f(0.175f, 0.175f)) {
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);

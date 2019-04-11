@@ -29,7 +29,7 @@ void MoveLeftShootEnemy::Update(const float &dt, Vector2f target){
 		this->shootTimer = 0.f;
 		const float bulletSpeed = rand() % 15 + 10.f;
 		MoveLeftShootEnemy::bullets.Add(
-			Bullet(&(*this->bulletTextures)[GameEnums::EB_DEFAULT],
+			Bullet(Bullet::ORB_RED,
 				Vector2f(0.2f, 0.2f),
 				this->sprite.getPosition(),
 				this->normalizedLookDirection,

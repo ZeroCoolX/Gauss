@@ -2,6 +2,12 @@
 
 dArr<Texture> Particle::particleTextures;
 
+void Particle::InitTextures() {
+	Texture temp;
+	temp.loadFromFile("Textures/Particles/particle01.png");
+	Particle::particleTextures.Add(Texture(temp));
+}
+
 Particle::Particle(Vector2f pos,
 	int textureIndex,
 	Vector2f dir,

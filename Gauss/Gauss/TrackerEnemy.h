@@ -10,10 +10,9 @@ private:
 	bool divebombPlayer = false;
 
 public:
-	TrackerEnemy(dArr<Texture> &textures,
-		View& view,
+	TrackerEnemy(View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum): EnemyLifeform(playerFollowNum, &textures[GameEnums::E_FOLLOW], Vector2f(0.12f, 0.12f)) {
+		int playerFollowNum): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
 		
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);

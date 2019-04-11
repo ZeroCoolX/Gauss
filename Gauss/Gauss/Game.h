@@ -96,15 +96,9 @@ public:
 
 	// Functions
 	void InitView();
-	void InitMapTextures();
 	void InitTextures();
-	void InitPlayerTextures();
 	void InitUI();
 	void InitMap();
-	void InitConsumableTextures();
-	void InitEnemyTextures();
-	void InitBossTextures();
-	void InitParticleTextures();
 
 	void UpdateView();
 	void Update(const float &dt);
@@ -126,6 +120,7 @@ public:
 	void UpdateParticles(const float &dt);
 
 	void DrawUI();
+	void DrawTextTags();
 	void Draw();
 	void DrawEnemy();
 	void DrawPlayers();
