@@ -181,9 +181,6 @@ void Game::Update(const float &dt) {
 	// Fullscreen check
 	this->ToggleFullscreen();
 
-	// view update
-	this->UpdateView();
-
 	// Pause check
 	this->PauseGame();
 
@@ -194,6 +191,9 @@ void Game::Update(const float &dt) {
 	if (!this->paused && this->playersExistInWorld()) {
 		// Update timers
 		this->UpdateTimersUnpaused(dt);
+
+		// view update
+		this->UpdateView();
 
 		//MAKE GAME HARDER WITH TIME
 		this->UpdateDifficulty();
