@@ -42,6 +42,7 @@ public:
 	bool LoadStage(std::string fileName, View &view);
 	void SetBackground(const int index, const int width, const int height);
 	void SetBackgroundSize(float width, float height);
+	void Reset(View &view);
 
 	static dArr<Texture> backgroundTextures;
 	static int numOfBackgrounds;

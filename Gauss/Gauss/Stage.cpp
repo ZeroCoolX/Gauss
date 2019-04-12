@@ -297,7 +297,7 @@ void Stage::UpdateBackground(const float &dt, View &view) {
 	// Parallax scrolling simulation
 	for (size_t i = 0; i < this->backgrounds.Size(); i++)
 	{
-		this->backgrounds[i].move(-this->scrollSpeed * 0.8f * dt * DeltaTime::dtMultiplier , 0.f);
+		this->backgrounds[i].move(-this->scrollSpeed * 0.6f * dt * DeltaTime::dtMultiplier , 0.f);
 
 		backgroundRightEdge = this->backgrounds[i].getPosition().x + this->backgrounds[i].getGlobalBounds().width;
 		viewLeftEdge = view.getCenter().x - view.getSize().x / 2.f;
@@ -463,6 +463,16 @@ void Stage::SetBackgroundSize(float width, float height) {
 		height = static_cast<float>(Gauss::BACKGROUND_SIZE);
 	}
 	this->backgroundRect.setSize(Vector2f(width, height));
+}
+
+void Stage::Reset(View &view) {
+	this->backgrounds.Clear();
+	this->backgroundRect.setPosition(Vector2f(
+		view.getCenter().x - view.getSize().x / 2, view.getCenter().y - view.getSize().y / 2
+	));
+	this->backgrounds.Add(this->backgroundRect);
+
+	// Reset enemy spawners
 }
 
 

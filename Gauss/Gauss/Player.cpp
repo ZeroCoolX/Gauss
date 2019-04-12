@@ -565,11 +565,14 @@ void Player::SetGunLevel(int gunLevel) {
 
 void Player::Reset() {
 	// Reset sprite
-	this->sprite.setPosition(Vector2f(100.f, 100.f));
+	this->sprite.setPosition(Vector2f(500.f, 300.f));
+
+	this->_recalculatePlayerCenter();
 	
 	// Reset stats
 	this->hpMax = 10;
 	this->hp = this->hpMax;
+	this->hpAdded = 10;
 	this->level = 1;
 	this->exp = 0;
 	this->expNext = 20;
@@ -579,6 +582,13 @@ void Player::Reset() {
 	this->power = 0;
 	this->plating = 0;
 	this->score = 0;
+	this->damage = 1;
+	this->damageMax = 2;
+	this->UpdateStats();
+
+	// Reset Physics
+	this->velocity.x = 0;
+	this->velocity.y = 0;
 
 	// Reset upgrades
 	this->dualMissiles01 = false;
@@ -594,11 +604,21 @@ void Player::Reset() {
 	this->currentWeapon = Player::LASER_GUN;
 	this->SetGunLevel(Player::DEFAULT_LASER);
 	this->bullets.Clear();
+	this->mainGunLevel = Player::DEFAULT_LASER;
 
 	// Reset Timers
+	this->shootTimerMax = this->getCalculatedShootTimer();
 	this->shootTimer = this->shootTimerMax;
+	this->damageTimerMax = 40.f;
 	this->damageTimer = this->damageTimerMax;
+	this->gaussChargeTimerMax = 500.f;
+	this->gaussChargeTimer = 0.f;
+	this->shieldChargeTimerMax = 100.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimer = this->shieldChargeTimerMax;
+	// Powerups Timer
+	this->powerupTimerMax = 500.f;
 	this->powerupTimer = this->powerupTimerMax;
+
 }
 
 void Player::AddStatPointRandom() {
@@ -693,6 +713,9 @@ void Player::_initTextures() {
 	this->sprite.setTexture(Player::shipBodyTextures[Player::DEFAULT_SHIP_BODY]);
 	this->sprite.setScale(0.1f, 0.1f);
 	this->sprite.setColor(Color(10, 10, 10, 255));
+	this->sprite.setPosition(Vector2f(500.f, 300.f));
+
+	this->_recalculatePlayerCenter();
 
 	// Assign main gun
 	this->mainGunSprite.setTexture(Player::shipMainGunTextures[Player::DEFAULT_LASER]);
@@ -700,7 +723,13 @@ void Player::_initTextures() {
 		this->mainGunSprite.getGlobalBounds().width / 2,
 		this->mainGunSprite.getGlobalBounds().height / 2);
 	this->mainGunSprite.rotate(90);
+	const float originX = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
+	// Update the position of the gun to track the player
+	this->mainGunSprite.setPosition(
+		originX,
+		this->playerCenter.y);
 
+	// Assign sheild
 	this->deflectorShield.setTexture(Player::shipShieldTextures[Player::DEFAULT_SHIELD]);
 	this->deflectorShield.setOrigin(this->deflectorShield.getGlobalBounds().width / 2.f, this->deflectorShield.getGlobalBounds().height / 2.f);
 	this->deflectorShield.setPosition(this->sprite.getPosition());

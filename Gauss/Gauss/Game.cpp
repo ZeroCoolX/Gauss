@@ -251,6 +251,7 @@ void Game::RestartUpdate() {
 		// Reset score and multipliers
 		this->totalScore = 0;
 		this->scoreTime = 0;
+		this->scoreTimer.restart();
 		this->killPerfectionMultiplier = 1;
 		this->killPerfectionAdder = 0;
 		this->killPerfectionAdderMax = 15;
@@ -273,6 +274,12 @@ void Game::RestartUpdate() {
 		// Init boss encounter
 		this->bossEncounterActivated = false;
 		this->bosses.Clear();
+
+		// Reset Stage
+		this->mainView.setCenter(Vector2f(
+			this->window->getSize().x / 2.f,
+			this->window->getSize().y / 2.f));
+		this->stage->Reset(this->mainView);
 
 		// Reset player
 		const int nrOfPlayers = Player::playerId;
