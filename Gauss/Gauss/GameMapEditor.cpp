@@ -39,6 +39,7 @@ void GameMapEditor::InitView() {
 
 void GameMapEditor::InitTextures() {
 	Stage::InitTextures();
+
 	Tile::InitTextures();
 }
 
@@ -160,6 +161,12 @@ void GameMapEditor::UpdateControls() {
 
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::B) && this->keyTime >= this->keyTimeMax) {
 		this->backgroundTile = !this->backgroundTile;
+		this->keyTime = 0.f;
+	}
+
+	// Select background and size
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::W) && this->keyTime >= this->keyTimeMax) {
+		this->SetBackground();
 		this->keyTime = 0.f;
 	}
 
@@ -376,4 +383,28 @@ void GameMapEditor::LoadStage() {
 		std::cout << "Failed to load stage " << loadFilename << std::endl;
 	}
 }
+
+void GameMapEditor::SetBackground() {
+	std::cout << "* - Background Select - *" << std::endl;
+	std::cout << " Background index [0," << (Stage::numOfBackgrounds - 1) << "] (-1 to exit) :>";
+	int choice;
+	std::cin >> choice;
+	while (std::cin.fail() || choice >= Stage::numOfBackgrounds || (choice < 0 && choice != -1)) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << " Background index [0," << (Stage::numOfBackgrounds - 1) << "] (-1 to exit) :>";
+		std::cin >> choice;
+	}
+
+	if (choice > 0) {
+		this->stage->SetBackground(choice);
+		this->backgroundIndex = choice;
+	}
+
+	std::cin.ignore(100, '\n');
+	std::cout << "\n";
+}
+
 

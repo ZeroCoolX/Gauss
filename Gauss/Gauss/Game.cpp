@@ -66,6 +66,14 @@ Game::~Game()
 	delete this->stage;
 }
 
+void Game::InitRenderTexture() {
+	this->mainRenderTexture.create(
+		this->window->getSize().x, 
+		this->window->getSize().y
+	);
+
+	this->mainRenderSprite.setTexture(this->mainRenderTexture.getTexture());
+}
 
 void Game::InitView() {
 	this->mainView.setSize(Vector2f(this->window->getSize()));

@@ -17,6 +17,8 @@ private:
 	// Game
 	RenderWindow *window;
 	View mainView;
+	RenderTexture mainRenderTexture;
+	Sprite mainRenderSprite;
 	bool paused;
 	float keyTimeMax;
 	float keyTime;
@@ -95,6 +97,7 @@ public:
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
 	// Functions
+	void InitRenderTexture();
 	void InitView();
 	void InitTextures();
 	void InitUI();

@@ -40,7 +40,7 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 {
 	this->stageSizeX = sizeX;
 	this->stageSizeY = sizeY;
-	this->scrollSpeed = 0.5f;
+	this->scrollSpeed = 2.f;
 
 	this->fromCol = 0;
 	this->toCol = 0;
@@ -55,6 +55,9 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 	}
 
 	this->backgroundIndex = 0;
+	this->backgroundRect.setSize(Vector2f(static_cast<float>(Gauss::BACKGROUND_SIZE), static_cast<float>(Gauss::BACKGROUND_SIZE)));
+	this->backgroundRect.setTextureRect(IntRect(0, 0, Gauss::BACKGROUND_SIZE, Gauss::BACKGROUND_SIZE));
+	this->backgroundRect.setTexture(&Stage::backgroundTextures[this->backgroundIndex]);
 }
 
 
@@ -116,7 +119,7 @@ void Stage::SaveStage(std::string filename) {
 		fout << std::to_string(this->stageSizeX) << MAP_FILE_DELIM;
 		fout << std::to_string(this->stageSizeY) << MAP_FILE_DELIM;
 
-		// Save background path
+		// Save background
 		fout << this->backgroundIndex 
 			<< MAP_FILE_DELIM << static_cast<int>(this->backgroundRect.getGlobalBounds().width) 
 			<< MAP_FILE_DELIM << static_cast<int>(this->backgroundRect.getGlobalBounds().height);
@@ -294,7 +297,7 @@ void Stage::UpdateBackground(const float &dt, View &view) {
 	// Parallax scrolling simulation
 	for (size_t i = 0; i < this->backgrounds.Size(); i++)
 	{
-		this->backgrounds[i].move(-this->scrollSpeed * 0.6f * dt * DeltaTime::dtMultiplier , 0.f);
+		this->backgrounds[i].move(-this->scrollSpeed * 0.8f * dt * DeltaTime::dtMultiplier , 0.f);
 
 		backgroundRightEdge = this->backgrounds[i].getPosition().x + this->backgrounds[i].getGlobalBounds().width;
 		viewLeftEdge = view.getCenter().x - view.getSize().x / 2.f;
@@ -369,7 +372,9 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	//		//this->UpdateBackground(dt, view, i, j);
 	//	}
 	//}
-	this->UpdateBackground(dt, view);
+	if (!editor) {
+		this->UpdateBackground(dt, view);
+	}
 }
 
 void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
@@ -406,12 +411,16 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 		this->toRow = this->stageSizeY;
 	}
 
-	// Draw background tiles
-	for (size_t i = 0; i < this->backgrounds.Size(); i++)
-	{
-		renderTarget.draw(this->backgrounds[i]);
+	if (editor) {
+		renderTarget.draw(this->backgroundRect);
 	}
-
+	else {
+		// Draw background tiles
+		for (size_t i = 0; i < this->backgrounds.Size(); i++)
+		{
+			renderTarget.draw(this->backgrounds[i]);
+		}
+	}
 
 	// Draw tiles
 	for (int i = this->fromCol; i < this->toCol; i++)

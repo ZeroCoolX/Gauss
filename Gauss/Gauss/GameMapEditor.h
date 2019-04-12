@@ -80,5 +80,6 @@ public:
 	void NewStage();
 	void SaveStage();
 	void LoadStage();
+	void SetBackground();
 };
 
