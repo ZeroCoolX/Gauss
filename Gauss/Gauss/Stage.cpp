@@ -185,6 +185,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		this->backgroundRect.setSize(Vector2f(static_cast<float>(bgWidth), static_cast<float>(bgHeight)));
 		this->backgroundRect.setTexture(&Stage::backgroundTextures[this->backgroundIndex]);
 		this->backgroundRect.setTextureRect(IntRect(0, 0, bgWidth, bgHeight));
+		this->backgrounds.Add(this->backgroundRect);
 
 		// Clear and Resize map to size
 		this->tileMatrix.ResizeClear(this->stageSizeX);
@@ -286,8 +287,28 @@ bool Stage::LoadStage(std::string filename, View &view) {
 	return successLoading;
 }
 
-void Stage::UpdateBackground(const float &dt) {
-	this->backgroundRect.move(this->scrollSpeed * dt * DeltaTime::dtMultiplier, 0.f);
+void Stage::UpdateBackground(const float &dt, View &view) {
+	float backgroundRightEdge = 0.f;
+	float viewLeftEdge = 0.f;
+	float viewRightEdge = 0.f;
+	// Parallax scrolling simulation
+	for (size_t i = 0; i < this->backgrounds.Size(); i++)
+	{
+		this->backgrounds[i].move(-this->scrollSpeed * 0.6f * dt * DeltaTime::dtMultiplier , 0.f);
+
+		backgroundRightEdge = this->backgrounds[i].getPosition().x + this->backgrounds[i].getGlobalBounds().width;
+		viewLeftEdge = view.getCenter().x - view.getSize().x / 2.f;
+		viewRightEdge = view.getCenter().x + view.getSize().x / 2.f;
+
+		if (this->backgrounds.Size() < 3 && backgroundRightEdge <= viewRightEdge) {
+			this->backgroundRect.setPosition(backgroundRightEdge, this->backgroundRect.getPosition().y);
+			this->backgrounds.Add(this->backgroundRect);
+		}
+		else if(backgroundRightEdge <= viewLeftEdge){
+			this->backgrounds.Remove(i);
+			break;
+		}
+	}
 }
 
 void Stage::Update(const float &dt, View &view, bool editor) {
@@ -348,7 +369,7 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	//		//this->UpdateBackground(dt, view, i, j);
 	//	}
 	//}
-	this->UpdateBackground(dt);
+	this->UpdateBackground(dt, view);
 }
 
 void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
@@ -384,9 +405,6 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 	if (this->toRow >= this->stageSizeY) {
 		this->toRow = this->stageSizeY;
 	}
-
-	// Draw background image
-	renderTarget.draw(this->backgroundRect);
 
 	// Draw background tiles
 	for (size_t i = 0; i < this->backgrounds.Size(); i++)

@@ -17,7 +17,7 @@ private:
 
 	int backgroundIndex;
 	RectangleShape backgroundRect;
-	dArr<Sprite> backgrounds;
+	dArr<RectangleShape> backgrounds;
 
 	// Optimization
 	int fromCol, toCol;
@@ -32,7 +32,7 @@ public:
 	inline long getSizeY() const { return this->stageSizeY; }
 	inline float getScrollSpeed() const { return this->scrollSpeed; }
 
-	void UpdateBackground(const float &dt);
+	void UpdateBackground(const float &dt, View &view);
 	void Update(const float &dt, View &view, bool editor);
 	void Draw(RenderTarget &renderTarget, View &view, bool editor);
 
