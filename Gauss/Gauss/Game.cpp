@@ -177,7 +177,7 @@ void Game::InitUI() {
 
 void Game::InitMap() {
 	this->stage = new Stage(10, 10);
-	this->stage->LoadStage("lel.smap", this->mainView);
+	this->stage->LoadStage("lel2.smap", this->mainView);
 }
 
 void Game::UpdateView(const float &dt) {

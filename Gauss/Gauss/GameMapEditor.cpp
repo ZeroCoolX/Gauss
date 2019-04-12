@@ -399,9 +399,35 @@ void GameMapEditor::SetBackground() {
 	}
 
 	if (choice > 0) {
-		this->stage->SetBackground(choice);
 		this->backgroundIndex = choice;
 	}
+
+	std::cout << "* - Background Size - *" << std::endl;
+	std::cout << " Background size X :>";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < Gauss::BACKGROUND_SIZE) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << " Background size X :>";
+		std::cin >> choice;
+	}
+	this->backgroundWidth = choice;
+
+	std::cout << " Background size Y :>";
+	std::cin >> choice;
+	while (std::cin.fail() || choice < Gauss::BACKGROUND_SIZE) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << " Background size Y :>";
+		std::cin >> choice;
+	}
+	this->backgroundHeight = choice;
+
+	this->stage->SetBackground(this->backgroundIndex, this->backgroundWidth, this->backgroundHeight);
 
 	std::cin.ignore(100, '\n');
 	std::cout << "\n";

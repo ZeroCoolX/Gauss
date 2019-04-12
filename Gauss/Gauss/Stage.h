@@ -40,7 +40,7 @@ public:
 	void RemoveTile(long row, long col, bool bkg = false);
 	void SaveStage(std::string fileName);
 	bool LoadStage(std::string fileName, View &view);
-	void SetBackground(const int index);
+	void SetBackground(const int index, const int width, const int height);
 	void SetBackgroundSize(float width, float height);
 
 	static dArr<Texture> backgroundTextures;

@@ -445,12 +445,15 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 	}
 }
 
-void Stage::SetBackground(const int index) {
+void Stage::SetBackground(const int index, const int width, const int height) {
 	if (index < 0 || index >= Stage::numOfBackgrounds) {
 		std::cout << "ERROR: No such background for index " << index << std::endl;
 		return;
 	}
-	this->backgroundRect.setTexture(&Stage::backgroundTextures[index]);
+	this->backgroundIndex = index;
+	this->backgroundRect.setSize(Vector2f(static_cast<float>(width), static_cast<float>(height)));
+	this->backgroundRect.setTextureRect(IntRect(0, 0, width, height));
+	this->backgroundRect.setTexture(&Stage::backgroundTextures[this->backgroundIndex]);
 }
 
 void Stage::SetBackgroundSize(float width, float height) {
