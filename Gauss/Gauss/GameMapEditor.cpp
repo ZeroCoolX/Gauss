@@ -9,10 +9,11 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
-
 	this->backgroundTile = false;
-
 	this->stage = nullptr;
+	this->backgroundIndex = 0;
+	this->backgroundWidth = Gauss::BACKGROUND_SIZE;
+	this->backgroundHeight = Gauss::BACKGROUND_SIZE;
 
 	this->InitView();
 
@@ -35,12 +36,10 @@ void GameMapEditor::InitView() {
 		this->window->getSize().y / 2.f));
 }
 
-void GameMapEditor::InitMapTextures() {
-	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
-}
 
 void GameMapEditor::InitTextures() {
-	this->InitMapTextures();
+	Stage::InitTextures();
+	Tile::InitTextures();
 }
 
 void GameMapEditor::InitUI() {

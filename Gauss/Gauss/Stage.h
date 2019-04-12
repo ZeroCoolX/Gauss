@@ -15,8 +15,9 @@ private:
 	TileArr<TileArr<Tile>> backgroundTiles;
 	TileArr<TileArr<Tile>> enemySpawners;
 
-	Sprite background1;
-	Sprite background2;
+	int backgroundIndex;
+	RectangleShape backgroundRect;
+	dArr<Sprite> backgrounds;
 
 	// Optimization
 	int fromCol, toCol;
@@ -31,7 +32,7 @@ public:
 	inline long getSizeY() const { return this->stageSizeY; }
 	inline float getScrollSpeed() const { return this->scrollSpeed; }
 
-	void UpdateBackground(const float &dt, View &view, unsigned row, unsigned col);
+	void UpdateBackground(const float &dt);
 	void Update(const float &dt, View &view, bool editor);
 	void Draw(RenderTarget &renderTarget, View &view, bool editor);
 
@@ -39,6 +40,13 @@ public:
 	void RemoveTile(long row, long col, bool bkg = false);
 	void SaveStage(std::string fileName);
 	bool LoadStage(std::string fileName, View &view);
+	void SetBackground(const int index);
+	void SetBackgroundSize(float width, float height);
+
+	static dArr<Texture> backgroundTextures;
+	static int numOfBackgrounds;
+
+	static void InitTextures();
 };
 
 

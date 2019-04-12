@@ -5,6 +5,32 @@
 // rect rect rect rect pos pos bool bool
 // Texturerect, vector2fPosition, colliderType, damageType 
 
+dArr<Texture> Stage::backgroundTextures;
+int Stage::numOfBackgrounds;
+
+void Stage::InitTextures() {
+	Texture temp;
+	std::string line;
+	std::ifstream fin;
+	fin.open("Textures/Backgrounds/backgrounds.txt");
+
+	if (fin.is_open()) {
+		while (std::getline(fin, line)) {
+			temp.loadFromFile(line.c_str());
+			temp.setRepeated(true);
+			Stage::backgroundTextures.Add(Texture(temp));
+			line.clear();
+		}
+	}
+	else {
+		std::cout << "Could not open backgrounds file " << std::endl;
+	}
+
+	fin.close();
+
+	Stage::numOfBackgrounds = Stage::backgroundTextures.Size();
+}
+
 Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 	:stageSizeX(sizeX),
 	stageSizeY(sizeY),
@@ -14,7 +40,7 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 {
 	this->stageSizeX = sizeX;
 	this->stageSizeY = sizeY;
-	this->scrollSpeed = 0.1f;
+	this->scrollSpeed = 0.5f;
 
 	this->fromCol = 0;
 	this->toCol = 0;
@@ -27,6 +53,8 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 		this->backgroundTiles.Add(TileArr<Tile>(this->stageSizeY), i);
 		this->enemySpawners.Add(TileArr<Tile>(this->stageSizeY), i);
 	}
+
+	this->backgroundIndex = 0;
 }
 
 
@@ -89,7 +117,9 @@ void Stage::SaveStage(std::string filename) {
 		fout << std::to_string(this->stageSizeY) << MAP_FILE_DELIM;
 
 		// Save background path
-		fout << "NONE";
+		fout << this->backgroundIndex 
+			<< MAP_FILE_DELIM << static_cast<int>(this->backgroundRect.getGlobalBounds().width) 
+			<< MAP_FILE_DELIM << static_cast<int>(this->backgroundRect.getGlobalBounds().height);
 
 		fout << "\n";//breaker
 
@@ -133,7 +163,8 @@ bool Stage::LoadStage(std::string filename, View &view) {
 	std::string line;
 	unsigned sizeX = 0;
 	unsigned sizeY = 0;
-	std::string backgroundPath;
+	int bgWidth;
+	int bgHeight;
 
 	// Open file
 	fin.open("Stages/" + filename);
@@ -148,7 +179,12 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		ss >> sizeY;
 		this->stageSizeY = sizeY;
 
-		ss >> backgroundPath;
+		this->backgroundIndex = 0; // reset just in case
+		ss >> this->backgroundIndex >> bgWidth >> bgHeight;
+
+		this->backgroundRect.setSize(Vector2f(static_cast<float>(bgWidth), static_cast<float>(bgHeight)));
+		this->backgroundRect.setTexture(&Stage::backgroundTextures[this->backgroundIndex]);
+		this->backgroundRect.setTextureRect(IntRect(0, 0, bgWidth, bgHeight));
 
 		// Clear and Resize map to size
 		this->tileMatrix.ResizeClear(this->stageSizeX);
@@ -250,11 +286,8 @@ bool Stage::LoadStage(std::string filename, View &view) {
 	return successLoading;
 }
 
-void Stage::UpdateBackground(const float &dt, View &view, unsigned row, unsigned col) {
-	// Update background tiles
-	if (!this->backgroundTiles[row].IsNull(col)) {
-		this->backgroundTiles[row][col].move(this->scrollSpeed / 2, 0.f);
-	}
+void Stage::UpdateBackground(const float &dt) {
+	this->backgroundRect.move(this->scrollSpeed * dt * DeltaTime::dtMultiplier, 0.f);
 }
 
 void Stage::Update(const float &dt, View &view, bool editor) {
@@ -315,6 +348,7 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	//		//this->UpdateBackground(dt, view, i, j);
 	//	}
 	//}
+	this->UpdateBackground(dt);
 }
 
 void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
@@ -351,6 +385,15 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 		this->toRow = this->stageSizeY;
 	}
 
+	// Draw background image
+	renderTarget.draw(this->backgroundRect);
+
+	// Draw background tiles
+	for (size_t i = 0; i < this->backgrounds.Size(); i++)
+	{
+		renderTarget.draw(this->backgrounds[i]);
+	}
+
 
 	// Draw tiles
 	for (int i = this->fromCol; i < this->toCol; i++)
@@ -374,3 +417,22 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 		}
 	}
 }
+
+void Stage::SetBackground(const int index) {
+	if (index < 0 || index >= Stage::numOfBackgrounds) {
+		std::cout << "ERROR: No such background for index " << index << std::endl;
+		return;
+	}
+	this->backgroundRect.setTexture(&Stage::backgroundTextures[index]);
+}
+
+void Stage::SetBackgroundSize(float width, float height) {
+	if (width < 0 || height < 0) {
+		std::cout << "ERROR: Invalid size parameters " << width << ", " << height << std::endl;
+		width = static_cast<float>(Gauss::BACKGROUND_SIZE);
+		height = static_cast<float>(Gauss::BACKGROUND_SIZE);
+	}
+	this->backgroundRect.setSize(Vector2f(width, height));
+}
+
+

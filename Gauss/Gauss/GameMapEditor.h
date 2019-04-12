@@ -22,7 +22,11 @@ private:
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
+
 	bool backgroundTile;
+	int backgroundIndex;
+	int backgroundWidth;
+	int backgroundHeight;
 
 	// MOUSE 
 	Vector2i mousePosWindow;
@@ -53,7 +57,6 @@ public:
 
 	// Functions
 	void InitView();
-	void InitMapTextures();
 	void InitTextures();
 	void InitUI();
 	void InitMap();

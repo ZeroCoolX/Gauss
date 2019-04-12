@@ -100,7 +100,7 @@ public:
 	void InitUI();
 	void InitMap();
 
-	void UpdateView();
+	void UpdateView(const float &dt);
 	void Update(const float &dt);
 	void RestartUpdate();
 	void UpdateTimers(const float &dt);

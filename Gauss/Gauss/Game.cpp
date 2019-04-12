@@ -7,9 +7,8 @@ Game::Game(RenderWindow *window)
 	this->stage = nullptr;
 
 	this->InitView();
-	this->InitMap();
-
 	this->InitTextures();
+	this->InitMap();
 
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -116,7 +115,11 @@ void Game::InitTextures() {
 	// Load Particle Textures
 	Particle::InitTextures();
 
+	// Load Tiles
 	Tile::InitTextures();
+
+	// Load Stage Textures
+	Stage::InitTextures();
 }
 
 void Game::InitUI() {
@@ -169,8 +172,8 @@ void Game::InitMap() {
 	this->stage->LoadStage("lel.smap", this->mainView);
 }
 
-void Game::UpdateView() {
-	this->mainView.move(this->stage->getScrollSpeed(), 0.f);
+void Game::UpdateView(const float &dt) {
+	this->mainView.move(this->stage->getScrollSpeed() * dt * DeltaTime::dtMultiplier, 0.f);
 }
 
 void Game::Update(const float &dt) {
@@ -193,7 +196,7 @@ void Game::Update(const float &dt) {
 		this->UpdateTimersUnpaused(dt);
 
 		// view update
-		this->UpdateView();
+		this->UpdateView(dt);
 
 		//MAKE GAME HARDER WITH TIME
 		this->UpdateDifficulty();
