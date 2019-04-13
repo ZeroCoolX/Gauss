@@ -376,7 +376,7 @@ void Game::UpdatePlayers(const float &dt) {
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
-			this->players[i].Update(this->mainView, dt);
+			this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
 			//this->UpdateWallColliders(dt, i);
@@ -528,7 +528,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 							case 1:
 							{
-								if (dropChance > 90) { // 10% chance for an upgrade
+								if (dropChance > 85) { // 15% chance for an upgrade
 
 									// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 									uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -558,7 +558,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							case 3:
 							{
 								uType = rand() % Powerup::numberOfPowerups;
-								if (dropChance > 95) { // 5% chance powerup is dropped
+								if (dropChance > 80) { // 20% chance powerup is dropped
 									this->consumables.Add(new Powerup(
 										currentEnemy->getPosition(),
 										uType,

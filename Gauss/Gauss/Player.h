@@ -249,14 +249,14 @@ public:
 	void Reset();
 	bool UpdateLeveling();
 	bool ChangeAccessories(const float &dt);
-	void UpdateAccessories(const float &dt);
+	void UpdateAccessories(const float &dt, const float scollSpeed);
 	void UpdatePowerups(const float &dt);
 	void Combat(const float &dt);
-	void Movement(const float &dt, View &view);
+	void Movement(const float &dt, View &view, const float scrollSpeed);
 	void Draw(RenderTarget &renderTarget);
 	void DrawUI(RenderTarget &renderTarget);
 	void UpdateStatsUI();
-	void Update(View &view, const float &dt);
+	void Update(View &view, const float &dt, const float scrollSpeed);
 	void UpdateStats();
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);

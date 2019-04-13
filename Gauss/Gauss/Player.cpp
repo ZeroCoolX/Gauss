@@ -176,14 +176,16 @@ bool Player::ChangeAccessories(const float &dt) {
 	return false;
 }
 
-void Player::Movement(const float &dt, View &view) {
+void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 	// Update normalized direction
 	this->normalizedDir = this->normalize(this->velocity, this->vectorLength(this->velocity));
 
 	this->_processPlayerInput(dt);
 
 	// Move player
-	this->sprite.move(this->velocity * dt * DeltaTime::dtMultiplier);
+	const float speedPlusViewX = (scrollSpeed * dt * DeltaTime::dtMultiplier) + (this->velocity.x * dt * DeltaTime::dtMultiplier);
+	const float speedPlusViewY = (this->velocity.y * dt * DeltaTime::dtMultiplier);
+	this->sprite.move(speedPlusViewX, speedPlusViewY);
 
 	this->_recalculatePlayerCenter();
 
@@ -297,7 +299,7 @@ void Player::UpdateStatsUI() {
 	}
 }
 
-void Player::UpdateAccessories(const float &dt) {
+void Player::UpdateAccessories(const float &dt, const float scollSpeed) {
 	// Update the position of the gun to track the player
 	this->mainGunSprite.setPosition(
 		this->mainGunSprite.getPosition().x,
@@ -306,7 +308,7 @@ void Player::UpdateAccessories(const float &dt) {
 	// Compensate after fire kickback
 	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
 	if (this->mainGunSprite.getPosition().x < origin) {
-		this->mainGunSprite.move((this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
+		this->mainGunSprite.move((scollSpeed * dt * DeltaTime::dtMultiplier) + (this->mainGunReturnSpeed + this->velocity.x) * dt * DeltaTime::dtMultiplier, 0.f);
 
 	}
 	if (this->mainGunSprite.getPosition().x > origin) {
@@ -384,7 +386,7 @@ void Player::UpdateStats() {
 	this->shieldChargeTimerMax = 100.f + (this->cooling * (this->maneuverability / 2));
 }
 
-void Player::Update(View &view, const float &dt) {
+void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	this->shootTimerMax = this->getCalculatedShootTimer();
 
 	// Update timers
@@ -419,8 +421,8 @@ void Player::Update(View &view, const float &dt) {
 		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
 
-	this->Movement(dt, view);
-	this->UpdateAccessories(dt);
+	this->Movement(dt, view, scrollSpeed);
+	this->UpdateAccessories(dt, scrollSpeed);
 	this->UpdatePowerups(dt);
 	this->Combat(dt);
 	this->UpdateStatsUI();
