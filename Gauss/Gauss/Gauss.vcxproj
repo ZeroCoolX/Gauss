@@ -136,6 +136,7 @@
     <ClCompile Include="ItemUpgrade.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="MoveLeftEnemy.cpp" />
     <ClCompile Include="MoveLeftShootEnemy.cpp" />
     <ClCompile Include="Particle.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="ItemUpgrade.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MathUtil.h" />
+    <ClInclude Include="MenuButton.h" />
     <ClInclude Include="MoveLeftEnemy.h" />
     <ClInclude Include="MoveLeftShootEnemy.h" />
     <ClInclude Include="Particle.h" />
