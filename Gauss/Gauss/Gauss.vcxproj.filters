@@ -73,6 +73,12 @@
     <Filter Include="Header Files\GameControl">
       <UniqueIdentifier>{c72a04cb-a394-4ee7-9170-2baa083a14c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{f850f835-e262-4586-8067-ff2ec3224c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{dbe6d237-18f3-4ed9-9081-a2757c79da88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EnemyLifeform.cpp">
@@ -137,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files\GameControl</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="GameMapEditor.h">
       <Filter>Header Files\GameControl</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -43,6 +43,7 @@ private:
 
 	// TEXT
 	Font font;
+	Text selectorText;
 
 	// MAP
 	std::string stageName;
@@ -60,6 +61,7 @@ public:
 	void InitTextures();
 	void InitUI();
 	void InitMap();
+	void InitText();
 
 	void UpdateAddRemoveTiles();
 	void UpdateMousePosition();
@@ -69,6 +71,7 @@ public:
 	void UpdateTimers(const float &dt);
 	void UpdateMap(const float &dt);
 	void UpdateControls();
+	void UpdateText();
 	void UpdateWallColliders(const float &dt, int playerIndex);
 
 	void Draw();

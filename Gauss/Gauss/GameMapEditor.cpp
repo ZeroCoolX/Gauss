@@ -4,9 +4,6 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 {
 	this->window = window;
 
-	// Init fonts
-	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
-
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
 	this->backgroundTile = false;
@@ -20,7 +17,10 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->InitTextures();
 
 	this->InitUI();
+
 	this->InitMap();
+
+	this->InitText();
 }
 
 GameMapEditor::~GameMapEditor()
@@ -60,6 +60,15 @@ void GameMapEditor::InitUI() {
 void GameMapEditor::InitMap() {
 	this->stageName = "EMPTY";
 	this->stage = new Stage(10, 10);
+}
+
+void GameMapEditor::InitText() {
+	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
+
+	this->selectorText.setFont(this->font);
+	this->selectorText.setCharacterSize(14);
+	this->selectorText.setFillColor(Color::White);
+	this->selectorText.setPosition(Vector2f(this->mousePosWindow));
 }
 
 void GameMapEditor::UpdateMousePosition() {
@@ -181,6 +190,22 @@ void GameMapEditor::UpdateControls() {
 	}
 }
 
+void GameMapEditor::UpdateText() {
+	if (this->showTextureSelectUI) {
+		this->selectorText.setPosition(Vector2f(this->mousePosWindow.x + 20.f, this->mousePosWindow.y));
+	}
+	else {
+		this->selectorText.setPosition(Vector2f(this->mousePosWorld.x + 20.f, this->mousePosWorld.y));
+	}
+
+	if(this->backgroundTile) {
+		this->selectorText.setString("BACKGROUND");
+	}
+	else {
+		this->selectorText.setString("REGULAR");
+	}
+}
+
 void GameMapEditor::UpdateAddRemoveTiles() {
 	if (Mouse::isButtonPressed(Mouse::Left)) {
 		this->keyTime = 0.f;
@@ -232,6 +257,9 @@ void GameMapEditor::Update(const float &dt) {
 	// General controls
 	this->UpdateControls();
 
+	// Text update
+	this->UpdateText();
+
 	// Update UI
 	this->UpdateUI();
 
@@ -242,10 +270,12 @@ void GameMapEditor::Update(const float &dt) {
 void GameMapEditor::DrawUIWindow() {
 	this->window->draw(this->textureSelector);
 	this->window->draw(this->selector);
+	this->window->draw(this->selectorText);
 }
 
 void GameMapEditor::DrawUIView() {
 	this->window->draw(this->selector);
+	this->window->draw(this->selectorText);
 }
 
 void GameMapEditor::DrawMap() {
