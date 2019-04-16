@@ -3,7 +3,7 @@
 
 using namespace sf;
 
-bool MAPEDITOR = false;
+bool MAPEDITOR = true;
 
 int main() {
 

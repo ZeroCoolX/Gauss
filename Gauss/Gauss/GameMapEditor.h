@@ -10,6 +10,7 @@
 #include "WorldMap.h"
 #include "Particle.h"
 #include "Powerup.h"
+#include "MenuButton.h"
 
 class GameMapEditor
 {
@@ -22,11 +23,19 @@ private:
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
+	int tileToolSelect;
 
-	bool backgroundTile;
 	int backgroundIndex;
 	int backgroundWidth;
 	int backgroundHeight;
+
+	// Enemy Spawner
+	Vector2i enemySpPositionGrid;
+	int enemySpLevel;
+	int enemySpType;
+	int enemySpInterval;
+	int numOfEnemies;
+	float enemySpTimerMax;
 
 	// MOUSE 
 	Vector2i mousePosWindow;
@@ -44,6 +53,9 @@ private:
 	// TEXT
 	Font font;
 	Text selectorText;
+	Text enemySpText;
+
+	dArr<MenuButton> buttons;
 
 	// MAP
 	std::string stageName;
@@ -58,6 +70,7 @@ public:
 
 	// Functions
 	void InitView();
+	void InitMenuButtons();
 	void InitTextures();
 	void InitUI();
 	void InitMap();
@@ -72,9 +85,11 @@ public:
 	void UpdateMap(const float &dt);
 	void UpdateControls();
 	void UpdateText();
+	void UpdateButtons();
 	void UpdateWallColliders(const float &dt, int playerIndex);
 
 	void Draw();
+	void DrawText();
 	void DrawUIWindow();
 	void DrawUIView();
 	void DrawMap();
@@ -84,5 +99,6 @@ public:
 	void SaveStage();
 	void LoadStage();
 	void SetBackground();
+	void SetEnemySpawner();
 };
 

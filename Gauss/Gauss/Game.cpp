@@ -99,6 +99,9 @@ void Game::InitView() {
 
 
 void Game::InitTextures() {
+	// buttons
+	MenuButton::InitTextures();
+
 	// Player Textures
 	Player::InitTextures();
 
@@ -604,7 +607,7 @@ void Game::UpdateScoreUI() {
 void Game::UpdateEnemies(const float &dt) {
 	// Spawn enemies
 	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-		this->_spawnEnemy();
+		//this->_spawnEnemy();
 		this->enemySpawnTimer = 0;
 	}
 

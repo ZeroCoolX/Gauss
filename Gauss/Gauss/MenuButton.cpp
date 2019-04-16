@@ -47,13 +47,13 @@ MenuButton::~MenuButton()
 {
 }
 
-void MenuButton::Update(const float &dt, Vector2f mousePos) {
+void MenuButton::Update(Vector2f mousePos) {
 	// Set Idle state
 	this->idle = !this->sprite.getGlobalBounds().contains(mousePos);
 
 	// Set Hover and pressing state
 	if (this->sprite.getGlobalBounds().contains(mousePos)) {
-		this->pressing = Mouse::isButtonPressed;
+		this->pressing = Mouse::isButtonPressed(Mouse::Left);
 		this->hovering = !this->pressing;
 	}else{
 		this->pressing = false;
@@ -72,7 +72,8 @@ void MenuButton::Update(const float &dt, Vector2f mousePos) {
 }
 
 void MenuButton::Draw(RenderTarget &renderTarget) {
-
+	renderTarget.draw(this->sprite);
+	renderTarget.draw(this->text);
 }
 
 bool MenuButton::IsPressed() {

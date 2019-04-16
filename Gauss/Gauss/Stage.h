@@ -13,7 +13,7 @@ private:
 	float scrollSpeed;
 	TileArr<TileArr<Tile>> tileMatrix;
 	TileArr<TileArr<Tile>> backgroundTiles;
-	TileArr<TileArr<Tile>> enemySpawners;
+	TileArr<TileArr<EnemySpawner>> enemySpawners;
 
 	int backgroundIndex;
 	RectangleShape backgroundRect;
@@ -36,8 +36,10 @@ public:
 	void Update(const float &dt, View &view, bool editor);
 	void Draw(RenderTarget &renderTarget, View &view, bool editor);
 
-	void AddTile(const Tile tile, long row, long col, bool bkg = false);
-	void RemoveTile(long row, long col, bool bkg = false);
+	void AddEnemySpawner(const EnemySpawner es, long row, long col);
+	void RemoveEnemySpawner(long row, long col);
+	void AddTile(const Tile tile, long row, long col, int tileType);
+	void RemoveTile(long row, long col, int tileType);
 	void SaveStage(std::string fileName);
 	bool LoadStage(std::string fileName, View &view);
 	void SetBackground(const int index, const int width, const int height);
@@ -48,6 +50,8 @@ public:
 	static int numOfBackgrounds;
 
 	static void InitTextures();
+
+	enum TileType { FOREGROUND_TILE = 0, BACKGROUND_TILE, ENEMY_SPAWNER_TILE };
 };
 
 

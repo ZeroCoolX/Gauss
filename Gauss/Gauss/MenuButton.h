@@ -25,7 +25,7 @@ public:
 
 	virtual ~MenuButton();
 
-	void Update(const float &dt, Vector2f mousePos);
+	void Update(Vector2f mousePos);
 	void Draw(RenderTarget &renderTarget);
 
 	bool IsPressed();

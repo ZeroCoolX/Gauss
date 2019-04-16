@@ -10,6 +10,8 @@
 #include "WorldMap.h"
 #include "Particle.h"
 #include "Powerup.h"
+#include "MenuButton.h"
+
 
 class Game
 {

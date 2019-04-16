@@ -51,7 +51,7 @@ Stage::Stage(unsigned long sizeX, unsigned long sizeY)
 	{
 		this->tileMatrix.Add(TileArr<Tile>(this->stageSizeY), i);
 		this->backgroundTiles.Add(TileArr<Tile>(this->stageSizeY), i);
-		this->enemySpawners.Add(TileArr<Tile>(this->stageSizeY), i);
+		this->enemySpawners.Add(TileArr<EnemySpawner>(this->stageSizeY), i);
 	}
 
 	this->backgroundIndex = 0;
@@ -65,12 +65,12 @@ Stage::~Stage()
 {
 }
 
-void Stage::AddTile(const Tile tile, long row, long col, bool bkg) {
+void Stage::AddTile(const Tile tile, long row, long col, int tileType) {
 	if (row >= this->stageSizeX || col >= this->stageSizeY) {
 		throw("Error: OUT OF BOUNDS: Stage::AddTile()");
 	}
 
-	if (bkg) {
+	if (tileType == TileType::BACKGROUND_TILE) {
 		if (this->backgroundTiles[row].IsNull(col)) {
 			this->backgroundTiles[row].Add(Tile(tile.getTexRect(), tile.getPos(), false, false), col);
 			this->backgroundTiles[row][col].changeColorTo(Color(100, 100, 100, 255));
@@ -79,21 +79,21 @@ void Stage::AddTile(const Tile tile, long row, long col, bool bkg) {
 			std::cout << "Alread background tile existing at [" << row << "][" << col << "]" << std::endl;
 		}
 	}
-	else {
+	else if (tileType == TileType::FOREGROUND_TILE) {
 		if (this->tileMatrix[row].IsNull(col)) {
 			this->tileMatrix[row].Add(tile, col);
 		}
 		else {
-			std::cout << "Alread tile existing at [" << row << "][" << col << "]" << std::endl;
+			std::cout << "Alread foreground tile existing at [" << row << "][" << col << "]" << std::endl;
 		}
 	}
 }
 
-void Stage::RemoveTile(long row, long col, bool bkg) {
+void Stage::RemoveTile(long row, long col, int tileType) {
 	if (row >= this->stageSizeX || col >= this->stageSizeY) {
 		throw("Error: OUT OF BOUNDS: Stage::RemoveTile()");
 	}
-	if (bkg) {
+	if (tileType == TileType::BACKGROUND_TILE) {
 		if (!this->backgroundTiles[row].IsNull(col)) {
 			this->backgroundTiles[row].Remove(col);
 		}
@@ -101,13 +101,34 @@ void Stage::RemoveTile(long row, long col, bool bkg) {
 			std::cout << "No background tile existing at [" << row << "][" << col << "]" << std::endl;
 		}
 	}
-	else {
+	else if (tileType == TileType::FOREGROUND_TILE) {
 		if (!this->tileMatrix[row].IsNull(col)) {
 			this->tileMatrix[row].Remove(col);
 		}
 		else {
 			std::cout << "No tile existing at [" << row << "][" << col << "]" << std::endl;
 		}
+	}
+}
+
+void Stage::AddEnemySpawner(const EnemySpawner es, long row, long col) {
+	if (this->enemySpawners[row].IsNull(col)) {
+		this->enemySpawners[row].Add(es, col);
+	}
+	else {
+		std::cout << "Alread enemy spawner tile existing at [" << row << "][" << col << "]" << std::endl;
+	}
+}
+
+void Stage::RemoveEnemySpawner(long row, long col) {
+	if (row >= this->stageSizeX || col >= this->stageSizeY) {
+		throw("Error: OUT OF BOUNDS: Stage::RemoveEnemySpawner()");
+	}
+	if (!this->enemySpawners[row].IsNull(col)) {
+			this->enemySpawners[row].Remove(col);
+	}
+	else {
+		std::cout << "No Enemy Spawner tile existing at [" << row << "][" << col << "]" << std::endl;
 	}
 }
 
@@ -199,7 +220,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		{
 			this->tileMatrix.Add(TileArr<Tile>(stageSizeY), i);
 			this->backgroundTiles.Add(TileArr<Tile>(stageSizeY), i);
-			this->enemySpawners.Add(TileArr<Tile>(stageSizeY), i);
+			this->enemySpawners.Add(TileArr<EnemySpawner>(stageSizeY), i);
 		}
 
 		line.clear();
@@ -415,7 +436,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 		renderTarget.draw(this->backgroundRect);
 	}
 	else {
-		// Draw background tiles
+		// Draw background image
 		for (size_t i = 0; i < this->backgrounds.Size(); i++)
 		{
 			renderTarget.draw(this->backgrounds[i]);
@@ -438,7 +459,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 			}
 
 			// Draw enemy spawners tiles
-			if (!this->enemySpawners[i].IsNull(j)) {
+			if (editor && !this->enemySpawners[i].IsNull(j)) {
 				this->enemySpawners[i][j].Draw(renderTarget);
 			}
 		}

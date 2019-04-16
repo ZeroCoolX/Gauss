@@ -6,11 +6,17 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
-	this->backgroundTile = false;
+	this->tileToolSelect = Stage::TileType::FOREGROUND_TILE;
 	this->stage = nullptr;
 	this->backgroundIndex = 0;
 	this->backgroundWidth = Gauss::BACKGROUND_SIZE;
 	this->backgroundHeight = Gauss::BACKGROUND_SIZE;
+
+	this->enemySpLevel = 0;
+	this->enemySpType = 0;
+	this->enemySpInterval = 0;
+	this->numOfEnemies = 0;
+	this->enemySpTimerMax = 0.f;
 
 	this->InitView();
 
@@ -21,6 +27,8 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->InitMap();
 
 	this->InitText();
+
+	this->InitMenuButtons();
 }
 
 GameMapEditor::~GameMapEditor()
@@ -36,11 +44,14 @@ void GameMapEditor::InitView() {
 		this->window->getSize().y / 2.f));
 }
 
+void GameMapEditor::InitMenuButtons() {
+	MenuButton temp(this->font, "EnemySpawnerSelect", 12, Vector2f(600.f, 500.f), 0);
+
+	this->buttons.Add(temp);
+}
 
 void GameMapEditor::InitTextures() {
-	Stage::InitTextures();
 
-	Tile::InitTextures();
 }
 
 void GameMapEditor::InitUI() {
@@ -69,6 +80,11 @@ void GameMapEditor::InitText() {
 	this->selectorText.setCharacterSize(14);
 	this->selectorText.setFillColor(Color::White);
 	this->selectorText.setPosition(Vector2f(this->mousePosWindow));
+
+	this->enemySpText.setFont(this->font);
+	this->enemySpText.setCharacterSize(14);
+	this->enemySpText.setFillColor(Color::White);
+	this->enemySpText.setPosition(Vector2f(this->mousePosWindow));
 }
 
 void GameMapEditor::UpdateMousePosition() {
@@ -163,13 +179,20 @@ void GameMapEditor::UpdateControls() {
 		this->UpdateAddRemoveTiles();
 	}
 
+	// New Stage
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::N) && this->keyTime >= this->keyTimeMax) {
 		this->NewStage();
 		this->keyTime = 0.f;
 	}
 
+	// Switch background/foreground tile
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::B) && this->keyTime >= this->keyTimeMax) {
-		this->backgroundTile = !this->backgroundTile;
+		if (tileToolSelect == Stage::TileType::BACKGROUND_TILE) {
+			tileToolSelect = Stage::TileType::FOREGROUND_TILE;
+		}
+		else {
+			tileToolSelect = Stage::BACKGROUND_TILE;
+		}
 		this->keyTime = 0.f;
 	}
 
@@ -179,11 +202,25 @@ void GameMapEditor::UpdateControls() {
 		this->keyTime = 0.f;
 	}
 
+	// Set Enemy Spawner 
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::LShift) && Keyboard::isKeyPressed(Keyboard::E) && this->keyTime >= this->keyTimeMax) {
+		this->SetEnemySpawner();
+		this->keyTime = 0.f;
+	}
+
+	// Assign Enemy Spawner 
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::E) && this->keyTime >= this->keyTimeMax) {
+		tileToolSelect = Stage::ENEMY_SPAWNER_TILE;
+		this->keyTime = 0.f;
+	}
+
+	// Save stage
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::S) && this->keyTime >= this->keyTimeMax) {
 		this->SaveStage();
 		this->keyTime = 0.f;
 	}
 
+	// Load stage
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::L) && this->keyTime >= this->keyTimeMax) {
 		this->LoadStage();
 		this->keyTime = 0.f;
@@ -192,36 +229,78 @@ void GameMapEditor::UpdateControls() {
 
 void GameMapEditor::UpdateText() {
 	if (this->showTextureSelectUI) {
-		this->selectorText.setPosition(Vector2f(this->mousePosWindow.x + 20.f, this->mousePosWindow.y));
+		this->selectorText.setPosition(Vector2f(this->mousePosWindow.x + 20.f, static_cast<float>(this->mousePosWindow.y)));
+		this->enemySpText.setPosition(Vector2f(this->mousePosWindow.x + 20.f, this->mousePosWindow.y + 20.f));
 	}
 	else {
-		this->selectorText.setPosition(Vector2f(this->mousePosWorld.x + 20.f, this->mousePosWorld.y));
+		this->selectorText.setPosition(Vector2f(this->mousePosWorld.x + 20.f, static_cast<float>(this->mousePosWorld.y)));
+		this->enemySpText.setPosition(Vector2f(this->mousePosWorld.x + 20.f, this->mousePosWorld.y + 20.f));
 	}
 
-	if(this->backgroundTile) {
-		this->selectorText.setString("BACKGROUND");
+	if(this->tileToolSelect == Stage::TileType::BACKGROUND_TILE) {
+		this->selectorText.setString("BACKGROUND_TILE");
+	}
+	else if(this->tileToolSelect == Stage::TileType::FOREGROUND_TILE){
+		this->selectorText.setString("FOREGROUND_TILE");
 	}
 	else {
-		this->selectorText.setString("REGULAR");
+		this->selectorText.setString("ENEMY_SPAWNER_TILE");
+	}
+
+	this->enemySpText.setString(
+		"Type: " + std::to_string(this->enemySpType) +
+		"\nLevel: " + std::to_string(this->enemySpLevel) +
+		"\nInterval: " + std::to_string(this->enemySpInterval) +
+		"\nNum Enemies: " + std::to_string(this->numOfEnemies) +
+		"\nTimer Max: " + std::to_string(this->enemySpTimerMax)
+	);
+}
+
+void GameMapEditor::UpdateButtons() {
+	for (size_t i = 0; i < this->buttons.Size(); i++)
+	{
+		this->buttons[i].Update(this->mousePosWorld);
 	}
 }
 
 void GameMapEditor::UpdateAddRemoveTiles() {
 	if (Mouse::isButtonPressed(Mouse::Left)) {
 		this->keyTime = 0.f;
-
-		this->stage->AddTile(
-			Tile(
-				IntRect(this->textureSelectedX, this->textureSelectedY, Gauss::GRID_SIZE, Gauss::GRID_SIZE), 
-				Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)), 
-				false, 
-				false
-			),
-			this->mousePosGrid.x, 
-			this->mousePosGrid.y, this->backgroundTile);
+		if (this->tileToolSelect == Stage::TileType::ENEMY_SPAWNER_TILE) {
+			this->enemySpPositionGrid = this->mousePosGrid;
+			this->stage->AddEnemySpawner(
+				EnemySpawner(
+					this->enemySpPositionGrid,
+					this->enemySpType,
+					this->enemySpLevel,
+					this->enemySpInterval,
+					this->numOfEnemies,
+					this->enemySpTimerMax
+				),
+				this->mousePosGrid.x,
+				this->mousePosGrid.y
+			);
+		}
+		else {
+			this->stage->AddTile(
+				Tile(
+					IntRect(this->textureSelectedX, this->textureSelectedY, Gauss::GRID_SIZE, Gauss::GRID_SIZE),
+					Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)),
+					false,
+					false
+				),
+				this->mousePosGrid.x,
+				this->mousePosGrid.y, this->tileToolSelect);
+		}
 	}
 	else if (Mouse::isButtonPressed(Mouse::Right)) {
-		this->stage->RemoveTile(this->mousePosGrid.x, this->mousePosGrid.y, this->backgroundTile);
+		this->keyTime = 0.f;
+		if (this->tileToolSelect == Stage::TileType::ENEMY_SPAWNER_TILE) {
+			this->stage->RemoveEnemySpawner(this->mousePosGrid.x, this->mousePosGrid.y);
+		}
+		else {
+			this->stage->RemoveTile(this->mousePosGrid.x, this->mousePosGrid.y, this->tileToolSelect);
+		}
 	}
 }
 
@@ -260,6 +339,9 @@ void GameMapEditor::Update(const float &dt) {
 	// Text update
 	this->UpdateText();
 
+	// Buttons update
+	this->UpdateButtons();
+
 	// Update UI
 	this->UpdateUI();
 
@@ -267,15 +349,23 @@ void GameMapEditor::Update(const float &dt) {
 	this->UpdateView(dt);
 }
 
+void GameMapEditor::DrawText() {
+	this->window->draw(this->selectorText);
+	this->window->draw(this->enemySpText);
+}
+
 void GameMapEditor::DrawUIWindow() {
 	this->window->draw(this->textureSelector);
 	this->window->draw(this->selector);
-	this->window->draw(this->selectorText);
+
 }
 
 void GameMapEditor::DrawUIView() {
 	this->window->draw(this->selector);
-	this->window->draw(this->selectorText);
+	for (size_t i = 0; i < this->buttons.Size(); i++)
+	{
+		this->buttons[i].Draw(*this->window);
+	}
 }
 
 void GameMapEditor::DrawMap() {
@@ -290,6 +380,9 @@ void GameMapEditor::Draw() {
 
 	// Draw Map
 	this->DrawMap();
+
+	// Draw Text
+	this->DrawText();
 
 	// Draw the window
 	if (this->showTextureSelectUI) {
@@ -463,4 +556,64 @@ void GameMapEditor::SetBackground() {
 	std::cout << "\n";
 }
 
+void GameMapEditor::SetEnemySpawner() {
+	std::cout << "SetEnemySpawner " << "\n\n";
+	std::cout << "Type :>";
+	std::cin >> this->enemySpType;
+	while (std::cin.fail()) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Type :>";
+		std::cin >> this->enemySpType;
+	}
+
+	std::cout << "Level :>";
+	std::cin >> this->enemySpLevel;
+	while (std::cin.fail()) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Level :>";
+		std::cin >> this->enemySpLevel;
+	}
+
+	std::cout << "Level Interval :>";
+	std::cin >> this->enemySpInterval;
+	while (std::cin.fail()) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Level Interval :>";
+		std::cin >> this->enemySpInterval;
+	}
+
+	std::cout << "Number of enemies :>";
+	std::cin >> this->numOfEnemies;
+	while (std::cin.fail()) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Number of enemies :>";
+		std::cin >> this->numOfEnemies;
+	}
+
+	std::cout << "Timer max :>";
+	std::cin >> this->enemySpTimerMax;
+	while (std::cin.fail()) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Timer max :>";
+		std::cin >> this->enemySpTimerMax;
+	}
+
+	std::cin.clear();
+	std::cin.ignore(100, '\n');
+}
 
