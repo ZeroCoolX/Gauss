@@ -147,6 +147,7 @@ void Stage::SaveStage(std::string filename) {
 
 		fout << "\n";//breaker
 
+		// Foreground tiles
 		for (int i = 0; i < this->stageSizeX; i++)
 		{
 			// Foreground tiles
@@ -168,6 +169,20 @@ void Stage::SaveStage(std::string filename) {
 			{
 				if (!this->backgroundTiles[i].IsNull(j)) {
 					fout << this->backgroundTiles[i][j].GetAsString() << MAP_FILE_DELIM;
+				}
+			}
+		}
+
+		fout << "\n";// breaker
+
+		// Enemy Spawners
+		for (int i = 0; i < this->stageSizeX; i++)
+		{
+			// Enemy Spawners
+			for (int j = 0; j < this->stageSizeY; j++)
+			{
+				if (!this->enemySpawners[i].IsNull(j)) {
+					fout << this->enemySpawners[i][j].GetAsString() << MAP_FILE_DELIM;
 				}
 			}
 		}
@@ -283,20 +298,34 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		}
 
 		// Enemy Spawner
+		int enemySpType = 0;
+		int enemySpInterval = 0;
+		int enemySpNumOfEnemies = 0;
+		float enemySpSpawnTimerMax = 0.f;
 
-
-		//line.clear();
-		//ss.clear();
+		line.clear();
+		ss.clear();
 
 		//// Load the enemy spawners
-		//std::getline(fin, line);
-		//ss.str(line);
-		//while (
-		//	) {
+		std::getline(fin, line);
+		ss.str(line);
+		while (
+			ss >> gridPosX >> gridPosY
+			>> enemySpType
+			>> enemySpInterval 
+			>> enemySpNumOfEnemies
+			>> enemySpSpawnTimerMax
+			) {
 
-		//	this->enemySpawners[gridPosX].Add(
-		//	);
-		//}
+			this->enemySpawners[gridPosX].Add(
+				EnemySpawner(
+					Vector2i(gridPosX, gridPosY),
+					enemySpType,
+					enemySpInterval,
+					enemySpNumOfEnemies,
+					enemySpSpawnTimerMax), gridPosY
+			);
+		}
 
 		successLoading = true;
 		std::cout << "Success loading" << std::endl;

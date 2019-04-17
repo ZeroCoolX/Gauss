@@ -25,14 +25,6 @@ void EnemySpawner::UpdateTimer() {
 
 }
 
-void EnemySpawner::IsInScreen(View &view) {
-
-}
-
-void EnemySpawner::Spawn() {
-
-}
-
 void EnemySpawner::Update(View &view) {
 
 }
@@ -55,4 +47,21 @@ void EnemySpawner::Draw(RenderTarget &renderTarget, Font &font) {
 
 	renderTarget.draw(shape);
 	renderTarget.draw(text);
+}
+
+void EnemySpawner::IsInScreen(View &view) {
+
+}
+
+void EnemySpawner::Spawn() {
+
+}
+
+std::string EnemySpawner::GetAsString() const {
+	return std::to_string(this->gridPos.x) + " " +
+		std::to_string(this->gridPos.y) + " " +
+		std::to_string(this->type) + " " +
+		std::to_string(this->levelInterval) + " " +
+		std::to_string(this->numOfEnemies) + " " +
+		std::to_string(static_cast<int>(this->spawnTimerMax));
 }

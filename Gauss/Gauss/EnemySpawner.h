@@ -21,9 +21,11 @@ public:
 	virtual ~EnemySpawner();
 
 	void UpdateTimer();
-	void IsInScreen(View &view);
-	void Spawn();
 	void Update(View &view);
 	void Draw(RenderTarget &renderTarget, Font &font);
+
+	void IsInScreen(View &view);
+	void Spawn();
+	std::string GetAsString() const;
 };
 

@@ -16,7 +16,7 @@ Tile::Tile(IntRect textureRect,
 	this->position = position;
 	this->colliderType = colliderType;
 	this->damageType = damageType;
-	this->damage = 0; // percent of HP
+	this->damagePercentage = 20.f; // percent of HP
 
 	// Sprite sheet
 	this->sprite.setTexture(Tile::tileTextures);
@@ -41,8 +41,7 @@ std::string Tile::GetAsString() const {
 		std::to_string(static_cast<int>(this->sprite.getPosition().y / Gauss::GRID_SIZE)) + " " +
 		// Stats
 		std::to_string(this->colliderType) + " " +
-		std::to_string(this->damageType) + " " +
-		std::to_string(this->damage);
+		std::to_string(this->damageType);
 }
 
 

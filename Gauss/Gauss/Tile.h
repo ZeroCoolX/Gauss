@@ -9,7 +9,7 @@ private:
 	// Core
 	bool colliderType;
 	bool damageType;
-	int damage;
+	float damagePercentage;
 
 	// Positioning
 	Vector2f position;
