@@ -16,7 +16,7 @@ Tile::Tile(IntRect textureRect,
 	this->position = position;
 	this->colliderType = colliderType;
 	this->damageType = damageType;
-	this->damage = 0;
+	this->damage = 0; // percent of HP
 
 	// Sprite sheet
 	this->sprite.setTexture(Tile::tileTextures);

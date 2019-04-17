@@ -185,8 +185,12 @@ bool Stage::LoadStage(std::string filename, View &view) {
 	bool successLoading = false;
 	std::stringstream ss;
 	std::string line;
+
+	// Map
 	unsigned sizeX = 0;
 	unsigned sizeY = 0;
+
+	// Background
 	int bgWidth;
 	int bgHeight;
 
@@ -203,7 +207,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		ss >> sizeY;
 		this->stageSizeY = sizeY;
 
-		this->backgroundIndex = 0; // reset just in case
+		this->backgroundIndex = 0;
 		ss >> this->backgroundIndex >> bgWidth >> bgHeight;
 
 		this->backgroundRect.setSize(Vector2f(static_cast<float>(bgWidth), static_cast<float>(bgHeight)));
@@ -226,6 +230,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		line.clear();
 		ss.clear();
 
+		// Tiles
 		int rectLeft = 0;
 		int rectTop = 0;
 		int rectWidth = 0;
@@ -234,7 +239,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		int gridPosY = 0;
 		bool isCollider = 0;
 		bool isDamaging = 0;
-		int damage = 0;
 
 		// Load the foreground - LINE 2
 		std::getline(fin, line);
@@ -243,7 +247,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			ss >> rectLeft >> rectTop
 			>> rectWidth >> rectHeight
 			>> gridPosX >> gridPosY
-			>> isCollider >> isDamaging >> damage
+			>> isCollider >> isDamaging
 			) {
 
 			this->tileMatrix[gridPosX].Add(
@@ -265,7 +269,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			ss >> rectLeft >> rectTop
 			>> rectWidth >> rectHeight
 			>> gridPosX >> gridPosY
-			>> isCollider >> isDamaging >> damage
+			>> isCollider >> isDamaging
 			) {
 
 			this->backgroundTiles[gridPosX].Add(
@@ -277,6 +281,9 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			);
 			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Gauss::BACKGROUND_COLOR);
 		}
+
+		// Enemy Spawner
+
 
 		//line.clear();
 		//ss.clear();
@@ -298,14 +305,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		std::cout << "File failed to open " << std::endl;
 		successLoading = false;
 	}
-	
-	// Load map size
-
-	// Set tilearr size
-
-	// Load backgrounds
-
-	// Load tiles
 
 	fin.close();
 	return successLoading;
@@ -398,7 +397,7 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	}
 }
 
-void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
+void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font) {
 	this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Gauss::GRID_SIZE);
 	if (this->fromCol <= 0) {
 		this->fromCol = 0;
@@ -460,7 +459,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor) {
 
 			// Draw enemy spawners tiles
 			if (editor && !this->enemySpawners[i].IsNull(j)) {
-				this->enemySpawners[i][j].Draw(renderTarget);
+				this->enemySpawners[i][j].Draw(renderTarget, font);
 			}
 		}
 	}

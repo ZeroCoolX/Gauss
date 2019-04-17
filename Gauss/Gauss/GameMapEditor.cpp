@@ -12,7 +12,6 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->backgroundWidth = Gauss::BACKGROUND_SIZE;
 	this->backgroundHeight = Gauss::BACKGROUND_SIZE;
 
-	this->enemySpLevel = 0;
 	this->enemySpType = 0;
 	this->enemySpInterval = 0;
 	this->numOfEnemies = 0;
@@ -249,7 +248,6 @@ void GameMapEditor::UpdateText() {
 
 	this->enemySpText.setString(
 		"Type: " + std::to_string(this->enemySpType) +
-		"\nLevel: " + std::to_string(this->enemySpLevel) +
 		"\nInterval: " + std::to_string(this->enemySpInterval) +
 		"\nNum Enemies: " + std::to_string(this->numOfEnemies) +
 		"\nTimer Max: " + std::to_string(this->enemySpTimerMax)
@@ -265,14 +263,12 @@ void GameMapEditor::UpdateButtons() {
 
 void GameMapEditor::UpdateAddRemoveTiles() {
 	if (Mouse::isButtonPressed(Mouse::Left)) {
-		this->keyTime = 0.f;
 		if (this->tileToolSelect == Stage::TileType::ENEMY_SPAWNER_TILE) {
 			this->enemySpPositionGrid = this->mousePosGrid;
 			this->stage->AddEnemySpawner(
 				EnemySpawner(
 					this->enemySpPositionGrid,
 					this->enemySpType,
-					this->enemySpLevel,
 					this->enemySpInterval,
 					this->numOfEnemies,
 					this->enemySpTimerMax
@@ -294,7 +290,6 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 		}
 	}
 	else if (Mouse::isButtonPressed(Mouse::Right)) {
-		this->keyTime = 0.f;
 		if (this->tileToolSelect == Stage::TileType::ENEMY_SPAWNER_TILE) {
 			this->stage->RemoveEnemySpawner(this->mousePosGrid.x, this->mousePosGrid.y);
 		}
@@ -369,7 +364,7 @@ void GameMapEditor::DrawUIView() {
 }
 
 void GameMapEditor::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView, true);
+	this->stage->Draw(*this->window, this->mainView, true, this->font);
 }
 
 void GameMapEditor::Draw() {
@@ -567,17 +562,6 @@ void GameMapEditor::SetEnemySpawner() {
 
 		std::cout << "Type :>";
 		std::cin >> this->enemySpType;
-	}
-
-	std::cout << "Level :>";
-	std::cin >> this->enemySpLevel;
-	while (std::cin.fail()) {
-		std::cout << "Invalid input...\n";
-		std::cin.clear();
-		std::cin.ignore(100, '\n');
-
-		std::cout << "Level :>";
-		std::cin >> this->enemySpLevel;
 	}
 
 	std::cout << "Level Interval :>";

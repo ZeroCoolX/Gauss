@@ -837,7 +837,7 @@ void Game::DrawPlayers() {
 }
 
 void Game::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView, false);
+	this->stage->Draw(*this->window, this->mainView, false, this->font);
 }
 
 void Game::DrawConsumables() {
