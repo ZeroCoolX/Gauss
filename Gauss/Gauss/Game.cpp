@@ -946,7 +946,7 @@ void Game::_spawnEnemy() {
 		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
-		//this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	}
 

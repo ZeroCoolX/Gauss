@@ -12,14 +12,14 @@ public:
 	MoveLeftShootLineEnemy(RenderWindow *window,
 		View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT_LINE], Vector2f(0.175f, 0.175f)) {
+		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT_LINE], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
 		this->window = window;
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
-		this->moveSpeed = rand() % 10 + 5.f;
+		this->moveSpeed = rand() % 10 + 3.f;
 
 		// STATS
 		this->damageRange = Vector2i((rand() % 3 + 1)*playerLvlScaleFactor, (rand() % 1 + 1)*playerLvlScaleFactor);
@@ -27,7 +27,7 @@ public:
 		this->hp = this->hpMax;
 
 		// ATTACK
-		this->shootTimerMax = 8.f;
+		this->shootTimerMax = 7.f;
 		this->shootTimer = 0.f;
 		this->nrOfBullets = 3;
 

@@ -16,13 +16,14 @@ void MoveLeftShootLineEnemy::Update(const float &dt, Vector2f target) {
 	if (this->shootTimer < this->shootTimerMax) {
 		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	}
-	if (this->shootTimer >= this->shootTimerMax) {
+	if (this->shootTimer >= this->shootTimerMax && this->nrOfBullets > 0) {
+		--this->nrOfBullets;
 		this->shootTimer = 0.f;
-		const float bulletSpeed = rand() % 15 + 10.f;
+		const float bulletSpeed = this->moveSpeed + 10.f;
 		MoveLeftShootLineEnemy::bullets.Add(
 			Bullet(Bullet::ORB_RED,
 				Vector2f(0.2f, 0.2f),
-				this->sprite.getPosition(),
+				this->sprite.getOrigin(),
 				this->normalizedMoveDirection,
 				bulletSpeed,
 				bulletSpeed,
