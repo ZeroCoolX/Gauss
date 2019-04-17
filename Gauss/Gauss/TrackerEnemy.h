@@ -23,7 +23,7 @@ public:
 		this->hp = this->hpMax;
 
 		// ATTACK
-		this->attackDistance = rand() % 700 + 300;
+		this->attackDistance = rand() % 700 + 200;
 
 		this->InitSpritePoisition(view);
 	}

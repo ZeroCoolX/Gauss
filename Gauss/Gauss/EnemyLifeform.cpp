@@ -11,6 +11,8 @@ void EnemyLifeform::InitializeTextures() {
 	EnemyLifeform::enemyTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShoot_v2.png");
 	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/enemyMoveLeftShootLine.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
 }
 
 EnemyLifeform::~EnemyLifeform()

@@ -150,6 +150,9 @@
     <ClCompile Include="MenuButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MoveLeftShootLineEnemy.cpp">
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dArr.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="MenuButton.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveLeftShootLineEnemy.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

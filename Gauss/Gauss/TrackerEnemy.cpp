@@ -10,7 +10,7 @@ void TrackerEnemy::Update(const float &dt, Vector2f target) {
 	// Get distance to see if we need to divebomb
 	float adjustedMoveSpeed;
 
-	const float distance = sqrt(pow(this->sprite.getPosition().x - target.x, 2) + pow(this->sprite.getPosition().y - target.x, 2));
+	const float distance = sqrt(pow(this->sprite.getPosition().x - target.x, 2) + pow(this->sprite.getPosition().y - target.y, 2));
 
 	if (distance < this->attackDistance || this->divebombPlayer) {
 		this->divebombPlayer = true;

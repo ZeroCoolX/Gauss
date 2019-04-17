@@ -59,7 +59,7 @@ public:
 
 	static dArr<Bullet> bullets;
 	static dArr<Texture> enemyTextures;
-	enum EnemyType { MOVE_LEFT = 0, FOLLOW, MOVE_LEFT_SHOOT, FOLLOW_FAST, FOLLOW_SHOOT, FOLLOW_FAST_SHOOT };
+	enum EnemyType { MOVE_LEFT = 0, FOLLOW, MOVE_LEFT_SHOOT, MOVE_LEFT_SHOOT_LINE, FOLLOW_FAST, FOLLOW_SHOOT, FOLLOW_FAST_SHOOT };
 
 	static void InitializeTextures();
 };

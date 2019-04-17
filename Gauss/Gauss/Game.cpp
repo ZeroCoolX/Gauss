@@ -931,11 +931,9 @@ void Game::DisplayGameEnd() {
 	}
 }
 
-
-
 void Game::_spawnEnemy() {
 	const int pNum = rand() % this->players.Size();
-	const int randType = rand() % 3;
+	const int randType = rand() % 4;
 
 	switch (randType) {
 	case EnemyLifeform::MOVE_LEFT:
@@ -946,6 +944,9 @@ void Game::_spawnEnemy() {
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT:
 		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
+		break;
+	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
+		//this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
 		break;
 	}
 
