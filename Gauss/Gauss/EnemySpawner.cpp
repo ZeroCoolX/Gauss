@@ -15,6 +15,7 @@ EnemySpawner::EnemySpawner(Vector2i gridPos,
 	this->numOfEnemies = numOfEnemies;
 	this->spawnTimerMax = spawnTimerMax;
 	this->spawnTimer = this->spawnTimerMax;
+	this->randomSpawnPos = randomSpawnPos;
 }
 
 

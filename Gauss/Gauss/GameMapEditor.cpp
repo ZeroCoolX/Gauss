@@ -556,15 +556,17 @@ void GameMapEditor::SetBackground() {
 void GameMapEditor::SetEnemySpawner() {
 	std::cout << "SetEnemySpawner " << "\n\n";
 	std::cout << "Random Pos? (0/1) :>";
-	std::cin >> this->enemySpRandPos;
-	while (std::cin.fail() || this->enemySpRandPos < 0 || this->enemySpRandPos > 1) {
+	int randSpawn = 0;
+	std::cin >> randSpawn;
+	while (std::cin.fail() || randSpawn < 0 || randSpawn > 1) {
 		std::cout << "Invalid input...\n";
 		std::cin.clear();
 		std::cin.ignore(100, '\n');
 
 		std::cout << "Random Pos? (0/1) :>";
-		std::cin >> this->enemySpRandPos;
+		std::cin >> randSpawn;
 	}
+	this->enemySpRandPos = randSpawn;
 
 	std::cout << "Type :>";
 	std::cin >> this->enemySpType;

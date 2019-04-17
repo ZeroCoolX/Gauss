@@ -323,11 +323,11 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			this->enemySpawners[gridPosX].Add(
 				EnemySpawner(
 					Vector2i(gridPosX, gridPosY),
+					randSpawnPos,
 					enemySpType,
 					enemySpInterval,
 					enemySpNumOfEnemies,
-					enemySpSpawnTimerMax, 
-					randSpawnPos), gridPosY
+					enemySpSpawnTimerMax), gridPosY
 			);
 		}
 
@@ -491,7 +491,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font
 			}
 
 			// Draw enemy spawners tiles
-			if (editor && !this->enemySpawners[i].IsNull(j)) {
+			if (!this->enemySpawners[i].IsNull(j)) {
 				this->enemySpawners[i][j].Draw(renderTarget, font);
 			}
 		}

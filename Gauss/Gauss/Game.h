@@ -25,6 +25,7 @@ private:
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
+	int gameMode;
 
 	// Score
 	Clock scoreTimer;
@@ -118,6 +119,7 @@ public:
 	void UpdateWallColliders(const float &dt, int playerIndex);
 	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdateScoreUI();
+	void UpdateEnemySpawns(const float &dt);
 	void UpdateEnemies(const float &dt);
 	void UpdateEnemyBullets(const float &dt);
 	void UpdateTextTags(const float &dt);
@@ -137,5 +139,7 @@ public:
 	void PauseGame();
 	void DisplayGameEnd();
 
+	// statics
+	enum Mode {SURVIVAL = 0, LADDER};
 };
 

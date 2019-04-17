@@ -6,6 +6,8 @@ Game::Game(RenderWindow *window)
 	// Init stage
 	this->stage = nullptr;
 
+	this->gameMode = Mode::SURVIVAL;
+
 	this->InitView();
 	this->InitTextures();
 	this->InitMap();
@@ -604,13 +606,22 @@ void Game::UpdateScoreUI() {
 		+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
 }
 
+void Game::UpdateEnemySpawns(const float &dt) {
+	if (this->gameMode == Mode::SURVIVAL) {
+		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
+			this->_spawnEnemy();
+			this->enemySpawnTimer = 0;
+		}
+	}
+	else {// LADDER
+
+	}
+}
+
 void Game::UpdateEnemies(const float &dt) {
 	// Spawn enemies
-	if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-		this->_spawnEnemy();
-		this->enemySpawnTimer = 0;
-	}
-
+	this->UpdateEnemySpawns(dt);
+		
 	for (size_t i = 0; i < this->enemyLifeforms.Size(); i++)
 	{
 		EnemyLifeform *currentEnemy = this->enemyLifeforms[i];
