@@ -10,17 +10,21 @@ private:
 	int type;// -1 is random
 	int levelInterval;
 	int numOfEnemies; // -1 is random
-	float spawnTimerMax;
-	float spawnTimer;
 
 public:
 	EnemySpawner(Vector2i gridPos,
-		bool randSpawnPos,
+		bool randomSpawnPos,
 		int type,
 		int levelInterval,
-		int numOfEnemies,
-		float spawnTimerMax);
+		int numOfEnemies);
 	virtual ~EnemySpawner();
+
+	inline Vector2f getPosition() const { return Vector2f(this->gridPos.x * Gauss::GRID_SIZE, this->gridPos.y * Gauss::GRID_SIZE); }
+	inline Vector2i getGridPosition() const { return this->gridPos; }
+	inline bool isRandomSpawnPos() const { return this->randomSpawnPos; }
+	inline int getType() const { return this->type; }
+	inline int getLevelInterval() const { return this->levelInterval; }
+	inline int getNumOfEnemies() const { return this->numOfEnemies; }
 
 	void UpdateTimer();
 	void Update(View &view);

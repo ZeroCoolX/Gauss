@@ -65,6 +65,9 @@ private:
 	// MAP
 	WorldMap worldMap;
 	Stage *stage;
+	// Optimization - this can be local variable in UpdateEnemySpawns
+	int fromCol, toCol;
+	int fromRow, toRow;
 
 	// Players
 	dArr<Player> players;

@@ -35,7 +35,6 @@ private:
 	int enemySpType;
 	int enemySpInterval;
 	int numOfEnemies;
-	float enemySpTimerMax;
 
 	// MOUSE 
 	Vector2i mousePosWindow;

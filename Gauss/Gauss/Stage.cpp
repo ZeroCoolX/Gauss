@@ -301,7 +301,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		int enemySpType = 0;
 		int enemySpInterval = 0;
 		int enemySpNumOfEnemies = 0;
-		float enemySpSpawnTimerMax = 0.f;
 		bool randSpawnPos = 0;
 
 		line.clear();
@@ -317,7 +316,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			>> enemySpType
 			>> enemySpInterval 
 			>> enemySpNumOfEnemies
-			>> enemySpSpawnTimerMax
 			) {
 
 			this->enemySpawners[gridPosX].Add(
@@ -326,8 +324,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 					randSpawnPos,
 					enemySpType,
 					enemySpInterval,
-					enemySpNumOfEnemies,
-					enemySpSpawnTimerMax), gridPosY
+					enemySpNumOfEnemies), gridPosY
 			);
 		}
 

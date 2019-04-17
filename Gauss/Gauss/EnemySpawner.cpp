@@ -3,18 +3,15 @@
 
 
 EnemySpawner::EnemySpawner(Vector2i gridPos,
-	bool randSpawnPos,
+	bool randomSpawnPos,
 	int type,
 	int levelInterval,
-	int numOfEnemies,
-	float spawnTimerMax)
+	int numOfEnemies)
 {
 	this->gridPos = gridPos;
 	this->type = type;
 	this->levelInterval = levelInterval;
 	this->numOfEnemies = numOfEnemies;
-	this->spawnTimerMax = spawnTimerMax;
-	this->spawnTimer = this->spawnTimerMax;
 	this->randomSpawnPos = randomSpawnPos;
 }
 
@@ -45,8 +42,7 @@ void EnemySpawner::Draw(RenderTarget &renderTarget, Font &font) {
 	text.setString("Rand Pos: " + std::to_string(this->randomSpawnPos) +
 		"\nType: " + std::to_string(this->type) +
 		"\nInterval: " + std::to_string(this->levelInterval) +
-		"\nQuantity: " + std::to_string(this->numOfEnemies) +
-		"\nTimer: " + std::to_string(this->spawnTimerMax));
+		"\nQuantity: " + std::to_string(this->numOfEnemies));
 
 	renderTarget.draw(shape);
 	renderTarget.draw(text);
@@ -66,6 +62,5 @@ std::string EnemySpawner::GetAsString() const {
 		std::to_string(this->randomSpawnPos) + " " +
 		std::to_string(this->type) + " " +
 		std::to_string(this->levelInterval) + " " +
-		std::to_string(this->numOfEnemies) + " " +
-		std::to_string(static_cast<int>(this->spawnTimerMax));
+		std::to_string(this->numOfEnemies);
 }

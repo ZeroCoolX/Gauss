@@ -614,7 +614,51 @@ void Game::UpdateEnemySpawns(const float &dt) {
 		}
 	}
 	else {// LADDER
+		// Get those spawners that are in the screen view only
+		// Functionize
+		this->fromCol = static_cast<int>((this->mainView.getCenter().x - this->mainView.getSize().x / 2) / Gauss::GRID_SIZE);
+		if (this->fromCol <= 0) {
+			this->fromCol = 0;
+		}
+		if (this->fromCol >= this->stage->getSizeX()) {
+			this->fromCol = this->stage->getSizeX();
+		}
 
+		this->toCol = static_cast<int>((this->mainView.getCenter().x + this->mainView.getSize().x / 2) / Gauss::GRID_SIZE + 1);
+		if (this->toCol <= 0) {
+			this->toCol = 0;
+		}
+		if (this->toCol >= this->stage->getSizeX()) {
+			this->toCol = this->stage->getSizeX();
+		}
+
+
+		this->fromRow = static_cast<int>((this->mainView.getCenter().y - this->mainView.getSize().y / 2) / Gauss::GRID_SIZE);
+		if (this->fromRow <= 0) {
+			this->fromRow = 0;
+		}
+		if (this->fromRow >= this->stage->getSizeY()) {
+			this->fromRow = this->stage->getSizeY();
+		}
+
+		this->toRow = static_cast<int>((this->mainView.getCenter().y + this->mainView.getSize().y / 2) / Gauss::GRID_SIZE + 1);
+		if (this->toRow <= 0) {
+			this->toRow = 0;
+		}
+		if (this->toRow >= this->stage->getSizeY()) {
+			this->toRow = this->stage->getSizeY();
+		}
+
+		const float viewRightSide = this->mainView.getCenter().x + this->mainView.getSize().x / 2;
+		for (size_t i = this->fromRow; i < this->toRow; i++)
+		{
+			for (size_t j = this->fromCol; j < this->toCol; j++)
+			{
+				if (this->stage->getEnemySpawners()[i][j].getPosition().x < viewRightSide) {
+
+				}
+			}
+		}
 	}
 }
 

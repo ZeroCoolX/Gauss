@@ -28,6 +28,7 @@ public:
 	virtual ~Stage();
 
 	inline TileArr<TileArr<Tile>>& getTiles() { return this->tileMatrix; }
+	inline TileArr<TileArr<EnemySpawner>>& getEnemySpawners() { return this->enemySpawners; }
 	inline long getSizeX() const { return this->stageSizeX; }
 	inline long getSizeY() const { return this->stageSizeY; }
 	inline float getScrollSpeed() const { return this->scrollSpeed; }

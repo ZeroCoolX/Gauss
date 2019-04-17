@@ -15,7 +15,6 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->enemySpType = 0;
 	this->enemySpInterval = 0;
 	this->numOfEnemies = 0;
-	this->enemySpTimerMax = 0.f;
 	this->enemySpRandPos = false;
 
 	this->InitView();
@@ -250,8 +249,7 @@ void GameMapEditor::UpdateText() {
 	this->enemySpText.setString(
 		"Type: " + std::to_string(this->enemySpType) +
 		"\nInterval: " + std::to_string(this->enemySpInterval) +
-		"\nNum Enemies: " + std::to_string(this->numOfEnemies) +
-		"\nTimer Max: " + std::to_string(this->enemySpTimerMax)
+		"\nNum Enemies: " + std::to_string(this->numOfEnemies)
 	);
 }
 
@@ -272,8 +270,7 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 					this->enemySpRandPos,
 					this->enemySpType,
 					this->enemySpInterval,
-					this->numOfEnemies,
-					this->enemySpTimerMax
+					this->numOfEnemies
 				),
 				this->mousePosGrid.x,
 				this->mousePosGrid.y
@@ -599,17 +596,6 @@ void GameMapEditor::SetEnemySpawner() {
 
 		std::cout << "Number of enemies :>";
 		std::cin >> this->numOfEnemies;
-	}
-
-	std::cout << "Timer max :>";
-	std::cin >> this->enemySpTimerMax;
-	while (std::cin.fail()) {
-		std::cout << "Invalid input...\n";
-		std::cin.clear();
-		std::cin.ignore(100, '\n');
-
-		std::cout << "Timer max :>";
-		std::cin >> this->enemySpTimerMax;
 	}
 
 	std::cin.clear();
