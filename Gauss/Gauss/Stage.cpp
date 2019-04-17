@@ -302,6 +302,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		int enemySpInterval = 0;
 		int enemySpNumOfEnemies = 0;
 		float enemySpSpawnTimerMax = 0.f;
+		bool randSpawnPos = 0;
 
 		line.clear();
 		ss.clear();
@@ -310,7 +311,9 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		std::getline(fin, line);
 		ss.str(line);
 		while (
-			ss >> gridPosX >> gridPosY
+			ss >> gridPosX 
+			>> gridPosY 
+			>> randSpawnPos
 			>> enemySpType
 			>> enemySpInterval 
 			>> enemySpNumOfEnemies
@@ -323,7 +326,8 @@ bool Stage::LoadStage(std::string filename, View &view) {
 					enemySpType,
 					enemySpInterval,
 					enemySpNumOfEnemies,
-					enemySpSpawnTimerMax), gridPosY
+					enemySpSpawnTimerMax, 
+					randSpawnPos), gridPosY
 			);
 		}
 

@@ -3,6 +3,7 @@
 
 
 EnemySpawner::EnemySpawner(Vector2i gridPos,
+	bool randSpawnPos,
 	int type,
 	int levelInterval,
 	int numOfEnemies,
@@ -40,7 +41,8 @@ void EnemySpawner::Draw(RenderTarget &renderTarget, Font &font) {
 	text.setCharacterSize(12);
 	text.setFillColor(Color::Red);
 	text.setPosition(shape.getPosition());
-	text.setString("Type: " + std::to_string(this->type) +
+	text.setString("Rand Pos: " + std::to_string(this->randomSpawnPos) +
+		"\nType: " + std::to_string(this->type) +
 		"\nInterval: " + std::to_string(this->levelInterval) +
 		"\nQuantity: " + std::to_string(this->numOfEnemies) +
 		"\nTimer: " + std::to_string(this->spawnTimerMax));
@@ -60,6 +62,7 @@ void EnemySpawner::Spawn() {
 std::string EnemySpawner::GetAsString() const {
 	return std::to_string(this->gridPos.x) + " " +
 		std::to_string(this->gridPos.y) + " " +
+		std::to_string(this->randomSpawnPos) + " " +
 		std::to_string(this->type) + " " +
 		std::to_string(this->levelInterval) + " " +
 		std::to_string(this->numOfEnemies) + " " +

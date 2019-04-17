@@ -6,6 +6,7 @@ class EnemySpawner
 {
 private:
 	Vector2i gridPos;
+	bool randomSpawnPos;
 	int type;// -1 is random
 	int levelInterval;
 	int numOfEnemies; // -1 is random
@@ -14,6 +15,7 @@ private:
 
 public:
 	EnemySpawner(Vector2i gridPos,
+		bool randSpawnPos,
 		int type,
 		int levelInterval,
 		int numOfEnemies,

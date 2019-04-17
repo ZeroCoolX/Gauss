@@ -16,6 +16,7 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->enemySpInterval = 0;
 	this->numOfEnemies = 0;
 	this->enemySpTimerMax = 0.f;
+	this->enemySpRandPos = false;
 
 	this->InitView();
 
@@ -268,6 +269,7 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 			this->stage->AddEnemySpawner(
 				EnemySpawner(
 					this->enemySpPositionGrid,
+					this->enemySpRandPos,
 					this->enemySpType,
 					this->enemySpInterval,
 					this->numOfEnemies,
@@ -553,6 +555,17 @@ void GameMapEditor::SetBackground() {
 
 void GameMapEditor::SetEnemySpawner() {
 	std::cout << "SetEnemySpawner " << "\n\n";
+	std::cout << "Random Pos? (0/1) :>";
+	std::cin >> this->enemySpRandPos;
+	while (std::cin.fail() || this->enemySpRandPos < 0 || this->enemySpRandPos > 1) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Random Pos? (0/1) :>";
+		std::cin >> this->enemySpRandPos;
+	}
+
 	std::cout << "Type :>";
 	std::cin >> this->enemySpType;
 	while (std::cin.fail()) {
