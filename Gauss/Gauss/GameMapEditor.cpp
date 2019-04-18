@@ -50,7 +50,6 @@ void GameMapEditor::InitMenuButtons() {
 }
 
 void GameMapEditor::InitTextures() {
-
 }
 
 void GameMapEditor::InitUI() {

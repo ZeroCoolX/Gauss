@@ -516,6 +516,7 @@ void Stage::SetBackgroundSize(float width, float height) {
 }
 
 void Stage::Reset(View &view) {
+	// Reset background
 	this->backgrounds.Clear();
 	this->backgroundRect.setPosition(Vector2f(
 		view.getCenter().x - view.getSize().x / 2, view.getCenter().y - view.getSize().y / 2
@@ -523,6 +524,15 @@ void Stage::Reset(View &view) {
 	this->backgrounds.Add(this->backgroundRect);
 
 	// Reset enemy spawners
+	for (int i = 0; i < this->stageSizeX; i++)
+	{
+		for (int j = 0; j < this->stageSizeY; j++)
+		{
+			if (!this->enemySpawners[i].IsNull(j)) {
+				this->enemySpawners[i][j].setUnused();
+			}
+		}
+	}
 }
 
 

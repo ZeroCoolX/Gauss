@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Gauss.h"
+#include "EnemyLifeform.h"
 
 class EnemySpawner
 {

@@ -35,6 +35,9 @@ void EnemySpawner::Draw(RenderTarget &renderTarget, Font &font) {
 	shape.setFillColor(Color::White);
 	shape.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
 	shape.setPosition(static_cast<float>(this->gridPos.x * Gauss::GRID_SIZE), static_cast<float>(this->gridPos.y * Gauss::GRID_SIZE));
+	if (this->type >= 0) {
+		shape.setTexture(&EnemyLifeform::enemyTextures[this->type]);
+	}
 
 	Text text;
 	text.setFont(font);
