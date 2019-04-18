@@ -13,6 +13,8 @@ EnemySpawner::EnemySpawner(Vector2i gridPos,
 	this->levelInterval = levelInterval;
 	this->numOfEnemies = numOfEnemies;
 	this->randomSpawnPos = randomSpawnPos;
+
+	this->used = false;
 }
 
 

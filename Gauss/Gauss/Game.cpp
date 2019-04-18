@@ -6,7 +6,7 @@ Game::Game(RenderWindow *window)
 	// Init stage
 	this->stage = nullptr;
 
-	this->gameMode = Mode::SURVIVAL;
+	this->gameMode = Mode::LADDER;
 
 	this->InitView();
 	this->InitTextures();
@@ -654,10 +654,11 @@ void Game::UpdateEnemySpawns(const float &dt) {
 		{
 			for (int j = this->fromRow; j < this->toRow; j++)
 			{
-				if (this->stage->getEnemySpawners()[i].IsNull(j)) {
+				if (this->stage->getEnemySpawners()[i].IsNull(j) || this->stage->getEnemySpawners()[i][j].isUsed()) {
 					continue;
 				}
 				if (this->stage->getEnemySpawners()[i][j].getPosition().x < viewRightSide) {
+					this->stage->getEnemySpawners()[i][j].setUsed();
 					int eType = 0;
 					int nrOfE = 1;
 					if (this->stage->getEnemySpawners()[i][j].getType() < 0) {

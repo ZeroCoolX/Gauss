@@ -12,6 +12,8 @@ private:
 	int levelInterval;
 	int numOfEnemies; // -1 is random (1-10)
 
+	bool used;
+
 public:
 	EnemySpawner(Vector2i gridPos,
 		bool randomSpawnPos,
@@ -26,6 +28,9 @@ public:
 	inline int getType() const { return this->type; }
 	inline int getLevelInterval() const { return this->levelInterval; }
 	inline int getNumOfEnemies() const { return this->numOfEnemies; }
+	inline void setUsed() { this->used = true; }
+	inline void setUnused() { this->used = false; }
+	inline bool isUsed() const { return this->used; }
 
 	void UpdateTimer();
 	void Update(View &view);
