@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Gauss.h"
 
 class EnemySpawner
 {
@@ -9,7 +10,7 @@ private:
 	bool randomSpawnPos;
 	int type;// -1 is random
 	int levelInterval;
-	int numOfEnemies; // -1 is random
+	int numOfEnemies; // -1 is random (1-10)
 
 public:
 	EnemySpawner(Vector2i gridPos,
@@ -19,7 +20,7 @@ public:
 		int numOfEnemies);
 	virtual ~EnemySpawner();
 
-	inline Vector2f getPosition() const { return Vector2f(this->gridPos.x * Gauss::GRID_SIZE, this->gridPos.y * Gauss::GRID_SIZE); }
+	inline Vector2f getPosition() const { return Vector2f(static_cast<float>(this->gridPos.x * Gauss::GRID_SIZE), static_cast<float>(this->gridPos.y * Gauss::GRID_SIZE)); }
 	inline Vector2i getGridPosition() const { return this->gridPos; }
 	inline bool isRandomSpawnPos() const { return this->randomSpawnPos; }
 	inline int getType() const { return this->type; }

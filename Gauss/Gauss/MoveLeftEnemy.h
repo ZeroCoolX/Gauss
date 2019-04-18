@@ -8,7 +8,7 @@ class MoveLeftEnemy : public EnemyLifeform
 public:
 	MoveLeftEnemy(View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT], Vector2f(0.175f, 0.175f)) {
+		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT], Vector2f(0.175f, 0.175f)) {
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
@@ -19,7 +19,7 @@ public:
 		this->hpMax = (rand() % 5 + 2) * playerLvlScaleFactor;
 		this->hp = this->hpMax;
 
-		this->InitSpritePoisition(view);
+		this->InitSpritePoisition(view, forcedPosition);
 	}
 	virtual ~MoveLeftEnemy();
 

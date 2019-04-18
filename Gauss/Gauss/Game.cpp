@@ -609,7 +609,7 @@ void Game::UpdateScoreUI() {
 void Game::UpdateEnemySpawns(const float &dt) {
 	if (this->gameMode == Mode::SURVIVAL) {
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
-			this->_spawnEnemy();
+			this->_spawnEnemy(rand() % EnemyLifeform::nrOfEnemyTypes);
 			this->enemySpawnTimer = 0;
 		}
 	}
@@ -650,12 +650,37 @@ void Game::UpdateEnemySpawns(const float &dt) {
 		}
 
 		const float viewRightSide = this->mainView.getCenter().x + this->mainView.getSize().x / 2;
-		for (size_t i = this->fromRow; i < this->toRow; i++)
+		for (int i = this->fromCol; i < this->toCol; i++)
 		{
-			for (size_t j = this->fromCol; j < this->toCol; j++)
+			for (int j = this->fromRow; j < this->toRow; j++)
 			{
+				if (this->stage->getEnemySpawners()[i].IsNull(j)) {
+					continue;
+				}
 				if (this->stage->getEnemySpawners()[i][j].getPosition().x < viewRightSide) {
-
+					int eType = 0;
+					int nrOfE = 1;
+					if (this->stage->getEnemySpawners()[i][j].getType() < 0) {
+						// randomize
+						eType = rand() % EnemyLifeform::nrOfEnemyTypes;
+					}
+					else {
+						eType = this->stage->getEnemySpawners()[i][j].getType();
+					}
+					if (this->stage->getEnemySpawners()[i][j].getNumOfEnemies() < 0) {
+						// randomize
+						nrOfE = rand() % 10 + 1;
+					}
+					while (nrOfE > 0) {
+						--nrOfE;
+						if (this->stage->getEnemySpawners()[i][j].isRandomSpawnPos()) {
+							// random spawn point
+							this->_spawnEnemy(eType);
+						}
+						else {
+							this->_spawnEnemy(eType, this->stage->getEnemySpawners()[i][j].getPosition());
+						}
+					}
 				}
 			}
 		}
@@ -975,22 +1000,21 @@ void Game::DisplayGameEnd() {
 	}
 }
 
-void Game::_spawnEnemy() {
+void Game::_spawnEnemy(int enemyType, Vector2f position) {
 	const int pNum = rand() % this->players.Size();
-	const int randType = rand() % 4;
-
-	switch (randType) {
+	const int eLevel = this->players[pNum].getLevel();
+	switch (enemyType) {
 	case EnemyLifeform::MOVE_LEFT:
-		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, position));
 		break;
 	case EnemyLifeform::FOLLOW:
-		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, eLevel, pNum, position));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT:
-		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, eLevel, pNum, position));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
-		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, this->players[pNum].getLevel(), pNum));
+		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, position));
 		break;
 	}
 

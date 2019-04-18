@@ -53,13 +53,23 @@ public:
 
 	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	virtual void Draw(RenderTarget &renderTarget);
-	void InitSpritePoisition(const View& view);
+	void InitSpritePoisition(const View& view, Vector2f forcedPosition);
 	void Collision();
 	void TakeDamage(int damage);
 
+	// statics
+	static int nrOfEnemyTypes;
 	static dArr<Bullet> bullets;
 	static dArr<Texture> enemyTextures;
-	enum EnemyType { MOVE_LEFT = 0, FOLLOW, MOVE_LEFT_SHOOT, MOVE_LEFT_SHOOT_LINE, FOLLOW_FAST, FOLLOW_SHOOT, FOLLOW_FAST_SHOOT };
+	enum EnemyType { 
+		MOVE_LEFT = 0, 
+		FOLLOW, 
+		MOVE_LEFT_SHOOT, 
+		MOVE_LEFT_SHOOT_LINE, 
+		FOLLOW_FAST, 
+		FOLLOW_SHOOT, 
+		FOLLOW_FAST_SHOOT 
+	};
 
 	static void InitializeTextures();
 };

@@ -12,10 +12,10 @@ public:
 	MoveLeftShootEnemy(RenderWindow *window, 
 		View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
+		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
-		this->window = window;
+		this->window = window; // TODO: remove
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
@@ -29,7 +29,7 @@ public:
 		// ATTACK
 		this->shootTimerMax = rand() % 200 + 100.f;
 
-		this->InitSpritePoisition(view);
+		this->InitSpritePoisition(view, forcedPosition);
 	}
 	virtual ~MoveLeftShootEnemy();
 

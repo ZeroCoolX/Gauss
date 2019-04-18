@@ -12,10 +12,10 @@ public:
 	MoveLeftShootLineEnemy(RenderWindow *window,
 		View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT_LINE], Vector2f(0.15f, 0.15f)) {
+		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT_LINE], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
-		this->window = window;
+		this->window = window; // TODO: remove
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
@@ -31,7 +31,7 @@ public:
 		this->shootTimer = 0.f;
 		this->nrOfBullets = 3;
 
-		this->InitSpritePoisition(view);
+		this->InitSpritePoisition(view, forcedPosition);
 	}
 	virtual ~MoveLeftShootLineEnemy();
 

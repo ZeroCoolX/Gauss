@@ -23,7 +23,7 @@ void MoveLeftShootLineEnemy::Update(const float &dt, Vector2f target) {
 		MoveLeftShootLineEnemy::bullets.Add(
 			Bullet(Bullet::ORB_RED,
 				Vector2f(0.2f, 0.2f),
-				this->sprite.getOrigin(),
+				this->sprite.getPosition(),
 				this->normalizedMoveDirection,
 				bulletSpeed,
 				bulletSpeed,

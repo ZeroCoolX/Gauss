@@ -11,7 +11,7 @@ private:
 public:
 	TrackerEnemy(View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
+		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
 		
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
@@ -25,7 +25,7 @@ public:
 		// ATTACK
 		this->attackDistance = rand() % 700 + 200;
 
-		this->InitSpritePoisition(view);
+		this->InitSpritePoisition(view, forcedPosition);
 	}
 	virtual ~TrackerEnemy();
 
