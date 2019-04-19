@@ -389,6 +389,7 @@ void Game::UpdatePlayers(const float &dt) {
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
 			//this->UpdateWallColliders(dt, i);
+			this->UpdatePlayerTileCollision(dt, this->players[i]);
 
 			// Bullets update
 			this->UpdatePlayerBullets(dt, this->players[i]);
@@ -398,26 +399,6 @@ void Game::UpdatePlayers(const float &dt) {
 
 		this->UpdateScoreUI();
 	}
-}
-
-void Game::UpdateMap(const float &dt) {
-	this->stage->Update(dt, this->mainView, false);
-}
-
-void Game::UpdateWallColliders(const float &dt, int playerIndex) {
-	//for (size_t i = 0; i < this->tiles.Size(); i++)
-	//{
-	//	if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-	//		while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-	//			this->players[playerIndex].move(
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
-	//			);
-	//		}
-
-	//		this->players[playerIndex].resetVelocity();
-	//	}
-	//}
 }
 
 void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
@@ -451,7 +432,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					);
 
 					currentEnemy->TakeDamage(damage);
-					
+
 					// Generate particles based on how alive enemy is
 					if (currentEnemy->getHp() <= 0) {
 						const int nrOfPatricles = rand() % 30 + 10;
@@ -460,7 +441,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							this->particles.Add(Particle(currentEnemy->getPosition(),
 								0,
 								currentPlayer.BulletAt(j).getVelocity(),
-								rand () % 40 + 10.f,
+								rand() % 40 + 10.f,
 								rand() % 30 + 1.f,
 								50.f));
 						}
@@ -478,7 +459,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						}
 					}
 
-					if (currentEnemy->getHp() <= 0){
+					if (currentEnemy->getHp() <= 0) {
 
 						// Gain score & Reset multiplier timer
 						this->killboxTimer = this->killboxTimerMax;
@@ -535,46 +516,46 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						int uType = 0;
 						int consumableType = rand() % 3 + 1;
 						switch (consumableType) {
-							case 1:
-							{
-								if (dropChance > 85) { // 15% chance for an upgrade
+						case 1:
+						{
+							if (dropChance > 85) { // 15% chance for an upgrade
 
-									// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
-									uType = rand() % ItemUpgrade::numberOfUpgrades;
-									for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
-									{
-										if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
-											uType = rand() % 1;
-										}
+								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
+								uType = rand() % ItemUpgrade::numberOfUpgrades;
+								for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
+								{
+									if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
+										uType = rand() % 1;
 									}
+								}
 
-									this->consumables.Add(new ItemUpgrade(
-										currentEnemy->getPosition(),
-										uType,
-										300.f));
-								}
-								break;
+								this->consumables.Add(new ItemUpgrade(
+									currentEnemy->getPosition(),
+									uType,
+									300.f));
 							}
-							case 2: {
-								if (dropChance > 85) { // 25% chance health is dropped
-									this->consumables.Add(new ItemPickup(
-										currentEnemy->getPosition(),
-										ItemPickup::HEALTH, // health item for now
-										150.f));
-								}
-								break;
+							break;
+						}
+						case 2: {
+							if (dropChance > 85) { // 25% chance health is dropped
+								this->consumables.Add(new ItemPickup(
+									currentEnemy->getPosition(),
+									ItemPickup::HEALTH, // health item for now
+									150.f));
 							}
-							case 3:
-							{
-								uType = rand() % Powerup::numberOfPowerups;
-								if (dropChance > 80) { // 20% chance powerup is dropped
-									this->consumables.Add(new Powerup(
-										currentEnemy->getPosition(),
-										uType,
-										300.f));
-								}
-								break;
+							break;
+						}
+						case 3:
+						{
+							uType = rand() % Powerup::numberOfPowerups;
+							if (dropChance > 80) { // 20% chance powerup is dropped
+								this->consumables.Add(new Powerup(
+									currentEnemy->getPosition(),
+									uType,
+									300.f));
 							}
+							break;
+						}
 						}
 
 						// Destroy the enemy
@@ -595,6 +576,79 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 			}
 		}
 	}
+}
+
+void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
+	if (currentPlayer.isDead()) {
+		return;
+	}
+	this->fromCol = static_cast<int>((currentPlayer.getPosition().x - Gauss::GRID_SIZE * 2) / Gauss::GRID_SIZE);
+	if (this->fromCol <= 0) {
+		this->fromCol = 0;
+	}
+	if (this->fromCol >= this->stage->getSizeX()) {
+		this->fromCol = this->stage->getSizeX();
+	}
+
+	this->toCol = static_cast<int>((currentPlayer.getPosition().x + Gauss::GRID_SIZE * 2) / Gauss::GRID_SIZE + 1);
+	if (this->toCol <= 0) {
+		this->toCol = 0;
+	}
+	if (this->toCol >= this->stage->getSizeX()) {
+		this->toCol = this->stage->getSizeX();
+	}
+
+
+	this->fromRow = static_cast<int>((currentPlayer.getPosition().y - Gauss::GRID_SIZE * 2) / Gauss::GRID_SIZE);
+	if (this->fromRow <= 0) {
+		this->fromRow = 0;
+	}
+	if (this->fromRow >= this->stage->getSizeY()) {
+		this->fromRow = this->stage->getSizeY();
+	}
+
+	this->toRow = static_cast<int>((currentPlayer.getPosition().y + Gauss::GRID_SIZE * 2) / Gauss::GRID_SIZE + 1);
+	if (this->toRow <= 0) {
+		this->toRow = 0;
+	}
+	if (this->toRow >= this->stage->getSizeY()) {
+		this->toRow = this->stage->getSizeY();
+	}
+
+	for (int i = fromCol; i < toCol; i++)
+	{
+		for (int j = fromRow; j < toRow; j++)
+		{
+			// Collision!
+			if (!this->stage->getTiles()[i].IsNull(j)
+				&& this->stage->getTiles()[i][j].isColliderType()
+				&& currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
+				// temporary collision
+				currentPlayer.move(-currentPlayer.getNormDir().x * 100 * dt * DeltaTime::dtMultiplier, -currentPlayer.getNormDir().y * 100 * dt * DeltaTime::dtMultiplier);
+				currentPlayer.resetVelocity();
+			}
+		}
+	}
+}
+
+void Game::UpdateMap(const float &dt) {
+	this->stage->Update(dt, this->mainView, false);
+}
+
+void Game::UpdateWallColliders(const float &dt, int playerIndex) {
+	//for (size_t i = 0; i < this->tiles.Size(); i++)
+	//{
+	//	if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+	//		while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
+	//			this->players[playerIndex].move(
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
+	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
+	//			);
+	//		}
+
+	//		this->players[playerIndex].resetVelocity();
+	//	}
+	//}
 }
 
 void Game::UpdateScoreUI() {

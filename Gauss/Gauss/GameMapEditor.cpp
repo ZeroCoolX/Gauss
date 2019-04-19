@@ -12,6 +12,9 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 	this->backgroundWidth = Gauss::BACKGROUND_SIZE;
 	this->backgroundHeight = Gauss::BACKGROUND_SIZE;
 
+	// Tile properties
+	this->tileCollider = false;
+
 	this->enemySpType = 0;
 	this->enemySpInterval = 0;
 	this->numOfEnemies = 0;
@@ -60,7 +63,7 @@ void GameMapEditor::InitUI() {
 
 	this->selector.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
 	this->selector.setFillColor(Color::Transparent);
-	this->selector.setOutlineColor(Color::Red);
+	this->selector.setOutlineColor(Color::Green);
 	this->selector.setOutlineThickness(2.f);
 
 	this->textureSelector.setTexture(Tile::tileTextures);
@@ -183,6 +186,17 @@ void GameMapEditor::UpdateControls() {
 		this->keyTime = 0.f;
 	}
 
+	// Toggle tile collider
+	if (Keyboard::isKeyPressed(Keyboard::LControl) 
+		&& Keyboard::isKeyPressed(Keyboard::T) 
+		&& Keyboard::isKeyPressed(Keyboard::LShift) 
+		&& this->keyTime >= this->keyTimeMax
+	) {
+		this->tileCollider = !this->tileCollider;
+		this->selector.setOutlineColor(this->tileCollider ? Color::Red : Color::Green);
+		this->keyTime = 0.f;
+	}
+
 	// Switch background/foreground tile
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::B) && this->keyTime >= this->keyTimeMax) {
 		if (tileToolSelect == Stage::TileType::BACKGROUND_TILE) {
@@ -236,13 +250,13 @@ void GameMapEditor::UpdateText() {
 	}
 
 	if(this->tileToolSelect == Stage::TileType::BACKGROUND_TILE) {
-		this->selectorText.setString("BACKGROUND_TILE");
+		this->selectorText.setString("BACKGROUND");
 	}
 	else if(this->tileToolSelect == Stage::TileType::FOREGROUND_TILE){
-		this->selectorText.setString("FOREGROUND_TILE");
+		this->selectorText.setString("FOREGROUND");
 	}
 	else {
-		this->selectorText.setString("ENEMY_SPAWNER_TILE");
+		this->selectorText.setString("ENEMY_SPAWNER");
 	}
 
 	this->enemySpText.setString(
@@ -281,7 +295,7 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 				Tile(
 					IntRect(this->textureSelectedX, this->textureSelectedY, Gauss::GRID_SIZE, Gauss::GRID_SIZE),
 					Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)),
-					false,
+					this->tileCollider,
 					false
 				),
 				this->mousePosGrid.x,

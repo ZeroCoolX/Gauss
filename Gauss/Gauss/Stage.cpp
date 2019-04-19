@@ -488,6 +488,17 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font
 			// Draw foreground tiles
 			if (!this->tileMatrix[i].IsNull(j)) {
 				this->tileMatrix[i][j].Draw(renderTarget);
+
+				if (editor && this->tileMatrix[i][j].isColliderType()) {
+					RectangleShape border;
+					border.setSize(Vector2f(Gauss::GRID_SIZE, Gauss::GRID_SIZE));
+					border.setPosition(this->tileMatrix[i][j].getPos());
+					border.setOutlineColor(Color::Red);
+					border.setOutlineThickness(2.f);
+					border.setFillColor(Color::Transparent);
+
+					renderTarget.draw(border);
+				}
 			}
 
 			// Draw enemy spawners tiles

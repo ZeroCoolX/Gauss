@@ -119,9 +119,10 @@ public:
 	void UpdateMultipliers();
 	void UpdateWhilePaused(const float &dt);
 	void UpdatePlayers(const float &dt);
+	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
+	void UpdatePlayerTileCollision(const float &dt, Player &currentPlayer);
 	void UpdateMap(const float &dt);
 	void UpdateWallColliders(const float &dt, int playerIndex);
-	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdateScoreUI();
 	void UpdateEnemySpawns(const float &dt);
 	void UpdateEnemies(const float &dt);

@@ -29,6 +29,9 @@ private:
 	int backgroundWidth;
 	int backgroundHeight;
 
+	// Tiles
+	bool tileCollider;
+
 	// Enemy Spawner
 	Vector2i enemySpPositionGrid;
 	bool enemySpRandPos;
