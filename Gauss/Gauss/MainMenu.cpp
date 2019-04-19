@@ -2,8 +2,9 @@
 
 
 
-MainMenu::MainMenu()
+MainMenu::MainMenu(Font &font)
 {
+	this->font = font;
 	this->Init();
 }
 
@@ -17,7 +18,11 @@ void MainMenu::Init() {
 }
 
 void MainMenu::InitButtons() {
-	// heh
+	//this->buttons.Add(MenuButton(this->font, 
+	//	ButtonTypes::BTN_SURVIVAL,
+	//	"Survival",
+	//	12, 
+	//	Vector2f(0.f, 0.f)))
 }
 
 void MainMenu::Update(Vector2f &mousePos, const float &dt) {

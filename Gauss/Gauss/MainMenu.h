@@ -6,7 +6,7 @@
 class MainMenu
 {
 public:
-	MainMenu();
+	MainMenu(Font &font);
 	virtual ~MainMenu();
 
 	// Init
@@ -24,7 +24,7 @@ public:
 	dArr<MenuButton> buttons;
 
 	// statics
-	enum buttonTypes {
+	enum ButtonTypes {
 		BTN_LADDER = 0, 
 		BTN_SURVIVAL,
 		BTN_EXIT
