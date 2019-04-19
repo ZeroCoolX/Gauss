@@ -298,6 +298,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		}
 
 		// Enemy Spawner
+		int enemySpVelocity = 0;
 		int enemySpType = 0;
 		int enemySpInterval = 0;
 		int enemySpNumOfEnemies = 0;
@@ -313,8 +314,9 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			ss >> gridPosX 
 			>> gridPosY 
 			>> randSpawnPos
+			>> enemySpVelocity
 			>> enemySpType
-			>> enemySpInterval 
+			>> enemySpInterval
 			>> enemySpNumOfEnemies
 			) {
 
@@ -322,6 +324,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 				EnemySpawner(
 					Vector2i(gridPosX, gridPosY),
 					randSpawnPos,
+					enemySpVelocity,
 					enemySpType,
 					enemySpInterval,
 					enemySpNumOfEnemies), gridPosY

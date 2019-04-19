@@ -9,15 +9,17 @@ class EnemySpawner
 private:
 	Vector2i gridPos;
 	bool randomSpawnPos;
+	int forcedVelocity; // -1 random
 	int type;// -1 is random
 	int levelInterval;
-	int numOfEnemies; // -1 is random (1-10)
+	int numOfEnemies; // -1 is random (1-10) // TODO: need to space them out
 
 	bool used;
 
 public:
 	EnemySpawner(Vector2i gridPos,
 		bool randomSpawnPos,
+		int forcedVelocity,
 		int type,
 		int levelInterval,
 		int numOfEnemies);
@@ -26,6 +28,7 @@ public:
 	inline Vector2f getPosition() const { return Vector2f(static_cast<float>(this->gridPos.x * Gauss::GRID_SIZE), static_cast<float>(this->gridPos.y * Gauss::GRID_SIZE)); }
 	inline Vector2i getGridPosition() const { return this->gridPos; }
 	inline bool isRandomSpawnPos() const { return this->randomSpawnPos; }
+	inline int getForcedVelocity() const { return this->forcedVelocity; }
 	inline int getType() const { return this->type; }
 	inline int getLevelInterval() const { return this->levelInterval; }
 	inline int getNumOfEnemies() const { return this->numOfEnemies; }

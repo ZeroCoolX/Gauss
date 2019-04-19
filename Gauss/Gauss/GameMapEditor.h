@@ -32,6 +32,7 @@ private:
 	// Enemy Spawner
 	Vector2i enemySpPositionGrid;
 	bool enemySpRandPos;
+	int enemySpVelocity;
 	int enemySpType;
 	int enemySpInterval;
 	int numOfEnemies;

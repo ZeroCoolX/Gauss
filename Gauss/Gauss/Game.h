@@ -93,7 +93,7 @@ private:
 
 
 	// Utility Functions
-	void _spawnEnemy(int enemyType, Vector2f position = Vector2f(0.f, 0.f));
+	void _spawnEnemy(int enemyType, int velocity = -1, Vector2f position = Vector2f(0.f, 0.f));
 
 public:
 	Game(RenderWindow *window);

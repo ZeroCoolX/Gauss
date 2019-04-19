@@ -267,6 +267,7 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 				EnemySpawner(
 					this->enemySpPositionGrid,
 					this->enemySpRandPos,
+					this->enemySpVelocity,
 					this->enemySpType,
 					this->enemySpInterval,
 					this->numOfEnemies
@@ -564,15 +565,26 @@ void GameMapEditor::SetEnemySpawner() {
 	}
 	this->enemySpRandPos = randSpawn;
 
-	std::cout << "Type :>";
+	std::cout << "Type (-1 for random) :>";
 	std::cin >> this->enemySpType;
-	while (std::cin.fail()) {
+	while (std::cin.fail() || this->enemySpType > EnemyLifeform::nrOfEnemyTypes-1) {
 		std::cout << "Invalid input...\n";
 		std::cin.clear();
 		std::cin.ignore(100, '\n');
 
-		std::cout << "Type :>";
+		std::cout << "Type (-1 for random) :>";
 		std::cin >> this->enemySpType;
+	}
+
+	std::cout << "Velocity (-1 for random) :>";
+	std::cin >> this->enemySpVelocity;
+	while (std::cin.fail() || this->enemySpVelocity < -1) {
+		std::cout << "Invalid input...\n";
+		std::cin.clear();
+		std::cin.ignore(100, '\n');
+
+		std::cout << "Velocity (-1 for random):>";
+		std::cin >> this->enemySpVelocity;
 	}
 
 	std::cout << "Level Interval :>";

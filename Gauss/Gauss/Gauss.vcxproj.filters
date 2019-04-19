@@ -147,11 +147,11 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="MenuButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MoveLeftShootLineEnemy.cpp">
       <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,11 +233,11 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="MenuButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MoveLeftShootLineEnemy.h">
       <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

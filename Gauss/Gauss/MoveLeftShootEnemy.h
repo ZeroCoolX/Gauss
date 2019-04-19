@@ -12,14 +12,16 @@ public:
 	MoveLeftShootEnemy(RenderWindow *window, 
 		View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
+		int playerFollowNum, 
+		float forcedVelocity,
+		Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
 		this->window = window; // TODO: remove
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
-		this->moveSpeed = rand() % 10 + 3.f;
+		this->moveSpeed = (forcedVelocity > 0 ? forcedVelocity : rand() % 10 + 3.f);
 
 		// STATS
 		this->damageRange = Vector2i((rand() % 2 + 1)*playerLvlScaleFactor, (rand() % 1 + 1)*playerLvlScaleFactor);
@@ -27,7 +29,7 @@ public:
 		this->hp = this->hpMax;
 
 		// ATTACK
-		this->shootTimerMax = rand() % 200 + 100.f;
+		this->shootTimerMax = rand() % 100 + 50.f;
 
 		this->InitSpritePoisition(view, forcedPosition);
 	}

@@ -234,6 +234,10 @@ void Game::Update(const float &dt) {
 
 		// Update Particles 
 		this->UpdateParticles(dt);
+
+		// Update mid game if the player wants to
+		this->RestartUpdate();
+
 	}
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
 		// Show end game stats
@@ -450,7 +454,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					
 					// Generate particles based on how alive enemy is
 					if (currentEnemy->getHp() <= 0) {
-						const int nrOfPatricles = rand() % 20 + 10;
+						const int nrOfPatricles = rand() % 30 + 10;
 						for (int m = 0; m < nrOfPatricles; m++)
 						{
 							this->particles.Add(Particle(currentEnemy->getPosition(),
@@ -676,10 +680,10 @@ void Game::UpdateEnemySpawns(const float &dt) {
 						--nrOfE;
 						if (this->stage->getEnemySpawners()[i][j].isRandomSpawnPos()) {
 							// random spawn point
-							this->_spawnEnemy(eType);
+							this->_spawnEnemy(eType, this->stage->getEnemySpawners()[i][j].getForcedVelocity());
 						}
 						else {
-							this->_spawnEnemy(eType, this->stage->getEnemySpawners()[i][j].getPosition());
+							this->_spawnEnemy(eType, this->stage->getEnemySpawners()[i][j].getForcedVelocity(), this->stage->getEnemySpawners()[i][j].getPosition());
 						}
 					}
 				}
@@ -782,7 +786,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
 				// Generate a few collision particles
-				const int nrOfPatricles = rand() % 5 + 2;
+				const int nrOfPatricles = rand() % 5 + 3;
 				for (int m = 0; m < nrOfPatricles; m++)
 				{
 					this->particles.Add(Particle(EnemyLifeform::bullets[i].getPosition(),
@@ -1001,21 +1005,21 @@ void Game::DisplayGameEnd() {
 	}
 }
 
-void Game::_spawnEnemy(int enemyType, Vector2f position) {
+void Game::_spawnEnemy(int enemyType, int velocity, Vector2f position) {
 	const int pNum = rand() % this->players.Size();
 	const int eLevel = this->players[pNum].getLevel();
 	switch (enemyType) {
 	case EnemyLifeform::MOVE_LEFT:
-		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, position));
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, velocity, position));
 		break;
 	case EnemyLifeform::FOLLOW:
-		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, eLevel, pNum, position));
+		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, eLevel, pNum, velocity, position));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT:
-		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, eLevel, pNum, position));
+		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, eLevel, pNum, velocity, position));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
-		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, position));
+		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, velocity, position));
 		break;
 	}
 

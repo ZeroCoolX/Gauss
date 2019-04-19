@@ -11,11 +11,13 @@ private:
 public:
 	TrackerEnemy(View& view,
 		int playerLvlScaleFactor,
-		int playerFollowNum, Vector2f forcedPosition = Vector2f(0.f, 0.f)): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
+		int playerFollowNum, 
+		float forcedVelocity,
+		Vector2f forcedPosition = Vector2f(0.f, 0.f)): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
 		
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
-		this->moveSpeed = rand() % 12 + 5.f;
+		this->moveSpeed = (forcedVelocity > 0 ? forcedVelocity : rand() % 12 + 5.f);
 
 		// STATS
 		this->damageRange = Vector2i((rand() % 2 + 1)*playerLvlScaleFactor, (rand() % 1 + 1)*playerLvlScaleFactor);
