@@ -12,12 +12,15 @@ void MenuButton::InitTextures() {
 	MenuButton::numOfTextures = MenuButton::textures.Size();
 }
 
-MenuButton::MenuButton(Font &font, 
+MenuButton::MenuButton(int id,
+	Font &font,
 	std::string text, 
 	const unsigned int charSize,
 	Vector2f pos, 
 	int textureIndex)
 {
+	this->ID = id;
+
 	this->text.setFont(font);
 	this->text.setCharacterSize(charSize);
 	this->text.setString(text);

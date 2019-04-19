@@ -5,6 +5,8 @@
 class MenuButton
 {
 private:
+	int ID;
+
 	Sprite sprite;
 	Text text;
 
@@ -17,13 +19,18 @@ private:
 	Color colorPressed;
 
 public:
-	MenuButton(Font &font, 
+	MenuButton(
+		int id,
+		Font &font, 
 		std::string text, 
 		const unsigned int charSize,
 		Vector2f pos, 
 		int textureIndex);
 
 	virtual ~MenuButton();
+
+	inline std::string getName() { return this->text.getString(); }
+	inline int getId() const { return this->ID; }
 
 	void Update(Vector2f mousePos);
 	void Draw(RenderTarget &renderTarget);
