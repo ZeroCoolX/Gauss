@@ -302,23 +302,25 @@ void Game::RestartUpdate() {
 			this->window->getSize().y / 2.f));
 		this->stage->Reset(this->mainView);
 
-		// Reset player
-		const int nrOfPlayers = Player::playerId;
-		Player::playerId = 0;
-		this->players.Add(Player());
-		// If there was a player 2 add them back in as well
-		if (nrOfPlayers > 1) {
-			this->players.Add(Player(Keyboard::I,
-				Keyboard::K,
-				Keyboard::J,
-				Keyboard::L,
-				Keyboard::RShift,
-				Keyboard::U,
-				Keyboard::Return,
-				Keyboard::Num7,
-				Keyboard::Num8,
-				Keyboard::Num9,
-				Keyboard::Num0));
+		if (this->players.Size() == 0) {
+			// Reset player
+			const int nrOfPlayers = Player::playerId;
+			Player::playerId = 0;
+			this->players.Add(Player());
+			// If there was a player 2 add them back in as well
+			if (nrOfPlayers > 1) {
+				this->players.Add(Player(Keyboard::I,
+					Keyboard::K,
+					Keyboard::J,
+					Keyboard::L,
+					Keyboard::RShift,
+					Keyboard::U,
+					Keyboard::Return,
+					Keyboard::Num7,
+					Keyboard::Num8,
+					Keyboard::Num9,
+					Keyboard::Num0));
+			}
 		}
 
 		this->InitUI();
