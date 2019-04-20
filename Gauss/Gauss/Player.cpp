@@ -84,7 +84,7 @@ Player::Player(
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
 	int CHANGE_AURA
-) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
 	// Formula courtesy of Suraj Sharma and Tibia
@@ -383,7 +383,7 @@ void Player::UpdateStats() {
 	this->hpMax = this->hpAdded + (this->plating * 5);
 	this->damageMax = 2 + (this->power * 2);
 	this->damage = 1 + power;
-	this->shieldChargeTimerMax = 100.f + (this->cooling * (this->maneuverability / 2));
+	this->shieldChargeTimerMax = 300.f + this->shieldAdded + (this->cooling * (this->maneuverability / 2));
 }
 
 void Player::Update(View &view, const float &dt, const float scrollSpeed) {
@@ -575,6 +575,7 @@ void Player::Reset() {
 	this->hpMax = 10;
 	this->hp = this->hpMax;
 	this->hpAdded = 10;
+	this->shieldAdded = 0.f;
 	this->level = 1;
 	this->exp = 0;
 	this->expNext = 20;
@@ -615,7 +616,7 @@ void Player::Reset() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
-	this->shieldChargeTimerMax = 500.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
 	this->powerupTimerMax = 500.f;
@@ -784,7 +785,7 @@ void Player::_initPlayerSettings() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
-	this->shieldChargeTimerMax = 500.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
 	this->powerupTimerMax = 500.f;

@@ -72,6 +72,7 @@ private:
 
 	Sprite deflectorShield;
 	bool shieldActive;
+	float shieldAdded;
 
 	// Accessories
 	Sprite lWing;
@@ -167,6 +168,11 @@ public:
 	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
 	inline const bool isShielding() const { return this->shieldActive; }
 	inline Sprite getDeflectorShield() { return this->deflectorShield; }
+	inline void upgradeShield() {
+		this->shieldAdded += 33.f;
+		this->UpdateStats();
+		this->shieldChargeTimer = this->shieldChargeTimerMax;
+	}
 
 	// Powerups
 	inline void enablePowerupRF() { 
@@ -190,7 +196,7 @@ public:
 
 	// Positional
 	inline const Vector2f& getPosition()const { return this->sprite.getPosition(); }
-	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); } // TODO: rename to getBounds()
+	inline FloatRect getGlobalBounds() const { return this->sprite.getGlobalBounds(); }
 	inline void resetVelocity() { this->velocity = Vector2f(0.f, 0.f); }
 	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
 	inline const Vector2f& getNormDir() const { return this->normalizedDir; }

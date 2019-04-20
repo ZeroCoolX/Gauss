@@ -25,10 +25,10 @@ private:
 			this->text = "PIERCING SHOT UPGRADE";
 			break;
 		case ItemUpgrade::SHEILD:
-			this->text = "SHEILD UPGRADE";
+			this->text = "PERMANENT SHEILD UPGRADE";
 			break;
 		case ItemUpgrade::HEALTH_TANK:
-			this->text = "PERMANANT HEALTH UPGRADE";
+			this->text = "PERMANENT HEALTH UPGRADE";
 			break;
 		}
 	}

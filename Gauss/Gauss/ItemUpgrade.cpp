@@ -63,7 +63,7 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 		player->enablePiercingShot();
 		break;
 	case ItemUpgrade::SHEILD:
-		player->enableSheild();
+		player->upgradeShield();
 		break;
 	case ItemUpgrade::HEALTH_TANK:
 		player->upgradeHP();
@@ -82,6 +82,6 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 }
 
 bool ItemUpgrade::_shouldAddUpgrade() {
-	return this->type != ItemUpgrade::STATPOINT && this->type != ItemUpgrade::HEALTH_TANK;
+	return this->type != ItemUpgrade::STATPOINT && this->type != ItemUpgrade::HEALTH_TANK && this->type != ItemUpgrade::SHEILD;
 }
 

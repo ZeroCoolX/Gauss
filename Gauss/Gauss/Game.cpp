@@ -506,7 +506,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										currentPlayer.getPosition().y + currentPlayer.getGlobalBounds().height), "LEVEL UP!",
 									Color::Cyan,
 									Vector2f(0.f, 1.f),
-									36, 40.f, true
+									42, 40.f, true
 								)
 							);
 						}
@@ -530,7 +530,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1:
 						{
-							if (dropChance > 85) { // 15% chance for an upgrade
+							if (dropChance > 10) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -538,6 +538,23 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								{
 									if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
 										uType = rand() % 1;
+									}
+									// Want to make it really hard to get double and triple ray upgrades
+									if (uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+										dropChance = rand() % 100 + 1;
+										if (dropChance >= 97) {
+											// only a 3% chance this will happen
+											uType = ItemUpgrade::Type::TRIPLE_RAY;
+											break;
+										}
+									}
+									else if (uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
+										dropChance = rand() % 100 + 1;
+										if (dropChance >= 93) {
+											// only a 7% chance this will happen
+											uType = ItemUpgrade::Type::TRIPLE_RAY;
+											break;
+										}
 									}
 								}
 
@@ -560,7 +577,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						case 3:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 80) { // 20% chance powerup is dropped
+							if (dropChance > 85) { // 25% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
