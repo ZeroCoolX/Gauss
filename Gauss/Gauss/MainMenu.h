@@ -40,7 +40,7 @@ public:
 	void DrawButtons(RenderTarget &renderTarget);
 	void DrawBackground(RenderTarget &renderTarget);
 
-	dArr<MenuButton> buttons;
+	dArr<MenuButton*> buttons;
 
 	// statics
 	enum ButtonTypes {

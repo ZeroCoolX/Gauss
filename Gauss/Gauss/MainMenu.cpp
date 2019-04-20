@@ -21,10 +21,8 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	MenuButton temp(1, this->font, "Play Gauss", 18, Vector2f(150.f, 500.f), 0);
-	this->buttons.Add(temp);
-	MenuButton temp2(2, this->font, "Quit", 18, Vector2f(150.f, 700.f), 0);
-	this->buttons.Add(temp2);
+	this->buttons.Add(new MenuButton(MainMenu::BTN_SURVIVAL, this->font, "Play Gauss", 18, Vector2f(150.f, 400.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 550.f), 0));
 }
 
 void MainMenu::InitBackground() {
@@ -38,18 +36,20 @@ void MainMenu::Update(const float &dt) {
 	this->UpdateButtons(dt);
 }
 
+// For now - this is rather ugly
 void MainMenu::UpdateButtons(const float &dt) {
 	for (size_t i = 0; i < this->buttons.Size(); i++)
 	{
-		this->buttons[i].Update(this->mousePosWorld);
-		if (this->buttons[i].IsPressed()) {
-			std::cout << "Pressed Button!" << std::endl;
-			switch (this->buttons[i].getId()) {
-			case 2:
-				this->window->close();
-			case 1:
-				std::cout << "play game" << std::endl;
-				this->active = false;
+		this->buttons[i]->Update(this->mousePosWorld);
+		if (this->buttons[i]->IsPressed()) {
+			switch (this->buttons[i]->getId()) {
+				case MainMenu::BTN_LADDER:
+				case MainMenu::BTN_SURVIVAL:
+					this->active = false;
+					break;
+				case MainMenu::BTN_EXIT:
+					this->window->close();
+					break;
 			}
 		}
 	}
@@ -83,7 +83,7 @@ void MainMenu::Draw(RenderTarget &renderTarget) {
 void MainMenu::DrawButtons(RenderTarget &renderTarget) {
 	for (size_t i = 0; i < this->buttons.Size(); i++)
 	{
-		this->buttons[i].Draw(renderTarget);
+		this->buttons[i]->Draw(renderTarget);
 	}
 }
 
