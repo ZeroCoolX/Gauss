@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bullet.h"
+#include "Powerup.h"
 
 class Player
 {
@@ -170,12 +171,12 @@ public:
 	// Powerups
 	inline void enablePowerupRF() { 
 		this->powerupRF = true; 
-		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[0]); 
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[Powerup::PowerupTypes::RF]);
 		this->setupPowerupSprite();
 	}
 	inline void enablePowerupXP() { 
 		this->powerupXP = true;
-		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[1]);
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[Powerup::PowerupTypes::XP2]);
 		this->setupPowerupSprite();
 	}
 	inline void setupPowerupSprite() {

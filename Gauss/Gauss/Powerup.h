@@ -2,8 +2,6 @@
 
 #include "Consumable.h"
 
-enum powerup_types {RF = 0, XP2};
-
 class Powerup : public Consumable
 {
 public:
@@ -12,6 +10,8 @@ public:
 
 		this->lifetimeTimerMax = lifetime;
 		this->lifetimeTimer = 0.f;
+
+		this->type = type;
 	}
 	virtual ~Powerup();
 
@@ -20,6 +20,11 @@ public:
 	void Draw(RenderTarget &renderTarget);
 
 	// Statics
+	enum PowerupTypes { 
+		RF = 0, 
+		XP2 
+	};
+
 	static dArr<Texture> powerupTextures;
 	static void InitTextures();
 

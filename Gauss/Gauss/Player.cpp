@@ -283,7 +283,7 @@ void Player::UpdateStatsUI() {
 	this->playerShieldChargeCircle.setScale(circleScale, circleScale);
 	playerShieldChargeCircleBorder.setPosition(shieldChargePos);
 
-	// Powerup Indicator - TODO: the center is a teeny bit off
+	// Powerup Indicator
 	if (this->getPowerupRF() || this->getPowerupXP()) {
 		Vector2f powerupSpritePos = Vector2f(shieldChargePos.x - 45.f, shieldChargePos.y - 7.f);
 		this->powerupSprite.setPosition(powerupSpritePos);
