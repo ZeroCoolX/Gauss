@@ -11,13 +11,15 @@
 #include "WorldMap.h"
 #include "Particle.h"
 #include "Powerup.h"
-#include "MenuButton.h"
+#include "MainMenu.h"
 
 
 class Game
 {
 private:
 	// Game
+	MainMenu *mainMenu;
+
 	RenderWindow *window;
 	View mainView;
 	RenderTexture mainRenderTexture;
@@ -109,6 +111,7 @@ public:
 	void InitTextures();
 	void InitUI();
 	void InitMap();
+	void InitMenu();
 
 	void UpdateView(const float &dt);
 	void Update(const float &dt);

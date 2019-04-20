@@ -47,9 +47,9 @@ void GameMapEditor::InitView() {
 }
 
 void GameMapEditor::InitMenuButtons() {
-	MenuButton temp(this->font, "EnemySpawnerSelect", 12, Vector2f(600.f, 500.f), 0);
+	//MenuButton temp(this->font, "EnemySpawnerSelect", 12, Vector2f(600.f, 500.f), 0);
 
-	this->buttons.Add(temp);
+	//this->buttons.Add(temp);
 }
 
 void GameMapEditor::InitTextures() {

@@ -23,6 +23,7 @@ MenuButton::MenuButton(int id,
 
 	this->text.setFont(font);
 	this->text.setCharacterSize(charSize);
+	this->text.setFillColor(Color::White);
 	this->text.setString(text);
 
 	// Set colors
@@ -42,7 +43,11 @@ MenuButton::MenuButton(int id,
 	}
 	this->sprite.setPosition(pos);
 	this->sprite.setColor(this->colorIdle);
-	this->text.setPosition(this->sprite.getPosition());
+	this->text.setPosition(
+		this->sprite.getPosition().x + (this->sprite.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+		this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
+	);
+
 }
 
 

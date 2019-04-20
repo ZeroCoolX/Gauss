@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GameMapEditor.h"
+#include "MainMenu.h"
 
 using namespace sf;
 

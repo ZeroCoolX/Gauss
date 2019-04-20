@@ -6,14 +6,16 @@ Game::Game(RenderWindow *window)
 	// Init stage
 	this->stage = nullptr;
 
-	this->gameMode = Mode::LADDER;
+	this->mainMenu = nullptr;
+
+	this->gameMode = Mode::SURVIVAL;
+	// Init fonts
+	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
 	this->InitView();
 	this->InitTextures();
 	this->InitMap();
-
-	// Init fonts
-	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
+	this->InitMenu();
 
 	// Init scoring multipliers
 	this->killPerfectionMultiplier = 1;
@@ -66,6 +68,7 @@ Game::Game(RenderWindow *window)
 Game::~Game()
 {
 	delete this->stage;
+	delete this->mainMenu;
 }
 
 void Game::InitRenderTexture() {
@@ -185,11 +188,20 @@ void Game::InitMap() {
 	this->stage->LoadStage("lel.smap", this->mainView);
 }
 
+void Game::InitMenu() {
+	this->mainMenu = new MainMenu(this->font, this->window);
+}
+
 void Game::UpdateView(const float &dt) {
 	this->mainView.move(this->stage->getScrollSpeed() * dt * DeltaTime::dtMultiplier, 0.f);
 }
 
 void Game::Update(const float &dt) {
+
+	if (this->mainMenu->isActive()) {
+		this->mainMenu->Update(dt);
+		return;
+	}
 
 	// Keytime update
 	this->UpdateTimers(dt);
@@ -999,6 +1011,13 @@ void Game::Draw() {
 	// Set View
 	this->window->setView(this->mainView);
 
+	if (this->mainMenu->isActive()) {
+		this->mainMenu->Draw(*this->window);
+		// Draw everything to the window
+		this->window->display();
+		return;
+	}
+
 	// Draw Map
 	this->DrawMap();
 
@@ -1059,9 +1078,10 @@ void Game::DisplayGameEnd() {
 	}
 }
 
-void Game::_spawnEnemy(int enemyType, int velocity, Vector2f position) {
+void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 	const int pNum = rand() % this->players.Size();
 	const int eLevel = this->players[pNum].getLevel();
+	const float velocity = static_cast<float>(forcedVelocity);
 	switch (enemyType) {
 	case EnemyLifeform::MOVE_LEFT:
 		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, velocity, position));
