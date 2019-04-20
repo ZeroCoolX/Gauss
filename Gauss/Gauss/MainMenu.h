@@ -34,6 +34,8 @@ public:
 	void Update(const float &dt);
 	void UpdateButtons(const float &dt);
 	void UpdateMousePosition();
+
+	void Test();
 	
 	// Draw
 	void Draw(RenderTarget &renderTarget);

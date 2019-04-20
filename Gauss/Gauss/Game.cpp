@@ -1046,7 +1046,7 @@ void Game::Draw() {
 	if (this->mainMenu->isActive()) {
 		this->mainMenu->Draw(*this->window);
 		// Draw everything to the window
-		this->window->display();
+		//this->window->display();
 		return;
 	}
 
@@ -1073,7 +1073,7 @@ void Game::Draw() {
 	this->DrawUI();
 
 	// Draw everything to the window
-	this->window->display();
+	//this->window->display();
 }
 
 void Game::ToggleFullscreen() {
