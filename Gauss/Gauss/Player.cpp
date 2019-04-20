@@ -615,7 +615,7 @@ void Player::Reset() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
-	this->shieldChargeTimerMax = 100.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 500.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
 	this->powerupTimerMax = 500.f;
@@ -784,7 +784,7 @@ void Player::_initPlayerSettings() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
-	this->shieldChargeTimerMax = 100.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 500.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
 	this->powerupTimerMax = 500.f;

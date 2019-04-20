@@ -66,6 +66,9 @@ void MainMenu::UpdateMousePosition() {
 			std::max(0.f, this->mousePosWorld.y / Gauss::GRID_SIZE)
 		);
 #pragma warning(pop)
+
+#pragma warning(push)
+#pragma warning(disable:4018)
 		// Max bounds check
 		if (this->mousePosGrid.x >= window->getSize().x) {
 			this->mousePosGrid.x = window->getSize().x - 1;
@@ -73,6 +76,7 @@ void MainMenu::UpdateMousePosition() {
 		if (this->mousePosGrid.y >= window->getSize().y) {
 			this->mousePosGrid.y = window->getSize().y - 1;
 		}
+#pragma warning(pop)
 }
 
 void MainMenu::Draw(RenderTarget &renderTarget) {

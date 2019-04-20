@@ -105,6 +105,13 @@ public:
 	inline RenderWindow& getWindow() { return *this->window; }
 	inline const bool playersExistInWorld() const { return this->players.Size() > 0; }
 
+	// Helpers
+	float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
+	Vector2f normalize(Vector2f v, float length) {
+		if (length == 0) { return Vector2f(0.f, 0.f); }
+		return (v / length);
+	}
+
 	// Functions
 	void InitRenderTexture();
 	void InitView();

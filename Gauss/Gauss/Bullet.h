@@ -5,7 +5,8 @@
 class Bullet : public GameObject
 {
 private:
-	bool isGaussShot = false;
+	bool gaussProjectile = false;
+	bool playerProjectile = false;
 
 	// Movement
 	Vector2f velocity;
@@ -28,14 +29,13 @@ public:
 		float initialVelocity,
 		float maxVelocity,
 		int damage,
-		bool gaussShot,
-		float acceleration) : GameObject(&bulletTextures[type], scale) {
+		bool gaussShot = false,
+		float acceleration = 0.f) : GameObject(&bulletTextures[type], scale) {
 
 		this->type = type;
 
 		// Damage
 		this->damage = damage;
-		this->isGaussShot = gaussShot;
 
 		// Init movement
 		this->maxVelocity = maxVelocity;
@@ -47,7 +47,7 @@ public:
 
 		// Init origin and position
 		this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2,
-			(this->sprite.getGlobalBounds().height / 2) + 20); // 20 is a compensation...I swear these sprites used to line up perfectly...After refactoring it seems 10 pixels have changed. Idk how....
+			(this->sprite.getGlobalBounds().height / 2) + 20);
 		this->sprite.setPosition(position);
 		this->sprite.setRotation(atan2(this->direction.y, this->direction.x) * 180.f / MathUtil::PI);
 	}
@@ -57,9 +57,12 @@ public:
 	inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 	inline void setPosition(Vector2f position) { this->sprite.setPosition(position); }
 	inline const int& getDamage() const { return this->damage; }
-	inline const bool& gaussShot() const { return this->isGaussShot; }
+	inline const bool& isGaussShot() const { return this->gaussProjectile; }
+	inline const bool& isPlayerProjectile() const { return this->playerProjectile; }
+	inline void setPlayerProjectile(bool playerProj) { this->playerProjectile = playerProj; }
 	inline Vector2f getNormDir() { return this->normalize(this->velocity, this->vectorLength(this->velocity)); }
 	inline Vector2f getVelocity() { return this->velocity; }
+	inline float getMaxVelocity() { return this->maxVelocity; }
 	inline void reverseDirection() { this->velocity.x *= -1; this->velocity.y *= -1; }
 
 	// Vector Utility
@@ -80,7 +83,8 @@ public:
 		MISSILE, 
 		GAUSS_CANNON, 
 		MISSILE_HEAVY, 
-		ORB_RED 
+		ORB_RED,
+		ORB_BLUE
 	};
 	static dArr<Texture> bulletTextures;
 

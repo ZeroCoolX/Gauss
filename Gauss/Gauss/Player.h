@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Bullet.h"
-#include "Powerup.h"
 
 class Player
 {
@@ -164,6 +163,7 @@ public:
 
 	// Accessories
 	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
+	inline dArr<Bullet>* getBullets() { return &this->bullets; }
 	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
 	inline const bool isShielding() const { return this->shieldActive; }
 	inline Sprite getDeflectorShield() { return this->deflectorShield; }
@@ -171,12 +171,12 @@ public:
 	// Powerups
 	inline void enablePowerupRF() { 
 		this->powerupRF = true; 
-		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[Powerup::PowerupTypes::RF]);
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[0]);
 		this->setupPowerupSprite();
 	}
 	inline void enablePowerupXP() { 
 		this->powerupXP = true;
-		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[Powerup::PowerupTypes::XP2]);
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[1]);
 		this->setupPowerupSprite();
 	}
 	inline void setupPowerupSprite() {

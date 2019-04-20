@@ -14,6 +14,8 @@ void Bullet::InitTextures() {
 	Bullet::bulletTextures.Add(temp);
 	temp.loadFromFile("Textures/Guns/orbRedBullet.png");
 	Bullet::bulletTextures.Add(temp);
+	temp.loadFromFile("Textures/Guns/orbBlueBullet.png");
+	Bullet::bulletTextures.Add(temp);
 }
 
 Bullet::~Bullet()

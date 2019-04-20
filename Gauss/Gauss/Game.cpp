@@ -575,7 +575,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					}
 
 					// Destroy the bullet if not piercing shot && not gauss shot
-					if (!currentPlayer.getPiercingShot() && !currentPlayer.BulletAt(j).gaussShot()) {
+					if (!currentPlayer.getPiercingShot() && !currentPlayer.BulletAt(j).isGaussShot()) {
 						// Should add effect to indicate it is piercing shots
 						currentPlayer.RemoveBullet(j);
 					}
@@ -841,13 +841,26 @@ void Game::UpdateEnemyBullets(const float &dt) {
 		// Bullet Player collision check
 		for (size_t j = 0; j < this->players.Size(); j++)
 		{
-			if (this->players[j].isShielding()) {
+			if (this->players[j].isShielding() && !EnemyLifeform::bullets[i].isPlayerProjectile()) {
 				if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getDeflectorShield().getGlobalBounds())
 					 || EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
 					// Reflect bullet
 					this->players[j].getDeflectorShield().setColor(Color::Red);
+
+					// Reverse direction
 					EnemyLifeform::bullets[i].reverseDirection();
+					// Add bullet to player
+					this->players[j].getBullets()->Add(Bullet(Bullet::ORB_BLUE,
+						Vector2f(0.2f, 0.2f),
+						EnemyLifeform::bullets[i].getPosition(),
+						this->normalize(EnemyLifeform::bullets[i].getVelocity(), this->vectorLength(EnemyLifeform::bullets[i].getVelocity())),
+						EnemyLifeform::bullets[i].getMaxVelocity(),
+						EnemyLifeform::bullets[i].getMaxVelocity(),
+						EnemyLifeform::bullets[i].getDamage()));
+					// Remove from enemy bullet
+					EnemyLifeform::bullets.Remove(i);
+					break;
 				}
 			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
