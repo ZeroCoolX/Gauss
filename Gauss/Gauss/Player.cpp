@@ -84,7 +84,7 @@ Player::Player(
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
 	int CHANGE_AURA
-) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	// Stats
 	// Formula courtesy of Suraj Sharma and Tibia
@@ -384,6 +384,7 @@ void Player::UpdateStats() {
 	this->damageMax = 2 + (this->power * 2);
 	this->damage = 1 + power;
 	this->shieldChargeTimerMax = 300.f + this->shieldAdded + (this->cooling * (this->maneuverability / 2));
+	this->shieldRechargeRate = 0.5f + (static_cast<float>(this->cooling) / 10.f);
 }
 
 void Player::Update(View &view, const float &dt, const float scrollSpeed) {
@@ -417,7 +418,7 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	}
 	// Make sure they let go of the key
 	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD]))){
-		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + 0.5f * dt * DeltaTime::dtMultiplier);
+		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + this->shieldRechargeRate * dt * DeltaTime::dtMultiplier);
 		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
 	}
 
@@ -576,6 +577,7 @@ void Player::Reset() {
 	this->hp = this->hpMax;
 	this->hpAdded = 10;
 	this->shieldAdded = 0.f;
+	this->shieldRechargeRate = 0.5f;
 	this->level = 1;
 	this->exp = 0;
 	this->expNext = 20;
@@ -649,7 +651,7 @@ bool Player::PlayerShowStatsIsPressed() {
 }
 
 std::string Player::GetStatsAsString() {
-	return 
+	return
 		"Level: " + std::to_string(this->level) +
 		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
 		"\nStatpoints: " + std::to_string(this->statPoints) +
@@ -659,8 +661,9 @@ std::string Player::GetStatsAsString() {
 		"\nPower: " + std::to_string(this->power) +
 		"\nPlating: " + std::to_string(this->plating) +
 		"\nManeuverability: " + std::to_string(this->maneuverability) +
-		"\nCooling: " + std::to_string(this->cooling) + 
-		"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax);
+		"\nCooling: " + std::to_string(this->cooling) +
+		"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax) +
+		"\nShield Recharge Rate: " + std::to_string(this->shieldRechargeRate);
 
 }
 

@@ -73,6 +73,7 @@ private:
 	Sprite deflectorShield;
 	bool shieldActive;
 	float shieldAdded;
+	float shieldRechargeRate = 0.5f;
 
 	// Accessories
 	Sprite lWing;
@@ -101,7 +102,7 @@ private:
 	int expNext;
 	int statPoints;
 
-	int cooling;				// shot rate
+	int cooling;				// shield recharge rate
 	int plating;				// armour
 	int power;					// strength
 	int maneuverability;		// agility

@@ -530,7 +530,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1:
 						{
-							if (dropChance > 10) { // 10% chance for an upgrade
+							if (dropChance > 90) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
