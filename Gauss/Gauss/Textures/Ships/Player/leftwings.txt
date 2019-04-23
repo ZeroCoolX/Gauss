@@ -1,0 +1,12 @@
+Textures/Ships/Player/wingLeft01.png
+Textures/Ships/Player/wingLeft02.png
+Textures/Ships/Player/wingLeft03.png
+Textures/Ships/Player/wingLeft04.png
+Textures/Ships/Player/wingLeft05.png
+Textures/Ships/Player/wingLeft06.png
+Textures/Ships/Player/wingLeft07.png
+Textures/Ships/Player/wingLeft08.png
+Textures/Ships/Player/wingLeft09.png
+Textures/Ships/Player/wingLeft10.png
+Textures/Ships/Player/wingLeft11.png
+Textures/Ships/Player/wingLeft12.png

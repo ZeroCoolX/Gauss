@@ -1,0 +1,12 @@
+Textures/Ships/Player/cpit01.png
+Textures/Ships/Player/cpit02.png
+Textures/Ships/Player/cpit03.png
+Textures/Ships/Player/cpit04.png
+Textures/Ships/Player/cpit05.png
+Textures/Ships/Player/cpit06.png
+Textures/Ships/Player/cpit07.png
+Textures/Ships/Player/cpit08.png
+Textures/Ships/Player/cpit09.png
+Textures/Ships/Player/cpit10.png
+Textures/Ships/Player/cpit11.png
+Textures/Ships/Player/cpit12.png

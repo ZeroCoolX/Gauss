@@ -21,11 +21,11 @@ void Player::InitTextures() {
 	Player::shipBodyTextures.Add(temp);
 
 	// Main Gun textures
-	temp.loadFromFile("Textures/Guns/gun01.png");
+	temp.loadFromFile("Textures/Guns/gunStock06.png");
 	Player::shipMainGunTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/gun02.png");
+	temp.loadFromFile("Textures/Guns/gunDoubleStock06.png");
 	Player::shipMainGunTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/gun03.png");
+	temp.loadFromFile("Textures/Guns/gunTripleStock06.png");
 	Player::shipMainGunTextures.Add(temp);
 
 	// Powerup indication textures
@@ -39,7 +39,7 @@ void Player::InitTextures() {
 	Player::shipShieldTextures.Add(temp);
 
 	// Ship Parts textures
-	std::string accessoriesBaseDir = "Textures/Accessories/";
+	std::string accessoriesBaseDir = "Textures/Ships/Player/";
 	std::string accessories[] = {
 	"leftwings.txt","rightwings.txt","auras.txt","cockpits.txt" };
 
