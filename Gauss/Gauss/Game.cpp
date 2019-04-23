@@ -532,7 +532,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1:
 						{
-							if (dropChance > 90) { // 10% chance for an upgrade
+							if (dropChance > 10) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -544,7 +544,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 									// Want to make it really hard to get double and triple ray upgrades
 									if (uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance >= 97) {
+										if (dropChance >= 7) {
 											// only a 3% chance this will happen
 											uType = ItemUpgrade::Type::TRIPLE_RAY;
 											break;
@@ -552,14 +552,14 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 									}
 									else if (uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance >= 93) {
+										if (dropChance >= 3) {
 											// only a 7% chance this will happen
 											uType = ItemUpgrade::Type::TRIPLE_RAY;
 											break;
 										}
 									}
 								}
-
+								uType == ItemUpgrade::Type::DOUBLE_RAY;
 								this->consumables.Add(new ItemUpgrade(
 									currentEnemy->getPosition(),
 									uType,

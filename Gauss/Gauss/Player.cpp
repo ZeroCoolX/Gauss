@@ -25,7 +25,7 @@ void Player::InitTextures() {
 	Player::shipMainGunTextures.Add(temp);
 	temp.loadFromFile("Textures/Guns/gunDoubleStock06.png");
 	Player::shipMainGunTextures.Add(temp);
-	temp.loadFromFile("Textures/Guns/gunTripleStock06.png");
+	temp.loadFromFile("Textures/Guns/gunTripleStock07.png");
 	Player::shipMainGunTextures.Add(temp);
 
 	// Powerup indication textures
@@ -561,7 +561,7 @@ void Player::SetGunLevel(int gunLevel) {
 		this->mainGunSprite.setTexture(Player::shipMainGunTextures[this->mainGunLevel]);
 		// Hack right now since I don't like how the level 3 gun looks
 		if (this->mainGunLevel == LaserLevels::LEVEL_3_LASER) {
-			this->mainGunSprite.setScale(0.75f, 0.75f);
+			//this->mainGunSprite.setScale(0.75f, 0.75f);
 		}
 	}
 }
