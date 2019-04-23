@@ -17,6 +17,11 @@
 class Game
 {
 private:
+	// Only for test
+	Sound sound;
+	SoundBuffer soundBuff;
+
+
 	// Game
 	MainMenu *mainMenu;
 

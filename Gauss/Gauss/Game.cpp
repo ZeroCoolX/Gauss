@@ -559,7 +559,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										}
 									}
 								}
-								uType == ItemUpgrade::Type::DOUBLE_RAY;
+								uType = ItemUpgrade::Type::DOUBLE_RAY;
 								this->consumables.Add(new ItemUpgrade(
 									currentEnemy->getPosition(),
 									uType,

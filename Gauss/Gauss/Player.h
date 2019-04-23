@@ -5,6 +5,7 @@
 class Player
 {
 private:
+
 	// INPUT
 	float keyTimeMax;
 	float keyTime;
@@ -251,8 +252,6 @@ public:
 		return (v / length);
 	}
 
-
-
 	// Functions
 	void Reset();
 	bool UpdateLeveling();
@@ -288,6 +287,9 @@ public:
 	static dArr<Texture> powerupIndicatorTextures;
 
 	static void InitTextures();
+
+	//static SoundBuffer soundBuff;
+	//static Sound sound;
 
 	enum Weapon { 
 		LASER_GUN = 0, 

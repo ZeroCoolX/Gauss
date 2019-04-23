@@ -3,6 +3,9 @@
 
 unsigned Player::playerId = 0;
 
+//SoundBuffer Player::soundBuff;
+//Sound Player::sound;
+
 //dArr<Texture> Player::shipBulletTextures;
 dArr<Texture> Player::shipBodyTextures;
 dArr<Texture> Player::shipMainGunTextures;
@@ -123,6 +126,8 @@ Player::Player(
 	this->controls.Add(CHANGE_CPIT);
 	this->controls.Add(CHANGE_RWING);
 	this->controls.Add(CHANGE_AURA);
+
+	this->InitAudio();
 }
 
 Player::~Player()
@@ -198,6 +203,7 @@ void Player::Combat(const float &dt) {
 
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
+		this->PlayAudio();
 		switch (this->currentWeapon) {
 			case Player::LASER_GUN:
 				this->_fireLaser(direction);
