@@ -75,6 +75,7 @@ void Player::InitTextures() {
 }
 
 Player::Player(
+	AudioManager* audioManager,
 	int UP, 
 	int DOWN,
 	int LEFT, 
@@ -89,6 +90,7 @@ Player::Player(
 	int CHANGE_AURA
 ) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
+	this->audioManager = audioManager;
 	// Stats
 	// Formula courtesy of Suraj Sharma and Tibia
 	// https://www.youtube.com/watch?v=SPcLqoTbIWE&list=PL6xSOsbVA1eZUKRu_boTDdzu8pGsVNpTo&index=18
@@ -126,8 +128,6 @@ Player::Player(
 	this->controls.Add(CHANGE_CPIT);
 	this->controls.Add(CHANGE_RWING);
 	this->controls.Add(CHANGE_AURA);
-
-	this->InitAudio();
 }
 
 Player::~Player()
@@ -203,7 +203,7 @@ void Player::Combat(const float &dt) {
 
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		this->PlayAudio();
+		this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
 		switch (this->currentWeapon) {
 			case Player::LASER_GUN:
 				this->_fireLaser(direction);

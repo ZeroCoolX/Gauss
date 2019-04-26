@@ -8,6 +8,10 @@ Game::Game(RenderWindow *window)
 
 	this->mainMenu = nullptr;
 
+	this->audioManager = new AudioManager();
+	//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
+	this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
+
 	this->gameMode = Mode::SURVIVAL;
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
@@ -28,7 +32,7 @@ Game::Game(RenderWindow *window)
 	this->killboxAdderMax = 10;
 
 	// Init player
-	this->players.Add(Player());
+	this->players.Add(Player(this->audioManager));
 
 	/*this->players.Add(Player(Keyboard::I, 
 		Keyboard::K,
@@ -69,6 +73,7 @@ Game::~Game()
 {
 	delete this->stage;
 	delete this->mainMenu;
+	delete this->audioManager;
 }
 
 void Game::InitRenderTexture() {
@@ -306,10 +311,11 @@ void Game::RestartUpdate() {
 			// Reset player
 			const int nrOfPlayers = Player::playerId;
 			Player::playerId = 0;
-			this->players.Add(Player());
+			this->players.Add(Player(this->audioManager));
 			// If there was a player 2 add them back in as well
 			if (nrOfPlayers > 1) {
-				this->players.Add(Player(Keyboard::I,
+				this->players.Add(Player(this->audioManager,
+					Keyboard::I,
 					Keyboard::K,
 					Keyboard::J,
 					Keyboard::L,

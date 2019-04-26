@@ -23,13 +23,13 @@ int main() {
 	Game game(&window);
 	GameMapEditor mapEditor(&window);
 
-	Music music;
-	if (!music.openFromFile("Audio/Music/Music_Boss.ogg")) {
-		std::cout << "Error! Could not open music file" << std::endl;
-	}
-	else {
-		music.play();
-	}
+	//Music music;
+	//if (!music.openFromFile("Audio/Music/Music_Boss.ogg")) {
+	//	std::cout << "Error! Could not open music file" << std::endl;
+	//}
+	//else {
+	//	music.play();
+	//}
 
 	Font f;
 	if(!f.loadFromFile("Fonts/Dosis-Light.ttf")){

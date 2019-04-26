@@ -18,9 +18,7 @@ class Game
 {
 private:
 	// Only for test
-	Sound sound;
-	SoundBuffer soundBuff;
-
+	AudioManager* audioManager;
 
 	// Game
 	MainMenu *mainMenu;

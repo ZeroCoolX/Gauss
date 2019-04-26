@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Bullet.h"
+#include "AudioManager.h"
 
 class Player
 {
 private:
+	AudioManager* audioManager;
 
 	// INPUT
 	float keyTimeMax;
@@ -150,6 +152,7 @@ private:
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
 	Player(
+		AudioManager* audioManager,
 		int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
