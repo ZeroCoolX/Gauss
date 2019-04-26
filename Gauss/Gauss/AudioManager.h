@@ -13,9 +13,16 @@ public:
 		SoundBuffer* soundBuffer; 
 		
 	public:
-		SoundInfo(const std::string& path){
+		SoundInfo(const std::string& path, float volume = 100.f, float pitch = 1.f, bool loop = false) {
+			// Init audio filepath
 			this->filePath = path;
+
+			// Init pointers
 			this->sound = new Sound();
+			this->sound->setVolume(volume);
+			this->sound->setPitch(pitch);
+			this->sound->setLoop(loop);
+
 			this->soundBuffer = new SoundBuffer();
 		}
 

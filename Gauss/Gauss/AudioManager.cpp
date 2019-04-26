@@ -19,7 +19,7 @@ AudioManager::~AudioManager()
 
 
 AudioManager::SoundInfo* AudioManager::LoadSound(const std::string& path) {
-	SoundInfo* soundInfo = new SoundInfo(path);
+	SoundInfo* soundInfo = new SoundInfo(path, 50.f);
 
 	if (!soundInfo->soundBuffer->loadFromFile(soundInfo->filePath)) {
 		delete soundInfo->soundBuffer;
