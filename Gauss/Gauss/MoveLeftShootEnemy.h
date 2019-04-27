@@ -14,7 +14,7 @@ public:
 		int playerLvlScaleFactor,
 		int playerFollowNum, 
 		float forcedVelocity,
-		Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::MOVE_LEFT_SHOOT], Vector2f(0.15f, 0.15f)) {
+		Vector2f forcedPosition = Vector2f(0.f, 0.f)) : EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::GetEnemyType(EnemyLifeform::MOVE_LEFT_SHOOT)], Vector2f(0.15f, 0.15f)) {
 
 		// WINDOW
 		this->window = window; // TODO: remove

@@ -3,6 +3,18 @@
 dArr<Bullet> EnemyLifeform::bullets;
 dArr<Texture> EnemyLifeform::enemyTextures;
 int EnemyLifeform::nrOfEnemyTypes;
+bool EnemyLifeform::hotSwap;
+
+int EnemyLifeform::GetEnemyType(int eType) {
+	if (!EnemyLifeform::hotSwap) {
+		return eType;
+	}
+	int newType = rand() % EnemyLifeform::nrOfEnemyTypes;
+	if (newType == eType) {
+		newType = (eType + 1) % EnemyLifeform::nrOfEnemyTypes;
+	}
+}
+
 void EnemyLifeform::InitializeTextures() {
 	Texture temp;
 	temp.loadFromFile("Textures/Ships/enemyMoveLeft_v2.png");
@@ -14,6 +26,16 @@ void EnemyLifeform::InitializeTextures() {
 	temp.loadFromFile("Textures/Ships/enemyMoveLeftShootLine.png");
 	EnemyLifeform::enemyTextures.Add(Texture(temp));
 	nrOfEnemyTypes = EnemyLifeform::enemyTextures.Size();
+
+	// Purposely declared AFTER number of enemies for now
+	temp.loadFromFile("Textures/Ships/cosmo_1.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/cosmo_2.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/cosmo_3.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Ships/cosmo_4.png");
+	EnemyLifeform::enemyTextures.Add(Texture(temp));
 }
 
 EnemyLifeform::~EnemyLifeform()

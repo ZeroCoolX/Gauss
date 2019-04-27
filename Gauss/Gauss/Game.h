@@ -5,6 +5,7 @@
 #include "TrackerEnemy.h"
 #include "MoveLeftShootEnemy.h"
 #include "MoveLeftShootLineEnemy.h"
+#include "CosmoEnemy.h"
 #include "ItemPickup.h"
 #include "ItemUpgrade.h"
 #include "Boss.h"

@@ -1,10 +1,9 @@
 #include <algorithm>
 #include "Player.h"
+#include "EnemyLifeform.h"
 
 unsigned Player::playerId = 0;
 
-//SoundBuffer Player::soundBuff;
-//Sound Player::sound;
 
 //dArr<Texture> Player::shipBulletTextures;
 dArr<Texture> Player::shipBodyTextures;
@@ -202,7 +201,7 @@ void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 	this->_recalculatePlayerCenter();
 
 	// Bounds check for window collision
-	this->_checkBounds(view);
+	this->_checkBounds(view, this->warpVerticalBounds);
 }
 
 void Player::Combat(const float &dt) {
@@ -405,6 +404,34 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	this->shootTimerMax = this->getCalculatedShootTimer();
 
 	// Update timers
+	if (this->cosmoEffectTimer < this->cosmoEffectTimerMax) {
+		this->cosmoEffectTimer += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+	else {
+		if (this->effectedByCosmo) {
+			// UNDO COSMO!
+			this->effectedByCosmo = false;
+			switch (this->currentCosmoEffect) {
+			case CosmoEffects::INVERT_CONTROLS_EFFECT:
+				this->ToggleInvertControlsEffect();
+				break;
+			case CosmoEffects::VERTICAL_WARP_EFFECT:
+				this->ToggleWarpBoundsEffect(false);
+				break;
+			case CosmoEffects::SPEED_INCREASE_EFFECT:
+				this->ToggleSpeedIncreaseEffect(false);
+				break;
+			case CosmoEffects::SPEED_DECREASE_EFFECT:
+				this->ToggleSpeedDecreaseEffect(false);
+				break;
+			case CosmoEffects::SWAP_BADDIE_TYPES_EFFECT:
+				this->ToggleBaddieSwap(false);
+				break;
+			case CosmoEffects::VISUAL_DISTORTION_EFFECT:
+				break;
+			}
+		}
+	}
 	if (this->shootTimer < this->shootTimerMax) {
 		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	}
@@ -611,6 +638,7 @@ void Player::Reset() {
 	// Reset Physics
 	this->velocity.x = 0;
 	this->velocity.y = 0;
+	this->warpVerticalBounds = false;
 
 	// Reset upgrades
 	this->dualMissiles01 = false;
@@ -629,6 +657,9 @@ void Player::Reset() {
 	this->mainGunLevel = Player::DEFAULT_LASER;
 
 	// Reset Timers
+	this->effectedByCosmo = false;
+	this->cosmoEffectTimerMax = 500.f;
+	this->cosmoEffectTimer = this->cosmoEffectTimerMax;
 	this->shootTimerMax = this->getCalculatedShootTimer();
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 40.f;
@@ -711,19 +742,102 @@ std::string Player::GetStatsAsString() {
 		"\nLives: " + std::to_string(this->lives) +
 		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
 		"\nStatpoints: " + std::to_string(this->statPoints) +
-		"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
-		"\nDamage: " + std::to_string(this->damage) + "/" + std::to_string(this->damageMax) +
-		"\nScore: " + std::to_string(this->score) +
-		"\nPower: " + std::to_string(this->power) +
-		"\nPlating: " + std::to_string(this->plating) +
-		"\nManeuverability: " + std::to_string(this->maneuverability) +
-		"\nCooling: " + std::to_string(this->cooling) +
-		"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax) +
-		"\nShield Recharge Rate: " + std::to_string(this->shieldRechargeRate);
-
+		//"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
+		//"\nDamage: " + std::to_string(this->damage) + "/" + std::to_string(this->damageMax) +
+		//"\nScore: " + std::to_string(this->score) +
+		//"\nPower: " + std::to_string(this->power) +
+		//"\nPlating: " + std::to_string(this->plating) +
+		//"\nManeuverability: " + std::to_string(this->maneuverability) +
+		//"\nCooling: " + std::to_string(this->cooling) +
+		//"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax) +
+		//"\nShield Recharge Rate: " + std::to_string(this->shieldRechargeRate) +
+		"\nVelocity: " + std::to_string(this->maxVelocity) +
+		"\nAcceleration: " + std::to_string(this->acceleration) +
+		"\nCosmoEffect: " + std::to_string(this->effectedByCosmo);
 }
 
+std::string Player::ApplyCosmoEffect() {
+	std::string effectText = "";
 
+	if (this->effectedByCosmo) {
+		// we're already effected so disregard this for now
+		return effectText;
+	}
+
+	int cosmoEffect = rand() % 5; // number of possible cosmo effecs
+
+	this->effectedByCosmo = true;
+	this->cosmoEffectTimer = 0.f;
+
+	// do some stuff
+	switch (cosmoEffect) {
+	case CosmoEffects::INVERT_CONTROLS_EFFECT:
+		this->ToggleInvertControlsEffect();
+		this->currentCosmoEffect = CosmoEffects::INVERT_CONTROLS_EFFECT;
+		effectText = "UP = DOWN and DOWN = UP!";
+		break;
+	case CosmoEffects::VERTICAL_WARP_EFFECT:
+		this->currentCosmoEffect = CosmoEffects::VERTICAL_WARP_EFFECT;
+		this->ToggleWarpBoundsEffect(true);
+		effectText = "VERTICAL bounds TELEPORT!";
+		break;
+	case CosmoEffects::SPEED_INCREASE_EFFECT:
+		this->currentCosmoEffect = CosmoEffects::SPEED_INCREASE_EFFECT;
+		this->ToggleSpeedIncreaseEffect(true);
+		effectText = "SPEED INCREASED!";
+		break;
+	case CosmoEffects::SPEED_DECREASE_EFFECT:
+		this->currentCosmoEffect = CosmoEffects::SPEED_DECREASE_EFFECT;
+		this->ToggleSpeedDecreaseEffect(true);
+		effectText = "SPEED DECREASED!";
+		break;
+	case CosmoEffects::SWAP_BADDIE_TYPES_EFFECT:
+		this->currentCosmoEffect = CosmoEffects::SWAP_BADDIE_TYPES_EFFECT;
+		this->ToggleBaddieSwap(true);
+		effectText = "BADDIE SWAP!";
+		break;
+	case CosmoEffects::VISUAL_DISTORTION_EFFECT:
+		this->currentCosmoEffect = CosmoEffects::VISUAL_DISTORTION_EFFECT;
+		effectText = "I DON'T KNOW YET!!!!";
+		break;
+	}
+	return effectText;
+}
+
+void Player::ToggleInvertControlsEffect() {
+	int temp;
+	temp = this->controls[Player::CONTROL_UP];
+	this->controls[Player::CONTROL_UP] = this->controls[Player::CONTROL_DOWN];
+	this->controls[Player::CONTROL_DOWN] = temp;
+}
+
+void Player::ToggleWarpBoundsEffect(bool warp) {
+	this->warpVerticalBounds = warp;
+}
+
+void Player::ToggleSpeedIncreaseEffect(bool on) {
+	if (on) {
+		this->maxVelocity *= 2;
+		this->acceleration = 1.5f;
+	}
+	else {
+		this->maxVelocity = 15.f;
+		this->acceleration = 1.f;
+	}
+}
+
+void Player::ToggleSpeedDecreaseEffect(bool on) {
+	if (on) {
+		this->maxVelocity /= 2;
+	}
+	else {
+		this->maxVelocity = 15.f;
+	}
+}
+
+void Player::ToggleBaddieSwap(bool swap) {
+	EnemyLifeform::hotSwap = swap;
+}
 
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
@@ -837,6 +951,11 @@ void Player::_initPlayerSettings() {
 	this->bulletMaxSpeed = 60;
 	this->bulletAcceleration = 1.f;
 
+	// Setup cosmo properties
+	this->effectedByCosmo = false;
+	this->cosmoEffectTimerMax = 500.f;
+	this->cosmoEffectTimer = this->cosmoEffectTimerMax;
+
 	// Setup timers
 	this->shootTimerMax = this->getCalculatedShootTimer();
 	this->shootTimer = this->shootTimerMax;
@@ -854,6 +973,7 @@ void Player::_initPlayerSettings() {
 	this->maxVelocity = 15.f;
 	this->acceleration = 1.f;
 	this->stabalizingForce = 0.3f;
+	this->warpVerticalBounds = false;
 
 	// WEAPON
 	this->currentWeapon = Player::LASER_GUN;
@@ -955,10 +1075,10 @@ void Player::_checkBounds(View &view, bool warpVertical) {
 
 	if (warpVertical) {
 		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= viewTop) { // TOP BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, viewTop);
+			this->sprite.setPosition(this->sprite.getPosition().x, viewBottom - this->sprite.getGlobalBounds().height);
 		}
 		else if (this->getPosition().y >= viewBottom) { // BOTTOM BOUNDS
-			this->sprite.setPosition(this->sprite.getPosition().x, viewBottom - this->sprite.getGlobalBounds().height);
+			this->sprite.setPosition(this->sprite.getPosition().x, viewTop);
 		}
 	}
 	else {

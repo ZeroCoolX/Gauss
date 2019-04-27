@@ -159,6 +159,9 @@
     <ClCompile Include="GameOverMenu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CosmoEnemy.cpp">
+      <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dArr.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="PlayerScore.h">
       <Filter>Header Files\GameObjects\Lifeforms\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="CosmoEnemy.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

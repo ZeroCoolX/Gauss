@@ -29,6 +29,9 @@ protected:
 	float damageTimer;
 	Vector2i damageRange;
 
+	// MODIFIER?
+	bool universeModifier;
+
 protected:
 	float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
 	Vector2f normalize(Vector2f v, float length) {
@@ -37,7 +40,8 @@ protected:
 	}
 
 public:
-	EnemyLifeform(int playerFollowNum, Texture *texture, Vector2f spriteScale) : GameObject(texture, spriteScale) {
+	EnemyLifeform(int playerFollowNum, Texture *texture, Vector2f spriteScale, bool universeModifier = false) : GameObject(texture, spriteScale) {
+		this->universeModifier = universeModifier;
 		// TRACKING
 		this->playerFollowNum = playerFollowNum;
 	}
@@ -51,6 +55,7 @@ public:
 	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
 	inline void updatePlayerFollowNum(int num) { this->playerFollowNum = num; }
 	inline Vector2f getVelocity() const { return Vector2f(this->moveSpeed * this->normalizedMoveDirection.x, this->moveSpeed * this->normalizedMoveDirection.y); }
+	inline const bool isUniverseModifier() const { return this->universeModifier; }
 
 	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	virtual void Draw(RenderTarget &renderTarget);
@@ -67,11 +72,16 @@ public:
 		FOLLOW, 
 		MOVE_LEFT_SHOOT, 
 		MOVE_LEFT_SHOOT_LINE, 
-		FOLLOW_FAST, 
-		FOLLOW_SHOOT, 
+		COSMOSOS_01,
+		COSMOSOS_02,
+		COSMOSOS_03,
+		COSMOSOS_04,
+		FOLLOW_SHOOT,
 		FOLLOW_FAST_SHOOT 
 	};
 
+	static bool hotSwap;
+	static int GetEnemyType(int eType);
 	static void InitializeTextures();
 };
 

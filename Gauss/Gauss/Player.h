@@ -5,7 +5,55 @@
 
 class Player
 {
+public:
+	enum Weapon {
+		LASER_GUN = 0,
+		MISSILE_LIGHT_GUN,
+		MISSILE_HEAVY_GUN
+	};
+	enum Controls {
+		CONTROL_UP = 0,
+		CONTROL_DOWN,
+		CONTROL_LEFT,
+		CONTROL_RIGHT,
+		CONTROL_FIRE,
+		CONTROL_GAUSSCANNON,
+		CONTROL_SHIELD,
+		CONTROL_TOGGLE_STATS,
+		CONTROL_CHANGE_LWING,
+		CONTROL_CHANGE_CPIT,
+		CONTROL_CHANGE_RWING,
+		CONTROL_CHANGE_AURA
+	};
+	enum ShipBody {
+		DEFAULT_SHIP_BODY = 0
+	};
+
+	enum LaserLevels {
+		DEFAULT_LASER = 0,
+		LEVEL_2_LASER,
+		LEVEL_3_LASER
+	};
+	enum Sheild {
+		DEFAULT_SHIELD = 0
+	};
+
+	enum CosmoEffects {
+		INVERT_CONTROLS_EFFECT = 0,
+		VERTICAL_WARP_EFFECT,
+		SPEED_INCREASE_EFFECT,
+		SPEED_DECREASE_EFFECT,
+		SWAP_BADDIE_TYPES_EFFECT,
+		VISUAL_DISTORTION_EFFECT
+	};
+
 private:
+	// Cosmo specific properties
+	bool effectedByCosmo;
+	CosmoEffects currentCosmoEffect;
+	float cosmoEffectTimer;
+	float cosmoEffectTimerMax;
+
 	AudioManager* audioManager;
 
 	// INPUT
@@ -95,7 +143,8 @@ private:
 	// Movement
 	Vector2f velocity;
 	float maxVelocity;
-	float acceleration;
+	bool warpVerticalBounds;
+	float acceleration; // increase or decrease acceleration i think
 	Vector2f direction;
 	Vector2f normalizedDir;
 	float stabalizingForce;
@@ -271,18 +320,20 @@ public:
 	}
 
 	// Functions
-	void Reset();
-	bool UpdateLeveling();
-	bool ChangeAccessories(const float &dt);
 	void UpdateAccessories(const float &dt, const float scollSpeed);
 	void UpdatePowerups(const float &dt);
-	void Combat(const float &dt);
-	void Movement(const float &dt, View &view, const float scrollSpeed);
-	void Draw(RenderTarget &renderTarget);
-	void DrawUI(RenderTarget &renderTarget);
+	bool UpdateLeveling();
 	void UpdateStatsUI();
 	void Update(View &view, const float &dt, const float scrollSpeed);
 	void UpdateStats();
+
+	void Draw(RenderTarget &renderTarget);
+	void DrawUI(RenderTarget &renderTarget);
+
+	void Reset();
+	bool ChangeAccessories(const float &dt);
+	void Combat(const float &dt);
+	void Movement(const float &dt, View &view, const float scrollSpeed);
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
@@ -292,6 +343,15 @@ public:
 	bool PlayerShowStatsIsPressed();
 	std::string GetStatsAsString();
 	void ResetOnLifeLost();
+
+	// Cosmo Effects
+	inline const bool isEffectedByCosmo() const { return this->effectedByCosmo; }
+	std::string ApplyCosmoEffect();
+	void ToggleInvertControlsEffect();
+	void ToggleWarpBoundsEffect(bool warp);
+	void ToggleSpeedIncreaseEffect(bool on);
+	void ToggleSpeedDecreaseEffect(bool on);
+	void ToggleBaddieSwap(bool swap);
 
 	// Statics
 	static unsigned playerId;
@@ -306,37 +366,5 @@ public:
 	static dArr<Texture> powerupIndicatorTextures;
 
 	static void InitTextures();
-
-	enum Weapon { 
-		LASER_GUN = 0, 
-		MISSILE_LIGHT_GUN, 
-		MISSILE_HEAVY_GUN 
-	};
-	enum Controls { 
-		CONTROL_UP = 0, 
-		CONTROL_DOWN, 
-		CONTROL_LEFT, 
-		CONTROL_RIGHT, 
-		CONTROL_FIRE, 
-		CONTROL_GAUSSCANNON, 
-		CONTROL_SHIELD, 
-		CONTROL_TOGGLE_STATS, 
-		CONTROL_CHANGE_LWING, 
-		CONTROL_CHANGE_CPIT, 
-		CONTROL_CHANGE_RWING, 
-		CONTROL_CHANGE_AURA 
-	};
-	enum ShipBody { 
-		DEFAULT_SHIP_BODY = 0 
-	};
-
-	enum LaserLevels {
-		DEFAULT_LASER = 0, 
-		LEVEL_2_LASER, 
-		LEVEL_3_LASER
-	};
-	enum Sheild {
-		DEFAULT_SHIELD = 0
-	};
 };
 

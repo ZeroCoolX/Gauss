@@ -13,7 +13,7 @@ public:
 		int playerLvlScaleFactor,
 		int playerFollowNum, 
 		float forcedVelocity,
-		Vector2f forcedPosition = Vector2f(0.f, 0.f)): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::FOLLOW], Vector2f(0.12f, 0.12f)) {
+		Vector2f forcedPosition = Vector2f(0.f, 0.f)): EnemyLifeform(playerFollowNum, &EnemyLifeform::enemyTextures[EnemyLifeform::GetEnemyType(EnemyLifeform::FOLLOW)], Vector2f(0.12f, 0.12f)) {
 		
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);

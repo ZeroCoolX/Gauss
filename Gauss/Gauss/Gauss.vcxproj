@@ -128,6 +128,7 @@
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Consumable.cpp" />
+    <ClCompile Include="CosmoEnemy.cpp" />
     <ClCompile Include="EnemyLifeform.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Consumable.h" />
+    <ClInclude Include="CosmoEnemy.h" />
     <ClInclude Include="EnemyLifeform.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Game.h" />

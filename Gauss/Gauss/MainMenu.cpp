@@ -57,9 +57,7 @@ void MainMenu::UpdateButtons(const float &dt) {
 					this->playInfinite = true;
 					return;
 				case MainMenu::BTN_COSMOS:
-					// TODO: Put this back in once I create this game mode
-					//this->playCosmos = true;
-					this->playInfinite = true;
+					this->playCosmos = true;
 					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();

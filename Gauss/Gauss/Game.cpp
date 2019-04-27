@@ -246,6 +246,10 @@ void Game::InitMap() {
 	switch (this->gameMode) {
 	case Game::Mode::INFINTE:
 		mapName = "infinite_invasion_01.smap";
+		break;
+	case Game::Mode::COSMOS:
+		mapName = "cosmos_01.smap";
+		break;
 	}
 	this->stage->LoadStage(mapName, this->mainView);
 }
@@ -567,7 +571,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1:
 						{
-							if (dropChance > 90) { // 10% chance for an upgrade
+							if (dropChance > 95) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -577,20 +581,17 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										uType = rand() % 1;
 									}
 									// Want to make it really hard to get double and triple ray upgrades
-									if (uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+									if (currentPlayer.getLevel() >= 10 && uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance <= 10) {
-											// only a203% chance this will happen
-											uType = ItemUpgrade::Type::TRIPLE_RAY;
-											break;
-										}
-									}
-									else if (uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
-										dropChance = rand() % 100 + 1;
-										if (dropChance <= 5) {
+										if (dropChance > 90) {
 											// only a 25% chance this will happen
 											uType = ItemUpgrade::Type::DOUBLE_RAY;
-											break;
+										}
+									}else if (currentPlayer.getLevel() >= 15 && uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+										dropChance = rand() % 100 + 1;
+										if (dropChance > 80) {
+											// only a203% chance this will happen
+											uType = ItemUpgrade::Type::TRIPLE_RAY;
 										}
 									}
 								}
@@ -613,7 +614,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						case 3:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 85) { // 25% chance powerup is dropped
+							if (dropChance > 90) { // 25% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -737,6 +738,38 @@ void Game::UpdateEnemySpawns(const float &dt) {
 			this->_spawnEnemy(rand() % EnemyLifeform::nrOfEnemyTypes);
 			this->enemySpawnTimer = 0;
 		}
+	}if (this->gameMode == Mode::COSMOS) {
+		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
+			const int cosmoChance = rand() % 100;
+			int numOfEnemies = EnemyLifeform::nrOfEnemyTypes;
+			if (cosmoChance > 90) {
+				numOfEnemies += 4;
+				// if even 1 player is currently effected by a cosmo don't spawn anymore!
+				for (size_t i = 0; i < this->players.Size(); i++)
+				{
+					if (this->players[i].isEffectedByCosmo()) {
+						numOfEnemies -= 4;
+						break;
+					}
+				}
+				int cosmosToSpawn = 1;
+				// There is a chance we can spawn 1-3 cosmos
+				int randType = rand() % numOfEnemies;
+				if (numOfEnemies > EnemyLifeform::nrOfEnemyTypes && randType >= 4) {
+					cosmosToSpawn = rand() % 3 + 1;
+				}
+				// Either spawn 1 normal, or multiple cosmos
+				for (int i = 0; i < cosmosToSpawn; i++)
+				{
+					this->_spawnEnemy(rand() % numOfEnemies);
+				}
+			}
+			else {
+				// No chance for cosmo spawns so spawn 1 normal enemy
+				this->_spawnEnemy(rand() % numOfEnemies);
+			}
+			this->enemySpawnTimer = 0;
+		}
 	}
 	else {// CAMPAIGN
 		// Get those spawners that are in the screen view only
@@ -844,8 +877,43 @@ void Game::UpdateEnemies(const float &dt) {
 				if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds())
 					&& !this->players[j].isDamageCooldown()) {
 
+					// Check if this is a Cosmosos
+					if (currentEnemy->isUniverseModifier()) {
+						// do stuff
+						const int nrOfPatricles = rand() % 20 + 5;
+						for (int m = 0; m < nrOfPatricles; m++)
+						{
+							this->particles.Add(Particle(currentEnemy->getPosition(),
+								0,
+								currentEnemy->getVelocity(),
+								rand() % 40 + 10.f,
+								rand() % 30 + 1.f,
+								50.f));
+						}
+						this->enemyLifeforms.Remove(i);
+						// Player is going to not be a happy camper for a bit
+						std::string effectText = this->players[j].ApplyCosmoEffect();
+						if (effectText != "") {
+							this->textTags.Add(
+								TextTag(
+									&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+										this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
+									effectText,
+									Color::Magenta,
+									Vector2f(-1.f, 0.f),
+									50, 80.f, true
+								)
+							);
+							return;
+						}
+					}
+
 					// Damage player		
 					int damage = currentEnemy->getDamage();
+					// Half damage player takes for Cosmos mode since its way harder
+					if (this->gameMode == Game::Mode::COSMOS) {
+						damage /= 2;
+					}
 					this->players[j].TakeDamage(damage);
 					// Collision resets the perfection streak
 					this->killPerfectionAdder = 0;
@@ -949,10 +1017,14 @@ void Game::UpdateEnemyBullets(const float &dt) {
 				}
 
 				// Damage player		
-				int damage = (rand() % 2 + 1) + (this->players[j].getLevel() / 2);// /*As level increases this got rediculous*/ EnemyLifeform::bullets[i].getDamage() / 3;
+				int damage = (rand() % 2 + 1) + (this->players[j].getLevel() / 2);
 
 				EnemyLifeform::bullets.Remove(i);
 
+				// Half damage player takes for Cosmos mode since its way harder
+				if (this->gameMode == Game::Mode::COSMOS) {
+					damage /= 2;
+				}
 				this->players[j].TakeDamage(damage);
 
 				// Player collision damage
@@ -1265,6 +1337,12 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
 		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, velocity, position));
+		break;
+	case EnemyLifeform::COSMOSOS_01:
+	case EnemyLifeform::COSMOSOS_02:
+	case EnemyLifeform::COSMOSOS_03:
+	case EnemyLifeform::COSMOSOS_04:
+		this->enemyLifeforms.Add(new CosmoEnemy(this->mainView, enemyType, eLevel, pNum, velocity, position));
 		break;
 	}
 

@@ -11,3 +11,4 @@ Textures/Backgrounds/bg10.png
 Textures/Backgrounds/bg11.png
 Textures/Backgrounds/bg12.png
 Textures/Backgrounds/space.png
+Textures/Backgrounds/cosmos.png
