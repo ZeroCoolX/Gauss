@@ -1,6 +1,7 @@
 #include "Game.h"
+#include <sstream>
 
-Game::Game(RenderWindow *window)
+Game::Game(RenderWindow *window) : infiniteLeaderboards(5)
 {
 	this->window = window;
 	// Init stage
@@ -21,6 +22,7 @@ Game::Game(RenderWindow *window)
 	this->InitTextures();
 	this->InitMap();
 	this->InitMenus();
+	this->InitLeaderboards();
 
 	// Init scoring multipliers
 	this->killPerfectionMultiplier = 1;
@@ -181,7 +183,7 @@ void Game::InitUI() {
 
 	// Game Over Text
 	this->gameOverText.setFont(this->font);
-	this->gameOverText.setCharacterSize(30);
+	this->gameOverText.setCharacterSize(20);
 	this->gameOverText.setFillColor(Color::Red);
 	this->gameOverText.setString("Game Over! (X___X)");
 	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
@@ -199,6 +201,41 @@ void Game::InitUI() {
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setString("Score: 0");
 	this->scoreText.setPosition(10.f, 10.f);
+}
+
+void Game::InitLeaderboards() {
+
+	// Load campaign leaderboards
+	//this->leaderboards.Add(dArr<Leaderboard>(3));
+
+	// Load Infinite leaderboards
+	std::ifstream fin;
+	std::string line;
+	int leadIndex = 0;
+	fin.open("Leaderboards/Infinite/leaderboard.txt");
+	if (fin.is_open()) {
+		// Lead line by line
+		Leaderboard leader;
+		while (getline(fin, line)) {
+			std::stringstream ss;
+			ss.str(line);
+			ss >> leader.id;
+			ss >> leader.score;
+			this->infiniteLeaderboards.Add(leader);
+		}
+		this->_sortLeaderboard();
+		std::cout << "Loaded Infinite leaderboards" << std::endl;
+		for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
+		{
+			std::cout << "Leader " << std::to_string(this->infiniteLeaderboards[i].id) << ": " << std::to_string(this->infiniteLeaderboards[i].score) << "\n" << std::endl;
+		}
+	}
+	else {
+		std::cerr << "Failure to open Inifinite leaderboards file" << std::endl;
+	}
+
+	// Load Cosmos Leaderboards
+	//this->leaderboards.Add(dArr<Leaderboard>(5));
 }
 
 void Game::InitMap() {
@@ -265,10 +302,6 @@ void Game::Update(const float &dt) {
 
 		// Update Particles 
 		this->UpdateParticles(dt);
-
-		// Update mid game if the player wants to
-		this->RestartUpdate();
-
 	}
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
 		// Show end game stats
@@ -315,16 +348,8 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->mainView.setCenter(Vector2f(
 			this->window->getSize().x / 2.f,
 			this->window->getSize().y / 2.f));
+		this->mainMenu->Reset();
 		this->mainMenu->activate();
-	}
-	else {
-		this->RestartUpdate();
-	}
-}
-
-void Game::RestartUpdate() {
-	if (Keyboard::isKeyPressed(Keyboard::F1)) {
-		this->_redeploy();
 	}
 }
 
@@ -1126,7 +1151,14 @@ void Game::DisplayGameEnd() {
 	std::string scoreText = "";
 	std::map<int, PlayerScore>::iterator it = this->playerScoreMap.begin();
 	while (it != this->playerScoreMap.end()) {
-		scoreText += "Player " + std::to_string(it->first) + " Score: " + this->_calculateScore(it->second) + "\n";
+		// calculate the final player score
+		const int finalPlayerScore = this->_calculateScore(it->second);
+		
+		// insert it into the leaderboard if possible
+	   this->_insertLeaderboardEntry(it->first, finalPlayerScore);
+		
+		// display stats on screen
+		scoreText += "Player " + std::to_string(it->first) + " Score: " + std::to_string(finalPlayerScore) + "\n";
 		scoreText +=	"\tEnemies Killed: " + std::to_string(it->second.getEnemiesKilled()) +
 						"\n\tHighest Level Achieved: Level " + std::to_string(it->second.getHighestLevelAchieved()) +
 						"\n\tTime Survived: " + std::to_string(static_cast<int>(it->second.getSecondsSurvived())) + " seconds" +
@@ -1140,11 +1172,41 @@ void Game::DisplayGameEnd() {
 	if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
 		this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
 	}
+	for (size_t i = 0; i < 5; i++)
+	{
+		std::cout << "Leader " << std::to_string(this->infiniteLeaderboards[i].id) << ": " << std::to_string(this->infiniteLeaderboards[i].score) << "\n" << std::endl;
+	}
 }
 
-std::string Game::_calculateScore(PlayerScore &playerScore) {
+void Game::_insertLeaderboardEntry(int id, int score) {
+	// Only if this score is >= the last entry is it stored
+	if (score >= this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
+		// Remove lowest
+		this->infiniteLeaderboards.Remove(this->infiniteLeaderboards.Size() - 1);
+		Leaderboard lead;
+		lead.id = id;
+		lead.score = score;
+		// Add new one
+		this->infiniteLeaderboards.Add(lead);
+		// Sort
+		this->_sortLeaderboard();
+	}
+}
+
+void Game::_sortLeaderboard() {
+		for (size_t i = 0; i < this->infiniteLeaderboards.Size() - 1; i = i + 1) {
+			int min = i;
+			for (size_t j = i + 1; j < this->infiniteLeaderboards.Size(); j = j + 1) {
+				if (this->infiniteLeaderboards[j].score > this->infiniteLeaderboards[min].score) { min = j; }
+			}
+			std::swap(this->infiniteLeaderboards[i], this->infiniteLeaderboards[min]);
+		}
+}
+
+
+int Game::_calculateScore(PlayerScore &playerScore) {
 	// total score + enemies killed per second over lifetime + score per second over lifetime
-	return std::to_string(static_cast<int>(playerScore.getScore() + (static_cast<float>(playerScore.getEnemiesKilled()) / playerScore.getSecondsSurvived()) + (static_cast<float>(totalScore) / playerScore.getSecondsSurvived()) + (playerScore.getHighestLevelAchieved() * 10)));
+	return static_cast<int>(playerScore.getScore() + (static_cast<float>(playerScore.getEnemiesKilled()) / playerScore.getSecondsSurvived()) + (static_cast<float>(totalScore) / playerScore.getSecondsSurvived()) + (playerScore.getHighestLevelAchieved() * 10));
 }
 
 void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
@@ -1231,22 +1293,7 @@ void Game::_redeploy() {
 		// Reset player
 		const int nrOfPlayers = Player::playerId;
 		Player::playerId = 0;
-		this->players.Add(Player(this->audioManager));
-		// If there was a player 2 add them back in as well
-		if (nrOfPlayers > 1) {
-			this->players.Add(Player(this->audioManager,
-				Keyboard::I,
-				Keyboard::K,
-				Keyboard::J,
-				Keyboard::L,
-				Keyboard::RShift,
-				Keyboard::U,
-				Keyboard::Return,
-				Keyboard::Num7,
-				Keyboard::Num8,
-				Keyboard::Num9,
-				Keyboard::Num0));
-		}
+		this->InitPlayersInWorld(nrOfPlayers);
 	}
 
 	this->InitUI();

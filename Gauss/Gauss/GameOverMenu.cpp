@@ -2,7 +2,8 @@
 
 GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
 {
-	//this->callbackFunction = callback;
+	this->pressTimeMax = 10.f;
+	this->pressTime = this->pressTimeMax;
 	this->active = false;
 	this->font = font;
 	this->window = window;
@@ -16,9 +17,9 @@ GameOverMenu::~GameOverMenu()
 
 void GameOverMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_REDEPLOY, this->font, "Redeploy", 18, Vector2f(50.f, 550.f), 1));
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_MENU, this->font, "Menu", 18, Vector2f(50.f, 650.f), 1));
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(50.f, 750.f), 1));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_REDEPLOY, this->font, "Redeploy", 18, Vector2f(50.f, 650.f), 1));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_MENU, this->font, "Menu", 18, Vector2f(50.f, 750.f), 1));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(50.f, 850.f), 1));
 }
 
 // Init
@@ -29,7 +30,7 @@ void GameOverMenu::Init() {
 
 void GameOverMenu::InitBackground() {
 	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
-	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/genericGameOverBackground.png");
+	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/genericGameOverBackground02.png");
 	this->background.setTexture(&this->backgroundTexture);
 	this->background.setFillColor(Color(255, 255, 255, 255));
 }
@@ -38,17 +39,18 @@ void GameOverMenu::UpdateButtons(const float &dt) {
 	for (size_t i = 0; i < this->buttons.Size(); i++)
 	{
 		this->buttons[i]->Update(this->mousePosWorld);
-		if (this->buttons[i]->IsPressed()) {
+		if (this->buttons[i]->IsPressed() && this->pressTime >= this->pressTimeMax) {
+			this->pressTime = 0.f;
 			switch (this->buttons[i]->getId()) {
 			case GameOverMenu::BTN_REDEPLOY:
 				this->redeploy = true;
-				break;
+				return;
 			case GameOverMenu::BTN_MENU:
 				this->menu = true;
-				break;
+				return;
 			case GameOverMenu::BTN_EXIT:
 				this->window->close();
-				break;
+				return;
 			}
 		}
 	}
@@ -56,8 +58,16 @@ void GameOverMenu::UpdateButtons(const float &dt) {
 
 // Update
 void GameOverMenu::Update(const float &dt) {
+	// Presstime update
+	this->UpdateTimers(dt);
 	this->UpdateMousePosition();
 	this->UpdateButtons(dt);
+}
+
+void GameOverMenu::UpdateTimers(const float &dt) {
+	if (this->pressTime < this->pressTimeMax) {
+		this->pressTime += 1.f * dt * DeltaTime::dtMultiplier;
+	}
 }
 
 void GameOverMenu::UpdateMousePosition() {
@@ -104,4 +114,5 @@ void GameOverMenu::Reset() {
 	this->deactivate();
 	this->redeploy = false;
 	this->menu = false;
+	this->pressTime = 0.f;
 }

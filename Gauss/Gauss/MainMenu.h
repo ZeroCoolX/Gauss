@@ -12,6 +12,9 @@ private:
 	bool playCampaign = false;
 	bool playInfinite = false;
 
+	float pressTimeMax;
+	float pressTime = this->pressTimeMax;
+
 	Font font;
 	Texture backgroundTexture;
 	RectangleShape background;
@@ -42,6 +45,7 @@ public:
 	void Update(const float &dt);
 	void UpdateButtons(const float &dt);
 	void UpdateMousePosition();
+	void UpdateTimers(const float &dt);
 	
 	// Draw
 	void Draw(RenderTarget &renderTarget);

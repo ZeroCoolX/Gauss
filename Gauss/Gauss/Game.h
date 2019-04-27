@@ -17,7 +17,23 @@
 
 class Game
 {
+public:
+	enum Mode {
+		CAMPAIGN = 0,
+		INFINTE,
+		COSMOS
+	};
+
 private:
+	struct Leaderboard {
+	public:
+		int id;
+		int score;
+	};
+
+	// 3 potential leaderboards
+	dArr<Leaderboard> infiniteLeaderboards;
+
 	// Only for test
 	AudioManager* audioManager;
 
@@ -104,7 +120,10 @@ private:
 	void _spawnEnemy(int enemyType, int velocity = -1, Vector2f position = Vector2f(0.f, 0.f));
 	std::string _getPlayerLivesText();
 	void _redeploy();
-	std::string _calculateScore(PlayerScore &playerScore);
+	int _calculateScore(PlayerScore &playerScore);
+	void _sortLeaderboard();
+	void _insertLeaderboardEntry(int id, int score);
+
 
 public:
 	Game(RenderWindow *window);
@@ -127,12 +146,12 @@ public:
 	void InitView();
 	void InitTextures();
 	void InitUI();
+	void InitLeaderboards();
 	void InitMap();
 	void InitMenus();
 
 	void UpdateView(const float &dt);
 	void Update(const float &dt);
-	void RestartUpdate();
 	void UpdateTimers(const float &dt);
 	void UpdateTimersUnpaused(const float &dt);
 	void UpdateDifficulty();
@@ -166,12 +185,5 @@ public:
 	void ToggleFullscreen();
 	void PauseGame();
 	void DisplayGameEnd();
-
-	// statics
-	enum Mode {
-		CAMPAIGN = 0, 
-		INFINTE,
-		COSMOS
-	};
 };
 

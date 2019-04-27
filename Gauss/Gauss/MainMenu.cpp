@@ -3,6 +3,8 @@
 
 MainMenu::MainMenu(Font &font, RenderWindow *window)
 {
+	this->pressTimeMax = 10.f;
+	this->pressTime = this->pressTimeMax;
 	this->active = true;
 	this->font = font;
 	this->window = window;
@@ -34,6 +36,8 @@ void MainMenu::InitBackground() {
 }
 
 void MainMenu::Update(const float &dt) {
+	// Presstime update
+	this->UpdateTimers(dt);
 	this->UpdateMousePosition();
 	this->UpdateButtons(dt);
 }
@@ -43,24 +47,31 @@ void MainMenu::UpdateButtons(const float &dt) {
 	for (size_t i = 0; i < this->buttons.Size(); i++)
 	{
 		this->buttons[i]->Update(this->mousePosWorld);
-		if (this->buttons[i]->IsPressed()) {
+		if (this->buttons[i]->IsPressed() && this->pressTime >= this->pressTimeMax) {
+			this->pressTime = 0.f;
 			switch (this->buttons[i]->getId()) {
 				case MainMenu::BTN_CAMPAIGN:
 					this->playCampaign = true;
-					break;
+					return;
 				case MainMenu::BTN_INFINITE:
 					this->playInfinite = true;
-					break;
+					return;
 				case MainMenu::BTN_COSMOS:
 					// TODO: Put this back in once I create this game mode
 					//this->playCosmos = true;
 					this->playInfinite = true;
-					break;
+					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
-					break;
+					return;
 			}
 		}
+	}
+}
+
+void MainMenu::UpdateTimers(const float &dt) {
+	if (this->pressTime < this->pressTimeMax) {
+		this->pressTime += 1.f * dt * DeltaTime::dtMultiplier;
 	}
 }
 
@@ -109,5 +120,6 @@ void MainMenu::Reset() {
 	this->playCosmos = false;
 	this->playCampaign = false;
 	this->playInfinite = false;
+	this->pressTime = 0.f;
 }
 
