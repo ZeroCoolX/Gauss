@@ -50,6 +50,7 @@ public:
 	inline Vector2f getPosition() const { return this->sprite.getPosition(); }
 	inline const int& getPlayerFollowNum() const { return this->playerFollowNum; }
 	inline void updatePlayerFollowNum(int num) { this->playerFollowNum = num; }
+	inline Vector2f getVelocity() const { return Vector2f(this->moveSpeed * this->normalizedMoveDirection.x, this->moveSpeed * this->normalizedMoveDirection.y); }
 
 	virtual void Update(const float &dt, Vector2f target = Vector2f(0.f, 0.f));
 	virtual void Draw(RenderTarget &renderTarget);

@@ -817,6 +817,17 @@ void Game::UpdateEnemies(const float &dt) {
 						)
 					);
 
+					const int nrOfPatricles = rand() % 20 + 5;
+					for (int m = 0; m < nrOfPatricles; m++)
+					{
+						this->particles.Add(Particle(currentEnemy->getPosition(),
+							0,
+							currentEnemy->getVelocity(),
+							rand() % 40 + 10.f,
+							rand() % 30 + 1.f,
+							50.f));
+					}
+
 					// Check for player death
 					if (players[j].isDead()) {
 						this->players.Remove(j);

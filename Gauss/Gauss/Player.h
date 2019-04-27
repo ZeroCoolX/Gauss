@@ -100,11 +100,11 @@ private:
 	Vector2f normalizedDir;
 	float stabalizingForce;
 
+	// STATS
 	int level;
 	int exp;
 	int expNext;
 	int statPoints;
-
 	int cooling;				// shield recharge rate
 	int plating;				// armour
 	int power;					// strength
@@ -120,7 +120,12 @@ private:
 	int damage;
 	int damageMax;
 
+	// SCORE STATS
 	int score;
+	int enemiesKilled;
+	int highestLevelAchieved;
+	float timeSurvived;
+
 
 	int currentWeapon;
 
