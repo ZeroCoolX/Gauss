@@ -90,6 +90,7 @@ private:
 	Text staticPlayerText;
 	Text enemyText;
 	Text gameOverText;
+	Text cosmoEffectText;
 	Text infinteLeaderboardText;
 	Text scoreText;
 	Text controlsText;

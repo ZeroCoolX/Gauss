@@ -14,11 +14,11 @@ public:
 
 		// MOVEMENT
 		this->moveDirection = Vector2f(-1.f, 0.f);
-		this->moveSpeed = (forcedVelocity > 0 ? forcedVelocity : rand() % 10 + 5.f);
+		this->moveSpeed = (forcedVelocity > 0 ? forcedVelocity : rand() % 20 + 5.f);
 
 		// STATS
 		this->damageRange = Vector2i(2, 1);
-		this->hpMax = (rand() % 5 + 2) * playerLvlScaleFactor;
+		this->hpMax = (rand() % 4 + 2) * playerLvlScaleFactor;
 		this->hp = this->hpMax;
 
 		this->InitSpritePoisition(view, forcedPosition);

@@ -181,6 +181,12 @@ void Game::InitUI() {
 	this->enemyText.setCharacterSize(14);
 	this->enemyText.setFillColor(Color::White);
 
+	// Cosmos Text
+	this->cosmoEffectText.setFont(this->font);
+	this->cosmoEffectText.setCharacterSize(40);
+	this->cosmoEffectText.setFillColor(Color::Magenta);
+	this->cosmoEffectText.setPosition(10.f, 10.f);
+
 	// Game Over Text
 	this->gameOverText.setFont(this->font);
 	this->gameOverText.setCharacterSize(20);
@@ -435,10 +441,12 @@ void Game::UpdatePlayers(const float &dt) {
 		// Reset the total each calculation
 		this->totalScore = 0;
 
+		bool playersEffectedByCosmos = true;
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
 			this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
+			playersEffectedByCosmos = this->players[i].isEffectedByCosmo();
 
 			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
 			//this->UpdateWallColliders(dt, i);
@@ -448,6 +456,9 @@ void Game::UpdatePlayers(const float &dt) {
 			this->UpdatePlayerBullets(dt, this->players[i]);
 
 			this->totalScore += this->players[i].getScore();
+		}
+		if (!playersEffectedByCosmos) {
+			this->cosmoEffectText.setString("");
 		}
 
 		this->UpdateScoreUI();
@@ -894,6 +905,8 @@ void Game::UpdateEnemies(const float &dt) {
 						// Player is going to not be a happy camper for a bit
 						std::string effectText = this->players[j].ApplyCosmoEffect();
 						if (effectText != "") {
+							this->cosmoEffectText.setString("Cosmo Effect: " + effectText);
+
 							this->textTags.Add(
 								TextTag(
 									&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
@@ -901,7 +914,7 @@ void Game::UpdateEnemies(const float &dt) {
 									effectText,
 									Color::Magenta,
 									Vector2f(-1.f, 0.f),
-									50, 80.f, true
+									50, 120.f, true
 								)
 							);
 							return;
@@ -1111,8 +1124,12 @@ void Game::DrawUI() {
 		this->window->draw(this->infinteLeaderboardText);
 	}
 	else {
-		// Score text
-		this->window->draw(this->scoreText);
+		if (this->gameMode == Mode::COSMOS) {
+			this->window->draw(this->cosmoEffectText);
+		}
+		else if (this->gameMode == Mode::INFINTE) {
+			this->window->draw(this->scoreText);
+		}
 	}
 
 	if (this->paused) {
