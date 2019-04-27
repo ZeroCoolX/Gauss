@@ -2,7 +2,8 @@
 
 GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
 {
-	this->active = true;
+	//this->callbackFunction = callback;
+	this->active = false;
 	this->font = font;
 	this->window = window;
 	this->Init();
@@ -13,9 +14,17 @@ GameOverMenu::~GameOverMenu()
 {
 }
 
+void GameOverMenu::InitButtons() {
+
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_REDEPLOY, this->font, "Redeploy", 18, Vector2f(50.f, 550.f), 1));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_MENU, this->font, "Menu", 18, Vector2f(50.f, 650.f), 1));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(50.f, 750.f), 1));
+}
+
 // Init
 void GameOverMenu::Init() {
 	this->InitBackground();
+	this->InitButtons();
 }
 
 void GameOverMenu::InitBackground() {
@@ -25,25 +34,30 @@ void GameOverMenu::InitBackground() {
 	this->background.setFillColor(Color(255, 255, 255, 255));
 }
 
+void GameOverMenu::UpdateButtons(const float &dt) {
+	for (size_t i = 0; i < this->buttons.Size(); i++)
+	{
+		this->buttons[i]->Update(this->mousePosWorld);
+		if (this->buttons[i]->IsPressed()) {
+			switch (this->buttons[i]->getId()) {
+			case GameOverMenu::BTN_REDEPLOY:
+				this->redeploy = true;
+				break;
+			case GameOverMenu::BTN_MENU:
+				this->menu = true;
+				break;
+			case GameOverMenu::BTN_EXIT:
+				this->window->close();
+				break;
+			}
+		}
+	}
+}
+
 // Update
 void GameOverMenu::Update(const float &dt) {
-	//if (Keyboard::isKeyPressed(Keyboard::U))
-	//{
-	//	sf::Color rectColor = this->background.getFillColor();
-	//	if (rectColor != sf::Color::White) {
-	//		this->background.setFillColor(rectColor + sf::Color(1, 1, 1, 0));
-	//	}
-	//}
-
-	//if (Keyboard::isKeyPressed(Keyboard::Y))
-	//{
-	//	sf::Color rectColor = this->background.getFillColor();
-	//	if (rectColor != sf::Color::Black) {
-	//		this->background.setFillColor(rectColor - sf::Color(1, 1, 1, 0));
-	//	}
-	//}
-
 	this->UpdateMousePosition();
+	this->UpdateButtons(dt);
 }
 
 void GameOverMenu::UpdateMousePosition() {
@@ -70,10 +84,24 @@ void GameOverMenu::UpdateMousePosition() {
 #pragma warning(pop)
 }
 
+void GameOverMenu::DrawButtons(RenderTarget &renderTarget) {
+	for (size_t i = 0; i < this->buttons.Size(); i++)
+	{
+		this->buttons[i]->Draw(renderTarget);
+	}
+}
+
 // Draw
 void GameOverMenu::Draw(RenderTarget &renderTarget) {
 	this->DrawBackground(renderTarget);
+	this->DrawButtons(renderTarget);
 }
 void GameOverMenu::DrawBackground(RenderTarget &renderTarget) {
 	renderTarget.draw(this->background);
+}
+
+void GameOverMenu::Reset() {
+	this->deactivate();
+	this->redeploy = false;
+	this->menu = false;
 }

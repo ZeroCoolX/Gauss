@@ -24,6 +24,8 @@ public:
 	virtual ~MainMenu();
 
 	inline bool isActive() const { return this->active; }
+	void activate() { this->active = true; }
+	void deactivate() { this->active = false; }
 
 	// Init
 	void Init();

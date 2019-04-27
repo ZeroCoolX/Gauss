@@ -271,74 +271,28 @@ void Game::Update(const float &dt) {
 	// Restart
 	if (!this->playersExistInWorld()) {
 		this->gameOverMenu->Update(dt);
-		this->RestartUpdate();
+
+		if (this->gameOverMenu->onRedeployPress()) {
+			this->gameOverMenu->Reset();
+			this->_redeploy();
+		}
+		else if (this->gameOverMenu->onMenuPress()) {
+			this->gameOverMenu->Reset();
+			this->_redeploy();
+			this->mainView.setCenter(Vector2f(
+				this->window->getSize().x / 2.f,
+				this->window->getSize().y / 2.f));
+			this->mainMenu->activate();
+		}
+		else {
+			this->RestartUpdate();
+		}
 	}
 }
 
 void Game::RestartUpdate() {
 	if (Keyboard::isKeyPressed(Keyboard::F1)) {
-		for (size_t i = 0; i < this->players.Size(); i++)
-		{
-			this->players[i].Reset();
-		}
-
-		// Reset score and multipliers
-		this->totalScore = 0;
-		this->scoreTime = 0;
-		this->scoreTimer.restart();
-		this->killPerfectionMultiplier = 1;
-		this->killPerfectionAdder = 0;
-		this->killPerfectionAdderMax = 15;
-		this->killboxMultiplier = 1;
-		this->killboxTimerMax = 400.f;
-		this->killboxTimer = this->killboxTimerMax;
-		this->killboxAdder = 0;
-		this->killboxAdderMax = 10;
-
-		// Reset difficulty
-		this->difficulty = 0;
-		this->enemySpawnTimerMax = 35.f; // Also in constructor
-
-		// Reset collections
-		this->enemyLifeforms.Clear();
-		this->consumables.Clear();
-		this->particles.Clear();
-		this->textTags.Clear();
-
-		// Init boss encounter
-		this->bossEncounterActivated = false;
-		this->bosses.Clear();
-
-		// Reset Stage
-		this->mainView.setCenter(Vector2f(
-			this->window->getSize().x / 2.f,
-			this->window->getSize().y / 2.f));
-		this->stage->Reset(this->mainView);
-
-		if (this->players.Size() == 0) {
-			// Reset player
-			const int nrOfPlayers = Player::playerId;
-			Player::playerId = 0;
-			this->players.Add(Player(this->audioManager));
-			// If there was a player 2 add them back in as well
-			if (nrOfPlayers > 1) {
-				this->players.Add(Player(this->audioManager,
-					Keyboard::I,
-					Keyboard::K,
-					Keyboard::J,
-					Keyboard::L,
-					Keyboard::RShift,
-					Keyboard::U,
-					Keyboard::Return,
-					Keyboard::Num7,
-					Keyboard::Num8,
-					Keyboard::Num9,
-					Keyboard::Num0));
-			}
-		}
-
-		this->InitUI();
-		this->InitMap();
+		this->_redeploy();
 	}
 }
 
@@ -1157,4 +1111,71 @@ std::string Game::_getPlayerLivesText() {
 	}
 	text += std::to_string(lives);
 	return text;
+}
+
+void Game::_redeploy() {
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		this->players[i].Reset();
+	}
+
+	this->paused = true;
+
+	// Reset score and multipliers
+	this->totalScore = 0;
+	this->scoreTime = 0;
+	this->scoreTimer.restart();
+	this->killPerfectionMultiplier = 1;
+	this->killPerfectionAdder = 0;
+	this->killPerfectionAdderMax = 15;
+	this->killboxMultiplier = 1;
+	this->killboxTimerMax = 400.f;
+	this->killboxTimer = this->killboxTimerMax;
+	this->killboxAdder = 0;
+	this->killboxAdderMax = 10;
+
+	// Reset difficulty
+	this->difficulty = 0;
+	this->enemySpawnTimerMax = 35.f; // Also in constructor
+
+	// Reset collections
+	this->enemyLifeforms.Clear();
+	this->consumables.Clear();
+	this->particles.Clear();
+	this->textTags.Clear();
+
+	// Init boss encounter
+	this->bossEncounterActivated = false;
+	this->bosses.Clear();
+
+	// Reset Stage
+	this->mainView.setCenter(Vector2f(
+		this->window->getSize().x / 2.f,
+		this->window->getSize().y / 2.f));
+	this->stage->Reset(this->mainView);
+
+	if (this->players.Size() == 0) {
+		// Reset player
+		const int nrOfPlayers = Player::playerId;
+		Player::playerId = 0;
+		this->players.Add(Player(this->audioManager));
+		// If there was a player 2 add them back in as well
+		if (nrOfPlayers > 1) {
+			this->players.Add(Player(this->audioManager,
+				Keyboard::I,
+				Keyboard::K,
+				Keyboard::J,
+				Keyboard::L,
+				Keyboard::RShift,
+				Keyboard::U,
+				Keyboard::Return,
+				Keyboard::Num7,
+				Keyboard::Num8,
+				Keyboard::Num9,
+				Keyboard::Num0));
+		}
+	}
+
+	this->InitUI();
+	this->InitMap();
 }

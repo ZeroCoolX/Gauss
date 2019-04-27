@@ -157,7 +157,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameOverMenu.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,7 +249,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameOverMenu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
