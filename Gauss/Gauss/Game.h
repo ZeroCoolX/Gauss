@@ -13,7 +13,7 @@
 #include "Powerup.h"
 #include "MainMenu.h"
 #include "GameOverMenu.h"
-
+#include "PlayerScore.h"
 
 class Game
 {
@@ -78,6 +78,7 @@ private:
 
 	// Players
 	dArr<Player> players;
+	std::map<int,PlayerScore> playerScoreMap;
 
 	// Enemies
 	dArr<EnemyLifeform*> enemyLifeforms;
@@ -103,6 +104,7 @@ private:
 	void _spawnEnemy(int enemyType, int velocity = -1, Vector2f position = Vector2f(0.f, 0.f));
 	std::string _getPlayerLivesText();
 	void _redeploy();
+	std::string _calculateScore(PlayerScore &playerScore);
 
 public:
 	Game(RenderWindow *window);
@@ -120,6 +122,7 @@ public:
 	}
 
 	// Functions
+	void InitPlayersInWorld(int quantity);
 	void InitRenderTexture();
 	void InitView();
 	void InitTextures();
@@ -159,6 +162,7 @@ public:
 	void DrawConsumables();
 	void DrawParticles();
 
+	void InitPlayerScoreStats();
 	void ToggleFullscreen();
 	void PauseGame();
 	void DisplayGameEnd();

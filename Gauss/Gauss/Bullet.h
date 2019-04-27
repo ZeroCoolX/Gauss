@@ -33,7 +33,7 @@ public:
 		float acceleration = 0.f) : GameObject(&bulletTextures[type], scale) {
 
 		this->type = type;
-
+		this->gaussProjectile = gaussShot;
 		// Damage
 		this->damage = damage;
 

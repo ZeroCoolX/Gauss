@@ -33,21 +33,9 @@ Game::Game(RenderWindow *window)
 	this->killboxAdderMax = 10;
 
 	// Init player
-	this->players.Add(Player(this->audioManager));
+	this->InitPlayersInWorld(1);
 
-	/*this->players.Add(Player(this->audioManager,
-		Keyboard::I,
-		Keyboard::K,
-		Keyboard::J, 
-		Keyboard::L, 
-		Keyboard::RShift, 
-		Keyboard::U,
-		Keyboard::RControl,
-		Keyboard::Return,
-		Keyboard::Num7,
-		Keyboard::Num8,
-		Keyboard::Num9,
-		Keyboard::Num0));*/
+
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -76,6 +64,7 @@ Game::~Game()
 	delete this->stage;
 	delete this->mainMenu;
 	delete this->audioManager;
+	this->playerScoreMap.clear();
 }
 
 void Game::InitRenderTexture() {
@@ -109,6 +98,28 @@ void Game::InitView() {
 //	//this->bossBodyTextures.Add(Texture(temp));
 //}
 
+void Game::InitPlayersInWorld(int quantity) {
+	// Always add at least 1 player
+	this->players.Add(Player(this->audioManager));
+
+	// Optionally add another
+	if (quantity > 1) {
+		this->players.Add(Player(this->audioManager,
+			Keyboard::I,
+			Keyboard::K,
+			Keyboard::J,
+			Keyboard::L,
+			Keyboard::RShift,
+			Keyboard::U,
+			Keyboard::RControl,
+			Keyboard::Return,
+			Keyboard::Num7,
+			Keyboard::Num8,
+			Keyboard::Num9,
+			Keyboard::Num0));
+	}
+	this->InitPlayerScoreStats();
+}
 
 void Game::InitTextures() {
 	// buttons
@@ -533,7 +544,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 									// Want to make it really hard to get double and triple ray upgrades
 									if (uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance <= 20) {
+										if (dropChance <= 10) {
 											// only a203% chance this will happen
 											uType = ItemUpgrade::Type::TRIPLE_RAY;
 											break;
@@ -541,7 +552,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 									}
 									else if (uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance <= 25) {
+										if (dropChance <= 5) {
 											// only a 25% chance this will happen
 											uType = ItemUpgrade::Type::DOUBLE_RAY;
 											break;
@@ -579,6 +590,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 
 						// Destroy the enemy
 						this->enemyLifeforms.Remove(k);
+						currentPlayer.incrementEnemiesKilled();
 					}
 
 					// Destroy the bullet if not piercing shot && not gauss shot
@@ -830,6 +842,12 @@ void Game::UpdateEnemies(const float &dt) {
 
 					// Check for player death
 					if (players[j].isDead()) {
+						this->players[j].setTimeAlive(this->scoreTimer.getElapsedTime().asSeconds());
+						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setScore(this->players[j].getScore());
+						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setEnemiesKilled(this->players[j].getEnemiesKilled());
+						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setSecondsSurvive(this->players[j].getTimeAlive());
+						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setHighestLevelAchieved(this->players[j].getHighestLevelAchieved());
+						
 						this->players.Remove(j);
 						return;
 					}
@@ -915,6 +933,12 @@ void Game::UpdateEnemyBullets(const float &dt) {
 
 				// Check for player death
 				if (players[j].isDead()) {
+					this->players[j].setTimeAlive(this->scoreTimer.getElapsedTime().asSeconds());
+					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setScore(this->players[j].getScore());
+					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setEnemiesKilled(this->players[j].getEnemiesKilled());
+					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setSecondsSurvive(this->players[j].getTimeAlive());
+					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setHighestLevelAchieved(this->players[j].getHighestLevelAchieved());
+
 					this->players.Remove(j);
 					return;
 				}
@@ -1073,6 +1097,13 @@ void Game::Draw() {
 	this->DrawUI();
 }
 
+void Game::InitPlayerScoreStats() {
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		this->playerScoreMap[this->players[i].getPlayerNumber()] = PlayerScore();
+	}
+}
+
 void Game::ToggleFullscreen() {
 	if (Keyboard::isKeyPressed(Keyboard::F11) && this->keyTime >= this->keyTimeMax) {
 		this->keyTime = 0.f;
@@ -1092,19 +1123,28 @@ void Game::PauseGame() {
 
 void Game::DisplayGameEnd() {
 	this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
+	std::string scoreText = "";
+	std::map<int, PlayerScore>::iterator it = this->playerScoreMap.begin();
+	while (it != this->playerScoreMap.end()) {
+		scoreText += "Player " + std::to_string(it->first) + " Score: " + this->_calculateScore(it->second) + "\n";
+		scoreText +=	"\tEnemies Killed: " + std::to_string(it->second.getEnemiesKilled()) +
+						"\n\tHighest Level Achieved: Level " + std::to_string(it->second.getHighestLevelAchieved()) +
+						"\n\tTime Survived: " + std::to_string(static_cast<int>(it->second.getSecondsSurvived())) + " seconds" +
+					 "\n\n";
+		++it;
+	}
 
-	this->gameOverText.setString("Score: " +
-		std::to_string(this->totalScore) +
-		"\nTime: " +
-		std::to_string(this->scoreTime) +
-		"\n Score/Second: " +
-		std::to_string(std::ceil((double)this->totalScore / (double)this->scoreTime)) +
-		"\nF1 to Restart"
-	);
+	this->gameOverText.setString(scoreText + "\nGame Time: " + std::to_string(this->scoreTime));
 
+	// fix this later
 	if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
 		this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
 	}
+}
+
+std::string Game::_calculateScore(PlayerScore &playerScore) {
+	// total score + enemies killed per second over lifetime + score per second over lifetime
+	return std::to_string(static_cast<int>(playerScore.getScore() + (static_cast<float>(playerScore.getEnemiesKilled()) / playerScore.getSecondsSurvived()) + (static_cast<float>(totalScore) / playerScore.getSecondsSurvived()) + (playerScore.getHighestLevelAchieved() * 10)));
 }
 
 void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
@@ -1185,6 +1225,9 @@ void Game::_redeploy() {
 	this->stage->Reset(this->mainView);
 
 	if (this->players.Size() == 0) {
+		// Clear out players score
+		this->playerScoreMap.clear();
+
 		// Reset player
 		const int nrOfPlayers = Player::playerId;
 		Player::playerId = 0;

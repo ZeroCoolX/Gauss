@@ -124,7 +124,7 @@ private:
 	int score;
 	int enemiesKilled;
 	int highestLevelAchieved;
-	float timeSurvived;
+	float totalSecondsAlive;
 
 
 	int currentWeapon;
@@ -215,6 +215,7 @@ public:
 	inline const bool collidesWith(FloatRect other) const { return this->sprite.getGlobalBounds().intersects(other); }
 
 	// Life
+	inline const int getPlayerNumber() const { return this->playerNumber; }
 	inline const bool isDead() const { return this->lives <= 0 && this->hp <= 0; }
 	inline const bool shouldLoseLife() { return this->hp <= 0 && this->lives > 0; }
 	inline const int getLives() const { return this->lives; }
@@ -247,6 +248,11 @@ public:
 		}
 		return false;
 	}
+	inline void incrementEnemiesKilled() { ++this->enemiesKilled; }
+	inline const int getEnemiesKilled() const { return this->enemiesKilled; }
+	inline const float getTimeAlive() const { return this->totalSecondsAlive; }
+	inline const int getHighestLevelAchieved() const { return this->highestLevelAchieved; }
+	inline void setTimeAlive(float seconds) { this->totalSecondsAlive = seconds; }
 
 	// Damage/Attack
 	int getDamage() const;

@@ -108,6 +108,10 @@ Player::Player(
 	this->cPitSelect = 1;
 	this->auraSelect = 0;
 
+	this->enemiesKilled = 0;
+	this->score = 0;
+	this->highestLevelAchieved = 1;
+	this->totalSecondsAlive = 1;
 
 	this->_initTextures();
 	this->_initPlayerSettings();
@@ -365,6 +369,7 @@ void Player::UpdatePowerups(const float &dt) {
 bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
 		this->level++;
+		this->highestLevelAchieved = this->level;
 		this->addStatPoint();
 
 		this->exp -= this->expNext;
@@ -596,7 +601,10 @@ void Player::Reset() {
 	this->power = 0;
 	this->plating = 0;
 	this->score = 0;
-	this->damage = 1;
+	this->enemiesKilled = 0;
+	this->score = 0;
+	this->highestLevelAchieved = 1;
+	this->totalSecondsAlive = 1;
 	this->damageMax = 2;
 	this->UpdateStats();
 

@@ -251,5 +251,8 @@
     <ClInclude Include="GameOverMenu.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerScore.h">
+      <Filter>Header Files\GameObjects\Lifeforms\Player</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
