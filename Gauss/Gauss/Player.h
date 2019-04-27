@@ -115,6 +115,8 @@ private:
 	int hpMax;//--//
 	int hpAdded;
 
+	int lives;
+
 	int damage;
 	int damageMax;
 
@@ -208,7 +210,9 @@ public:
 	inline const bool collidesWith(FloatRect other) const { return this->sprite.getGlobalBounds().intersects(other); }
 
 	// Life
-	inline const bool isDead() const { return this->hp <= 0; }
+	inline const bool isDead() const { return this->lives <= 0 && this->hp <= 0; }
+	inline const bool shouldLoseLife() { return this->hp <= 0 && this->lives > 0; }
+	inline const int getLives() const { return this->lives; }
 	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
 	inline const int& getHp() const { return hp; }
 	inline const int& getHpMax() const { return hpMax; }
@@ -276,6 +280,7 @@ public:
 	void AddStatPointRandom();
 	bool PlayerShowStatsIsPressed();
 	std::string GetStatsAsString();
+	void ResetOnLifeLost();
 
 	// Statics
 	static unsigned playerId;
@@ -290,9 +295,6 @@ public:
 	static dArr<Texture> powerupIndicatorTextures;
 
 	static void InitTextures();
-
-	//static SoundBuffer soundBuff;
-	//static Sound sound;
 
 	enum Weapon { 
 		LASER_GUN = 0, 

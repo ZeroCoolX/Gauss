@@ -88,13 +88,10 @@ Player::Player(
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
 	int CHANGE_AURA
-) :level(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), lives(3), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	this->audioManager = audioManager;
 	// Stats
-	// Formula courtesy of Suraj Sharma and Tibia
-	// https://www.youtube.com/watch?v=SPcLqoTbIWE&list=PL6xSOsbVA1eZUKRu_boTDdzu8pGsVNpTo&index=18
-	// https://tibia.fandom.com/wiki/Experience_Formula
 	this->expNext = 20 + static_cast<int>(
 		(50/3)
 		*((pow(level,3)-6
@@ -153,8 +150,14 @@ int Player::getDamage() const {
 
 void Player::TakeDamage(int damage) {
 	this->hp -= damage;
-
 	this->damageTimer = 0;
+
+	if (this->shouldLoseLife()) {
+		--this->lives;
+		// Reset stats for the player
+		this->ResetOnLifeLost();
+		return;
+	}
 
 	this->velocity.x += -this->normalizedDir.x * 10.f; // knockback amount
 	this->velocity.y += -this->normalizedDir.y * 10.f; // knockback amount
@@ -203,7 +206,7 @@ void Player::Combat(const float &dt) {
 
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
+		//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
 		switch (this->currentWeapon) {
 			case Player::LASER_GUN:
 				this->_fireLaser(direction);
@@ -632,6 +635,44 @@ void Player::Reset() {
 
 }
 
+void Player::ResetOnLifeLost() {
+	// Reset Physics
+	this->velocity.x = 0;
+	this->velocity.y = 0;
+
+	// Reset upgrades
+	this->dualMissiles01 = false;
+	this->dualMissiles02 = false;
+	this->sheild = false;
+	this->shieldActive = false;
+	this->piercingShot = false;
+	this->powerupRF = false;
+	this->powerupXP = false;
+	this->upgradesAcquired.Clear();
+
+	// Reset weapons
+	this->currentWeapon = Player::LASER_GUN;
+	this->SetGunLevel(Player::DEFAULT_LASER);
+	this->bullets.Clear();
+	this->mainGunLevel = Player::DEFAULT_LASER;
+
+	// Reset Timers
+	this->shootTimerMax = this->getCalculatedShootTimer();
+	this->shootTimer = this->shootTimerMax;
+	this->damageTimerMax = 40.f;
+	this->damageTimer = this->damageTimerMax;
+	this->gaussChargeTimerMax = 500.f;
+	this->gaussChargeTimer = 0.f;
+	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimer = this->shieldChargeTimerMax;
+	// Powerups Timer
+	this->powerupTimerMax = 500.f;
+	this->powerupTimer = this->powerupTimerMax;
+
+	this->hp = this->hpMax;
+	this->UpdateStats();
+}
+
 void Player::AddStatPointRandom() {
 	int r = rand() % 4;
 	switch (r) {
@@ -659,6 +700,7 @@ bool Player::PlayerShowStatsIsPressed() {
 std::string Player::GetStatsAsString() {
 	return
 		"Level: " + std::to_string(this->level) +
+		"\nLives: " + std::to_string(this->lives) +
 		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
 		"\nStatpoints: " + std::to_string(this->statPoints) +
 		"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +

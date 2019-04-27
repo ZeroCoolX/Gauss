@@ -9,7 +9,7 @@ AudioManager::AudioManager()
 	sounds.Add(this->LoadSound("Audio/Sounds/ExplosionFireBlast.ogg"));
 
 	this->musicContainer.Add(new Music());
-	this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");
+	//this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");
 }
 
 

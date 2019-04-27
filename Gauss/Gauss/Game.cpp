@@ -34,7 +34,8 @@ Game::Game(RenderWindow *window)
 	// Init player
 	this->players.Add(Player(this->audioManager));
 
-	/*this->players.Add(Player(Keyboard::I, 
+	/*this->players.Add(Player(this->audioManager,
+		Keyboard::I,
 		Keyboard::K,
 		Keyboard::J, 
 		Keyboard::L, 
@@ -690,7 +691,8 @@ void Game::UpdateWallColliders(const float &dt, int playerIndex) {
 
 void Game::UpdateScoreUI() {
 	this->scoreText.setString(
-		"Score: " + std::to_string(this->totalScore)
+		this->_getPlayerLivesText() +
+		+ "\nScore: " + std::to_string(this->totalScore)
 		+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
 		+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
 		+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
@@ -1135,4 +1137,19 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 		break;
 	}
 
+}
+
+std::string Game::_getPlayerLivesText() {
+	if (!this->playersExistInWorld()) {
+		return "All Gaussians Dead";
+	}
+	std::string text = "";
+	text += "Player Lives: ";
+	int lives = 0;
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		lives += this->players[i].getLives();
+	}
+	text += std::to_string(lives);
+	return text;
 }

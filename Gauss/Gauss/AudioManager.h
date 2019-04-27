@@ -18,12 +18,12 @@ public:
 			this->filePath = path;
 
 			// Init pointers
+			this->soundBuffer = new SoundBuffer();
 			this->sound = new Sound();
+			// Init sound properties
 			this->sound->setVolume(volume);
 			this->sound->setPitch(pitch);
 			this->sound->setLoop(loop);
-
-			this->soundBuffer = new SoundBuffer();
 		}
 
 		~SoundInfo() {

@@ -34,7 +34,6 @@ void MainMenu::InitBackground() {
 void MainMenu::Update(const float &dt) {
 	this->UpdateMousePosition();
 	this->UpdateButtons(dt);
-	this->Test();
 }
 
 // For now - this is rather ugly
@@ -96,7 +95,4 @@ void MainMenu::DrawBackground(RenderTarget &renderTarget) {
 	renderTarget.draw(this->background);
 }
 
-void MainMenu::Test() {
-
-}
 

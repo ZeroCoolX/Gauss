@@ -1,10 +1,8 @@
 #pragma once
 
 #include "GameObject.h"
-#include "MenuButton.h"
-#include "Gauss.h"
 
-class MainMenu
+class GameOverMenu
 {
 private:
 	bool active = true;
@@ -20,33 +18,23 @@ private:
 	Vector2i mousePosGrid;
 
 public:
-	MainMenu(Font &font, RenderWindow *window);
-	virtual ~MainMenu();
+	GameOverMenu(Font &font, RenderWindow *window);
+	virtual ~GameOverMenu();
 
 	inline bool isActive() const { return this->active; }
 
+
 	// Init
 	void Init();
-	void InitButtons();
 	void InitBackground();
 
 	// Update
 	void Update(const float &dt);
-	void UpdateButtons(const float &dt);
 	void UpdateMousePosition();
-	
+
 	// Draw
 	void Draw(RenderTarget &renderTarget);
-	void DrawButtons(RenderTarget &renderTarget);
 	void DrawBackground(RenderTarget &renderTarget);
 
-	dArr<MenuButton*> buttons;
-
-	// statics
-	enum ButtonTypes {
-		BTN_LADDER = 0, 
-		BTN_SURVIVAL,
-		BTN_EXIT
-	};
 };
 
