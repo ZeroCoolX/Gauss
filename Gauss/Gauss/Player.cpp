@@ -88,7 +88,7 @@ Player::Player(
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
 	int CHANGE_AURA
-) :level(1), lives(3), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), lives(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	this->audioManager = audioManager;
 	// Stats

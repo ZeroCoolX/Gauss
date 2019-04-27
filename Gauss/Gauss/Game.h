@@ -12,6 +12,7 @@
 #include "Particle.h"
 #include "Powerup.h"
 #include "MainMenu.h"
+#include "GameOverMenu.h"
 
 
 class Game
@@ -22,6 +23,7 @@ private:
 
 	// Game
 	MainMenu *mainMenu;
+	GameOverMenu *gameOverMenu;
 
 	RenderWindow *window;
 	View mainView;
@@ -122,7 +124,7 @@ public:
 	void InitTextures();
 	void InitUI();
 	void InitMap();
-	void InitMenu();
+	void InitMenus();
 
 	void UpdateView(const float &dt);
 	void Update(const float &dt);

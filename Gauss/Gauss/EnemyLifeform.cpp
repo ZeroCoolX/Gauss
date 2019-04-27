@@ -25,7 +25,6 @@ void EnemyLifeform::InitSpritePoisition(const View& view, Vector2f forcedPositio
 	float xPos = 0.f;
 	if (forcedPosition == Vector2f(0.f, 0.f)) {
 		// Random position
-		std::cout << "Random position!" << std::endl;
 		xPos = ((float)view.getCenter().x + (view.getSize().x / 2));
 		yPos = ((float)(rand() % static_cast<int>((view.getCenter().y + view.getSize().y)) + static_cast<int>((view.getCenter().y - view.getSize().y))));
 	}

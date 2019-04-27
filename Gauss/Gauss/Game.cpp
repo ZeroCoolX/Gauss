@@ -5,8 +5,9 @@ Game::Game(RenderWindow *window)
 	this->window = window;
 	// Init stage
 	this->stage = nullptr;
-
+	// Init Menus
 	this->mainMenu = nullptr;
+	this->gameOverMenu = nullptr;
 
 	this->audioManager = new AudioManager();
 	//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
@@ -19,7 +20,7 @@ Game::Game(RenderWindow *window)
 	this->InitView();
 	this->InitTextures();
 	this->InitMap();
-	this->InitMenu();
+	this->InitMenus();
 
 	// Init scoring multipliers
 	this->killPerfectionMultiplier = 1;
@@ -169,10 +170,10 @@ void Game::InitUI() {
 
 	// Game Over Text
 	this->gameOverText.setFont(this->font);
-	this->gameOverText.setCharacterSize(40);
+	this->gameOverText.setCharacterSize(30);
 	this->gameOverText.setFillColor(Color::Red);
 	this->gameOverText.setString("Game Over! (X___X)");
-	this->gameOverText.setPosition((float)this->window->getSize().x / 4, (float)this->window->getSize().y / 2);
+	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
 
 	// Controls / Pause text
 	this->controlsText.setFont(this->font);
@@ -194,8 +195,9 @@ void Game::InitMap() {
 	this->stage->LoadStage("lel.smap", this->mainView);
 }
 
-void Game::InitMenu() {
+void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
+	this->gameOverMenu = new GameOverMenu(this->font, this->window);
 }
 
 void Game::UpdateView(const float &dt) {
@@ -260,10 +262,15 @@ void Game::Update(const float &dt) {
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
 		// Show end game stats
 		this->DisplayGameEnd();
+		// Activate the game over screen if it's not already turned on
+		if (!this->gameOverMenu->isActive()) {
+			this->gameOverMenu->activate();
+		}
 	}
 
 	// Restart
 	if (!this->playersExistInWorld()) {
+		this->gameOverMenu->Update(dt);
 		this->RestartUpdate();
 	}
 }
@@ -983,11 +990,13 @@ void Game::UpdateParticles(const float &dt) {
 void Game::DrawUI() {
 	// Draw Game Over Text - if needed
 	if (!this->playersExistInWorld()) {
+		this->gameOverMenu->Draw(*this->window);
 		this->window->draw(this->gameOverText);
 	}
-
-	// Score text
-	this->window->draw(this->scoreText);
+	else {
+		// Score text
+		this->window->draw(this->scoreText);
+	}
 
 	if (this->paused) {
 		this->window->draw(this->controlsText);
@@ -1053,8 +1062,6 @@ void Game::Draw() {
 
 	if (this->mainMenu->isActive()) {
 		this->mainMenu->Draw(*this->window);
-		// Draw everything to the window
-		//this->window->display();
 		return;
 	}
 
@@ -1079,9 +1086,6 @@ void Game::Draw() {
 	// Draw UI - update view
 	this->window->setView(this->window->getDefaultView());
 	this->DrawUI();
-
-	// Draw everything to the window
-	//this->window->display();
 }
 
 void Game::ToggleFullscreen() {
@@ -1102,9 +1106,10 @@ void Game::PauseGame() {
 }
 
 void Game::DisplayGameEnd() {
+	//this->gameOverMenu.setActive
 	this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
 
-	this->gameOverText.setString("Game Over (X___X)\nScore: " +
+	this->gameOverText.setString("Score: " +
 		std::to_string(this->totalScore) +
 		"\nTime: " +
 		std::to_string(this->scoreTime) +

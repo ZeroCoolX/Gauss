@@ -1,11 +1,12 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Gauss.h"
 
 class GameOverMenu
 {
 private:
-	bool active = true;
+	bool active = false;
 
 	Font font;
 	Texture backgroundTexture;
@@ -22,7 +23,8 @@ public:
 	virtual ~GameOverMenu();
 
 	inline bool isActive() const { return this->active; }
-
+	void activate() { this->active = true; }
+	void deactivate() { this->active = false; }
 
 	// Init
 	void Init();
@@ -35,6 +37,5 @@ public:
 	// Draw
 	void Draw(RenderTarget &renderTarget);
 	void DrawBackground(RenderTarget &renderTarget);
-
 };
 
