@@ -25,10 +25,20 @@ public:
 	};
 
 private:
+	const int LEADERBOARD_MAX = 8;
 	struct Leaderboard {
 	public:
 		int id;
 		int score;
+		inline bool operator== (const Leaderboard &i)
+		{
+			if (this == nullptr) return false;
+			return id == i.id && score == i.score;
+		}
+		inline bool operator!= (nullptr_t n)
+		{
+			if (this != n) return true;
+		}
 	};
 
 	// 3 potential leaderboards
@@ -79,6 +89,7 @@ private:
 	Text staticPlayerText;
 	Text enemyText;
 	Text gameOverText;
+	Text infinteLeaderboardText;
 	Text scoreText;
 	Text controlsText;
 
@@ -123,6 +134,7 @@ private:
 	int _calculateScore(PlayerScore &playerScore);
 	void _sortLeaderboard();
 	void _insertLeaderboardEntry(int id, int score);
+	void _storeLeaderboard();
 
 
 public:

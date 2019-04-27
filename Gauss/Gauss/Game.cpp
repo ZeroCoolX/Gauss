@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <sstream>
 
-Game::Game(RenderWindow *window) : infiniteLeaderboards(5)
+Game::Game(RenderWindow *window) : infiniteLeaderboards(this->LEADERBOARD_MAX)
 {
 	this->window = window;
 	// Init stage
@@ -188,6 +188,12 @@ void Game::InitUI() {
 	this->gameOverText.setString("Game Over! (X___X)");
 	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
 
+	// Leaderboard Text
+	this->infinteLeaderboardText.setFont(this->font);
+	this->infinteLeaderboardText.setCharacterSize(30);
+	this->infinteLeaderboardText.setFillColor(Color::White);
+	this->infinteLeaderboardText.setPosition((float)this->window->getSize().x - 600.f, 300.f);
+
 	// Controls / Pause text
 	this->controlsText.setFont(this->font);
 	this->controlsText.setCharacterSize(30);
@@ -224,15 +230,11 @@ void Game::InitLeaderboards() {
 			this->infiniteLeaderboards.Add(leader);
 		}
 		this->_sortLeaderboard();
-		std::cout << "Loaded Infinite leaderboards" << std::endl;
-		for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
-		{
-			std::cout << "Leader " << std::to_string(this->infiniteLeaderboards[i].id) << ": " << std::to_string(this->infiniteLeaderboards[i].score) << "\n" << std::endl;
-		}
 	}
 	else {
 		std::cerr << "Failure to open Inifinite leaderboards file" << std::endl;
 	}
+	fin.close();
 
 	// Load Cosmos Leaderboards
 	//this->leaderboards.Add(dArr<Leaderboard>(5));
@@ -1026,6 +1028,7 @@ void Game::DrawUI() {
 	if (!this->playersExistInWorld()) {
 		this->gameOverMenu->Draw(*this->window);
 		this->window->draw(this->gameOverText);
+		this->window->draw(this->infinteLeaderboardText);
 	}
 	else {
 		// Score text
@@ -1165,32 +1168,61 @@ void Game::DisplayGameEnd() {
 					 "\n\n";
 		++it;
 	}
-
 	this->gameOverText.setString(scoreText + "\nGame Time: " + std::to_string(this->scoreTime));
 
-	// fix this later
-	if ((double)this->totalScore / (double)this->scoreTime > this->bestScorePerSecond) {
-		this->bestScorePerSecond = (double)this->totalScore / (double)this->scoreTime;
-	}
-	for (size_t i = 0; i < 5; i++)
+	// Write leaderboard text
+	std::string leaderboardText = "Gaussian\t\t\tScore\n";
+	for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
 	{
-		std::cout << "Leader " << std::to_string(this->infiniteLeaderboards[i].id) << ": " << std::to_string(this->infiniteLeaderboards[i].score) << "\n" << std::endl;
+		leaderboardText += "G." + std::to_string(this->infiniteLeaderboards[i].id) + "\t\t\t\t\t" + std::to_string(this->infiniteLeaderboards[i].score);
+		leaderboardText += "\n\n";
 	}
+	for (size_t i = 0; i < (this->LEADERBOARD_MAX - this->infiniteLeaderboards.Size()); i++)
+	{
+		leaderboardText += "G...\t\t\t\t\t....";;
+		leaderboardText += "\n\n";
+	}
+	this->infinteLeaderboardText.setString(leaderboardText);
+	
+	// Write to file
+	this->_storeLeaderboard();
 }
 
 void Game::_insertLeaderboardEntry(int id, int score) {
-	// Only if this score is >= the last entry is it stored
-	if (score >= this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
+	if (this->infiniteLeaderboards.Size() == this->LEADERBOARD_MAX && score < this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
+		return; 
+	}
+
+	if (this->infiniteLeaderboards.Size() == this->LEADERBOARD_MAX && score >= this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
 		// Remove lowest
 		this->infiniteLeaderboards.Remove(this->infiniteLeaderboards.Size() - 1);
-		Leaderboard lead;
-		lead.id = id;
-		lead.score = score;
-		// Add new one
-		this->infiniteLeaderboards.Add(lead);
-		// Sort
-		this->_sortLeaderboard();
 	}
+
+	Leaderboard lead;
+	lead.id = id;
+	lead.score = score;
+	// Add new one
+	this->infiniteLeaderboards.Add(lead);
+	// Sort
+	this->_sortLeaderboard();
+}
+
+void Game::_storeLeaderboard() {
+	std::ofstream fout;
+	fout.open("Leaderboards/Infinite/leaderboard.txt", std::ofstream::out | std::ofstream::trunc);
+	if (fout.is_open()) {
+		for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
+		{
+			fout << std::to_string(this->infiniteLeaderboards[i].id) << " " << std::to_string(this->infiniteLeaderboards[i].score);
+			if (i + 1 < this->infiniteLeaderboards.Size()) {
+				fout << "\n";
+			}
+		}
+	}
+	else {
+		std::cerr << "Failure to open Leaderboards file to write " << std::endl;
+	}
+	fout.close();
 }
 
 void Game::_sortLeaderboard() {
@@ -1299,3 +1331,4 @@ void Game::_redeploy() {
 	this->InitUI();
 	this->InitMap();
 }
+
