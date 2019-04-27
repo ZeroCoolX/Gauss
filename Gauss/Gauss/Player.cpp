@@ -764,7 +764,7 @@ std::string Player::ApplyCosmoEffect() {
 		return effectText;
 	}
 
-	int cosmoEffect = rand() % 5; // number of possible cosmo effecs
+	int cosmoEffect = 1;//rand() % 5; // number of possible cosmo effecs
 
 	this->effectedByCosmo = true;
 	this->cosmoEffectTimer = 0.f;
@@ -841,18 +841,26 @@ void Player::ToggleBaddieSwap(bool swap) {
 
 void Player::_processPlayerInput(const float &dt) {
 	// Collect player input
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
-		this->direction.y = -1;
-		if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
-			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+	if (this->warpVerticalBounds) {
+		if (this->velocity.y > -this->maxVelocity) {
+			this->velocity.y += -1.f * this->acceleration * dt * DeltaTime::dtMultiplier;
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
-		this->direction.y = 1;
-		if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
-			this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+	else {
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
+			this->direction.y = -1;
+			if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
+				this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
+			this->direction.y = 1;
+			if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
+				this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+			}
 		}
 	}
+
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_LEFT]))) {
 		this->direction.x = -1;
 		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
