@@ -147,6 +147,8 @@ public:
 	void UpdateTextTags(const float &dt);
 	void UpdateConsumables(const float &dt);
 	void UpdateParticles(const float &dt);
+	void UpdateMainMenu(const float &dt);
+	void UpdateGameOverMenu(const float &dt);
 
 	void DrawUI();
 	void DrawTextTags();
@@ -162,6 +164,10 @@ public:
 	void DisplayGameEnd();
 
 	// statics
-	enum Mode {SURVIVAL = 0, LADDER};
+	enum Mode {
+		CAMPAIGN = 0, 
+		INFINTE,
+		COSMOS
+	};
 };
 

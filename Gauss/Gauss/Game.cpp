@@ -13,7 +13,7 @@ Game::Game(RenderWindow *window)
 	//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
 	this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
-	this->gameMode = Mode::SURVIVAL;
+	this->gameMode = Mode::INFINTE;
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
@@ -207,7 +207,7 @@ void Game::UpdateView(const float &dt) {
 void Game::Update(const float &dt) {
 
 	if (this->mainMenu->isActive()) {
-		this->mainMenu->Update(dt);
+		this->UpdateMainMenu(dt);
 		return;
 	}
 
@@ -270,23 +270,44 @@ void Game::Update(const float &dt) {
 
 	// Restart
 	if (!this->playersExistInWorld()) {
-		this->gameOverMenu->Update(dt);
+		this->UpdateGameOverMenu(dt);
+	}
+}
 
-		if (this->gameOverMenu->onRedeployPress()) {
-			this->gameOverMenu->Reset();
-			this->_redeploy();
-		}
-		else if (this->gameOverMenu->onMenuPress()) {
-			this->gameOverMenu->Reset();
-			this->_redeploy();
-			this->mainView.setCenter(Vector2f(
-				this->window->getSize().x / 2.f,
-				this->window->getSize().y / 2.f));
-			this->mainMenu->activate();
-		}
-		else {
-			this->RestartUpdate();
-		}
+void Game::UpdateMainMenu(const float &dt) {
+	this->mainMenu->Update(dt);
+
+	if (this->mainMenu->onCampaignPress()) {
+		this->gameMode = Mode::CAMPAIGN;
+		this->mainMenu->Reset();
+	}
+	else if (this->mainMenu->onInfinitePress()) {
+		this->gameMode = Mode::INFINTE;
+		this->mainMenu->Reset();
+	}
+	else if (this->mainMenu->onCosmosPress()) {
+		this->gameMode = Mode::COSMOS;
+		this->mainMenu->Reset();
+	}
+}
+
+void Game::UpdateGameOverMenu(const float &dt) {
+	this->gameOverMenu->Update(dt);
+
+	if (this->gameOverMenu->onRedeployPress()) {
+		this->gameOverMenu->Reset();
+		this->_redeploy();
+	}
+	else if (this->gameOverMenu->onMenuPress()) {
+		this->gameOverMenu->Reset();
+		this->_redeploy();
+		this->mainView.setCenter(Vector2f(
+			this->window->getSize().x / 2.f,
+			this->window->getSize().y / 2.f));
+		this->mainMenu->activate();
+	}
+	else {
+		this->RestartUpdate();
 	}
 }
 
@@ -500,7 +521,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1:
 						{
-							if (dropChance > 10) { // 10% chance for an upgrade
+							if (dropChance > 90) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -512,22 +533,21 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 									// Want to make it really hard to get double and triple ray upgrades
 									if (uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance >= 7) {
-											// only a 3% chance this will happen
+										if (dropChance <= 20) {
+											// only a203% chance this will happen
 											uType = ItemUpgrade::Type::TRIPLE_RAY;
 											break;
 										}
 									}
 									else if (uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance >= 3) {
-											// only a 7% chance this will happen
-											uType = ItemUpgrade::Type::TRIPLE_RAY;
+										if (dropChance <= 25) {
+											// only a 25% chance this will happen
+											uType = ItemUpgrade::Type::DOUBLE_RAY;
 											break;
 										}
 									}
 								}
-								uType = ItemUpgrade::Type::DOUBLE_RAY;
 								this->consumables.Add(new ItemUpgrade(
 									currentEnemy->getPosition(),
 									uType,
@@ -665,13 +685,13 @@ void Game::UpdateScoreUI() {
 }
 
 void Game::UpdateEnemySpawns(const float &dt) {
-	if (this->gameMode == Mode::SURVIVAL) {
+	if (this->gameMode == Mode::INFINTE) {
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
 			this->_spawnEnemy(rand() % EnemyLifeform::nrOfEnemyTypes);
 			this->enemySpawnTimer = 0;
 		}
 	}
-	else {// LADDER
+	else {// CAMPAIGN
 		// Get those spawners that are in the screen view only
 		// Functionize
 		this->fromCol = static_cast<int>((this->mainView.getCenter().x - this->mainView.getSize().x / 2) / Gauss::GRID_SIZE);
@@ -1060,7 +1080,6 @@ void Game::PauseGame() {
 }
 
 void Game::DisplayGameEnd() {
-	//this->gameOverMenu.setActive
 	this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
 
 	this->gameOverText.setString("Score: " +

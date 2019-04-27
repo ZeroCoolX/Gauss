@@ -21,8 +21,10 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(MainMenu::BTN_SURVIVAL, this->font, "Play Gauss", 18, Vector2f(150.f, 400.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 550.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 400.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 500.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 600.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 750.f), 0));
 }
 
 void MainMenu::InitBackground() {
@@ -43,9 +45,16 @@ void MainMenu::UpdateButtons(const float &dt) {
 		this->buttons[i]->Update(this->mousePosWorld);
 		if (this->buttons[i]->IsPressed()) {
 			switch (this->buttons[i]->getId()) {
-				case MainMenu::BTN_LADDER:
-				case MainMenu::BTN_SURVIVAL:
-					this->active = false;
+				case MainMenu::BTN_CAMPAIGN:
+					this->playCampaign = true;
+					break;
+				case MainMenu::BTN_INFINITE:
+					this->playInfinite = true;
+					break;
+				case MainMenu::BTN_COSMOS:
+					// TODO: Put this back in once I create this game mode
+					//this->playCosmos = true;
+					this->playInfinite = true;
 					break;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
@@ -95,4 +104,10 @@ void MainMenu::DrawBackground(RenderTarget &renderTarget) {
 	renderTarget.draw(this->background);
 }
 
+void MainMenu::Reset() {
+	this->deactivate();
+	this->playCosmos = false;
+	this->playCampaign = false;
+	this->playInfinite = false;
+}
 

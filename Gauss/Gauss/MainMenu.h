@@ -8,6 +8,9 @@ class MainMenu
 {
 private:
 	bool active = true;
+	bool playCosmos = false;
+	bool playCampaign = false;
+	bool playInfinite = false;
 
 	Font font;
 	Texture backgroundTexture;
@@ -24,6 +27,9 @@ public:
 	virtual ~MainMenu();
 
 	inline bool isActive() const { return this->active; }
+	inline const bool onCosmosPress() { return this->active && this->playCosmos; }
+	inline const bool onCampaignPress() { return this->active && this->playCampaign; }
+	inline const bool onInfinitePress() { return this->active && this->playInfinite; }
 	void activate() { this->active = true; }
 	void deactivate() { this->active = false; }
 
@@ -42,12 +48,15 @@ public:
 	void DrawButtons(RenderTarget &renderTarget);
 	void DrawBackground(RenderTarget &renderTarget);
 
+	void Reset();
+
 	dArr<MenuButton*> buttons;
 
 	// statics
 	enum ButtonTypes {
-		BTN_LADDER = 0, 
-		BTN_SURVIVAL,
+		BTN_CAMPAIGN = 0, 
+		BTN_INFINITE,
+		BTN_COSMOS,
 		BTN_EXIT
 	};
 };
