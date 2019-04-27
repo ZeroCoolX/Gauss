@@ -242,7 +242,12 @@ void Game::InitLeaderboards() {
 
 void Game::InitMap() {
 	this->stage = new Stage(10, 10);
-	this->stage->LoadStage("lel.smap", this->mainView);
+	std::string mapName = "lel.smap";
+	switch (this->gameMode) {
+	case Game::Mode::INFINTE:
+		mapName = "infinite_invasion_01.smap";
+	}
+	this->stage->LoadStage(mapName, this->mainView);
 }
 
 void Game::InitMenus() {
@@ -326,14 +331,17 @@ void Game::UpdateMainMenu(const float &dt) {
 	if (this->mainMenu->onCampaignPress()) {
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
+		this->InitMap();
 	}
 	else if (this->mainMenu->onInfinitePress()) {
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
+		this->InitMap();
 	}
 	else if (this->mainMenu->onCosmosPress()) {
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
+		this->InitMap();
 	}
 }
 

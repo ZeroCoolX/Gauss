@@ -404,9 +404,6 @@ void GameMapEditor::Draw() {
 		// Draw the view
 		this->DrawUIView();
 	}
-
-	// Draw everything to the window
-	this->window->display();
 }
 
 void GameMapEditor::ToggleFullscreen() {
