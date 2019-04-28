@@ -35,6 +35,10 @@ void Player::InitTextures() {
 	Player::powerupIndicatorTextures.Add(temp);
 	temp.loadFromFile("Textures/Powerups/powerupXPIndicator.png");
 	Player::powerupIndicatorTextures.Add(temp);
+	temp.loadFromFile("Textures/Powerups/powerupAbsorberIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
+	temp.loadFromFile("Textures/Powerups/powerupGrinderIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
 
 	// Sheild texutures
 	temp.loadFromFile("Textures/shield02.png");
@@ -175,7 +179,7 @@ bool Player::ChangeAccessories(const float &dt) {
 		this->rWingSelect = ++this->rWingSelect % ((int)Player::shipRWingTextures.Size() - 1);
 		this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
 		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_AURA]))) {
+	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_AURA]))) { // Don't allow anyone to change this
 		this->auraSelect = ++this->auraSelect % ((int)Player::shipAuraTextures.Size() - 1);
 		this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
 		return true;
@@ -296,7 +300,7 @@ void Player::UpdateStatsUI() {
 	playerShieldChargeCircleBorder.setPosition(shieldChargePos);
 
 	// Powerup Indicator
-	if (this->getPowerupRF() || this->getPowerupXP()) {
+	if (this->isAnyPowerupActive()) {
 		Vector2f powerupSpritePos = Vector2f(shieldChargePos.x - 45.f, shieldChargePos.y - 7.f);
 		this->powerupSprite.setPosition(powerupSpritePos);
 		const float indicatorAlpha = (this->powerupTimer / this->powerupTimerMax) * 255.f;
@@ -362,6 +366,8 @@ void Player::UpdatePowerups(const float &dt) {
 	if (this->powerupTimer <= 0.f) {
 		this->powerupRF = false;
 		this->powerupXP = false;
+		this->powerupAbsorb = false;
+		this->powerupGrind = false;
 	}
 }
 
@@ -499,7 +505,10 @@ void Player::DrawUI(RenderTarget &renderTarget) {
 }
 
 void Player::Draw(RenderTarget &renderTarget) {
-	renderTarget.draw(this->aura);
+	// Only draw the aura if we have something to show
+	if (this->powerupAbsorb || this->powerupGrind) {
+		renderTarget.draw(this->aura);
+	}
 
 	for (size_t i = 0; i < this->bullets.Size(); ++i) {
 		this->bullets[i].Draw(renderTarget);
@@ -516,7 +525,7 @@ void Player::Draw(RenderTarget &renderTarget) {
 		renderTarget.draw(this->deflectorShield);
 	}
 
-	if (this->getPowerupRF() || this->getPowerupXP()) {
+	if (this->isAnyPowerupActive()) {
 		renderTarget.draw(this->powerupSprite);
 	}
 
@@ -648,6 +657,8 @@ void Player::Reset() {
 	this->piercingShot = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
+	this->powerupAbsorb = false;
+	this->powerupGrind = false;
 	this->upgradesAcquired.Clear();
 
 	// Reset weapons
@@ -687,6 +698,9 @@ void Player::ResetOnLifeLost() {
 	this->piercingShot = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
+	this->powerupAbsorb = false;
+	this->powerupGrind = false;
+
 	this->upgradesAcquired.Clear();
 
 	// Reset weapons
@@ -995,6 +1009,8 @@ void Player::_initPlayerSettings() {
 	this->shieldActive = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
+	this->powerupAbsorb = false;
+	this->powerupGrind = false;
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;

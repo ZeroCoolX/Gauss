@@ -2,6 +2,7 @@
 
 #include "Bullet.h"
 #include "AudioManager.h"
+//#include "Powerup.h"
 
 class Player
 {
@@ -36,6 +37,11 @@ public:
 	};
 	enum Sheild {
 		DEFAULT_SHIELD = 0
+	};
+
+	enum Auras {
+		ABSORB = 0,
+		GRIND
 	};
 
 	enum CosmoEffects {
@@ -191,7 +197,9 @@ private:
 	
 	// Powerups
 	bool powerupRF;
-	bool powerupXP;
+	bool powerupXP;	
+	bool powerupAbsorb;	
+	bool powerupGrind;
 
 	// Utility Functions
 	void _processPlayerInput(const float &dt);
@@ -227,6 +235,7 @@ public:
 	inline const unsigned getBulletsSize() const { return this->bullets.Size(); }
 	inline dArr<Bullet>* getBullets() { return &this->bullets; }
 	inline const bool shieldCharged() const { return this->shieldChargeTimer >= this->shieldChargeTimerMax; }
+	inline void addShieldCharge(float charge) { this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + charge); }
 	inline const bool isShielding() const { return this->shieldActive; }
 	inline Sprite getDeflectorShield() { return this->deflectorShield; }
 	inline void upgradeShield() {
@@ -247,13 +256,27 @@ public:
 		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[1]);
 		this->setupPowerupSprite();
 	}
+	inline void enablePowerupAbsorb() {
+		this->powerupAbsorb = true;
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[2]);
+		this->aura.setTexture(Player::shipAuraTextures[Auras::ABSORB]);
+		this->setupPowerupSprite();
+	}
+	inline void enablePowerupGrind() {
+		this->powerupGrind = true;
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[3]);
+		this->aura.setTexture(Player::shipAuraTextures[Auras::GRIND]);
+		this->setupPowerupSprite();
+	}
 	inline void setupPowerupSprite() {
 		this->powerupTimer = this->powerupTimerMax;
 		this->powerupSprite.setScale(0.3f, 0.3f);
 		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
 	}
-	inline bool getPowerupRF() const { return this->powerupRF; }
+	inline const bool isAnyPowerupActive() const { return (this->powerupRF || this->powerupXP || this->powerupAbsorb || this->powerupGrind); }
 	inline bool getPowerupXP() const { return this->powerupXP; }
+	inline bool getPowerupAbsorb() const { return this->powerupAbsorb; }
+	inline bool getPowerupGrind() const { return this->powerupGrind; }
 	inline float getCalculatedShootTimer() const { return this->powerupRF ? 10.f : 20.f; }
 
 	// Positional

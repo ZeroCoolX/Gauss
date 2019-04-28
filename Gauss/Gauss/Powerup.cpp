@@ -7,6 +7,10 @@ void Powerup::InitTextures() {
 	temp.loadFromFile("Textures/Powerups/powerupRF.png");
 	Powerup::powerupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Powerups/powerupXP.png");
+	Powerup::powerupTextures.Add(Texture(temp));	
+	temp.loadFromFile("Textures/Powerups/powerupAbsorber.png");
+	Powerup::powerupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Powerups/powerupGrinder.png");
 	Powerup::powerupTextures.Add(Texture(temp));
 	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
 }
@@ -33,6 +37,12 @@ void Powerup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 			break;
 		case XP2:
 			player->enablePowerupXP();
+			break;
+		case ABSORB:
+			player->enablePowerupAbsorb();
+			break;
+		case GRIND:
+			player->enablePowerupGrind();
 			break;
 	}
 }

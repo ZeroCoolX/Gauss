@@ -578,9 +578,10 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						// Change to drop consumable - perhaps revisit this
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
-						int consumableType = rand() % 3 + 1;
+						int consumableType = rand() % 9 + 6;
 						switch (consumableType) {
 						case 1:
+						case 2:
 						{
 							if (dropChance > 95) { // 10% chance for an upgrade
 
@@ -613,7 +614,10 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 2: {
+						case 3:
+						case 4:
+						case 5:
+						{
 							if (dropChance > 85) { // 25% chance health is dropped
 								this->consumables.Add(new ItemPickup(
 									currentEnemy->getPosition(),
@@ -622,10 +626,13 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 3:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 90) { // 25% chance powerup is dropped
+							if (dropChance > 9) { // 25% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -921,9 +928,18 @@ void Game::UpdateEnemies(const float &dt) {
 						}
 					}
 
-					if (this->players[j].isShielding()) {
+					if (this->players[j].isShielding() || this->players[j].getPowerupGrind()) {
+						Color particleColor = Color::Magenta;
+
 						// Damage the sheild from impact
-						this->players[j].impactSheild();
+						if (this->players[j].isShielding()) {
+							this->players[j].impactSheild();
+						}
+
+						// Grind powerup is active
+						if (this->players[j].getPowerupGrind()) {
+							particleColor = Color::Red;
+						}
 
 						const int nrOfPatricles = rand() % 20 + 5;
 						for (int m = 0; m < nrOfPatricles; m++)
@@ -933,7 +949,7 @@ void Game::UpdateEnemies(const float &dt) {
 								currentEnemy->getVelocity(),
 								rand() % 40 + 10.f,
 								rand() % 30 + 1.f,
-								50.f, Color::Magenta));
+								50.f, particleColor));
 						}
 
 						this->enemyLifeforms.Remove(i);
@@ -1013,28 +1029,39 @@ void Game::UpdateEnemyBullets(const float &dt) {
 		// Bullet Player collision check
 		for (size_t j = 0; j < this->players.Size(); j++)
 		{
-			if (this->players[j].isShielding() && !EnemyLifeform::bullets[i].isPlayerProjectile()) {
+			if ((this->players[j].isShielding() || this->players[j].getPowerupAbsorb()) && !EnemyLifeform::bullets[i].isPlayerProjectile()) {
 				if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getDeflectorShield().getGlobalBounds())
 					 || EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
-					// Reflect bullet
-					this->players[j].getDeflectorShield().setColor(Color::Red);
+					// Absorb, add charge to the shield
+					if (!this->players[j].isShielding() && this->players[j].getPowerupAbsorb()) {
+						// Add a small charge to the shield because of absorbtion
+						this->players[j].addShieldCharge(10);
+						// Remove from enemy bullet
+						EnemyLifeform::bullets.Remove(i);
+						break;
+					}
+					else {
+						// Reflect bullet
+						this->players[j].getDeflectorShield().setColor(Color::Red);
 
-					// Reverse direction
-					EnemyLifeform::bullets[i].reverseDirection();
-					// Add bullet to player
-					this->players[j].getBullets()->Add(Bullet(Bullet::ORB_BLUE,
-						Vector2f(0.2f, 0.2f),
-						EnemyLifeform::bullets[i].getPosition(),
-						this->normalize(EnemyLifeform::bullets[i].getVelocity(), this->vectorLength(EnemyLifeform::bullets[i].getVelocity())),
-						EnemyLifeform::bullets[i].getMaxVelocity(),
-						EnemyLifeform::bullets[i].getMaxVelocity(),
-						EnemyLifeform::bullets[i].getDamage()));
-					// Remove from enemy bullet
-					EnemyLifeform::bullets.Remove(i);
-					break;
+						// Reverse direction
+						EnemyLifeform::bullets[i].reverseDirection();
+						// Add bullet to player
+						this->players[j].getBullets()->Add(Bullet(Bullet::ORB_BLUE,
+							Vector2f(0.2f, 0.2f),
+							EnemyLifeform::bullets[i].getPosition(),
+							this->normalize(EnemyLifeform::bullets[i].getVelocity(), this->vectorLength(EnemyLifeform::bullets[i].getVelocity())),
+							EnemyLifeform::bullets[i].getMaxVelocity(),
+							EnemyLifeform::bullets[i].getMaxVelocity(),
+							EnemyLifeform::bullets[i].getDamage()));
+						// Remove from enemy bullet
+						EnemyLifeform::bullets.Remove(i);
+						break;
+					}
 				}
-			}else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
+			}
+			else if (EnemyLifeform::bullets[i].getGlobalBounds().intersects(this->players[j].getGlobalBounds())) {
 
 				// Generate a few collision particles
 				const int nrOfPatricles = rand() % 5 + 3;
@@ -1368,7 +1395,7 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 		if (position == Vector2f(0.f, 0.f)) {
 			const int inLineChance = rand() % 100;
 			if (inLineChance > 1) {
-				compensatedPos = Vector2f(((float)this->mainView.getCenter().x + (this->mainView.getSize().x / 2)), static_cast<int>(this->players[pNum].getPosition().y));
+				compensatedPos = Vector2f((this->mainView.getCenter().x + (this->mainView.getSize().x / 2.f)), this->players[pNum].getPosition().y);
 			}
 		}
 	}

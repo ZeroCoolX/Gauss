@@ -22,7 +22,9 @@ public:
 	// Statics
 	enum PowerupTypes { 
 		RF = 0, 
-		XP2 
+		XP2,
+		ABSORB,
+		GRIND
 	};
 
 	static dArr<Texture> powerupTextures;

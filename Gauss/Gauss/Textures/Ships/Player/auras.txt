@@ -1,11 +1,2 @@
-Textures/Ships/Player/aura01.png
-Textures/Ships/Player/aura02.png
-Textures/Ships/Player/aura03.png
-Textures/Ships/Player/aura04.png
-Textures/Ships/Player/aura05.png
-Textures/Ships/Player/aura06.png
-Textures/Ships/Player/aura07.png
-Textures/Ships/Player/aura08.png
-Textures/Ships/Player/aura09.png
-Textures/Ships/Player/aura10.png
-Textures/Ships/Player/aura11.png
+Textures/Accessories/absorber.png
+Textures/Accessories/grinder.png

@@ -13,6 +13,7 @@ int EnemyLifeform::GetEnemyType(int eType) {
 	if (newType == eType) {
 		newType = (eType + 1) % EnemyLifeform::nrOfEnemyTypes;
 	}
+	return newType;
 }
 
 void EnemyLifeform::InitializeTextures() {
