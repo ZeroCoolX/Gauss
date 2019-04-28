@@ -91,7 +91,7 @@ Player::Player(
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
 	int CHANGE_AURA
-) :level(1), lives(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+) :level(1), lives(3), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	this->audioManager = audioManager;
 	// Stats
@@ -158,15 +158,6 @@ int Player::getDamage() const {
 void Player::TakeDamage(int damage) {
 	this->hp = std::max(0, this->hp - damage);
 	this->damageTimer = 0;
-
-	if (this->shouldLoseLife()) {
-		--this->lives;
-		if (!this->isDead()) {
-			// Reset stats for the player
-			this->ResetOnLifeLost();
-		}
-		return;
-	}
 
 	this->velocity.x += -this->normalizedDir.x * 10.f; // knockback amount
 	this->velocity.y += -this->normalizedDir.y * 10.f; // knockback amount
@@ -686,8 +677,10 @@ void Player::Reset() {
 
 }
 
-void Player::ResetOnLifeLost() {
+void Player::ResetOnLifeLost(View &view) {
 	// Reset sprite
+	this->sprite.setPosition(view.getCenter());
+	this->_recalculatePlayerCenter();
 
 	// Reset Physics
 	this->velocity.x = 0;

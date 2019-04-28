@@ -268,7 +268,7 @@ void Game::InitLeaderboards() {
 
 void Game::InitMap() {
 	this->stage = new Stage(10, 10);
-	std::string mapName = "GET_TO_DA_CHOPPA.smap";
+	std::string mapName = "lel.smap";
 	switch (this->gameMode) {
 	case Game::Mode::INFINTE:
 		mapName = "infinite_invasion_01.smap";
@@ -478,7 +478,14 @@ void Game::UpdatePlayers(const float &dt) {
 
 			this->totalScore += this->players[i].getScore();
 
-			if (this->players[i].isDead()) {
+			if (this->players[i].shouldLoseLife()) {
+				if (this->players[i].loseLife()) {
+					this->players.Remove(i);
+					return;
+				}
+				this->players[i].ResetOnLifeLost(this->mainView);
+
+			}else if (this->players[i].isDead()) {
 				this->players.Remove(i);
 				return;
 			}
@@ -1208,7 +1215,7 @@ void Game::DrawUI() {
 		if (this->gameMode == Mode::COSMOS) {
 			this->window->draw(this->cosmoEffectText);
 		}
-		else if (this->gameMode == Mode::INFINTE) {
+		else if (this->gameMode == Mode::INFINTE || this->gameMode == Mode::CAMPAIGN) {
 			this->window->draw(this->scoreText);
 		}
 	}
