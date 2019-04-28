@@ -20,7 +20,6 @@ Particle::Particle(Vector2f pos,
 	this->sprite.setTexture(Particle::particleTextures[textureIndex]);
 	this->sprite.setPosition(pos);
 	this->sprite.setOrigin(this->sprite.getGlobalBounds().width / 2, this->sprite.getGlobalBounds().height / 2);
-	//this->sprite.setScale(Vector2f(static_cast<float>(rand() % 2 + 1), static_cast<float>(rand() % 2 + 1)));
 	this->sprite.setScale(Vector2f(1.f, 1.f));
 	this->sprite.setColor(color);
 

@@ -917,8 +917,27 @@ void Game::UpdateEnemies(const float &dt) {
 									50, 120.f, true
 								)
 							);
-							return;
+							break;
 						}
+					}
+
+					if (this->players[j].isShielding()) {
+						// Damage the sheild from impact
+						this->players[j].impactSheild();
+
+						const int nrOfPatricles = rand() % 20 + 5;
+						for (int m = 0; m < nrOfPatricles; m++)
+						{
+							this->particles.Add(Particle(currentEnemy->getPosition(),
+								0,
+								currentEnemy->getVelocity(),
+								rand() % 40 + 10.f,
+								rand() % 30 + 1.f,
+								50.f, Color::Magenta));
+						}
+
+						this->enemyLifeforms.Remove(i);
+						break;
 					}
 
 					// Damage player		
@@ -1342,9 +1361,21 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 	const int pNum = rand() % this->players.Size();
 	const int eLevel = this->players[pNum].getLevel();
 	const float velocity = static_cast<float>(forcedVelocity);
+
+	Vector2f compensatedPos = position;
+	// Compensation over time for increasing hardness
+	if (enemyType == EnemyLifeform::MOVE_LEFT || enemyType == EnemyLifeform::MOVE_LEFT_SHOOT_LINE) {
+		if (position == Vector2f(0.f, 0.f)) {
+			const int inLineChance = rand() % 100;
+			if (inLineChance > 1) {
+				compensatedPos = Vector2f(((float)this->mainView.getCenter().x + (this->mainView.getSize().x / 2)), static_cast<int>(this->players[pNum].getPosition().y));
+			}
+		}
+	}
+
 	switch (enemyType) {
 	case EnemyLifeform::MOVE_LEFT:
-		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, velocity, position));
+		this->enemyLifeforms.Add(new MoveLeftEnemy(this->mainView, eLevel, pNum, velocity, compensatedPos));
 		break;
 	case EnemyLifeform::FOLLOW:
 		this->enemyLifeforms.Add(new TrackerEnemy(this->mainView, eLevel, pNum, velocity, position));
@@ -1353,7 +1384,7 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 		this->enemyLifeforms.Add(new MoveLeftShootEnemy(this->window, this->mainView, eLevel, pNum, velocity, position));
 		break;
 	case EnemyLifeform::MOVE_LEFT_SHOOT_LINE:
-		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, velocity, position));
+		this->enemyLifeforms.Add(new MoveLeftShootLineEnemy(this->window, this->mainView, eLevel, pNum, velocity, compensatedPos));
 		break;
 	case EnemyLifeform::COSMOSOS_01:
 	case EnemyLifeform::COSMOSOS_02:

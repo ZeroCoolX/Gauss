@@ -234,6 +234,7 @@ public:
 		this->UpdateStats();
 		this->shieldChargeTimer = this->shieldChargeTimerMax;
 	}
+	inline void impactSheild() { this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - (this->shieldChargeTimerMax / 3)); }
 
 	// Powerups
 	inline void enablePowerupRF() { 
