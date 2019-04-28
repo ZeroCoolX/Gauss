@@ -314,11 +314,6 @@ void Game::Update(const float &dt) {
 	// Only allow changing accessories while paused
 	this->UpdateWhilePaused(dt);
 
-	// Check if campaign end occurred
-	//if (this->campaignOver) {
-	//	this->UpdateCampaignLevelBeatMenu(dt);
-	//	return;
-	//}
 
 	// Update the world
 	if (!this->paused && this->playersExistInWorld()) {
@@ -353,7 +348,7 @@ void Game::Update(const float &dt) {
 		this->UpdateParticles(dt);
 	}
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
-		if (!this->campaignOver) {
+		if (this->gameMode != Mode::CAMPAIGN) {
 			// Show end game stats
 			this->DisplayGameEnd();
 		}
@@ -415,9 +410,6 @@ void Game::UpdateGameOverMenu(const float &dt) {
 	}
 }
 
-void Game::UpdateCampaignLevelBeatMenu(const float &dt) {
-	std::cout << "YEEEEEE" << std::endl;
-}
 
 void Game::UpdateTimers(const float &dt) {
 	if (this->keyTime < this->keyTimeMax) {
@@ -644,12 +636,11 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						// Change to drop consumable - perhaps revisit this
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
-						int consumableType = rand() % 9 + 1;
+						int consumableType = rand() % 3 + 1;
 						switch (consumableType) {
 						case 1:
-						case 2:
 						{
-							if (dropChance > 95) { // 10% chance for an upgrade
+							if (dropChance > 90) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -659,15 +650,15 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										uType = rand() % 1;
 									}
 									// Want to make it really hard to get double and triple ray upgrades
-									if (currentPlayer.getLevel() >= 10 && uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
+									if (currentPlayer.getLevel() >= 5 && uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance > 90) {
+										if (dropChance > 75) {
 											// only a 25% chance this will happen
 											uType = ItemUpgrade::Type::DOUBLE_RAY;
 										}
-									}else if (currentPlayer.getLevel() >= 15 && uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+									}else if (currentPlayer.getLevel() >= 10 && uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance > 80) {
+										if (dropChance > 75) {
 											// only a203% chance this will happen
 											uType = ItemUpgrade::Type::TRIPLE_RAY;
 										}
@@ -680,11 +671,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 3:
-						case 4:
-						case 5:
+						case 2:
 						{
-							if (dropChance > 85) { // 25% chance health is dropped
+							if (dropChance > 80) { // 25% chance health is dropped
 								this->consumables.Add(new ItemPickup(
 									currentEnemy->getPosition(),
 									ItemPickup::HEALTH, // health item for now
@@ -692,13 +681,10 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 6:
-						case 7:
-						case 8:
-						case 9:
+						case 3:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 85) { // 25% chance powerup is dropped
+							if (dropChance > 80) { // 25% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -1518,6 +1504,10 @@ void Game::_redeploy() {
 	for (size_t i = 0; i < this->players.Size(); i++)
 	{
 		this->players[i].Reset();
+	}
+
+	if (this->gameMode == Mode::CAMPAIGN) {
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
 	}
 
 	this->paused = true;
