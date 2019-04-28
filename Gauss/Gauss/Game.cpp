@@ -120,6 +120,12 @@ void Game::InitPlayersInWorld(int quantity) {
 			Keyboard::Num9,
 			Keyboard::Num0));
 	}
+	// Set the lives for the player based off game mode
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		this->players[i].setLives(this->gameMode == Mode::CAMPAIGN ? 5 : 1);
+	}
+
 	this->InitPlayerScoreStats();
 }
 
@@ -275,6 +281,9 @@ void Game::InitMap() {
 		break;
 	case Game::Mode::COSMOS:
 		mapName = "cosmos_01.smap";
+		break;
+	case Game::Mode::CAMPAIGN:
+		mapName = "campaign_01.smap";
 		break;
 	}
 	this->stage->LoadStage(mapName, this->mainView);

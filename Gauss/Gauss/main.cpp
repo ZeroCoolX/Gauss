@@ -4,7 +4,7 @@
 
 using namespace sf;
 
-bool MAPEDITOR = false;
+bool MAPEDITOR = true;
 bool JOYSTICK_TEST = false;
 
 void DrawDebug(RenderTarget &renderTarget);

@@ -293,6 +293,7 @@ public:
 	inline const bool isDead() const { return this->lives <= 0 && this->hp <= 0; }
 	inline const bool shouldLoseLife() { return this->hp <= 0 && this->lives > 0; }
 	inline const int getLives() const { return this->lives; }
+	inline const int setLives(int lives) { this->lives = lives; }
 	inline const bool loseLife() { --this->lives; return this->isDead(); }
 	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
 	inline const int& getHp() const { return hp; }

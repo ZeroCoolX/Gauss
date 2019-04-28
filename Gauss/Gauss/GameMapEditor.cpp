@@ -193,19 +193,22 @@ void GameMapEditor::UpdateControls() {
 		&& Keyboard::isKeyPressed(Keyboard::LShift) 
 		&& this->keyTime >= this->keyTimeMax
 	) {
-		this->tileCollider = !this->tileCollider;
-		this->selector.setOutlineColor(!this->tileCollider ? Color::Green : (this->tileCollider && this->tileDamage) ? Color::Red : Color::Yellow);
-		this->keyTime = 0.f;
-	}
+		Color borderColor;
+		if (!this->tileCollider && !this->tileDamage) { // from no colision to collision
+			this->tileCollider = true;
+			borderColor = Color::Yellow;
+		}
+		else if (this->tileCollider && !this->tileDamage) { // collision to damage
+			this->tileDamage = true;
+			borderColor = Color::Red;
+		}
+		else if (this->tileCollider && this->tileDamage) { // damage back to no collision
+			this->tileCollider = false;
+			this->tileDamage = false;
+			borderColor = Color::Green;
+		}
 
-	// Toggle tile damage
-	if (this->tileCollider && Keyboard::isKeyPressed(Keyboard::LControl)
-		&& Keyboard::isKeyPressed(Keyboard::D)
-		&& Keyboard::isKeyPressed(Keyboard::LShift)
-		&& this->keyTime >= this->keyTimeMax
-		) {
-		this->tileDamage = !this->tileDamage;
-		this->selector.setOutlineColor(!this->tileCollider ? Color::Green : (this->tileCollider && this->tileDamage) ? Color::Red : Color::Yellow);
+		this->selector.setOutlineColor(borderColor);
 		this->keyTime = 0.f;
 	}
 
@@ -241,7 +244,8 @@ void GameMapEditor::UpdateControls() {
 	// Assign the gave end tile
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
 		tileToolSelect = Stage::GAME_END_TILE;
-		this->endGameTile = !this->endGameTile;
+		this->tileCollider = false;
+		this->tileDamage = false;
 		this->selector.setOutlineColor(Color::Magenta);
 		this->keyTime = 0.f;
 	}
