@@ -25,6 +25,11 @@ public:
 		COSMOS
 	};
 
+	enum LeaderboardIndex {
+		INF = 0,
+		COS
+	};
+
 private:
 	const int LEADERBOARD_MAX = 8;
 	struct Leaderboard {
@@ -43,7 +48,7 @@ private:
 	};
 
 	// 3 potential leaderboards
-	dArr<Leaderboard> infiniteLeaderboards;
+	dArr<dArr<Leaderboard>> leaderboards; // 0 = infinite, 1 = cosmos
 
 	// Only for test
 	AudioManager* audioManager;
@@ -134,9 +139,9 @@ private:
 	std::string _getPlayerLivesText();
 	void _redeploy();
 	int _calculateScore(PlayerScore &playerScore);
-	void _sortLeaderboard();
-	void _insertLeaderboardEntry(int id, int score);
-	void _storeLeaderboard();
+	void _sortLeaderboard(LeaderboardIndex leadIndex);
+	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score);
+	void _storeLeaderboard(LeaderboardIndex leadIndex, std::string filename);
 
 
 public:

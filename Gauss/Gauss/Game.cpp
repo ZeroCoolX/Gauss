@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <sstream>
 
-Game::Game(RenderWindow *window) : infiniteLeaderboards(this->LEADERBOARD_MAX)
+Game::Game(RenderWindow *window) : leaderboards(2)
 {
 	this->window = window;
 	// Init stage
@@ -220,13 +220,14 @@ void Game::InitUI() {
 
 void Game::InitLeaderboards() {
 
-	// Load campaign leaderboards
-	//this->leaderboards.Add(dArr<Leaderboard>(3));
+	// Add infinite leaderboard
+	this->leaderboards.Add(dArr<Leaderboard>(this->LEADERBOARD_MAX));
+	// Add cosmos leaderboard
+	this->leaderboards.Add(dArr<Leaderboard>(this->LEADERBOARD_MAX));
 
-	// Load Infinite leaderboards
+	// LOAD INFINITE LEADERBOARDS
 	std::ifstream fin;
 	std::string line;
-	int leadIndex = 0;
 	fin.open("Leaderboards/Infinite/leaderboard.txt");
 	if (fin.is_open()) {
 		// Lead line by line
@@ -236,17 +237,33 @@ void Game::InitLeaderboards() {
 			ss.str(line);
 			ss >> leader.id;
 			ss >> leader.score;
-			this->infiniteLeaderboards.Add(leader);
+			this->leaderboards[LeaderboardIndex::INF].Add(leader);
 		}
-		this->_sortLeaderboard();
+		this->_sortLeaderboard(LeaderboardIndex::INF);
 	}
 	else {
 		std::cerr << "Failure to open Inifinite leaderboards file" << std::endl;
 	}
 	fin.close();
 
-	// Load Cosmos Leaderboards
-	//this->leaderboards.Add(dArr<Leaderboard>(5));
+	// LOAD COSMOS LEADERBOARDS
+	fin.open("Leaderboards/Cosmos/leaderboard.txt");
+	if (fin.is_open()) {
+		// Lead line by line
+		Leaderboard leader;
+		while (getline(fin, line)) {
+			std::stringstream ss;
+			ss.str(line);
+			ss >> leader.id;
+			ss >> leader.score;
+			this->leaderboards[LeaderboardIndex::COS].Add(leader);
+		}
+		this->_sortLeaderboard(LeaderboardIndex::COS);
+	}
+	else {
+		std::cerr << "Failure to open Inifinite leaderboards file" << std::endl;
+	}
+	fin.close();
 }
 
 void Game::InitMap() {
@@ -898,41 +915,43 @@ void Game::UpdateEnemies(const float &dt) {
 			// Check Player - Enemy collision
 			for (size_t j = 0; j < this->players.Size(); j++)
 			{
+				// Check if this is a Cosmosos - collide regardless of damage cooldown because Cosmos don't cause damage - they cause CHAOS ^_^
+				if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds()) 
+					&& currentEnemy->isUniverseModifier()) 
+				{
+					// do stuff
+					const int nrOfPatricles = rand() % 20 + 5;
+					for (int m = 0; m < nrOfPatricles; m++)
+					{
+						this->particles.Add(Particle(currentEnemy->getPosition(),
+							0,
+							currentEnemy->getVelocity(),
+							rand() % 40 + 10.f,
+							rand() % 30 + 1.f,
+							50.f));
+					}
+					this->enemyLifeforms.Remove(i);
+					// Player is going to not be a happy camper for a bit
+					std::string effectText = this->players[j].ApplyCosmoEffect();
+					if (effectText != "") {
+						this->cosmoEffectText.setString("Cosmo Effect: " + effectText);
+
+						this->textTags.Add(
+							TextTag(
+								&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
+									this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
+								effectText,
+								Color::Magenta,
+								Vector2f(-1.f, 0.f),
+								50, 120.f, true
+							)
+						);
+						break;
+					}
+				}
+
 				if (this->players[j].getGlobalBounds().intersects(currentEnemy->getGlobalBounds())
 					&& !this->players[j].isDamageCooldown()) {
-
-					// Check if this is a Cosmosos
-					if (currentEnemy->isUniverseModifier()) {
-						// do stuff
-						const int nrOfPatricles = rand() % 20 + 5;
-						for (int m = 0; m < nrOfPatricles; m++)
-						{
-							this->particles.Add(Particle(currentEnemy->getPosition(),
-								0,
-								currentEnemy->getVelocity(),
-								rand() % 40 + 10.f,
-								rand() % 30 + 1.f,
-								50.f));
-						}
-						this->enemyLifeforms.Remove(i);
-						// Player is going to not be a happy camper for a bit
-						std::string effectText = this->players[j].ApplyCosmoEffect();
-						if (effectText != "") {
-							this->cosmoEffectText.setString("Cosmo Effect: " + effectText);
-
-							this->textTags.Add(
-								TextTag(
-									&this->font, Vector2f(this->players[j].getPosition().x + this->players[j].getGlobalBounds().width / 4,
-										this->players[j].getPosition().y - this->players[j].getGlobalBounds().height / 2),
-									effectText,
-									Color::Magenta,
-									Vector2f(-1.f, 0.f),
-									50, 120.f, true
-								)
-							);
-							break;
-						}
-					}
 
 					if (this->players[j].isShielding() || this->players[j].getPowerupGrind()) {
 						Color particleColor = Color::Magenta;
@@ -1302,12 +1321,17 @@ void Game::DisplayGameEnd() {
 	this->scoreTime = std::max(1, (int)this->scoreTimer.getElapsedTime().asSeconds());
 	std::string scoreText = "";
 	std::map<int, PlayerScore>::iterator it = this->playerScoreMap.begin();
+	// Store whichever leaderboard we need based off game mode
+	LeaderboardIndex leadIndex = this->gameMode == Mode::COSMOS
+		? LeaderboardIndex::COS
+		: LeaderboardIndex::INF;
+
 	while (it != this->playerScoreMap.end()) {
 		// calculate the final player score
 		const int finalPlayerScore = this->_calculateScore(it->second);
 		
 		// insert it into the leaderboard if possible
-	   this->_insertLeaderboardEntry(it->first, finalPlayerScore);
+	   this->_insertLeaderboardEntry(leadIndex, it->first,finalPlayerScore);
 		
 		// display stats on screen
 		scoreText += "Player " + std::to_string(it->first) + " Score: " + std::to_string(finalPlayerScore) + "\n";
@@ -1321,49 +1345,50 @@ void Game::DisplayGameEnd() {
 
 	// Write leaderboard text
 	std::string leaderboardText = "Gaussian\t\t\tScore\n";
-	for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
+	for (size_t i = 0; i < this->leaderboards[leadIndex].Size(); i++)
 	{
-		leaderboardText += "G." + std::to_string(this->infiniteLeaderboards[i].id) + "\t\t\t\t\t" + std::to_string(this->infiniteLeaderboards[i].score);
+		leaderboardText += "G." + std::to_string(this->leaderboards[leadIndex][i].id) + "\t\t\t\t\t\t" + std::to_string(this->leaderboards[leadIndex][i].score);
 		leaderboardText += "\n\n";
 	}
-	for (size_t i = 0; i < (this->LEADERBOARD_MAX - this->infiniteLeaderboards.Size()); i++)
+	for (size_t i = 0; i < (this->LEADERBOARD_MAX - this->leaderboards[leadIndex].Size()); i++)
 	{
-		leaderboardText += "G...\t\t\t\t\t....";;
+		leaderboardText += "G...\t\t\t\t\t\t....";;
 		leaderboardText += "\n\n";
 	}
 	this->infinteLeaderboardText.setString(leaderboardText);
 	
 	// Write to file
-	this->_storeLeaderboard();
+	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
 }
 
-void Game::_insertLeaderboardEntry(int id, int score) {
-	if (this->infiniteLeaderboards.Size() == this->LEADERBOARD_MAX && score < this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
+void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score) {
+	if (this->leaderboards[leadIndex].Size() == this->LEADERBOARD_MAX && score < this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
 		return; 
 	}
 
-	if (this->infiniteLeaderboards.Size() == this->LEADERBOARD_MAX && score >= this->infiniteLeaderboards[this->infiniteLeaderboards.Size() - 1].score) {
+	if (this->leaderboards[leadIndex].Size() == this->LEADERBOARD_MAX && score >= this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
 		// Remove lowest
-		this->infiniteLeaderboards.Remove(this->infiniteLeaderboards.Size() - 1);
+		this->leaderboards[leadIndex].Remove(this->leaderboards[leadIndex].Size() - 1);
 	}
 
 	Leaderboard lead;
 	lead.id = id;
 	lead.score = score;
 	// Add new one
-	this->infiniteLeaderboards.Add(lead);
+	this->leaderboards[leadIndex].Add(lead);
 	// Sort
-	this->_sortLeaderboard();
+	this->_sortLeaderboard(leadIndex);
 }
 
-void Game::_storeLeaderboard() {
+void Game::_storeLeaderboard(LeaderboardIndex leadIndex, std::string leaderFile) {
 	std::ofstream fout;
-	fout.open("Leaderboards/Infinite/leaderboard.txt", std::ofstream::out | std::ofstream::trunc);
+	std::string filename = "Leaderboards/" + leaderFile +"/leaderboard.txt";
+	fout.open(filename, std::ofstream::out | std::ofstream::trunc);
 	if (fout.is_open()) {
-		for (size_t i = 0; i < this->infiniteLeaderboards.Size(); i++)
+		for (size_t i = 0; i < this->leaderboards[leadIndex].Size(); i++)
 		{
-			fout << std::to_string(this->infiniteLeaderboards[i].id) << " " << std::to_string(this->infiniteLeaderboards[i].score);
-			if (i + 1 < this->infiniteLeaderboards.Size()) {
+			fout << std::to_string(this->leaderboards[leadIndex][i].id) << " " << std::to_string(this->leaderboards[leadIndex][i].score);
+			if (i + 1 < this->leaderboards[leadIndex].Size()) {
 				fout << "\n";
 			}
 		}
@@ -1374,13 +1399,13 @@ void Game::_storeLeaderboard() {
 	fout.close();
 }
 
-void Game::_sortLeaderboard() {
-		for (size_t i = 0; i < this->infiniteLeaderboards.Size() - 1; i = i + 1) {
+void Game::_sortLeaderboard(LeaderboardIndex leadIndex) {
+		for (size_t i = 0; i < this->leaderboards[leadIndex].Size() - 1; i = i + 1) {
 			int min = i;
-			for (size_t j = i + 1; j < this->infiniteLeaderboards.Size(); j = j + 1) {
-				if (this->infiniteLeaderboards[j].score > this->infiniteLeaderboards[min].score) { min = j; }
+			for (size_t j = i + 1; j < this->leaderboards[leadIndex].Size(); j = j + 1) {
+				if (this->leaderboards[leadIndex][j].score > this->leaderboards[leadIndex][min].score) { min = j; }
 			}
-			std::swap(this->infiniteLeaderboards[i], this->infiniteLeaderboards[min]);
+			std::swap(this->leaderboards[leadIndex][i], this->leaderboards[leadIndex][min]);
 		}
 }
 
