@@ -268,7 +268,7 @@ void Game::InitLeaderboards() {
 
 void Game::InitMap() {
 	this->stage = new Stage(10, 10);
-	std::string mapName = "lel.smap";
+	std::string mapName = "GET_TO_DA_CHOPPA.smap";
 	switch (this->gameMode) {
 	case Game::Mode::INFINTE:
 		mapName = "infinite_invasion_01.smap";
@@ -477,12 +477,18 @@ void Game::UpdatePlayers(const float &dt) {
 			this->UpdatePlayerBullets(dt, this->players[i]);
 
 			this->totalScore += this->players[i].getScore();
+
+			if (this->players[i].isDead()) {
+				this->players.Remove(i);
+				return;
+			}
 		}
 		if (!playersEffectedByCosmos) {
 			this->cosmoEffectText.setString("");
 		}
 
 		this->UpdateScoreUI();
+
 	}
 }
 
@@ -729,6 +735,22 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 			if (!this->stage->getTiles()[i].IsNull(j)
 				&& this->stage->getTiles()[i][j].isColliderType()
 				&& currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
+				if (this->stage->getTiles()[i][j].isDamageType()) {
+					// Once touch and only death awaits
+					currentPlayer.TakeDamage(999);
+					// Explode into particles
+					const int nrOfPatricles = rand() % 20 + 5;
+					for (int m = 0; m < nrOfPatricles; m++)
+					{
+						this->particles.Add(Particle(currentPlayer.getPosition(),
+							0,
+							Vector2f(-currentPlayer.getNormDir().x, -currentPlayer.getNormDir().y),
+							rand() % 40 + 10.f,
+							rand() % 30 + 1.f,
+							50.f));
+					}
+					return;
+				}
 				// Not great but not all together aweful
 				currentPlayer.move(0.f, -currentPlayer.getNormDir().y * 50 * dt * DeltaTime::dtMultiplier);
 				currentPlayer.resetVelocityY();
@@ -836,6 +858,11 @@ void Game::UpdateEnemySpawns(const float &dt) {
 		{
 			for (int j = this->fromRow; j < this->toRow; j++)
 			{
+				// Piggyback check for end game tile
+				if (!this->stage->getTiles()[i].IsNull(j) && this->stage->getTiles()[i][j].isGameEndType()) {
+					std::cout << "REACHED THE END OF THE GAME!!!" << std::endl;
+				}
+
 				if (this->stage->getEnemySpawners()[i].IsNull(j) || this->stage->getEnemySpawners()[i][j].isUsed()) {
 					continue;
 				}

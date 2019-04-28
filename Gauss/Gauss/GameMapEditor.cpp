@@ -14,7 +14,7 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 
 	// Tile properties
 	this->tileCollider = false;
-	//this->tileDamage = false;
+	this->tileDamage = false;
 
 	this->enemySpType = 0;
 	this->enemySpInterval = 0;
@@ -194,7 +194,18 @@ void GameMapEditor::UpdateControls() {
 		&& this->keyTime >= this->keyTimeMax
 	) {
 		this->tileCollider = !this->tileCollider;
-		this->selector.setOutlineColor(this->tileCollider ? Color::Red : Color::Green);
+		this->selector.setOutlineColor(!this->tileCollider ? Color::Green : (this->tileCollider && this->tileDamage) ? Color::Red : Color::Yellow);
+		this->keyTime = 0.f;
+	}
+
+	// Toggle tile damage
+	if (this->tileCollider && Keyboard::isKeyPressed(Keyboard::LControl)
+		&& Keyboard::isKeyPressed(Keyboard::D)
+		&& Keyboard::isKeyPressed(Keyboard::LShift)
+		&& this->keyTime >= this->keyTimeMax
+		) {
+		this->tileDamage = !this->tileDamage;
+		this->selector.setOutlineColor(!this->tileCollider ? Color::Green : (this->tileCollider && this->tileDamage) ? Color::Red : Color::Yellow);
 		this->keyTime = 0.f;
 	}
 
@@ -227,6 +238,14 @@ void GameMapEditor::UpdateControls() {
 		this->keyTime = 0.f;
 	}
 
+	// Assign the gave end tile
+	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
+		tileToolSelect = Stage::GAME_END_TILE;
+		this->endGameTile = !this->endGameTile;
+		this->selector.setOutlineColor(Color::Magenta);
+		this->keyTime = 0.f;
+	}
+
 	// Save stage
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::S) && this->keyTime >= this->keyTimeMax) {
 		this->SaveStage();
@@ -255,6 +274,9 @@ void GameMapEditor::UpdateText() {
 	}
 	else if(this->tileToolSelect == Stage::TileType::FOREGROUND_TILE){
 		this->selectorText.setString("FOREGROUND");
+	}
+	else if(this->tileToolSelect == Stage::TileType::GAME_END_TILE){
+		this->selectorText.setString("GAME_END");
 	}
 	else {
 		this->selectorText.setString("ENEMY_SPAWNER");
@@ -297,7 +319,8 @@ void GameMapEditor::UpdateAddRemoveTiles() {
 					IntRect(this->textureSelectedX, this->textureSelectedY, Gauss::GRID_SIZE, Gauss::GRID_SIZE),
 					Vector2f(static_cast<float>(this->mousePosGrid.x * Gauss::GRID_SIZE), static_cast<float>(this->mousePosGrid.y* Gauss::GRID_SIZE)),
 					this->tileCollider,
-					false
+					this->tileDamage,
+					this->endGameTile
 				),
 				this->mousePosGrid.x,
 				this->mousePosGrid.y, this->tileToolSelect);

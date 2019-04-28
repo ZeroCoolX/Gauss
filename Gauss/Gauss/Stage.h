@@ -53,7 +53,14 @@ public:
 
 	static void InitTextures();
 
-	enum TileType { FOREGROUND_TILE = 0, BACKGROUND_TILE, ENEMY_SPAWNER_TILE };
+	enum TileType { 
+		FOREGROUND_TILE = 0, 
+		BACKGROUND_TILE, 
+		ENEMY_SPAWNER_TILE,
+		UPGRADE_TILE,
+		POWERUP_TILE,
+		GAME_END_TILE
+	};
 };
 
 

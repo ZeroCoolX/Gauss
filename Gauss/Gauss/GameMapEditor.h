@@ -31,6 +31,8 @@ private:
 
 	// Tiles
 	bool tileCollider;
+	bool tileDamage;
+	bool endGameTile;
 
 	// Enemy Spawner
 	Vector2i enemySpPositionGrid;

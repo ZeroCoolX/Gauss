@@ -11,10 +11,12 @@ void Tile::InitTextures() {
 Tile::Tile(IntRect textureRect,
 	Vector2f position,
 	bool colliderType, 
-	bool damageType)
+	bool damageType,
+	bool endGameType)
 {
 	this->position = position;
 	this->colliderType = colliderType;
+	this->endGameType = endGameType;
 	this->damageType = damageType;
 	this->damagePercentage = 20.f; // percent of HP
 
@@ -41,7 +43,8 @@ std::string Tile::GetAsString() const {
 		std::to_string(static_cast<int>(this->sprite.getPosition().y / Gauss::GRID_SIZE)) + " " +
 		// Stats
 		std::to_string(this->colliderType) + " " +
-		std::to_string(this->damageType);
+		std::to_string(this->damageType) + " " +
+		std::to_string(this->endGameType);
 }
 
 

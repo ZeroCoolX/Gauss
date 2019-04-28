@@ -9,6 +9,7 @@ private:
 	// Core
 	bool colliderType;
 	bool damageType;
+	bool endGameType;
 	float damagePercentage;
 
 	// Positioning
@@ -21,13 +22,15 @@ public:
 	Tile(IntRect textureRect,
 		Vector2f position,
 		bool collisionType,
-		bool damageType);
+		bool damageType,
+		bool endGameType);
 	virtual ~Tile();
 
 	inline const FloatRect getBounds() const { return this->sprite.getGlobalBounds(); }
 	inline const IntRect getTexRect() const { return this->sprite.getTextureRect(); }
 	inline const bool isDamageType() const { return this->damageType; }
 	inline const bool isColliderType() const { return this->colliderType; }
+	inline const bool isGameEndType() const { return this->endGameType; }
 	inline void setPos(float x, float y) { this->sprite.setPosition(Vector2f(x, y)); }
 	inline void move(float x, float y) { this->sprite.move(x, y); }
 	inline const Vector2f getPos() const { return this->sprite.getPosition(); }

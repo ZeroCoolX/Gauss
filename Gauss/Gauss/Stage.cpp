@@ -72,7 +72,7 @@ void Stage::AddTile(const Tile tile, long row, long col, int tileType) {
 
 	if (tileType == TileType::BACKGROUND_TILE) {
 		if (this->backgroundTiles[row].IsNull(col)) {
-			this->backgroundTiles[row].Add(Tile(tile.getTexRect(), tile.getPos(), false, false), col);
+			this->backgroundTiles[row].Add(Tile(tile.getTexRect(), tile.getPos(), false, false, false), col);
 			this->backgroundTiles[row][col].changeColorTo(Color(100, 100, 100, 255));
 		}
 		else {
@@ -85,6 +85,13 @@ void Stage::AddTile(const Tile tile, long row, long col, int tileType) {
 		}
 		else {
 			std::cout << "Alread foreground tile existing at [" << row << "][" << col << "]" << std::endl;
+		}
+	}else if (tileType == TileType::GAME_END_TILE) {
+		if (this->tileMatrix[row].IsNull(col)) {
+			this->tileMatrix[row].Add(tile, col);
+		}
+		else {
+			std::cout << "Alread Game end tile existing at [" << row << "][" << col << "]" << std::endl;
 		}
 	}
 }
@@ -102,6 +109,14 @@ void Stage::RemoveTile(long row, long col, int tileType) {
 		}
 	}
 	else if (tileType == TileType::FOREGROUND_TILE) {
+		if (!this->tileMatrix[row].IsNull(col)) {
+			this->tileMatrix[row].Remove(col);
+		}
+		else {
+			std::cout << "No tile existing at [" << row << "][" << col << "]" << std::endl;
+		}
+	}
+	else if (tileType == TileType::GAME_END_TILE) {
 		if (!this->tileMatrix[row].IsNull(col)) {
 			this->tileMatrix[row].Remove(col);
 		}
@@ -254,6 +269,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		int gridPosY = 0;
 		bool isCollider = 0;
 		bool isDamaging = 0;
+		bool isEndGame = 0;
 
 		// Load the foreground - LINE 2
 		std::getline(fin, line);
@@ -262,7 +278,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			ss >> rectLeft >> rectTop
 			>> rectWidth >> rectHeight
 			>> gridPosX >> gridPosY
-			>> isCollider >> isDamaging
+			>> isCollider >> isDamaging >> isEndGame
 			) {
 
 			this->tileMatrix[gridPosX].Add(
@@ -270,7 +286,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
 					Vector2f(static_cast<float>(gridPosX * Gauss::GRID_SIZE), static_cast<float>(gridPosY * Gauss::GRID_SIZE)),
 					isCollider,
-					isDamaging), gridPosY
+					isDamaging, isEndGame), gridPosY
 			);
 		}
 
@@ -284,7 +300,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 			ss >> rectLeft >> rectTop
 			>> rectWidth >> rectHeight
 			>> gridPosX >> gridPosY
-			>> isCollider >> isDamaging
+			>> isCollider >> isDamaging >> isEndGame
 			) {
 
 			this->backgroundTiles[gridPosX].Add(
@@ -292,7 +308,7 @@ bool Stage::LoadStage(std::string filename, View &view) {
 					IntRect(rectLeft, rectTop, rectWidth, rectHeight),
 					Vector2f(static_cast<float>(gridPosX * Gauss::GRID_SIZE), static_cast<float>(gridPosY * Gauss::GRID_SIZE)),
 					isCollider,
-					isDamaging), gridPosY
+					isDamaging, isEndGame), gridPosY
 			);
 			this->backgroundTiles[gridPosX][gridPosY].changeColorTo(Gauss::BACKGROUND_COLOR);
 		}
@@ -511,7 +527,7 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font
 					RectangleShape border;
 					border.setSize(Vector2f(static_cast<float>(Gauss::GRID_SIZE), static_cast<float>(Gauss::GRID_SIZE)));
 					border.setPosition(this->tileMatrix[i][j].getPos());
-					border.setOutlineColor(Color::Red);
+					border.setOutlineColor(this->tileMatrix[i][j].isDamageType() ? Color::Red : Color::Yellow);
 					border.setOutlineThickness(2.f);
 					border.setFillColor(Color::Transparent);
 

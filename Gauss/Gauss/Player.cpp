@@ -156,7 +156,7 @@ int Player::getDamage() const {
 }
 
 void Player::TakeDamage(int damage) {
-	this->hp -= damage;
+	this->hp = std::max(0, this->hp - damage);
 	this->damageTimer = 0;
 
 	if (this->shouldLoseLife()) {
