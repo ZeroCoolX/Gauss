@@ -578,7 +578,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						// Change to drop consumable - perhaps revisit this
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
-						int consumableType = rand() % 9 + 6;
+						int consumableType = rand() % 9 + 1;
 						switch (consumableType) {
 						case 1:
 						case 2:
@@ -632,7 +632,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						case 9:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 9) { // 25% chance powerup is dropped
+							if (dropChance > 85) { // 25% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
