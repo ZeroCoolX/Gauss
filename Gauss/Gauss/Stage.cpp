@@ -430,7 +430,7 @@ void Stage::Update(const float &dt, View &view, bool editor) {
 	}
 }
 
-void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font) {
+void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font, dArr<Player> *players) {
 	this->fromCol = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / Gauss::GRID_SIZE);
 	if (this->fromCol <= 0) {
 		this->fromCol = 0;
@@ -485,7 +485,25 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font
 				this->backgroundTiles[i][j].Draw(renderTarget);
 			}
 
-			// Draw foreground tiles
+			// Draw enemy spawners tiles
+			if (!this->enemySpawners[i].IsNull(j) && editor) {
+				this->enemySpawners[i][j].Draw(renderTarget, font);
+			}
+		}
+	}
+
+	// Draw Player
+	if (players != nullptr) {
+		for (size_t i = 0; i < players->Size(); ++i) {
+			(*players)[i].Draw(renderTarget);
+		}
+	}
+
+	// Draw foreground tiles
+	for (int i = this->fromCol; i < this->toCol; i++)
+	{
+		for (int j = this->fromRow; j < this->toRow; j++)
+		{
 			if (!this->tileMatrix[i].IsNull(j)) {
 				this->tileMatrix[i][j].Draw(renderTarget);
 
@@ -499,11 +517,6 @@ void Stage::Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font
 
 					renderTarget.draw(border);
 				}
-			}
-
-			// Draw enemy spawners tiles
-			if (!this->enemySpawners[i].IsNull(j) && editor) {
-				this->enemySpawners[i][j].Draw(renderTarget, font);
 			}
 		}
 	}

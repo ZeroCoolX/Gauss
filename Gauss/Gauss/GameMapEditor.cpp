@@ -14,6 +14,7 @@ GameMapEditor::GameMapEditor(RenderWindow *window)
 
 	// Tile properties
 	this->tileCollider = false;
+	//this->tileDamage = false;
 
 	this->enemySpType = 0;
 	this->enemySpInterval = 0;
@@ -377,7 +378,7 @@ void GameMapEditor::DrawUIView() {
 }
 
 void GameMapEditor::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView, true, this->font);
+	this->stage->Draw(*this->window, this->mainView, true, this->font, nullptr);
 }
 
 void GameMapEditor::Draw() {

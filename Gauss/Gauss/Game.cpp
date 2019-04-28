@@ -471,8 +471,6 @@ void Game::UpdatePlayers(const float &dt) {
 			this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
 			playersEffectedByCosmos = this->players[i].isEffectedByCosmo();
 
-			// TESTING FOR NOW - UPDATE WALL-PLAYER COLLISION
-			//this->UpdateWallColliders(dt, i);
 			this->UpdatePlayerTileCollision(dt, this->players[i]);
 
 			// Bullets update
@@ -731,9 +729,10 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 			if (!this->stage->getTiles()[i].IsNull(j)
 				&& this->stage->getTiles()[i][j].isColliderType()
 				&& currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
-				// temporary collision
-				currentPlayer.move(-currentPlayer.getNormDir().x * 100 * dt * DeltaTime::dtMultiplier, -currentPlayer.getNormDir().y * 100 * dt * DeltaTime::dtMultiplier);
-				currentPlayer.resetVelocity();
+				// Not great but not all together aweful
+				currentPlayer.move(0.f, -currentPlayer.getNormDir().y * 50 * dt * DeltaTime::dtMultiplier);
+				currentPlayer.resetVelocityY();
+				return;
 			}
 		}
 	}
@@ -741,22 +740,6 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 
 void Game::UpdateMap(const float &dt) {
 	this->stage->Update(dt, this->mainView, false);
-}
-
-void Game::UpdateWallColliders(const float &dt, int playerIndex) {
-	//for (size_t i = 0; i < this->tiles.Size(); i++)
-	//{
-	//	if (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-	//		while (this->players[playerIndex].collidesWith(this->tiles[i].getBounds())) {
-	//			this->players[playerIndex].move(
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().x,
-	//				20.f * -1.f * this->players[playerIndex].getNormDir().y
-	//			);
-	//		}
-
-	//		this->players[playerIndex].resetVelocity();
-	//	}
-	//}
 }
 
 void Game::UpdateScoreUI() {
@@ -1235,14 +1218,8 @@ void Game::DrawEnemy() {
 	}
 }
 
-void Game::DrawPlayers() {
-	for (size_t i = 0; i < this->players.Size(); ++i) {
-		this->players[i].Draw(*this->window);
-	}
-}
-
-void Game::DrawMap() {
-	this->stage->Draw(*this->window, this->mainView, false, this->font);
+void Game::DrawPlayersAndMap() {
+	this->stage->Draw(*this->window, this->mainView, false, this->font, &this->players);
 }
 
 void Game::DrawConsumables() {
@@ -1270,11 +1247,8 @@ void Game::Draw() {
 		return;
 	}
 
-	// Draw Map
-	this->DrawMap();
-
-	// Draw Players
-	this->DrawPlayers();
+	// Draw Map and Players
+	this->DrawPlayersAndMap();
 
 	// Draw Enemy Lifeform
 	this->DrawEnemy();

@@ -161,8 +161,10 @@ void Player::TakeDamage(int damage) {
 
 	if (this->shouldLoseLife()) {
 		--this->lives;
-		// Reset stats for the player
-		this->ResetOnLifeLost();
+		if (!this->isDead()) {
+			// Reset stats for the player
+			this->ResetOnLifeLost();
+		}
 		return;
 	}
 
@@ -415,7 +417,6 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	}
 	else {
 		if (this->effectedByCosmo) {
-			// UNDO COSMO!
 			this->effectedByCosmo = false;
 			switch (this->currentCosmoEffect) {
 			case CosmoEffects::INVERT_CONTROLS_EFFECT:
@@ -686,6 +687,8 @@ void Player::Reset() {
 }
 
 void Player::ResetOnLifeLost() {
+	// Reset sprite
+
 	// Reset Physics
 	this->velocity.x = 0;
 	this->velocity.y = 0;

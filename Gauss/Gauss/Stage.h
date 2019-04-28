@@ -3,6 +3,7 @@
 #include "TileArr.h"
 #include "Gauss.h"
 #include "EnemySpawner.h"
+#include "Player.h"
 
 class Stage
 {
@@ -35,7 +36,7 @@ public:
 
 	void UpdateBackground(const float &dt, View &view);
 	void Update(const float &dt, View &view, bool editor);
-	void Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font);
+	void Draw(RenderTarget &renderTarget, View &view, bool editor, Font &font, dArr<Player> *players);
 
 	void AddEnemySpawner(const EnemySpawner es, long row, long col);
 	void RemoveEnemySpawner(long row, long col);
