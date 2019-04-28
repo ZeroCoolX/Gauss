@@ -681,6 +681,9 @@ void Player::ResetOnLifeLost(View &view) {
 	// Reset sprite
 	this->sprite.setPosition(view.getCenter());
 	this->_recalculatePlayerCenter();
+	this->mainGunSprite.setPosition(
+		this->mainGunSprite.getPosition().x,
+		this->playerCenter.y);
 
 	// Reset Physics
 	this->velocity.x = 0;
