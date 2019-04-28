@@ -15,6 +15,8 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
 	this->gameMode = Mode::INFINTE;
+	this->campaignOver = false;
+
 	// Init fonts
 	this->font.loadFromFile("Fonts/Dosis-Light.ttf");
 
@@ -120,11 +122,6 @@ void Game::InitPlayersInWorld(int quantity) {
 			Keyboard::Num9,
 			Keyboard::Num0));
 	}
-	// Set the lives for the player based off game mode
-	for (size_t i = 0; i < this->players.Size(); i++)
-	{
-		this->players[i].setLives(this->gameMode == Mode::CAMPAIGN ? 5 : 1);
-	}
 
 	this->InitPlayerScoreStats();
 }
@@ -200,7 +197,7 @@ void Game::InitUI() {
 	this->gameOverText.setFont(this->font);
 	this->gameOverText.setCharacterSize(20);
 	this->gameOverText.setFillColor(Color::Red);
-	this->gameOverText.setString("Game Over! (X___X)");
+	this->gameOverText.setString("");
 	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
 
 	// Leaderboard Text
@@ -299,7 +296,7 @@ void Game::UpdateView(const float &dt) {
 }
 
 void Game::Update(const float &dt) {
-
+	// Check for main menu actions
 	if (this->mainMenu->isActive()) {
 		this->UpdateMainMenu(dt);
 		return;
@@ -316,6 +313,12 @@ void Game::Update(const float &dt) {
 
 	// Only allow changing accessories while paused
 	this->UpdateWhilePaused(dt);
+
+	// Check if campaign end occurred
+	//if (this->campaignOver) {
+	//	this->UpdateCampaignLevelBeatMenu(dt);
+	//	return;
+	//}
 
 	// Update the world
 	if (!this->paused && this->playersExistInWorld()) {
@@ -350,8 +353,11 @@ void Game::Update(const float &dt) {
 		this->UpdateParticles(dt);
 	}
 	else if (!this->playersExistInWorld() && this->scoreTime == 0) {
-		// Show end game stats
-		this->DisplayGameEnd();
+		if (!this->campaignOver) {
+			// Show end game stats
+			this->DisplayGameEnd();
+		}
+
 		// Activate the game over screen if it's not already turned on
 		if (!this->gameOverMenu->isActive()) {
 			this->gameOverMenu->activate();
@@ -371,7 +377,11 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
 		this->InitMap();
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].setLives(3);
+		}
 	}
 	else if (this->mainMenu->onInfinitePress()) {
 		this->gameMode = Mode::INFINTE;
@@ -403,6 +413,10 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
+}
+
+void Game::UpdateCampaignLevelBeatMenu(const float &dt) {
+	std::cout << "YEEEEEE" << std::endl;
 }
 
 void Game::UpdateTimers(const float &dt) {
@@ -478,6 +492,15 @@ void Game::UpdatePlayers(const float &dt) {
 
 			// Players update
 			this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
+
+			// Check for game over state
+			if (this->gameMode == Mode::CAMPAIGN && this->players[i].campaignLevelBeat()) {
+				this->campaignOver = true;
+				this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN_BEAT);
+				this->players.Remove(i);
+				return;
+			}
+
 			playersEffectedByCosmos = this->players[i].isEffectedByCosmo();
 
 			this->UpdatePlayerTileCollision(dt, this->players[i]);
@@ -876,7 +899,12 @@ void Game::UpdateEnemySpawns(const float &dt) {
 			{
 				// Piggyback check for end game tile
 				if (!this->stage->getTiles()[i].IsNull(j) && this->stage->getTiles()[i][j].isGameEndType()) {
-					std::cout << "REACHED THE END OF THE GAME!!!" << std::endl;
+					for (size_t i = 0; i < this->players.Size(); i++)
+					{
+						if (!this->players[i].isGameOverActivated()) {
+							this->players[i].ActivateGameEnd(this->mainView.getCenter());
+						}
+					}
 				}
 
 				if (this->stage->getEnemySpawners()[i].IsNull(j) || this->stage->getEnemySpawners()[i][j].isUsed()) {

@@ -145,6 +145,9 @@ private:
 
 	// Player input controls
 	dArr<int> controls;
+	bool gameOverOverride;
+	float gameOverTimer;
+	float gameOverTimerMax;
 
 	// Movement
 	Vector2f velocity;
@@ -293,7 +296,7 @@ public:
 	inline const bool isDead() const { return this->lives <= 0 && this->hp <= 0; }
 	inline const bool shouldLoseLife() { return this->hp <= 0 && this->lives > 0; }
 	inline const int getLives() const { return this->lives; }
-	inline const int setLives(int lives) { this->lives = lives; }
+	inline const void setLives(int lives) { this->lives = lives; }
 	inline const bool loseLife() { --this->lives; return this->isDead(); }
 	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
 	inline const int& getHp() const { return hp; }
@@ -370,6 +373,9 @@ public:
 	bool PlayerShowStatsIsPressed();
 	std::string GetStatsAsString();
 	void ResetOnLifeLost(View &view);
+	void ActivateGameEnd(Vector2f pos);
+	inline const bool isGameOverActivated() const { return this->gameOverOverride; }
+	inline const bool campaignLevelBeat() const { return this->gameOverTimer <= 0.f; }
 
 	// Cosmo Effects
 	inline const bool isEffectedByCosmo() const { return this->effectedByCosmo; }

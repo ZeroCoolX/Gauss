@@ -57,6 +57,8 @@ private:
 	MainMenu *mainMenu;
 	GameOverMenu *gameOverMenu;
 
+	bool campaignOver;
+
 	RenderWindow *window;
 	View mainView;
 	RenderTexture mainRenderTexture;
@@ -189,6 +191,7 @@ public:
 	void UpdateParticles(const float &dt);
 	void UpdateMainMenu(const float &dt);
 	void UpdateGameOverMenu(const float &dt);
+	void UpdateCampaignLevelBeatMenu(const float &dt);
 
 	void DrawUI();
 	void DrawTextTags();

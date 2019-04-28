@@ -245,7 +245,8 @@ void GameMapEditor::UpdateControls() {
 	if (Keyboard::isKeyPressed(Keyboard::LControl) && Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
 		tileToolSelect = Stage::GAME_END_TILE;
 		this->tileCollider = false;
-		this->tileDamage = false;
+		this->tileCollider = false;
+		this->endGameTile = true;
 		this->selector.setOutlineColor(Color::Magenta);
 		this->keyTime = 0.f;
 	}

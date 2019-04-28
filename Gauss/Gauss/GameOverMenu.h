@@ -15,7 +15,9 @@ public:
 
 	enum Backgrounds {
 		INFINTE = 0,
-		COSMOS
+		COSMOS,
+		CAMPAIGN,
+		CAMPAIGN_BEAT
 	};
 
 private:

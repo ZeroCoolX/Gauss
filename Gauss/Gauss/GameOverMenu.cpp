@@ -8,6 +8,10 @@ void GameOverMenu::InitTextures() {
 	GameOverMenu::backgroundTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Backgrounds/UI/cosmosGameOverBackground.png");
 	GameOverMenu::backgroundTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Backgrounds/UI/campaignGameOverBackground.png");
+	GameOverMenu::backgroundTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Backgrounds/UI/campaignBeatScreen.png");
+	GameOverMenu::backgroundTextures.Add(Texture(temp));
 }
 
 GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
@@ -36,7 +40,7 @@ void GameOverMenu::LoadButtons(int buttonTextureIndex) {
 void GameOverMenu::LoadGameOverBackground(Backgrounds bIndex) {
 	this->background.setTexture(&GameOverMenu::backgroundTextures[bIndex]);
 	this->buttons.Clear();
-	LoadButtons(bIndex + 1);
+	LoadButtons((bIndex + 1) % MenuButton::numOfTextures);
 }
 
 

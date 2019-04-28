@@ -198,7 +198,9 @@ void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 	this->_recalculatePlayerCenter();
 
 	// Bounds check for window collision
-	this->_checkBounds(view, this->warpVerticalBounds);
+	if (!this->gameOverOverride) {
+		this->_checkBounds(view, this->warpVerticalBounds);
+	}
 }
 
 void Player::Combat(const float &dt) {
@@ -430,6 +432,12 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 			}
 		}
 	}
+	// Once the game over state is initiated count down and end
+	// ONLY countdown then
+	if (this->gameOverOverride && this->gameOverTimer > 0.f) {
+		this->gameOverTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+	}
+
 	if (this->shootTimer < this->shootTimerMax) {
 		this->shootTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	}
@@ -636,6 +644,11 @@ void Player::Reset() {
 	this->damageMax = 2;
 	this->UpdateStats();
 
+	// Reset game over state
+	this->gameOverOverride = false;
+	this->gameOverTimerMax = 150.f;
+	this->gameOverTimer = this->gameOverTimerMax;
+
 	// Reset Physics
 	this->velocity.x = 0;
 	this->velocity.y = 0;
@@ -690,6 +703,11 @@ void Player::ResetOnLifeLost(View &view) {
 	// Reset Physics
 	this->velocity.x = 0;
 	this->velocity.y = 0;
+
+	// Reset game over state
+	this->gameOverOverride = false;
+	this->gameOverTimerMax = 150.f;
+	this->gameOverTimer = this->gameOverTimerMax;
 
 	// Reset upgrades
 	this->dualMissiles01 = false;
@@ -854,7 +872,27 @@ void Player::ToggleBaddieSwap(bool swap) {
 	EnemyLifeform::hotSwap = swap;
 }
 
+void Player::ActivateGameEnd(Vector2f pos) {
+	// Set player into the middle of the screen
+	this->sprite.setPosition(pos);
+	this->_recalculatePlayerCenter();
+
+	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
+	this->mainGunSprite.setPosition(
+		origin,
+		this->playerCenter.y);
+
+	// turn off player input for WASD
+	this->gameOverOverride = true;
+}
+
 void Player::_processPlayerInput(const float &dt) {
+	if (this->gameOverOverride) {
+		this->velocity.y = 0.f;
+		this->velocity.x = this->maxVelocity * 10.f * dt * DeltaTime::dtMultiplier;
+		return;
+	}
+
 	// Collect player input
 	if (this->warpVerticalBounds) {
 		if (this->velocity.y > -this->maxVelocity) {
@@ -998,6 +1036,11 @@ void Player::_initPlayerSettings() {
 	this->stabalizingForce = 0.3f;
 	this->warpVerticalBounds = false;
 
+	// Reset game over state
+	this->gameOverOverride = false;
+	this->gameOverTimerMax = 150.f;
+	this->gameOverTimer = this->gameOverTimerMax;
+
 	// WEAPON
 	this->currentWeapon = Player::LASER_GUN;
 
@@ -1117,3 +1160,4 @@ void Player::_checkBounds(View &view, bool warpVertical) {
 		}
 	}
 }
+
