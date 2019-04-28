@@ -1,5 +1,15 @@
 #include "GameOverMenu.h"
 
+dArr<Texture> GameOverMenu::backgroundTextures;
+void GameOverMenu::InitTextures() {
+	Texture temp;
+
+	temp.loadFromFile("Textures/Backgrounds/UI/genericGameOverBackground02.png");
+	GameOverMenu::backgroundTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Backgrounds/UI/cosmosGameOverBackground.png");
+	GameOverMenu::backgroundTextures.Add(Texture(temp));
+}
+
 GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
 {
 	this->pressTimeMax = 10.f;
@@ -7,7 +17,8 @@ GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
 	this->active = false;
 	this->font = font;
 	this->window = window;
-	this->Init();
+	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
+	this->background.setFillColor(Color(255, 255, 255, 255));
 }
 
 
@@ -15,25 +26,19 @@ GameOverMenu::~GameOverMenu()
 {
 }
 
-void GameOverMenu::InitButtons() {
-
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_REDEPLOY, this->font, "Redeploy", 18, Vector2f(50.f, 650.f), 1));
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_MENU, this->font, "Menu", 18, Vector2f(50.f, 750.f), 1));
-	this->buttons.Add(new MenuButton(GameOverMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(50.f, 850.f), 1));
+void GameOverMenu::LoadButtons(int buttonTextureIndex) {
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_REDEPLOY, this->font, "Redeploy", 18, Vector2f(50.f, 650.f), buttonTextureIndex));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_MENU, this->font, "Menu", 18, Vector2f(50.f, 750.f), buttonTextureIndex));
+	this->buttons.Add(new MenuButton(GameOverMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(50.f, 850.f), buttonTextureIndex));
 }
 
-// Init
-void GameOverMenu::Init() {
-	this->InitBackground();
-	this->InitButtons();
+
+void GameOverMenu::LoadGameOverBackground(Backgrounds bIndex) {
+	this->background.setTexture(&GameOverMenu::backgroundTextures[bIndex]);
+	this->buttons.Clear();
+	LoadButtons(bIndex + 1);
 }
 
-void GameOverMenu::InitBackground() {
-	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
-	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/genericGameOverBackground02.png");
-	this->background.setTexture(&this->backgroundTexture);
-	this->background.setFillColor(Color(255, 255, 255, 255));
-}
 
 void GameOverMenu::UpdateButtons(const float &dt) {
 	for (size_t i = 0; i < this->buttons.Size(); i++)

@@ -127,6 +127,9 @@ void Game::InitTextures() {
 	// buttons
 	MenuButton::InitTextures();
 
+	// Game Over Menu
+	GameOverMenu::InitTextures();
+
 	// Player Textures
 	Player::InitTextures();
 
@@ -342,16 +345,19 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
 		this->InitMap();
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
 	}
 	else if (this->mainMenu->onInfinitePress()) {
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
 		this->InitMap();
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
 	}
 	else if (this->mainMenu->onCosmosPress()) {
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
 		this->InitMap();
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS);
 	}
 }
 
@@ -1394,7 +1400,7 @@ void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {
 	if (enemyType == EnemyLifeform::MOVE_LEFT || enemyType == EnemyLifeform::MOVE_LEFT_SHOOT_LINE) {
 		if (position == Vector2f(0.f, 0.f)) {
 			const int inLineChance = rand() % 100;
-			if (inLineChance > 1) {
+			if (inLineChance > 50) {
 				compensatedPos = Vector2f((this->mainView.getCenter().x + (this->mainView.getSize().x / 2.f)), this->players[pNum].getPosition().y);
 			}
 		}

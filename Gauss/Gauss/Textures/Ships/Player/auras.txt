@@ -1,2 +1,2 @@
-Textures/Accessories/absorber.png
-Textures/Accessories/grinder.png
+Textures/Ships/Player/absorber.png
+Textures/Ships/Player/grinder.png

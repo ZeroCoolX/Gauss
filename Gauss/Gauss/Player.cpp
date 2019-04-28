@@ -778,7 +778,7 @@ std::string Player::ApplyCosmoEffect() {
 		return effectText;
 	}
 
-	int cosmoEffect = 1;//rand() % 5; // number of possible cosmo effecs
+	int cosmoEffect = rand() % 5; // number of possible cosmo effecs
 
 	this->effectedByCosmo = true;
 	this->cosmoEffectTimer = 0.f;

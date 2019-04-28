@@ -6,6 +6,18 @@
 
 class GameOverMenu
 {
+public:
+	enum ButtonTypes {
+		BTN_REDEPLOY = 0,
+		BTN_MENU,
+		BTN_EXIT
+	};
+
+	enum Backgrounds {
+		INFINTE = 0,
+		COSMOS
+	};
+
 private:
 	bool active = false;
 	bool redeploy = false;
@@ -34,10 +46,6 @@ public:
 	void activate() { this->active = true; }
 	void deactivate() { this->active = false; }
 
-	// Init
-	void Init();
-	void InitButtons();
-	void InitBackground();
 
 	// Update
 	void Update(const float &dt);
@@ -51,14 +59,13 @@ public:
 	void DrawBackground(RenderTarget &renderTarget);
 
 	void Reset();
+	void LoadGameOverBackground(Backgrounds bIndex);
+	void LoadButtons(int buttonTextureIndex);
 
 	dArr<MenuButton*> buttons;
 
-	// statics
-	enum ButtonTypes {
-		BTN_REDEPLOY = 0,
-		BTN_MENU,
-		BTN_EXIT
-	};
+	static dArr<Texture> backgroundTextures;
+	static void InitTextures();
+
 };
 
