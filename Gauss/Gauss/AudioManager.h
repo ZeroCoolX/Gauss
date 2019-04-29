@@ -41,8 +41,9 @@ public:
 		PLAYER_LASER = 0,
 		GAUSS_CANNON,
 		GAUSS_CANNON_RELOAD,
-		EXPLOSION01,
-		EXPLOSION02
+		BUTTON_CLICK,
+		BADDIE_DEATH_01,
+		PLAYER_DEATH
 	};
 
 	enum AudioMusic {
@@ -54,7 +55,7 @@ public:
 	AudioManager();
 	~AudioManager();
 
-	SoundInfo* LoadSound(const std::string& path);
+	SoundInfo* LoadSound(const std::string& path, float volume = 100.f);
 	void PlaySound(AudioSounds sIndex);
 	void PlayMusic(AudioMusic mIndex);
 	void StopMusic(AudioMusic mIndex);

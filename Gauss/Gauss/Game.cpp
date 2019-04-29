@@ -369,6 +369,7 @@ void Game::UpdateMainMenu(const float &dt) {
 	this->mainMenu->Update(dt);
 
 	if (this->mainMenu->onCampaignPress()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
 		this->InitMap();
@@ -376,6 +377,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->_setPlayerLives(); // lives = 3
 	}
 	else if (this->mainMenu->onInfinitePress()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
 		this->InitMap();
@@ -383,6 +385,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->_setPlayerLives(); // lives = 1
 	}
 	else if (this->mainMenu->onCosmosPress()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
 		this->InitMap();
@@ -395,10 +398,12 @@ void Game::UpdateGameOverMenu(const float &dt) {
 	this->gameOverMenu->Update(dt);
 
 	if (this->gameOverMenu->onRedeployPress()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
 	}
 	else if (this->gameOverMenu->onMenuPress()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
 		this->mainView.setCenter(Vector2f(
@@ -502,6 +507,7 @@ void Game::UpdatePlayers(const float &dt) {
 			this->totalScore += this->players[i].getScore();
 
 			if (this->players[i].shouldLoseLife()) {
+				this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
 				if (this->players[i].loseLife()) {
 					this->players.Remove(i);
 					return;
@@ -509,6 +515,7 @@ void Game::UpdatePlayers(const float &dt) {
 				this->players[i].ResetOnLifeLost(this->mainView);
 
 			}else if (this->players[i].isDead()) {
+				this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
 				this->players.Remove(i);
 				return;
 			}
@@ -719,6 +726,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 
 						// Destroy the enemy
 						this->enemyLifeforms.Remove(k);
+						this->audioManager->PlaySound(AudioManager::AudioSounds::BADDIE_DEATH_01);
 						currentPlayer.incrementEnemiesKilled();
 					}
 
@@ -1088,7 +1096,7 @@ void Game::UpdateEnemies(const float &dt) {
 						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setEnemiesKilled(this->players[j].getEnemiesKilled());
 						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setSecondsSurvive(this->players[j].getTimeAlive());
 						this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setHighestLevelAchieved(this->players[j].getHighestLevelAchieved());
-						
+						this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
 						this->players.Remove(j);
 						return;
 					}
@@ -1194,7 +1202,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setEnemiesKilled(this->players[j].getEnemiesKilled());
 					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setSecondsSurvive(this->players[j].getTimeAlive());
 					this->playerScoreMap.find(this->players[j].getPlayerNumber())->second.setHighestLevelAchieved(this->players[j].getHighestLevelAchieved());
-
+					this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
 					this->players.Remove(j);
 					return;
 				}
