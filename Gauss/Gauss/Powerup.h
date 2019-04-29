@@ -24,7 +24,8 @@ public:
 		RF = 0, 
 		XP2,
 		ABSORB,
-		GRIND
+		GRIND,
+		PIERCE
 	};
 
 	static dArr<Texture> powerupTextures;

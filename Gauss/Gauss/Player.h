@@ -193,7 +193,6 @@ private:
 	// Upgrades
 	dArr<int> upgradesAcquired;
 	int mainGunLevel;
-	bool piercingShot;
 	bool sheild;
 	bool dualMissiles01;
 	bool dualMissiles02;
@@ -203,6 +202,7 @@ private:
 	bool powerupXP;	
 	bool powerupAbsorb;	
 	bool powerupGrind;
+	bool powerupPiercingShot;
 
 	// Utility Functions
 	void _processPlayerInput(const float &dt);
@@ -276,8 +276,14 @@ public:
 		this->powerupSprite.setScale(0.3f, 0.3f);
 		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
 	}
-	inline const bool isAnyPowerupActive() const { return (this->powerupRF || this->powerupXP || this->powerupAbsorb || this->powerupGrind); }
+	inline void enablePowerupPiercingShot() {
+		this->powerupPiercingShot = true; 
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[4]);
+		this->setupPowerupSprite();
+	}
+	inline const bool isAnyPowerupActive() const { return (this->powerupRF || this->powerupXP || this->powerupAbsorb || this->powerupGrind || this->powerupPiercingShot); }
 	inline bool getPowerupXP() const { return this->powerupXP; }
+	inline bool getPowerupPiercingShot() const { return this->powerupPiercingShot; }
 	inline bool getPowerupAbsorb() const { return this->powerupAbsorb; }
 	inline bool getPowerupGrind() const { return this->powerupGrind; }
 	inline float getCalculatedShootTimer() const { return this->powerupRF ? 10.f : 20.f; }
@@ -336,8 +342,6 @@ public:
 	// Damage/Attack
 	int getDamage() const;
 	inline bool isDamageCooldown() { return this->damageTimer < this->damageTimerMax; }
-	inline bool getPiercingShot() const { return this->piercingShot; }
-	inline void enablePiercingShot() { this->piercingShot = true; }
 	inline void enableSheild() { this->sheild = true; }
 	inline void enableDualMissile01() { this->dualMissiles01 = true; }
 	inline void enableDualMissile02() { this->dualMissiles02 = true; }

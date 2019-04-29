@@ -11,8 +11,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->gameOverMenu = nullptr;
 
 	this->audioManager = new AudioManager();
-	//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
-	this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
+	//this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
 	this->gameMode = Mode::INFINTE;
 	this->campaignOver = false;
@@ -636,9 +635,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						// Change to drop consumable - perhaps revisit this
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
-						int consumableType = rand() % 3 + 1;
+						int consumableType = rand() % 9 + 1;
 						switch (consumableType) {
-						case 1:
+						case 1: case 2:
 						{
 							if (dropChance > 90) { // 10% chance for an upgrade
 
@@ -648,22 +647,46 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								{
 									if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
 										uType = rand() % 1;
-									}
-									// Want to make it really hard to get double and triple ray upgrades
-									if (currentPlayer.getLevel() >= 5 && uType == ItemUpgrade::Type::DOUBLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
-										dropChance = rand() % 100 + 1;
-										if (dropChance > 75) {
-											// only a 25% chance this will happen
-											uType = ItemUpgrade::Type::DOUBLE_RAY;
-										}
-									}else if (currentPlayer.getLevel() >= 10 && uType == ItemUpgrade::Type::TRIPLE_RAY && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
-										dropChance = rand() % 100 + 1;
-										if (dropChance > 75) {
-											// only a203% chance this will happen
-											uType = ItemUpgrade::Type::TRIPLE_RAY;
-										}
+										break;
 									}
 								}
+
+								// Want to make it really hard to get double and triple ray upgrades
+								if (uType == ItemUpgrade::Type::DOUBLE_RAY) {
+									if (currentPlayer.getLevel() >= 5 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
+										dropChance = rand() % 100 + 1;
+										if (dropChance < 75) {
+											// Spawn random powerup instead
+											uType = rand() % Powerup::numberOfPowerups;
+											this->consumables.Add(new Powerup(
+												currentEnemy->getPosition(),
+												uType,
+												300.f));
+											break;
+										}
+									}
+									else {
+										uType = rand() % 1;
+									}
+								}
+								if (uType == ItemUpgrade::Type::TRIPLE_RAY) {
+									if (currentPlayer.getLevel() >= 10 && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+										dropChance = rand() % 100 + 1;
+										if (dropChance < 80) {
+											// Spawn random powerup instead
+											uType = rand() % Powerup::numberOfPowerups;
+											this->consumables.Add(new Powerup(
+												currentEnemy->getPosition(),
+												uType,
+												300.f));
+											break;
+										}
+									}
+									else {
+										uType = rand() % 1;
+									}
+								}
+
 								this->consumables.Add(new ItemUpgrade(
 									currentEnemy->getPosition(),
 									uType,
@@ -671,9 +694,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 2:
+						case 3: case 4: case 5:
 						{
-							if (dropChance > 80) { // 25% chance health is dropped
+							if (dropChance > 80) { // 20% chance health is dropped
 								this->consumables.Add(new ItemPickup(
 									currentEnemy->getPosition(),
 									ItemPickup::HEALTH, // health item for now
@@ -681,10 +704,10 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 3:
+						case 6: case 7: case 8: case 9:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 80) { // 25% chance powerup is dropped
+							if (dropChance > 80) { // 20% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -700,13 +723,15 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					}
 
 					// Destroy the bullet if not piercing shot && not gauss shot
-					if (!currentPlayer.getPiercingShot() && !currentPlayer.BulletAt(j).isGaussShot()) {
+					if (!currentPlayer.getPowerupPiercingShot() && !currentPlayer.BulletAt(j).isGaussShot()) {
 						// Should add effect to indicate it is piercing shots
 						currentPlayer.RemoveBullet(j);
 					}
-					else if (currentPlayer.getPiercingShot()) {
+					else if (currentPlayer.getPowerupPiercingShot()) {
 						// Move to the end of the sprite it hit so that there is only a single point of damage calculation
-						currentPlayer.BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width, currentPlayer.BulletAt(j).getPosition().y));
+						currentPlayer.BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width + 1.f, currentPlayer.BulletAt(j).getPosition().y));
+						std::cout << "Current enemy position far right x = " << std::to_string(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width) << std::endl;
+						std::cout << "Bullet position.x = " << std::to_string(currentPlayer.BulletAt(j).getPosition().x) << std::endl;
 					}
 					break;
 				}

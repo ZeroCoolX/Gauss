@@ -153,14 +153,14 @@
     <ClCompile Include="MenuButton.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameOverMenu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="CosmoEnemy.cpp">
       <Filter>Source Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source Files\GameControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,9 +248,6 @@
     <ClInclude Include="MenuButton.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameOverMenu.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
@@ -259,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="CosmoEnemy.h">
       <Filter>Header Files\GameObjects\Lifeforms\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Header Files\GameControl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,13 +3,13 @@
 
 AudioManager::AudioManager()
 {
-	sounds.Add(this->LoadSound("Audio/Sounds/Shot.ogg"));
-	sounds.Add(this->LoadSound("Audio/Sounds/GaussCannon.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/player_laser.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/ExplosionBlast.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/ExplosionFireBlast.ogg"));
 
 	this->musicContainer.Add(new Music());
-	//this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");
+	this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");
 }
 
 
@@ -32,16 +32,13 @@ AudioManager::SoundInfo* AudioManager::LoadSound(const std::string& path) {
 }
 
 void AudioManager::PlaySound(AudioManager::AudioSounds sIndex) {
-	std::cout << "Playing sound" << std::endl;
 	this->sounds[sIndex]->sound->play();
 }
 
 void AudioManager::PlayMusic(AudioManager::AudioMusic mIndex) {
-	std::cout << "Playing music" << std::endl;
 	this->musicContainer[mIndex]->play();
 }
 
 void AudioManager::StopMusic(AudioManager::AudioMusic mIndex) {
-	std::cout << "Stopping music" << std::endl;
 	this->musicContainer[mIndex]->stop();
 }

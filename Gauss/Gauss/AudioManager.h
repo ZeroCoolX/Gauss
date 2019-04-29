@@ -38,7 +38,7 @@ private:
 
 public:
 	enum AudioSounds {
-		SHOT_DEFAULT = 0,
+		PLAYER_LASER = 0,
 		GAUSS_CANNON,
 		EXPLOSION01,
 		EXPLOSION02

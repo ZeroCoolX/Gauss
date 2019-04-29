@@ -21,9 +21,6 @@ private:
 		case ItemUpgrade::TRIPLE_RAY:
 			this->text = "TRIPLE RAY UPGRADE";
 			break;
-		case ItemUpgrade::PIERCING_SHOT:
-			this->text = "PIERCING SHOT UPGRADE";
-			break;
 		case ItemUpgrade::SHEILD:
 			this->text = "PERMANENT SHEILD UPGRADE";
 			break;
@@ -68,7 +65,6 @@ public:
 		HEALTH_TANK, 
 		DOUBLE_RAY, 
 		TRIPLE_RAY, 
-		PIERCING_SHOT, 
 		SHEILD 
 	};
 };

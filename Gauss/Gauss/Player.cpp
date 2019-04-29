@@ -39,6 +39,8 @@ void Player::InitTextures() {
 	Player::powerupIndicatorTextures.Add(temp);
 	temp.loadFromFile("Textures/Powerups/powerupGrinderIndicator.png");
 	Player::powerupIndicatorTextures.Add(temp);
+	temp.loadFromFile("Textures/Powerups/powerupPierceIndicator.png");
+	Player::powerupIndicatorTextures.Add(temp);
 
 	// Sheild texutures
 	temp.loadFromFile("Textures/shield02.png");
@@ -208,7 +210,7 @@ void Player::Combat(const float &dt) {
 
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
 	{
-		//this->audioManager->PlaySound(AudioManager::AudioSounds::SHOT_DEFAULT);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_LASER);
 		switch (this->currentWeapon) {
 			case Player::LASER_GUN:
 				this->_fireLaser(direction);
@@ -225,6 +227,7 @@ void Player::Combat(const float &dt) {
 	}
 
 	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON);
 		// Fire a deadly gauss cannon shot
 		this->gaussChargeTimer = 0.f;
 		this->playerGaussBar.setFillColor(this->gaussChargingColor);
@@ -363,6 +366,7 @@ void Player::UpdatePowerups(const float &dt) {
 		this->powerupXP = false;
 		this->powerupAbsorb = false;
 		this->powerupGrind = false;
+		this->powerupPiercingShot = false;
 	}
 }
 
@@ -609,10 +613,6 @@ void Player::SetGunLevel(int gunLevel) {
 	}
 	else {
 		this->mainGunSprite.setTexture(Player::shipMainGunTextures[this->mainGunLevel]);
-		// Hack right now since I don't like how the level 3 gun looks
-		if (this->mainGunLevel == LaserLevels::LEVEL_3_LASER) {
-			//this->mainGunSprite.setScale(0.75f, 0.75f);
-		}
 	}
 }
 
@@ -659,7 +659,7 @@ void Player::Reset() {
 	this->dualMissiles02 = false;
 	this->sheild = false;
 	this->shieldActive = false;
-	this->piercingShot = false;
+	this->powerupPiercingShot = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
 	this->powerupAbsorb = false;
@@ -714,7 +714,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->dualMissiles02 = false;
 	this->sheild = false;
 	this->shieldActive = false;
-	this->piercingShot = false;
+	this->powerupPiercingShot = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
 	this->powerupAbsorb = false;
@@ -1049,8 +1049,8 @@ void Player::_initPlayerSettings() {
 	this->dualMissiles01 = false;
 	this->dualMissiles02 = false;
 	this->sheild = false;
-	this->piercingShot = false;
 	this->shieldActive = false;
+	this->powerupPiercingShot = false;
 	this->powerupRF = false;
 	this->powerupXP = false;
 	this->powerupAbsorb = false;

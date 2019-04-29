@@ -12,8 +12,6 @@ void ItemUpgrade::InitTextures() {
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/tripleray.png");
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/piercingshot.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/shield.png");
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	ItemUpgrade::numberOfUpgrades = ItemUpgrade::upgradeTextures.Size();
@@ -58,9 +56,6 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 		else {
 			return;
 		}
-		break;
-	case ItemUpgrade::PIERCING_SHOT:
-		player->enablePiercingShot();
 		break;
 	case ItemUpgrade::SHEILD:
 		player->upgradeShield();

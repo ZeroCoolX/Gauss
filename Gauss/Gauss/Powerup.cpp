@@ -12,6 +12,8 @@ void Powerup::InitTextures() {
 	Powerup::powerupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Powerups/powerupGrinder.png");
 	Powerup::powerupTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Powerups/powerupPierce.png");
+	Powerup::powerupTextures.Add(Texture(temp));
 	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
 }
 
@@ -43,6 +45,9 @@ void Powerup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 			break;
 		case GRIND:
 			player->enablePowerupGrind();
+			break;
+		case PIERCE:
+			player->enablePowerupPiercingShot();
 			break;
 	}
 }
