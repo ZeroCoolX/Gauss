@@ -8,11 +8,11 @@ void ItemUpgrade::InitTextures() {
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/healthtank.png");
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
+	temp.loadFromFile("Textures/Upgrades/shield.png");
+	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/doubleray.png");
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Upgrades/tripleray.png");
-	ItemUpgrade::upgradeTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Upgrades/shield.png");
 	ItemUpgrade::upgradeTextures.Add(Texture(temp));
 	ItemUpgrade::numberOfUpgrades = ItemUpgrade::upgradeTextures.Size();
 }

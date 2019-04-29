@@ -62,10 +62,10 @@ public:
 
 	enum Type { 
 		STATPOINT = 0, 
-		HEALTH_TANK, 
-		DOUBLE_RAY, 
+		HEALTH_TANK,
+		SHEILD,
+		DOUBLE_RAY,
 		TRIPLE_RAY, 
-		SHEILD 
 	};
 };
 

@@ -637,7 +637,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						int uType = 0;
 						int consumableType = rand() % 9 + 1;
 						switch (consumableType) {
-						case 1: case 2:
+						case 1: case 2: case 3:
 						{
 							if (dropChance > 90) { // 10% chance for an upgrade
 
@@ -646,16 +646,16 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								for (size_t u = 0; u < currentPlayer.getAcquiredUpgrades().Size(); u++)
 								{
 									if (uType == currentPlayer.getAcquiredUpgrades()[u]) {
-										uType = rand() % 1;
+										uType = rand() % 3;
 										break;
 									}
 								}
 
 								// Want to make it really hard to get double and triple ray upgrades
 								if (uType == ItemUpgrade::Type::DOUBLE_RAY) {
-									if (currentPlayer.getLevel() >= 5 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
+									if (currentPlayer.getLevel() >= 6 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 75) {
+										if (dropChance < 60) {
 											// Spawn random powerup instead
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
@@ -666,13 +666,13 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										}
 									}
 									else {
-										uType = rand() % 1;
+										uType = rand() % 3;
 									}
 								}
 								if (uType == ItemUpgrade::Type::TRIPLE_RAY) {
 									if (currentPlayer.getLevel() >= 10 && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 80) {
+										if (dropChance < 60) {
 											// Spawn random powerup instead
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
@@ -683,7 +683,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 										}
 									}
 									else {
-										uType = rand() % 1;
+										uType = rand() % 3;
 									}
 								}
 
@@ -694,9 +694,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 3: case 4: case 5:
+						case 4: case 5:
 						{
-							if (dropChance > 80) { // 20% chance health is dropped
+							if (dropChance > 50) { // 50% chance health is dropped
 								this->consumables.Add(new ItemPickup(
 									currentEnemy->getPosition(),
 									ItemPickup::HEALTH, // health item for now
