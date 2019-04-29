@@ -5,6 +5,7 @@ AudioManager::AudioManager()
 {
 	sounds.Add(this->LoadSound("Audio/Sounds/player_laser02.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon_ready.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/ExplosionBlast.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/ExplosionFireBlast.ogg"));
 

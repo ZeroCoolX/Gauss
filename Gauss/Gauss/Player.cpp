@@ -232,6 +232,7 @@ void Player::Combat(const float &dt) {
 		this->gaussChargeTimer = 0.f;
 		this->playerGaussBar.setFillColor(this->gaussChargingColor);
 		this->_fireGaussCannon(direction);
+		this->gaussReloaded = false;
 		this->keyTime = 0;
 	}
 
@@ -461,6 +462,10 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	}
 	else {
 		this->playerGaussBar.setFillColor(this->gaussReadyColor);
+		if (!this->gaussReloaded) {
+			this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON_RELOAD);
+			this->gaussReloaded = true;
+		}
 	}
 
 	// Depletes at rate n. Charges at rate n/2
@@ -682,6 +687,7 @@ void Player::Reset() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
+	this->gaussReloaded = false;
 	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
@@ -689,7 +695,7 @@ void Player::Reset() {
 	this->powerupTimer = this->powerupTimerMax;
 
 }
-
+// Over time these two menthods do the same thing ^ and v
 void Player::ResetOnLifeLost(View &view) {
 	// Reset sprite
 	this->sprite.setPosition(view.getCenter());
@@ -735,6 +741,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
+	this->gaussReloaded = false;
 	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
@@ -771,22 +778,14 @@ bool Player::PlayerShowStatsIsPressed() {
 
 std::string Player::GetStatsAsString() {
 	return
-		"Level: " + std::to_string(this->level) +
-		"\nLives: " + std::to_string(this->lives) +
-		"\nExp: " + std::to_string(this->exp) + "/" + std::to_string(this->expNext) +
-		"\nStatpoints: " + std::to_string(this->statPoints) +
-		//"\nHealth: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
-		//"\nDamage: " + std::to_string(this->damage) + "/" + std::to_string(this->damageMax) +
-		//"\nScore: " + std::to_string(this->score) +
-		//"\nPower: " + std::to_string(this->power) +
-		//"\nPlating: " + std::to_string(this->plating) +
-		//"\nManeuverability: " + std::to_string(this->maneuverability) +
-		//"\nCooling: " + std::to_string(this->cooling) +
-		//"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax) +
-		//"\nShield Recharge Rate: " + std::to_string(this->shieldRechargeRate) +
-		"\nVelocity: " + std::to_string(this->maxVelocity) +
-		"\nAcceleration: " + std::to_string(this->acceleration) +
-		"\nCosmoEffect: " + std::to_string(this->effectedByCosmo);
+		"Health: " + std::to_string(this->hp) + "/" + std::to_string(this->hpMax) + " (+ " + std::to_string(this->hpAdded) + ")" +
+		"\nDamage: " + std::to_string(this->damage) + "/" + std::to_string(this->damageMax) +
+		"\nPower: " + std::to_string(this->power) +
+		"\nPlating: " + std::to_string(this->plating) +
+		"\nManeuverability: " + std::to_string(this->maneuverability) +
+		"\nCooling: " + std::to_string(this->cooling) +
+		"\nShield Capacity: " + std::to_string(this->shieldChargeTimerMax) +
+		"\nShield Recharge Rate: " + std::to_string(this->shieldRechargeRate);
 }
 
 std::string Player::ApplyCosmoEffect() {
@@ -1024,6 +1023,7 @@ void Player::_initPlayerSettings() {
 	this->damageTimer = this->damageTimerMax;
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
+	this->gaussReloaded = false;
 	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer

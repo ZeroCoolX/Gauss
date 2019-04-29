@@ -200,10 +200,11 @@ void Game::InitUI() {
 	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
 
 	// Leaderboard Text
-	this->infinteLeaderboardText.setFont(this->font);
-	this->infinteLeaderboardText.setCharacterSize(30);
-	this->infinteLeaderboardText.setFillColor(Color::White);
-	this->infinteLeaderboardText.setPosition((float)this->window->getSize().x - 600.f, 300.f);
+	this->leaderboardText.setFont(this->font);
+	this->leaderboardText.setCharacterSize(30);
+	this->leaderboardText.setFillColor(Color::White);
+	this->leaderboardText.setString("");
+	this->leaderboardText.setPosition((float)this->window->getSize().x - 600.f, 300.f);
 
 	// Controls / Pause text
 	this->controlsText.setFont(this->font);
@@ -372,22 +373,21 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->mainMenu->Reset();
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
-		for (size_t i = 0; i < this->players.Size(); i++)
-		{
-			this->players[i].setLives(3);
-		}
+		this->_setPlayerLives(); // lives = 3
 	}
 	else if (this->mainMenu->onInfinitePress()) {
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
+		this->_setPlayerLives(); // lives = 1
 	}
 	else if (this->mainMenu->onCosmosPress()) {
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS);
+		this->_setPlayerLives(); // lives = 1
 	}
 }
 
@@ -1257,7 +1257,7 @@ void Game::DrawUI() {
 	if (!this->playersExistInWorld()) {
 		this->gameOverMenu->Draw(*this->window);
 		this->window->draw(this->gameOverText);
-		this->window->draw(this->infinteLeaderboardText);
+		this->window->draw(this->leaderboardText);
 	}
 	else {
 		if (this->gameMode == Mode::COSMOS) {
@@ -1411,7 +1411,7 @@ void Game::DisplayGameEnd() {
 		leaderboardText += "G...\t\t\t\t\t\t....";;
 		leaderboardText += "\n\n";
 	}
-	this->infinteLeaderboardText.setString(leaderboardText);
+	this->leaderboardText.setString(leaderboardText);
 	
 	// Write to file
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
@@ -1526,11 +1526,6 @@ std::string Game::_getPlayerLivesText() {
 }
 
 void Game::_redeploy() {
-	for (size_t i = 0; i < this->players.Size(); i++)
-	{
-		this->players[i].Reset();
-	}
-
 	if (this->gameMode == Mode::CAMPAIGN) {
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
 	}
@@ -1570,17 +1565,32 @@ void Game::_redeploy() {
 		this->window->getSize().y / 2.f));
 	this->stage->Reset(this->mainView);
 
-	if (this->players.Size() == 0) {
-		// Clear out players score
-		this->playerScoreMap.clear();
+	// Reset all players
+	this->players.Clear();
+	// Clear out players score
+	this->playerScoreMap.clear();
 
-		// Reset player
-		const int nrOfPlayers = Player::playerId;
-		Player::playerId = 0;
-		this->InitPlayersInWorld(nrOfPlayers);
-	}
+	// Reset player
+	const int nrOfPlayers = Player::playerId;
+	Player::playerId = 0;
+	this->InitPlayersInWorld(nrOfPlayers);
+
+	// Set player lives 
+	this->_setPlayerLives();
 
 	this->InitUI();
 	this->InitMap();
+}
+
+void Game::_setPlayerLives() {
+	int pLives = 1;
+	if (this->gameMode == Mode::CAMPAIGN) {
+		pLives = 3;
+	}
+
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		this->players[i].setLives(pLives);
+	}
 }
 

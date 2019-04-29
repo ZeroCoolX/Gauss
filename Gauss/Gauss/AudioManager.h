@@ -40,6 +40,7 @@ public:
 	enum AudioSounds {
 		PLAYER_LASER = 0,
 		GAUSS_CANNON,
+		GAUSS_CANNON_RELOAD,
 		EXPLOSION01,
 		EXPLOSION02
 	};

@@ -98,7 +98,7 @@ private:
 	Text enemyText;
 	Text gameOverText;
 	Text cosmoEffectText;
-	Text infinteLeaderboardText;
+	Text leaderboardText;
 	Text scoreText;
 	Text controlsText;
 
@@ -144,7 +144,7 @@ private:
 	void _sortLeaderboard(LeaderboardIndex leadIndex);
 	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score);
 	void _storeLeaderboard(LeaderboardIndex leadIndex, std::string filename);
-
+	void _setPlayerLives();
 
 public:
 	Game(RenderWindow *window);

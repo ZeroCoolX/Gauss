@@ -86,6 +86,7 @@ private:
 	RectangleShape playerGaussBar;
 	Color gaussChargingColor; //Color(145, 49, 125, 200)
 	Color gaussReadyColor; //Color(250, 17, 200, 200)
+	bool gaussReloaded;
 	// SHIELD CHARGE
 	CircleShape playerShieldChargeCircle;
 	CircleShape playerShieldChargeCircleBorder;
