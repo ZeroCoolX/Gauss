@@ -3,26 +3,29 @@
 
 AudioManager::AudioManager()
 {
-	sounds.Add(this->LoadSound("Audio/Sounds/player_laser02.ogg", 35.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon_ready.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/button_click.ogg", 25.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/player_laser02.ogg", 85.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/gauss_cannon_ready.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/button_click.ogg", 75.f));
 	sounds.Add(this->LoadSound("Audio/Sounds/baddie_death01_short.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/baddie_death01.ogg"));
-	sounds.Add(this->LoadSound("Audio/Sounds/absorb.ogg", 25.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/game_over.ogg", 50.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/absorb.ogg", 75.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/game_over.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/grinder_grinding.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/grinder_idle.ogg", 100.f, true));
-	sounds.Add(this->LoadSound("Audio/Sounds/health_pickup.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/level_up_robovoice.ogg", 40.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/powerup_collected.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/upgrade_collected.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/warp_cosmo.ogg", 50.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/health_pickup.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/level_up_robovoice.ogg", 90.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/powerup_collected.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/upgrade_collected.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/warp_cosmo.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/baddie_swap_cosmo.ogg"));
-	sounds.Add(this->LoadSound("Audio/Sounds/speed_decrease_cosmo.ogg",50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/speed_increase_cosmo.ogg",50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/invert_controls_cosmo.ogg", 50.f));
-	sounds.Add(this->LoadSound("Audio/Sounds/reflect_projectile.ogg", 25.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/speed_decrease_cosmo.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/speed_increase_cosmo.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/invert_controls_cosmo.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/reflect_projectile.ogg", 75.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/enemy_bullet_impact.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/cosmo_impact.ogg"));
+	sounds.Add(this->LoadSound("Audio/Sounds/baddie_death01_short.ogg"));
 
 	this->musicContainer.Add(new Music());
 	this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");

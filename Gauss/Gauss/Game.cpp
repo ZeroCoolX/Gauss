@@ -510,6 +510,11 @@ void Game::UpdatePlayers(const float &dt) {
 			if (this->players[i].shouldLoseLife()) {
 				this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
 				if (this->players[i].loseLife()) {
+					this->players[i].setTimeAlive(this->scoreTimer.getElapsedTime().asSeconds());
+					this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setScore(this->players[i].getScore());
+					this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setEnemiesKilled(this->players[i].getEnemiesKilled());
+					this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setSecondsSurvive(this->players[i].getTimeAlive());
+					this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setHighestLevelAchieved(this->players[i].getHighestLevelAchieved());
 					this->players.Remove(i);
 					return;
 				}
@@ -1009,6 +1014,7 @@ void Game::UpdateEnemies(const float &dt) {
 							rand() % 30 + 1.f,
 							50.f));
 					}
+					this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_ENEMY_IMPACT);
 					this->enemyLifeforms.Remove(i);
 					// Player is going to not be a happy camper for a bit
 					std::string effectText = this->players[j].ApplyCosmoEffect();
@@ -1056,7 +1062,7 @@ void Game::UpdateEnemies(const float &dt) {
 								rand() % 30 + 1.f,
 								50.f, particleColor));
 						}
-
+						this->players[j].incrementEnemiesKilled();
 						this->enemyLifeforms.Remove(i);
 						break;
 					}
@@ -1067,6 +1073,7 @@ void Game::UpdateEnemies(const float &dt) {
 					if (this->gameMode == Game::Mode::COSMOS) {
 						damage /= 2;
 					}
+					this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_ENEMY_IMPACT);
 					this->players[j].TakeDamage(damage);
 					// Collision resets the perfection streak
 					this->killPerfectionAdder = 0;
@@ -1192,6 +1199,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 				if (this->gameMode == Game::Mode::COSMOS) {
 					damage /= 2;
 				}
+				this->audioManager->PlaySound(AudioManager::AudioSounds::ENEMY_BULLET_IMPACT);
 				this->players[j].TakeDamage(damage);
 
 				// Player collision damage
@@ -1415,7 +1423,6 @@ void Game::DisplayGameEnd() {
 					 "\n\n";
 		++it;
 	}
-	this->gameOverText.setString(scoreText + "\nGame Time: " + std::to_string(this->scoreTime));
 
 	// Write leaderboard text
 	std::string leaderboardText = "Gaussian\t\t\tScore\n";
