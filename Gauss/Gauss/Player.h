@@ -243,6 +243,7 @@ public:
 	inline const bool isShielding() const { return this->shieldActive; }
 	inline Sprite getDeflectorShield() { return this->deflectorShield; }
 	inline void upgradeShield() {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::UPGRADE_COLLECT);
 		this->shieldAdded += 33.f;
 		this->UpdateStats();
 		this->shieldChargeTimer = this->shieldChargeTimerMax;
@@ -250,7 +251,7 @@ public:
 	inline void impactSheild() { this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - (this->shieldChargeTimerMax / 3)); }
 
 	// Powerups
-	inline void enablePowerupRF() { 
+	inline void enablePowerupRF() {
 		this->powerupRF = true; 
 		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[0]);
 		this->setupPowerupSprite();
@@ -267,20 +268,23 @@ public:
 		this->setupPowerupSprite();
 	}
 	inline void enablePowerupGrind() {
+		// Start looping the idle sound for duration of powerup
+		this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 		this->powerupGrind = true;
 		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[3]);
 		this->aura.setTexture(Player::shipAuraTextures[Auras::GRIND]);
 		this->setupPowerupSprite();
 	}
+	inline void enablePowerupPiercingShot() {
+		this->powerupPiercingShot = true;
+		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[4]);
+		this->setupPowerupSprite();
+	}
 	inline void setupPowerupSprite() {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_COLLECT);
 		this->powerupTimer = this->powerupTimerMax;
 		this->powerupSprite.setScale(0.3f, 0.3f);
 		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
-	}
-	inline void enablePowerupPiercingShot() {
-		this->powerupPiercingShot = true; 
-		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[4]);
-		this->setupPowerupSprite();
 	}
 	inline const bool isAnyPowerupActive() const { return (this->powerupRF || this->powerupXP || this->powerupAbsorb || this->powerupGrind || this->powerupPiercingShot); }
 	inline bool getPowerupXP() const { return this->powerupXP; }
@@ -305,11 +309,16 @@ public:
 	inline const int getLives() const { return this->lives; }
 	inline const void setLives(int lives) { this->lives = lives; }
 	inline const bool loseLife() { --this->lives; return this->isDead(); }
-	inline bool gainHp(int hp) { this->hp = std::min(this->hp + hp, this->hpMax); return this->hp < this->hpMax; }
+	inline bool gainHp(int hp) { 
+		this->audioManager->PlaySound(AudioManager::AudioSounds::HEALTH_PICKUP);
+		this->hp = std::min(this->hp + hp, this->hpMax); 
+		return this->hp < this->hpMax; 
+	}
 	inline const int& getHp() const { return hp; }
 	inline const int& getHpMax() const { return hpMax; }
 	inline const String getHpAsString() const { return std::to_string(this->hp) + "/" + std::to_string(this->hpMax); }
 	inline void upgradeHP() {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::UPGRADE_COLLECT);
 		this->hpAdded += 10;
 		this->UpdateStats();
 		this->hp = this->hpMax;
@@ -373,6 +382,7 @@ public:
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
 	void TakeDamage(int damage);
+	void UpgradeGunLevel(int gunLevel);
 	void SetGunLevel(int gunLevel);
 	void AddStatPointRandom();
 	bool PlayerShowStatsIsPressed();

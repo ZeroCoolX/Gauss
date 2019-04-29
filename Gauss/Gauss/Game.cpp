@@ -355,6 +355,7 @@ void Game::Update(const float &dt) {
 
 		// Activate the game over screen if it's not already turned on
 		if (!this->gameOverMenu->isActive()) {
+			this->audioManager->PlaySound(AudioManager::AudioSounds::GAME_OVER);
 			this->gameOverMenu->activate();
 		}
 	}
@@ -516,6 +517,11 @@ void Game::UpdatePlayers(const float &dt) {
 
 			}else if (this->players[i].isDead()) {
 				this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
+				this->players[i].setTimeAlive(this->scoreTimer.getElapsedTime().asSeconds());
+				this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setScore(this->players[i].getScore());
+				this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setEnemiesKilled(this->players[i].getEnemiesKilled());
+				this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setSecondsSurvive(this->players[i].getTimeAlive());
+				this->playerScoreMap.find(this->players[i].getPlayerNumber())->second.setHighestLevelAchieved(this->players[i].getHighestLevelAchieved());
 				this->players.Remove(i);
 				return;
 			}
@@ -1036,6 +1042,7 @@ void Game::UpdateEnemies(const float &dt) {
 
 						// Grind powerup is active
 						if (this->players[j].getPowerupGrind()) {
+							this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_GRIND);
 							particleColor = Color::Red;
 						}
 
@@ -1135,6 +1142,8 @@ void Game::UpdateEnemyBullets(const float &dt) {
 					if (!this->players[j].isShielding() && this->players[j].getPowerupAbsorb()) {
 						// Add a small charge to the shield because of absorbtion
 						this->players[j].addShieldCharge(10);
+						// Play sound effect
+						this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_ABSORB);
 						// Remove from enemy bullet
 						EnemyLifeform::bullets.Remove(i);
 						break;
@@ -1155,6 +1164,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 							EnemyLifeform::bullets[i].getDamage()));
 						// Remove from enemy bullet
 						EnemyLifeform::bullets.Remove(i);
+						this->audioManager->PlaySound(AudioManager::AudioSounds::REFLECT_BULLET);
 						break;
 					}
 				}

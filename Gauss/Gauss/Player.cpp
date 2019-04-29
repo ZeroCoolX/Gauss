@@ -367,12 +367,14 @@ void Player::UpdatePowerups(const float &dt) {
 		this->powerupXP = false;
 		this->powerupAbsorb = false;
 		this->powerupGrind = false;
+		this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 		this->powerupPiercingShot = false;
 	}
 }
 
 bool Player::UpdateLeveling() {
 	if (this->exp >= this->expNext) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::LEVEL_UP);
 		this->level++;
 		this->highestLevelAchieved = this->level;
 		this->addStatPoint();
@@ -611,6 +613,11 @@ void Player::RemoveBullet(unsigned index) {
 	return this->bullets.Remove(index);
 }
 
+void Player::UpgradeGunLevel(int gunLevel) {
+	this->audioManager->PlaySound(AudioManager::AudioSounds::UPGRADE_COLLECT);
+	this->SetGunLevel(gunLevel);
+}
+
 void Player::SetGunLevel(int gunLevel) {
 	this->mainGunLevel = gunLevel;
 	if (this->mainGunLevel >= (int)Player::shipMainGunTextures.Size()) {
@@ -669,6 +676,7 @@ void Player::Reset() {
 	this->powerupXP = false;
 	this->powerupAbsorb = false;
 	this->powerupGrind = false;
+	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 	this->upgradesAcquired.Clear();
 
 	// Reset weapons
@@ -725,6 +733,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->powerupXP = false;
 	this->powerupAbsorb = false;
 	this->powerupGrind = false;
+	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 
 	this->upgradesAcquired.Clear();
 
@@ -753,6 +762,7 @@ void Player::ResetOnLifeLost(View &view) {
 }
 
 void Player::AddStatPointRandom() {
+	this->audioManager->PlaySound(AudioManager::AudioSounds::UPGRADE_COLLECT);
 	int r = rand() % 4;
 	switch (r) {
 	case 0:
@@ -806,26 +816,31 @@ std::string Player::ApplyCosmoEffect() {
 	case CosmoEffects::INVERT_CONTROLS_EFFECT:
 		this->ToggleInvertControlsEffect();
 		this->currentCosmoEffect = CosmoEffects::INVERT_CONTROLS_EFFECT;
+		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_INVERT_CONTROLS);
 		effectText = "UP = DOWN and DOWN = UP!";
 		break;
 	case CosmoEffects::VERTICAL_WARP_EFFECT:
 		this->currentCosmoEffect = CosmoEffects::VERTICAL_WARP_EFFECT;
 		this->ToggleWarpBoundsEffect(true);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_WARP);
 		effectText = "VERTICAL bounds TELEPORT!";
 		break;
 	case CosmoEffects::SPEED_INCREASE_EFFECT:
 		this->currentCosmoEffect = CosmoEffects::SPEED_INCREASE_EFFECT;
 		this->ToggleSpeedIncreaseEffect(true);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_SPEED_UP);
 		effectText = "SPEED INCREASED!";
 		break;
 	case CosmoEffects::SPEED_DECREASE_EFFECT:
 		this->currentCosmoEffect = CosmoEffects::SPEED_DECREASE_EFFECT;
 		this->ToggleSpeedDecreaseEffect(true);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_SPEED_DOWN);
 		effectText = "SPEED DECREASED!";
 		break;
 	case CosmoEffects::SWAP_BADDIE_TYPES_EFFECT:
 		this->currentCosmoEffect = CosmoEffects::SWAP_BADDIE_TYPES_EFFECT;
 		this->ToggleBaddieSwap(true);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_BADDIE_SWAP);
 		effectText = "BADDIE SWAP!";
 		break;
 	case CosmoEffects::VISUAL_DISTORTION_EFFECT:
@@ -1055,6 +1070,7 @@ void Player::_initPlayerSettings() {
 	this->powerupXP = false;
 	this->powerupAbsorb = false;
 	this->powerupGrind = false;
+	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;
@@ -1143,9 +1159,11 @@ void Player::_checkBounds(View &view, bool warpVertical) {
 
 	if (warpVertical) {
 		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= viewTop) { // TOP BOUNDS
+			this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_WARP);
 			this->sprite.setPosition(this->sprite.getPosition().x, viewBottom - this->sprite.getGlobalBounds().height);
 		}
 		else if (this->getPosition().y >= viewBottom) { // BOTTOM BOUNDS
+			this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_WARP);
 			this->sprite.setPosition(this->sprite.getPosition().x, viewTop);
 		}
 	}

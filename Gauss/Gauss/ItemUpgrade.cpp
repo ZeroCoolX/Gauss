@@ -43,7 +43,7 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 		break;
 	case ItemUpgrade::DOUBLE_RAY:
 		if (player->getGunLevel() < Player::LEVEL_2_LASER) {
-			player->SetGunLevel(Player::LEVEL_2_LASER);
+			player->UpgradeGunLevel(Player::LEVEL_2_LASER);
 		}
 		else {
 			return;
@@ -51,7 +51,7 @@ void ItemUpgrade::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
 		break;
 	case ItemUpgrade::TRIPLE_RAY:
 		if (player->getGunLevel() < Player::LEVEL_3_LASER) {
-			player->SetGunLevel(Player::LEVEL_3_LASER);
+			player->UpgradeGunLevel(Player::LEVEL_3_LASER);
 		}
 		else {
 			return;
