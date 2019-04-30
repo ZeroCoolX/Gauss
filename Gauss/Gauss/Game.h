@@ -52,6 +52,7 @@ private:
 
 	// Only for test
 	AudioManager* audioManager;
+	int gameMusicSelection;
 
 	// Game
 	MainMenu *mainMenu;

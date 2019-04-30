@@ -65,7 +65,10 @@ public:
 
 	enum AudioMusic {
 		MENU = 0,
-		DEFAULT
+		CAMPAIGN,
+		INF_COS_01,
+		INF_COS_02,
+		INF_COS_03
 	};
 
 public:
@@ -75,7 +78,7 @@ public:
 	SoundInfo* LoadSound(const std::string& path, float volume = 100.f, bool loop = false);
 	void PlaySound(AudioSounds sIndex);
 	void StopSound(AudioSounds sIndex);
-	void PlayMusic(AudioMusic mIndex);
-	void StopMusic(AudioMusic mIndex);
+	void PlayMusic(int mIndex);
+	void StopMusic(int mIndex);
 };
 

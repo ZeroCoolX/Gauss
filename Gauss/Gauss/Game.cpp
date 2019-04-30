@@ -14,6 +14,9 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	//this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
 	this->gameMode = Mode::INFINTE;
+	this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_01;
+	// Play the menu music immediately
+	this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 	this->campaignOver = false;
 
 	// Init fonts
@@ -356,6 +359,9 @@ void Game::Update(const float &dt) {
 		// Activate the game over screen if it's not already turned on
 		if (!this->gameOverMenu->isActive()) {
 			this->audioManager->PlaySound(AudioManager::AudioSounds::GAME_OVER);
+			// This is just in case you die with the grinder on...otherwise it plays into the menu
+			this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
+			this->audioManager->StopMusic(this->gameMusicSelection);
 			this->gameOverMenu->activate();
 		}
 	}
@@ -370,14 +376,22 @@ void Game::UpdateMainMenu(const float &dt) {
 	this->mainMenu->Update(dt);
 
 	if (this->mainMenu->onCampaignPress()) {
+		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
+		this->gameMusicSelection = AudioManager::AudioMusic::CAMPAIGN;
+		this->audioManager->PlayMusic(this->gameMusicSelection);
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
 		this->_setPlayerLives(); // lives = 3
+		this->paused = false;
 	}
 	else if (this->mainMenu->onInfinitePress()) {
+		// Start each mode with the same music everytime, but swap on redeploys
+		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_01;
+		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
+		this->audioManager->PlayMusic(this->gameMusicSelection);
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
@@ -386,7 +400,11 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->_setPlayerLives(); // lives = 1
 	}
 	else if (this->mainMenu->onCosmosPress()) {
+		// Start each mode with the same music everytime, but swap on redeploys
+		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_02;
+		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->audioManager->PlayMusic(this->gameMusicSelection);
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
 		this->InitMap();
@@ -402,11 +420,16 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
+		if (this->gameMode != Mode::CAMPAIGN) {
+			this->gameMusicSelection = rand() % 3 + 2;
+		}
+		this->audioManager->PlayMusic(this->gameMusicSelection);
 	}
 	else if (this->gameOverMenu->onMenuPress()) {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
+		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 		this->mainView.setCenter(Vector2f(
 			this->window->getSize().x / 2.f,
 			this->window->getSize().y / 2.f));
@@ -725,7 +748,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						case 6: case 7: case 8: case 9:
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 80) { // 20% chance powerup is dropped
+							if (dropChance > 78) { // 20% chance powerup is dropped
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -1423,6 +1446,7 @@ void Game::DisplayGameEnd() {
 					 "\n\n";
 		++it;
 	}
+	this->gameOverText.setString(scoreText);
 
 	// Write leaderboard text
 	std::string leaderboardText = "Gaussian\t\t\tScore\n";
@@ -1441,6 +1465,7 @@ void Game::DisplayGameEnd() {
 	// Write to file
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
 }
+
 
 void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score) {
 	if (this->leaderboards[leadIndex].Size() == this->LEADERBOARD_MAX && score < this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
@@ -1553,9 +1578,11 @@ std::string Game::_getPlayerLivesText() {
 void Game::_redeploy() {
 	if (this->gameMode == Mode::CAMPAIGN) {
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
+		this->paused = false;
 	}
-
-	this->paused = true;
+	else {
+		this->paused = true;
+	}
 
 	// Reset score and multipliers
 	this->totalScore = 0;

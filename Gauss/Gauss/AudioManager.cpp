@@ -12,9 +12,9 @@ AudioManager::AudioManager()
 	sounds.Add(this->LoadSound("Audio/Sounds/absorb.ogg", 75.f));
 	sounds.Add(this->LoadSound("Audio/Sounds/game_over.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/grinder_grinding.ogg"));
-	sounds.Add(this->LoadSound("Audio/Sounds/grinder_idle.ogg", 100.f, true));
+	sounds.Add(this->LoadSound("Audio/Sounds/grinder_idle.ogg", 15.f, true));
 	sounds.Add(this->LoadSound("Audio/Sounds/health_pickup.ogg"));
-	sounds.Add(this->LoadSound("Audio/Sounds/level_up_robovoice.ogg", 90.f));
+	sounds.Add(this->LoadSound("Audio/Sounds/level_up_robovoice.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/powerup_collected.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/upgrade_collected.ogg"));
 	sounds.Add(this->LoadSound("Audio/Sounds/warp_cosmo.ogg"));
@@ -28,7 +28,28 @@ AudioManager::AudioManager()
 	sounds.Add(this->LoadSound("Audio/Sounds/baddie_death01_short.ogg"));
 
 	this->musicContainer.Add(new Music());
-	this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/Music_Boss.ogg");
+	this->musicContainer[AudioManager::AudioMusic::MENU]->setLoop(true);
+	this->musicContainer[AudioManager::AudioMusic::MENU]->setVolume(50.f);
+	this->musicContainer[AudioManager::AudioMusic::MENU]->openFromFile("Audio/Music/menu.ogg");
+
+	this->musicContainer.Add(new Music());
+	this->musicContainer[AudioManager::AudioMusic::CAMPAIGN]->setLoop(false);
+	this->musicContainer[AudioManager::AudioMusic::CAMPAIGN]->openFromFile("Audio/Music/campaign.ogg");
+
+	this->musicContainer.Add(new Music());
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->setLoop(true);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->setVolume(25.f);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->openFromFile("Audio/Music/infinite_cosmos_01.ogg");
+
+	this->musicContainer.Add(new Music());
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->setLoop(true);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->setVolume(25.f);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->openFromFile("Audio/Music/infinite_cosmos_02.ogg");
+
+	this->musicContainer.Add(new Music());
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->setLoop(true);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->setVolume(25.f);
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->openFromFile("Audio/Music/infinite_cosmos_03.ogg");
 }
 
 
@@ -58,10 +79,10 @@ void AudioManager::StopSound(AudioManager::AudioSounds sIndex) {
 	this->sounds[sIndex]->sound->stop();
 }
 
-void AudioManager::PlayMusic(AudioManager::AudioMusic mIndex) {
+void AudioManager::PlayMusic(int mIndex) {
 	this->musicContainer[mIndex]->play();
 }
 
-void AudioManager::StopMusic(AudioManager::AudioMusic mIndex) {
+void AudioManager::StopMusic(int mIndex) {
 	this->musicContainer[mIndex]->stop();
 }

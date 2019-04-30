@@ -420,6 +420,7 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 			this->effectedByCosmo = false;
 			switch (this->currentCosmoEffect) {
 			case CosmoEffects::INVERT_CONTROLS_EFFECT:
+				this->invertControlsEffectActive = false;
 				this->ToggleInvertControlsEffect();
 				break;
 			case CosmoEffects::VERTICAL_WARP_EFFECT:
@@ -687,6 +688,7 @@ void Player::Reset() {
 
 	// Reset Timers
 	this->effectedByCosmo = false;
+	this->invertControlsEffectActive = false;
 	this->cosmoEffectTimerMax = 500.f;
 	this->cosmoEffectTimer = this->cosmoEffectTimerMax;
 	this->shootTimerMax = this->getCalculatedShootTimer();
@@ -816,6 +818,7 @@ std::string Player::ApplyCosmoEffect() {
 	case CosmoEffects::INVERT_CONTROLS_EFFECT:
 		this->ToggleInvertControlsEffect();
 		this->currentCosmoEffect = CosmoEffects::INVERT_CONTROLS_EFFECT;
+		this->invertControlsEffectActive = true;
 		this->audioManager->PlaySound(AudioManager::AudioSounds::COSMO_INVERT_CONTROLS);
 		effectText = "UP = DOWN and DOWN = UP!";
 		break;
@@ -849,6 +852,16 @@ std::string Player::ApplyCosmoEffect() {
 		break;
 	}
 	return effectText;
+}
+
+void Player::ResetAllCosmoEffects() {
+	if(this->invertControlsEffectActive){
+		this->ToggleInvertControlsEffect();
+	}
+	this->ToggleWarpBoundsEffect(false);
+	this->ToggleSpeedIncreaseEffect(false);
+	this->ToggleSpeedDecreaseEffect(false);
+	this->ToggleBaddieSwap(false);
 }
 
 void Player::ToggleInvertControlsEffect() {
@@ -1027,6 +1040,7 @@ void Player::_initPlayerSettings() {
 	this->bulletAcceleration = 1.f;
 
 	// Setup cosmo properties
+	this->invertControlsEffectActive = false;
 	this->effectedByCosmo = false;
 	this->cosmoEffectTimerMax = 500.f;
 	this->cosmoEffectTimer = this->cosmoEffectTimerMax;

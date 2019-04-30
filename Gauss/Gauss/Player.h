@@ -56,6 +56,7 @@ public:
 private:
 	// Cosmo specific properties
 	bool effectedByCosmo;
+	bool invertControlsEffectActive;
 	CosmoEffects currentCosmoEffect;
 	float cosmoEffectTimer;
 	float cosmoEffectTimerMax;
@@ -395,6 +396,7 @@ public:
 	// Cosmo Effects
 	inline const bool isEffectedByCosmo() const { return this->effectedByCosmo; }
 	std::string ApplyCosmoEffect();
+	void ResetAllCosmoEffects();
 	void ToggleInvertControlsEffect();
 	void ToggleWarpBoundsEffect(bool warp);
 	void ToggleSpeedIncreaseEffect(bool on);
