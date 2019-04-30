@@ -680,7 +680,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						switch (consumableType) {
 						case 1: case 2: case 3:
 						{
-							if (dropChance > 90) { // 10% chance for an upgrade
+							if (dropChance > 85) { // 10% chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -696,7 +696,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								if (uType == ItemUpgrade::Type::DOUBLE_RAY) {
 									if (currentPlayer.getLevel() >= 6 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 60) {
+										if (dropChance < 30) {
 											// Spawn random powerup instead
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
@@ -713,7 +713,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 								if (uType == ItemUpgrade::Type::TRIPLE_RAY) {
 									if (currentPlayer.getLevel() >= 10 && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 60) {
+										if (dropChance < 30) {
 											// Spawn random powerup instead
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
