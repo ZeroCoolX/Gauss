@@ -28,7 +28,6 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->InitView();
 	this->InitTextures();
 	this->InitMap();
-	this->InitMenus();
 	this->InitLeaderboards();
 
 	// Init scoring multipliers
@@ -44,7 +43,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	// Init player
 	this->InitPlayersInWorld(1);
 
-
+	this->InitMenus();
 
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
@@ -300,7 +299,7 @@ void Game::InitMap() {
 void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
-	this->tutorial = new Tutorial(this->font, this->window);
+	this->tutorial = new Tutorial(this->font, this->window, &this->players);
 	Tutorial::InitTexts();
 }
 

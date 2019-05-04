@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Dialog.h"
+#include "Player.h"
 
 class Tutorial
 {
@@ -8,7 +9,7 @@ public:
 	enum TutorialStage {
 		INTRO = 0,
 		HORIZONTAL,
-		VETICAL,
+		VERTICAL,
 		LASER,
 		GAUSS_CANNON,
 		SHIELD
@@ -18,6 +19,22 @@ private:
 	RenderWindow *window;
 	TutorialStage currentStage;
 	Dialog* dialog;
+
+	// Pointer to the player controls
+	dArr<Player> *players;
+
+	// Indicates ready to move to next stage
+	bool moveToNextStage;
+	bool dialogueFinished;
+
+	// Tutorial specific keypress triggers
+	bool leftPressed;
+	bool rightPressed;
+	bool upPressed;
+	bool downPressed;
+	bool firePressed;
+	bool gaussCannonPressed;
+	bool shieldPressed;
 
 	std::string currentText;
 	int currentTextIndex;
@@ -32,16 +49,17 @@ private:
 	float sentenceDelayTimer;
 	float sentenceDelayTimerMax;
 
+	void displayText(const float &dt);
 	void updateIntro(const float &dt);
-	void updateHorizontal();
-	void updateVertical();
-	void updateLaser();
-	void updateGaussCannon();
-	void updateShield();
+	void updateHorizontal(const float &dt);
+	void updateVertical(const float &dt);
+	void updateLaser(const float &dt);
+	void updateGaussCannon(const float &dt);
+	void updateShield(const float &dt);
 
 
 public:
-	Tutorial(Font &font, RenderWindow *window);
+	Tutorial(Font &font, RenderWindow *window, dArr<Player> *players);
 	virtual ~Tutorial();
 
 	void Update(const float &dt);

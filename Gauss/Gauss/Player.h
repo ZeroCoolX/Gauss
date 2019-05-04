@@ -374,12 +374,20 @@ public:
 	}
 
 	// Tutorial modification
+	inline dArr<int> *getControls() { return &this->controls; }
 	inline void enableAllControls() {
 		this->disableGaussCannon = false;
 		this->disableHorizontal = false;
 		this->disableLaser = false;
 		this->disableSheild = false;
 		this->disableVertical = false;
+	}
+	inline void disableAllControls() {
+		this->disableGaussCannon = true;
+		this->disableHorizontal = true;
+		this->disableLaser = true;
+		this->disableSheild = true;
+		this->disableVertical = true;
 	}
 	inline void setDisableLaser(bool flag) { this->disableLaser = flag; }
 	inline void setDisableHorizontal(bool flag) { this->disableHorizontal = flag; }

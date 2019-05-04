@@ -9,8 +9,6 @@ Dialog::Dialog(Font &font, RenderWindow *window)
 	// Load texture
 	this->backgroundTexture.loadFromFile("Textures/Backgrounds/dialogBackground.png");
 
-	std::cout << "loaded dialog background " << std::endl;
-
 	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x / 3.f), static_cast<float>(window->getSize().y / 4)));
 	this->background.setFillColor(Color(255, 255, 255, 255));
 	this->background.setTexture(&this->backgroundTexture);
@@ -43,7 +41,9 @@ void Dialog::Update(const float &dt) {
 
 void Dialog::Draw(RenderTarget &renderTarget)
 {
-	renderTarget.draw(this->background);
-	renderTarget.draw(this->text);
+	if (this->active) {
+		renderTarget.draw(this->background);
+		renderTarget.draw(this->text);
+	}
 }
 
