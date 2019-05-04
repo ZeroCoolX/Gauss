@@ -21,8 +21,16 @@ private:
 
 	std::string currentText;
 	int currentTextIndex;
+
+	dArr<char> textCharacters;
+	int currentTextCharIndex;
+
+	// time in between each character appearing on screen
 	float textTimer;
 	float textTimerMax;
+	// time in between each sentence being written out
+	float sentenceDelayTimer;
+	float sentenceDelayTimerMax;
 
 	void updateIntro(const float &dt);
 	void updateHorizontal();

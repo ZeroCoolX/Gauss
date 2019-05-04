@@ -21,13 +21,15 @@ Dialog::Dialog(Font &font, RenderWindow *window)
 	);
 	
 	this->text.setFont(font);
-	this->text.setCharacterSize(20);
+	this->text.setCharacterSize(25);
 	this->text.setFillColor(Color::White);
 	this->text.setString("This is just a test to see if I can see anything. \nIf you can see me - then woohoo!");
 	this->text.setPosition(
 		this->background.getPosition().x + 10.f,//(this->background.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
 		this->background.getPosition().y + 10.f//(this->background.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
 	);
+
+	this->currentTextWidth = 0.f;
 }
 
 

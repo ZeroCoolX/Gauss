@@ -1,4 +1,6 @@
 #include "Tutorial.h"
+#include <string>
+#include <cstring>
 
 // statics
 dArr<dArr<std::string>> Tutorial::dialogTexts;
@@ -8,8 +10,8 @@ void Tutorial::InitTexts() {
 	// Intro
 	tempText.Add("Welcome to the Gaussian Fleet comrade.");
 	tempText.Add("Before we send you off to the front lines we need to make sure your ship is operating at max capacity.");
-	tempText.Add("Don't want that bad boy malfunctioning during the middle of a firefight.");
-	tempText.Add("Follow my orders and you'll be on your way to protecting humanity in no time");
+	tempText.Add("Don't want that bad boy malfunctioning during thhgf ghhh gjj h hjh jhhjhjh hh jh hj hhe middle of a firefight.");
+	tempText.Add("Follow my orders and you'll be on your way to protecting humanity in no time Follow my orders and you'll be on your way to protecting humanity in no time Follow my orders and you'll be on your way to protecting humanity in no time");
 	Tutorial::dialogTexts.Add(tempText);
 	// Horizontal instructions
 	tempText.Add("HORIZONTAL asdfsgdsfjhjg");
@@ -33,8 +35,11 @@ Tutorial::Tutorial(Font &font, RenderWindow *window)
 	this->currentStage = Tutorial::TutorialStage::INTRO;
 	this->dialog = new Dialog(font, window);
 
-	this->textTimerMax = 100.f;
+	this->textTimerMax = 1.f;
 	this->textTimer = this->textTimerMax;
+
+	this->sentenceDelayTimerMax = 5.f;
+	this->sentenceDelayTimer = this->sentenceDelayTimerMax;
 
 	this->currentText = "";
 	this->currentTextIndex = 0;
@@ -84,9 +89,52 @@ void Tutorial::updateIntro(const float &dt) {
 		else {
 			this->textTimer = this->textTimerMax;
 			if (this->currentTextIndex < Tutorial::dialogTexts[TutorialStage::INTRO].Size()) {
-				this->currentText = Tutorial::dialogTexts[TutorialStage::INTRO][this->currentTextIndex];
-				this->dialog->setText(currentText);
-				++this->currentTextIndex;
+				// Populate the current text characters into the array
+				if (textCharacters.Size() == 0) {
+					std::string str = Tutorial::dialogTexts[TutorialStage::INTRO][this->currentTextIndex];
+
+					// declaring character array 
+					char *cstr = new char[str.size() + 1];
+					str.copy(cstr, str.size() + 1);
+					cstr[str.size()] = '\0';
+
+					for (int i = 0; i < str.size(); i++) {
+						textCharacters.Add(cstr[i]);
+					}
+
+					this->currentTextCharIndex = 0;
+
+					// Release memory
+					delete [] cstr;
+				}
+				else {
+					// Loop through all the characters if we still have more to show
+					if (this->currentTextCharIndex < this->textCharacters.Size()) {
+						if (!this->dialog->isWithinBorderEdge() && textCharacters[this->currentTextCharIndex] == ' ') {
+							this->currentText += "\n";
+							this->dialog->resetCurrentTextWidth();
+						}
+						else {
+							this->currentText += textCharacters[this->currentTextCharIndex];
+							this->dialog->incrementCurrentTextWidth();
+						}
+						this->dialog->setText(currentText);
+						++this->currentTextCharIndex;
+					}
+					// End of the text line, so move to the next one
+					else {
+						if (this->sentenceDelayTimer > 0.f) {
+							this->sentenceDelayTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+						}
+						else {
+							this->dialog->resetCurrentTextWidth();
+							this->textCharacters.Clear();
+							this->currentText = "";
+							++this->currentTextIndex;
+							this->sentenceDelayTimer = this->sentenceDelayTimerMax;
+						}
+					}
+				}
 			}
 		}
 	}
