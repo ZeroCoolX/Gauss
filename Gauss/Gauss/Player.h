@@ -147,6 +147,15 @@ private:
 
 	// Player input controls
 	dArr<int> controls;
+	
+	// Switches needed for tutorial purposes
+	// There's gotta be a better away to do this : TODO: Fix
+	bool disableHorizontal;
+	bool disableVertical;
+	bool disableLaser;
+	bool disableGaussCannon;
+	bool disableSheild;
+
 	bool gameOverOverride;
 	float gameOverTimer;
 	float gameOverTimerMax;
@@ -363,6 +372,20 @@ public:
 		if (length == 0) { return Vector2f(0.f, 0.f); }
 		return (v / length);
 	}
+
+	// Tutorial modification
+	inline void enableAllControls() {
+		this->disableGaussCannon = false;
+		this->disableHorizontal = false;
+		this->disableLaser = false;
+		this->disableSheild = false;
+		this->disableVertical = false;
+	}
+	inline void setDisableLaser(bool flag) { this->disableLaser = flag; }
+	inline void setDisableHorizontal(bool flag) { this->disableHorizontal = flag; }
+	inline void setDisableVertical(bool flag) { this->disableVertical = flag; }
+	inline void setDisableGaussCannon(bool flag) { this->disableGaussCannon = flag; }
+	inline void setDisableShield(bool flag) { this->disableSheild = flag; }
 
 	// Functions
 	void UpdateAccessories(const float &dt, const float scollSpeed);

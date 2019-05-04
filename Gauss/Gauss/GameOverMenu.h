@@ -17,7 +17,8 @@ public:
 		INFINTE = 0,
 		COSMOS,
 		CAMPAIGN,
-		CAMPAIGN_BEAT
+		CAMPAIGN_BEAT,
+		TUTORIAL
 	};
 
 private:

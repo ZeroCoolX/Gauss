@@ -10,6 +10,9 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->mainMenu = nullptr;
 	this->gameOverMenu = nullptr;
 
+	// Init tutorial
+	this->tutorial = nullptr;
+
 	this->audioManager = new AudioManager();
 	//this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
@@ -70,6 +73,8 @@ Game::~Game()
 	delete this->stage;
 	delete this->mainMenu;
 	delete this->audioManager;
+	delete this->gameOverMenu;
+	delete this->tutorial;
 	this->playerScoreMap.clear();
 }
 
@@ -285,6 +290,9 @@ void Game::InitMap() {
 	case Game::Mode::CAMPAIGN:
 		mapName = "campaign_01.smap";
 		break;
+	case Game::Mode::TUTORIAL:
+		mapName = "tutorial_01.smap";
+		break;
 	}
 	this->stage->LoadStage(mapName, this->mainView);
 }
@@ -292,6 +300,7 @@ void Game::InitMap() {
 void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
+	this->tutorial = new Tutorial(this->font, this->window);
 }
 
 void Game::UpdateView(const float &dt) {
@@ -410,6 +419,18 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS);
 		this->_setPlayerLives(); // lives = 1
+	}
+	else if (this->mainMenu->onTutorialPress()) {
+		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
+		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_03;
+		this->audioManager->PlayMusic(this->gameMusicSelection);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->gameMode = Mode::TUTORIAL;
+		this->mainMenu->Reset();
+		this->InitMap();
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);// Needs to be TUTORIAL
+		this->_setPlayerLives(); // lives = 3 // Irrelevent for tutorial
+		this->paused = false;
 	}
 }
 
@@ -876,7 +897,7 @@ void Game::UpdateEnemySpawns(const float &dt) {
 			this->_spawnEnemy(rand() % EnemyLifeform::nrOfEnemyTypes);
 			this->enemySpawnTimer = 0;
 		}
-	}if (this->gameMode == Mode::COSMOS) {
+	}else if (this->gameMode == Mode::COSMOS) {
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
 			const int cosmoChance = rand() % 100;
 			int numOfEnemies = EnemyLifeform::nrOfEnemyTypes;
@@ -909,7 +930,7 @@ void Game::UpdateEnemySpawns(const float &dt) {
 			this->enemySpawnTimer = 0;
 		}
 	}
-	else {// CAMPAIGN
+	else if(this->gameMode == Mode::CAMPAIGN){
 		// Get those spawners that are in the screen view only
 		// Functionize
 		this->fromCol = static_cast<int>((this->mainView.getCenter().x - this->mainView.getSize().x / 2) / Gauss::GRID_SIZE);

@@ -23,10 +23,11 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 400.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 500.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 600.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 750.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(150.f, 400.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 500.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 600.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 700.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 850.f), 0));
 }
 
 void MainMenu::InitBackground() {
@@ -50,6 +51,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 		if (this->buttons[i]->IsPressed() && this->pressTime >= this->pressTimeMax) {
 			this->pressTime = 0.f;
 			switch (this->buttons[i]->getId()) {
+				case MainMenu::BTN_TUTORIAL:
+					this->playTutorial = true;
+					return;
 				case MainMenu::BTN_CAMPAIGN:
 					this->playCampaign = true;
 					return;
@@ -118,6 +122,7 @@ void MainMenu::Reset() {
 	this->playCosmos = false;
 	this->playCampaign = false;
 	this->playInfinite = false;
+	this->playTutorial = false;
 	this->pressTime = 0.f;
 }
 

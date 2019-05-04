@@ -15,6 +15,7 @@
 #include "MainMenu.h"
 #include "GameOverMenu.h"
 #include "PlayerScore.h"
+#include "Tutorial.h"
 
 class Game
 {
@@ -22,7 +23,8 @@ public:
 	enum Mode {
 		CAMPAIGN = 0,
 		INFINTE,
-		COSMOS
+		COSMOS,
+		TUTORIAL
 	};
 
 	enum LeaderboardIndex {
@@ -57,6 +59,8 @@ private:
 	// Game
 	MainMenu *mainMenu;
 	GameOverMenu *gameOverMenu;
+
+	Tutorial* tutorial;
 
 	bool campaignOver;
 

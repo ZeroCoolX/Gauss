@@ -11,6 +11,7 @@ private:
 	bool playCosmos = false;
 	bool playCampaign = false;
 	bool playInfinite = false;
+	bool playTutorial = false;
 
 	float pressTimeMax;
 	float pressTime = this->pressTimeMax;
@@ -32,6 +33,7 @@ public:
 	inline bool isActive() const { return this->active; }
 	inline const bool onCosmosPress() { return this->active && this->playCosmos; }
 	inline const bool onCampaignPress() { return this->active && this->playCampaign; }
+	inline const bool onTutorialPress() { return this->active && this->playTutorial; }
 	inline const bool onInfinitePress() { return this->active && this->playInfinite; }
 	void activate() { this->active = true; }
 	void deactivate() { this->active = false; }
@@ -61,7 +63,8 @@ public:
 		BTN_CAMPAIGN = 0, 
 		BTN_INFINITE,
 		BTN_COSMOS,
-		BTN_EXIT
+		BTN_EXIT,
+		BTN_TUTORIAL
 	};
 };
 

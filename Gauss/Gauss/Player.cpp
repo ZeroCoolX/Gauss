@@ -207,11 +207,13 @@ void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 
 void Player::Combat(const float &dt) {
 	const Vector2f direction = Vector2f(1.f, 0.f);
-
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
-	{
-		this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_LASER);
-		switch (this->currentWeapon) {
+	
+	// Main laser
+	if (!this->disableLaser) {
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
+		{
+			this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_LASER);
+			switch (this->currentWeapon) {
 			case Player::LASER_GUN:
 				this->_fireLaser(direction);
 				break;
@@ -221,26 +223,32 @@ void Player::Combat(const float &dt) {
 			case Player::MISSILE_HEAVY_GUN:
 				this->_fireMissileHeavy(direction);
 				break;
+			}
+
+			this->shootTimer = 0; // RESET TIMER
 		}
-
-		this->shootTimer = 0; // RESET TIMER
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
-		this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON);
-		// Fire a deadly gauss cannon shot
-		this->gaussChargeTimer = 0.f;
-		this->playerGaussBar.setFillColor(this->gaussChargingColor);
-		this->_fireGaussCannon(direction);
-		this->gaussReloaded = false;
-		this->keyTime = 0;
+	// Gauss Cannon
+	if (!this->disableGaussCannon) {
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
+			this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON);
+			// Fire a deadly gauss cannon shot
+			this->gaussChargeTimer = 0.f;
+			this->playerGaussBar.setFillColor(this->gaussChargingColor);
+			this->_fireGaussCannon(direction);
+			this->gaussReloaded = false;
+			this->keyTime = 0;
+		}
 	}
 
-	// SHIELD
+	// Sheild
 	if (this->shieldCharged()) {
 		this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
 	}
-	this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD])) && this->shieldChargeTimer > 0;
+	if (!this->disableSheild) {
+		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD])) && this->shieldChargeTimer > 0;
+	}
 
 	if (this->isDamageCooldown()) {
 		if ((int)this->damageTimer % 2 == 0) {
@@ -704,6 +712,8 @@ void Player::Reset() {
 	this->powerupTimerMax = 500.f;
 	this->powerupTimer = this->powerupTimerMax;
 
+	// Undo any tutorial overrides
+	this->enableAllControls();
 }
 // Over time these two menthods do the same thing ^ and v
 void Player::ResetOnLifeLost(View &view) {
@@ -761,6 +771,9 @@ void Player::ResetOnLifeLost(View &view) {
 
 	this->hp = this->hpMax;
 	this->UpdateStats();
+
+	// Undo any tutorial overrides
+	this->enableAllControls();
 }
 
 void Player::AddStatPointRandom() {
@@ -921,36 +934,43 @@ void Player::_processPlayerInput(const float &dt) {
 	}
 
 	// Collect player input
-	if (this->warpVerticalBounds) {
-		if (this->velocity.y > -this->maxVelocity) {
-			this->velocity.y += -1.f * this->acceleration * dt * DeltaTime::dtMultiplier;
-		}
-	}
-	else {
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
-			this->direction.y = -1;
-			if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
-				this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+
+	// Vertical
+	if (!this->disableVertical) {
+		if (this->warpVerticalBounds) {
+			if (this->velocity.y > -this->maxVelocity) {
+				this->velocity.y += -1.f * this->acceleration * dt * DeltaTime::dtMultiplier;
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
-			this->direction.y = 1;
-			if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
-				this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+		else {
+			if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
+				this->direction.y = -1;
+				if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
+					this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+				}
+			}
+			if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
+				this->direction.y = 1;
+				if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
+					this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
+				}
 			}
 		}
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_LEFT]))) {
-		this->direction.x = -1;
-		if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
-			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
+	// Horizontal
+	if (!this->disableHorizontal) {
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_LEFT]))) {
+			this->direction.x = -1;
+			if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
+				this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
+			}
 		}
-	}
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_RIGHT]))) {
-		this->direction.x = 1;
-		if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
-			this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
+		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_RIGHT]))) {
+			this->direction.x = 1;
+			if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
+				this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
+			}
 		}
 	}
 
@@ -1085,6 +1105,8 @@ void Player::_initPlayerSettings() {
 	this->powerupAbsorb = false;
 	this->powerupGrind = false;
 	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
+
+	this->enableAllControls();
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;

@@ -129,6 +129,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Consumable.cpp" />
     <ClCompile Include="CosmoEnemy.cpp" />
+    <ClCompile Include="Dialog.cpp" />
     <ClCompile Include="EnemyLifeform.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="TextTag.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TrackerEnemy.cpp" />
+    <ClCompile Include="Tutorial.cpp" />
     <ClCompile Include="WorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +160,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Consumable.h" />
     <ClInclude Include="CosmoEnemy.h" />
+    <ClInclude Include="Dialog.h" />
     <ClInclude Include="EnemyLifeform.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Game.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileArr.h" />
     <ClInclude Include="TrackerEnemy.h" />
+    <ClInclude Include="Tutorial.h" />
     <ClInclude Include="WorldMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
