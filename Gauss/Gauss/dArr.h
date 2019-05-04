@@ -18,6 +18,7 @@ public:
 	T& operator[](unsigned index);
 	void operator = (const T& obj);
 
+	//bool IsNull(const unsigned index);
 	void Add(const T element);
 	void Remove(unsigned index);
 	unsigned Size() const;
@@ -57,6 +58,14 @@ dArr<T>::~dArr() {
 	}
 	delete[] this->arr;
 }
+
+//template<typename T>
+//bool dArr<T>::IsNull(const unsigned index) {
+//	if (index < 0 || index >= this->numOfElements) {
+//		throw "ERROR: Out of bounds TileArr::IsNull";
+//	}
+//	return this->arr[index] == nullptr;
+//}
 
 template<typename T>
 void dArr<T>::Add(const T element) {

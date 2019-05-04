@@ -19,7 +19,12 @@ private:
 	TutorialStage currentStage;
 	Dialog* dialog;
 
-	void updateIntro();
+	std::string currentText;
+	int currentTextIndex;
+	float textTimer;
+	float textTimerMax;
+
+	void updateIntro(const float &dt);
 	void updateHorizontal();
 	void updateVertical();
 	void updateLaser();
@@ -33,5 +38,8 @@ public:
 
 	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
+
+	static dArr<dArr<std::string>> dialogTexts;
+	static void InitTexts();
 };
 

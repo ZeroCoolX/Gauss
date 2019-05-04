@@ -301,6 +301,7 @@ void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
 	this->tutorial = new Tutorial(this->font, this->window);
+	Tutorial::InitTexts();
 }
 
 void Game::UpdateView(const float &dt) {
@@ -312,6 +313,10 @@ void Game::Update(const float &dt) {
 	if (this->mainMenu->isActive()) {
 		this->UpdateMainMenu(dt);
 		return;
+	}
+
+	if (this->gameMode = Mode::TUTORIAL) {
+		this->tutorial->Update(dt);
 	}
 
 	// Keytime update
@@ -1417,6 +1422,10 @@ void Game::Draw() {
 	// Draw UI - update view
 	this->window->setView(this->window->getDefaultView());
 	this->DrawUI();
+
+	if (this->gameMode = Mode::TUTORIAL) {
+		this->tutorial->Draw(*this->window);
+	}
 }
 
 void Game::InitPlayerScoreStats() {
