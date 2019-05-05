@@ -7,7 +7,7 @@ Dialog::Dialog(Font &font, RenderWindow *window)
 	this->window = window;
 
 	// Load texture
-	this->backgroundTexture.loadFromFile("Textures/Backgrounds/dialogBackground.png");
+	this->backgroundTexture.loadFromFile("Textures/Backgrounds/GaussDialog.png");
 
 	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x / 3.f), static_cast<float>(window->getSize().y / 4)));
 	this->background.setFillColor(Color(255, 255, 255, 255));
@@ -23,8 +23,8 @@ Dialog::Dialog(Font &font, RenderWindow *window)
 	this->text.setFillColor(Color::White);
 	this->text.setString("This is just a test to see if I can see anything. \nIf you can see me - then woohoo!");
 	this->text.setPosition(
-		this->background.getPosition().x + 10.f,//(this->background.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
-		this->background.getPosition().y + 10.f//(this->background.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
+		this->background.getPosition().x + 40.f,//(this->background.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+		this->background.getPosition().y + 90.f//(this->background.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
 	);
 
 	this->currentTextWidth = 0.f;

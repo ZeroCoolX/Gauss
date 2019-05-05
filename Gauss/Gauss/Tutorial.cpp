@@ -32,7 +32,7 @@ void Tutorial::InitTexts() {
 	// TutorialStage::LASER
 	tempText.Add("Well done comrad. Mastering the movement controls of your Gauss will give you that extra edge in battle that might save your life one day.");
 	tempText.Add("Remember that TAPPING (wasd) vs HOLDING (wasd) will yield difference accelerations.");
-	tempText.Add("TAP \nthe direction to move a very small amount. \n\n HOLD the direction to accelerate very quickly.");
+	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
 	tempText.Add("Your Gauss is equipped with an electro magnetic laser as its main fire mode");
 	tempText.Add("This laser is your most reliable way to cleanup the universe of alien scum.");
 	tempText.Add("Fire your laser (SPACE) to make sure the engineers planet side didn't mess anything up.");
@@ -100,8 +100,9 @@ void Tutorial::InitTexts() {
 	// TutorialStage::TUTORIAL_OVER
 	tempText.Add("Alright soldier, time to cut the chit-chat and get out there!");
 	tempText.Add("Just remember these few key battle tips...");
-	tempText.Add("When completely filled you will LEVEL UP which increases the stats about your Gauss.");
-	tempText.Add("These stats: Cooling, Power, Plating, and Maneuverability directly effect the damage, health, and XP gain of your Gauss.");
+	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
+	tempText.Add("Leveling up refills your Gauss's health so if you're going down on health, go up on killing!");
+	tempText.Add("Lastly, don't forget to use the reflect shield to reflect enemy projectiles, and to give you some extra buffer if enemy collision is inevitable.");
 	Tutorial::dialogTexts.Add(tempText);
 }
 
