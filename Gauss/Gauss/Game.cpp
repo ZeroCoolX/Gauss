@@ -314,8 +314,8 @@ void Game::Update(const float &dt) {
 		return;
 	}
 
-	if (this->gameMode = Mode::TUTORIAL) {
-		this->tutorial->Update(dt);
+	if (this->gameMode == Mode::TUTORIAL) {
+		this->UpdateTutorial(dt);
 	}
 
 	// Keytime update
@@ -435,6 +435,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);// Needs to be TUTORIAL
 		this->_setPlayerLives(); // lives = 3 // Irrelevent for tutorial
 		this->paused = false;
+		this->tutorial->Activate();
 	}
 }
 
@@ -454,6 +455,22 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
+		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
+		this->mainView.setCenter(Vector2f(
+			this->window->getSize().x / 2.f,
+			this->window->getSize().y / 2.f));
+		this->mainMenu->Reset();
+		this->mainMenu->activate();
+	}
+}
+
+void Game::UpdateTutorial(const float &dt) {
+	this->tutorial->Update(dt);
+
+	if (this->tutorial->IsTutorialComplete()) {
+		this->tutorial->Reset();
+		this->_redeploy();
+		this->audioManager->StopMusic(this->gameMusicSelection);
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 		this->mainView.setCenter(Vector2f(
 			this->window->getSize().x / 2.f,
@@ -1422,7 +1439,7 @@ void Game::Draw() {
 	this->window->setView(this->window->getDefaultView());
 	this->DrawUI();
 
-	if (this->gameMode = Mode::TUTORIAL) {
+	if (this->gameMode == Mode::TUTORIAL) {
 		this->tutorial->Draw(*this->window);
 	}
 }

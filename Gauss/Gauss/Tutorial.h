@@ -12,10 +12,19 @@ public:
 		VERTICAL,
 		LASER,
 		GAUSS_CANNON,
-		SHIELD
+		SHIELD,
+		SHIELD_HOLD,
+		HEALTH_HUD,
+		SHIELD_HUD,
+		GAUSS_CHARGE_HUD,
+		XP_HUD,
+		TUTORIAL_OVER
 	};
 
 private:
+	bool active;
+	bool tutorialComplete;
+
 	RenderWindow *window;
 	TutorialStage currentStage;
 	Dialog* dialog;
@@ -48,6 +57,18 @@ private:
 	// time in between each sentence being written out
 	float sentenceDelayTimer;
 	float sentenceDelayTimerMax;
+	// time in between completing instructions
+	float instructionDelayTimer;
+	float instructionDelayTimerMax;
+	// time in between each flash indicating a part of the hud
+	float hudFlashIndicatorTimer;
+	float hudFlashIndicatorTimerMax;
+	// timer for forced xp gain
+	float xpGainTimer;
+	float xpGainTimerMax;
+	// time until we go back to the menu on complete
+	float tutorialCompleteTimerMax;;
+	float tutorialCompleteTimer;
 
 	void displayText(const float &dt);
 	void updateIntro(const float &dt);
@@ -56,7 +77,12 @@ private:
 	void updateLaser(const float &dt);
 	void updateGaussCannon(const float &dt);
 	void updateShield(const float &dt);
-
+	void updateShieldHold(const float &dt);
+	void updateHealthHud(const float &dt);
+	void updateShieldHud(const float &dt);
+	void updateGaussChargeHud(const float &dt);
+	void updateXpChargeHud(const float &dt);
+	void updateTutorialOver(const float &dt);
 
 public:
 	Tutorial(Font &font, RenderWindow *window, dArr<Player> *players);
@@ -64,6 +90,14 @@ public:
 
 	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
+	void Reset();
+	inline void Activate() {
+		this->active = true;
+		this->tutorialComplete = false;
+		(*this->players)[0].disableAllControls();
+		(*this->players)[0].activateColorFlashTutorialOverride();
+	}
+	inline const bool IsTutorialComplete() const { return this->active && this->tutorialComplete; }
 
 	static dArr<dArr<std::string>> dialogTexts;
 	static void InitTexts();

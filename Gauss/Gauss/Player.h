@@ -76,9 +76,11 @@ private:
 	Text statsText;
 	// EXP
 	RectangleShape playerExpBar;
+	Color playerExpBarColor;
 	RectangleShape playerExpBarBox;
 	// HEALTH
 	RectangleShape playerHealthBar;
+	Color playerHealthBarColor;
 	RectangleShape playerHealthBarBox;
 	// STATS HUD
 	Text playerStatsHudText;
@@ -122,7 +124,6 @@ private:
 	Vector2f missileScale = Vector2f(0.05f, 0.05f);
 	Vector2f laserBulletScale = Vector2f(0.2f, 0.2f);
 
-	//Texture *gaussCannonProjectileTexture;
 	Vector2f gaussCannonProjectileScale = Vector2f(0.5f, 0.5f);
 
 	float bulletSpeed;
@@ -155,8 +156,10 @@ private:
 	bool disableLaser;
 	bool disableGaussCannon;
 	bool disableSheild;
+	bool colorFlashTutorialOverride;
 
 	bool gameOverOverride;
+	bool tutorialOverride;
 	float gameOverTimer;
 	float gameOverTimerMax;
 
@@ -394,6 +397,24 @@ public:
 	inline void setDisableVertical(bool flag) { this->disableVertical = flag; }
 	inline void setDisableGaussCannon(bool flag) { this->disableGaussCannon = flag; }
 	inline void setDisableShield(bool flag) { this->disableSheild = flag; }
+	inline void flashPlayerHealthBar(int t) {
+		if (t % 4 == 0) { this->playerHealthBar.setFillColor(Color::White); }
+		else { this->playerHealthBar.setFillColor(this->playerHealthBarColor); }
+	}
+	inline void resetPlayerHealthBarColor() { this->playerHealthBar.setFillColor(this->playerHealthBarColor);}
+	inline void flashPlayerShield(int t) {
+		if (t % 4 == 0) { this->playerShieldChargeCircle.setFillColor(Color::White); }
+		else { this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor); }
+	}
+	inline void resetPlayerShieldColor() { this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);}
+	inline void flashPlayerGaussCannon(int t) {
+		if (t % 4 == 0) { this->playerGaussBar.setFillColor(Color::White); }
+		else { this->playerGaussBar.setFillColor(this->gaussReadyColor); }
+	}
+	inline void resetPlayerGaussCannonColor() { this->playerGaussBar.setFillColor(this->gaussReadyColor);}
+	inline const float getShieldChargeTimer() const { return this->shieldChargeTimer; }
+	inline void activateColorFlashTutorialOverride() { this->colorFlashTutorialOverride = true; }
+	inline void deactivateColorFlashTutorialOverride() { this->colorFlashTutorialOverride = false; }
 
 	// Functions
 	void UpdateAccessories(const float &dt, const float scollSpeed);
@@ -423,6 +444,7 @@ public:
 	void ActivateGameEnd(Vector2f pos);
 	inline const bool isGameOverActivated() const { return this->gameOverOverride; }
 	inline const bool campaignLevelBeat() const { return this->gameOverTimer <= 0.f; }
+	inline void overrideControlsForTutorial() { this->tutorialOverride = true; }
 
 	// Cosmo Effects
 	inline const bool isEffectedByCosmo() const { return this->effectedByCosmo; }

@@ -196,6 +196,7 @@ public:
 	void UpdateParticles(const float &dt);
 	void UpdateMainMenu(const float &dt);
 	void UpdateGameOverMenu(const float &dt);
+	void UpdateTutorial(const float &dt);
 
 	void DrawUI();
 	void DrawTextTags();

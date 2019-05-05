@@ -200,7 +200,7 @@ void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 	this->_recalculatePlayerCenter();
 
 	// Bounds check for window collision
-	if (!this->gameOverOverride) {
+	if (!(this->gameOverOverride || this->tutorialOverride)) {
 		this->_checkBounds(view, this->warpVerticalBounds);
 	}
 }
@@ -235,7 +235,9 @@ void Player::Combat(const float &dt) {
 			this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON);
 			// Fire a deadly gauss cannon shot
 			this->gaussChargeTimer = 0.f;
-			this->playerGaussBar.setFillColor(this->gaussChargingColor);
+			if (!this->colorFlashTutorialOverride) {
+				this->playerGaussBar.setFillColor(this->gaussChargingColor);
+			}
 			this->_fireGaussCannon(direction);
 			this->gaussReloaded = false;
 			this->keyTime = 0;
@@ -244,7 +246,9 @@ void Player::Combat(const float &dt) {
 
 	// Sheild
 	if (this->shieldCharged()) {
-		this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
+		if (!this->colorFlashTutorialOverride) {
+			this->playerShieldChargeCircle.setFillColor(this->shieldReadyColor);
+		}
 	}
 	if (!this->disableSheild) {
 		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD])) && this->shieldChargeTimer > 0;
@@ -472,7 +476,9 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 		this->gaussChargeTimer += 1.f * dt * DeltaTime::dtMultiplier;
 	}
 	else {
-		this->playerGaussBar.setFillColor(this->gaussReadyColor);
+		if (!this->colorFlashTutorialOverride) {
+			this->playerGaussBar.setFillColor(this->gaussReadyColor);
+		}
 		if (!this->gaussReloaded) {
 			this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON_RELOAD);
 			this->gaussReloaded = true;
@@ -486,7 +492,9 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 	// Make sure they let go of the key
 	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD]))){
 		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + this->shieldRechargeRate * dt * DeltaTime::dtMultiplier);
-		this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
+		if (!this->colorFlashTutorialOverride) {
+			this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
+		}
 	}
 
 	this->Movement(dt, view, scrollSpeed);
@@ -556,12 +564,14 @@ void Player::InitUI(Text t) {
 	this->statsText = t;
 
 	// EXP bad
-	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); // TODO: magic numbers need to go away
-	this->playerExpBar.setFillColor(Color(0, 90, 200, 200));
+	this->playerExpBarColor = Color(0, 90, 200, 200);
+	this->playerExpBar.setSize(Vector2f(90.f, 8.5)); 
+	this->playerExpBar.setFillColor(this->playerExpBarColor);
 
 	// Health bar
+	this->playerHealthBarColor = Color(180, 0, 18, 200);
 	this->playerHealthBar.setSize(Vector2f(90.f, 8.0));
-	this->playerHealthBar.setFillColor(Color(180, 0, 18, 200));
+	this->playerHealthBar.setFillColor(this->playerHealthBarColor);
 
 	// Setup Bar Boxes
 	this->playerHealthBarBox.setSize(Vector2f(91.f, 9.5));
@@ -927,7 +937,7 @@ void Player::ActivateGameEnd(Vector2f pos) {
 }
 
 void Player::_processPlayerInput(const float &dt) {
-	if (this->gameOverOverride) {
+	if (this->gameOverOverride || this->tutorialOverride) {
 		this->velocity.y = 0.f;
 		this->velocity.x = this->maxVelocity * 10.f * dt * DeltaTime::dtMultiplier;
 		return;
@@ -1087,6 +1097,7 @@ void Player::_initPlayerSettings() {
 
 	// Reset game over state
 	this->gameOverOverride = false;
+	this->tutorialOverride = false;
 	this->gameOverTimerMax = 150.f;
 	this->gameOverTimer = this->gameOverTimerMax;
 
@@ -1107,6 +1118,7 @@ void Player::_initPlayerSettings() {
 	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 
 	this->enableAllControls();
+	this->deactivateColorFlashTutorialOverride();
 
 	// Number of players for co-op
 	this->playerNumber = Player::playerId + 1;
