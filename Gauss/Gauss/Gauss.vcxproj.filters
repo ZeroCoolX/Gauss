@@ -163,10 +163,10 @@
       <Filter>Source Files\GameControl</Filter>
     </ClCompile>
     <ClCompile Include="Tutorial.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Dialog.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,10 +267,10 @@
       <Filter>Header Files\GameControl</Filter>
     </ClInclude>
     <ClInclude Include="Tutorial.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Dialog.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

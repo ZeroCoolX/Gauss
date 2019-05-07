@@ -12,7 +12,8 @@ void Powerup::InitTextures() {
 	Powerup::powerupTextures.Add(Texture(temp));
 	temp.loadFromFile("Textures/Powerups/powerupGrinder.png");
 	Powerup::powerupTextures.Add(Texture(temp));
-	temp.loadFromFile("Textures/Powerups/powerupPierce.png");
+	//temp.loadFromFile("Textures/Powerups/powerupPierce01.png");
+	temp.loadFromFile("Textures/Powerups/powerupPierce02.png");
 	Powerup::powerupTextures.Add(Texture(temp));
 	Powerup::numberOfPowerups = Powerup::powerupTextures.Size();
 }

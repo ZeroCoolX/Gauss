@@ -39,7 +39,8 @@ void Player::InitTextures() {
 	Player::powerupIndicatorTextures.Add(temp);
 	temp.loadFromFile("Textures/Powerups/powerupGrinderIndicator.png");
 	Player::powerupIndicatorTextures.Add(temp);
-	temp.loadFromFile("Textures/Powerups/powerupPierceIndicator.png");
+	//temp.loadFromFile("Textures/Powerups/powerupPierce01Indicator.png");
+	temp.loadFromFile("Textures/Powerups/powerupPierce02Indicator.png");
 	Player::powerupIndicatorTextures.Add(temp);
 
 	// Sheild texutures
