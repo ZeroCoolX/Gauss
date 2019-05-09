@@ -29,7 +29,6 @@ public:
 	enum ShipBody {
 		DEFAULT_SHIP_BODY = 0
 	};
-
 	enum LaserLevels {
 		DEFAULT_LASER = 0,
 		LEVEL_2_LASER,
@@ -38,12 +37,10 @@ public:
 	enum Sheild {
 		DEFAULT_SHIELD = 0
 	};
-
 	enum Auras {
 		ABSORB = 0,
 		GRIND
 	};
-
 	enum CosmoEffects {
 		INVERT_CONTROLS_EFFECT = 0,
 		VERTICAL_WARP_EFFECT,

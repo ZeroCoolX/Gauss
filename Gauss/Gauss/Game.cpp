@@ -913,6 +913,11 @@ void Game::UpdateScoreUI() {
 }
 
 void Game::UpdateEnemySpawns(const float &dt) {
+	// Safety check in case there are no more players in the world
+	if (!this->playersExistInWorld()) {
+		return;
+	}
+
 	if (this->gameMode == Mode::INFINTE) {
 		if (this->enemySpawnTimer >= this->enemySpawnTimerMax) {
 			this->_spawnEnemy(rand() % EnemyLifeform::nrOfEnemyTypes);
@@ -1114,7 +1119,7 @@ void Game::UpdateEnemies(const float &dt) {
 						// Grind powerup is active
 						if (this->players[j].getPowerupGrind()) {
 							this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_GRIND);
-							particleColor = Color::Red;
+							particleColor = Color::Green;
 						}
 
 						const int nrOfPatricles = rand() % 20 + 5;

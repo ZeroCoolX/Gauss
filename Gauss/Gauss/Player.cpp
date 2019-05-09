@@ -368,7 +368,7 @@ void Player::UpdateAccessories(const float &dt, const float scollSpeed) {
 
 	// Aura
 	this->aura.setPosition(this->playerCenter.x, this->playerCenter.y);
-	this->aura.rotate(5.f * dt * DeltaTime::dtMultiplier);
+	this->aura.rotate(-15.f * dt * DeltaTime::dtMultiplier);
 
 	// Cockpit
 	this->cPit.setPosition(this->playerCenter.x - this->velocity.x / 3, this->playerCenter.y);
@@ -1048,11 +1048,9 @@ void Player::_initTextures() {
 
 	// Aura
 	this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
-	this->aura.setOrigin(this->aura.getGlobalBounds().width / 2,
-		this->aura.getGlobalBounds().height / 2);
 	this->aura.setPosition(this->playerCenter);
-	this->aura.setRotation(90.f);
-	this->aura.setScale(0.7f, 0.7f);
+	this->aura.setScale(0.85f, 0.85f);
+	this->aura.setOrigin(100.f, 100.f);
 
 	// Cockpit
 	this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
