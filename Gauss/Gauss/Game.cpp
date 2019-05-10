@@ -110,12 +110,12 @@ void Game::InitView() {
 
 void Game::InitPlayersInWorld(int quantity) {
 	// Always add at least 1 player
-	this->players.Add(Player(this->audioManager));
+	this->players.Add(Player(this->audioManager, &this->keyManager));
 
 	// Optionally add another
 	if (quantity > 1) {
-		this->players.Add(Player(this->audioManager,
-			Keyboard::I,
+		this->players.Add(Player(this->audioManager, &this->keyManager
+			/*Keyboard::I,
 			Keyboard::K,
 			Keyboard::J,
 			Keyboard::L,
@@ -126,7 +126,7 @@ void Game::InitPlayersInWorld(int quantity) {
 			Keyboard::Num7,
 			Keyboard::Num8,
 			Keyboard::Num9,
-			Keyboard::Num0));
+			Keyboard::Num0*/));
 	}
 
 	this->InitPlayerScoreStats();
@@ -1515,6 +1515,10 @@ void Game::DisplayGameEnd() {
 	
 	// Write to file
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
+}
+
+void Game::ChangeKeybinding() {
+
 }
 
 

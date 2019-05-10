@@ -2,7 +2,7 @@
 
 #include "Bullet.h"
 #include "AudioManager.h"
-//#include "Powerup.h"
+#include "KeyManager.h"
 
 class Player
 {
@@ -51,6 +51,9 @@ public:
 	};
 
 private:
+	KeyManager *keyManager;
+	int keyScheme;
+
 	// Cosmo specific properties
 	bool effectedByCosmo;
 	bool invertControlsEffectActive;
@@ -230,8 +233,8 @@ private:
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
 	Player(
-		AudioManager* audioManager,
-		int UP = Keyboard::W, 
+		AudioManager* audioManager, KeyManager *keyManager);
+		/*int UP = Keyboard::W, 
 		int DOWN = Keyboard::S,
 		int LEFT = Keyboard::A, 
 		int RIGHT = Keyboard::D,
@@ -242,7 +245,7 @@ public:
 		int CHANGE_LWING = Keyboard::Num1,
 		int CHANGE_CPIT = Keyboard::Num2,
 		int CHANGE_RWING = Keyboard::Num3,
-		int CHANGE_AURA = Keyboard::Num4);
+		int CHANGE_AURA = Keyboard::Num4*/
 	virtual ~Player();
 
 	// Accessories

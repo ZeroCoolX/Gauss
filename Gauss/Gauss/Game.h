@@ -48,9 +48,10 @@ private:
 			if (this != n) return true;
 		}
 	};
-
-	// 3 potential leaderboards
 	dArr<dArr<Leaderboard>> leaderboards; // 0 = infinite, 1 = cosmos
+
+	KeyManager keyManager;
+	int keyScheme;
 
 	// Only for test
 	AudioManager* audioManager;

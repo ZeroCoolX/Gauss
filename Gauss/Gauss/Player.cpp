@@ -81,8 +81,8 @@ void Player::InitTextures() {
 }
 
 Player::Player(
-	AudioManager* audioManager,
-	int UP, 
+	AudioManager* audioManager, KeyManager *keyManager
+	/*int UP, 
 	int DOWN,
 	int LEFT, 
 	int RIGHT,
@@ -93,7 +93,7 @@ Player::Player(
 	int CHANGE_LWING,
 	int CHANGE_CPIT,
 	int CHANGE_RWING,
-	int CHANGE_AURA
+	int CHANGE_AURA*/
 ) :level(1), lives(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
 {
 	this->audioManager = audioManager;
@@ -122,19 +122,22 @@ Player::Player(
 	this->_initTextures();
 	this->_initPlayerSettings();
 
+	this->keyManager = keyManager;
+	this->keyScheme = 0;
+
 	// Set player controls
-	this->controls.Add(UP);
-	this->controls.Add(DOWN);
-	this->controls.Add(LEFT);
-	this->controls.Add(RIGHT);
-	this->controls.Add(FIRE);
-	this->controls.Add(GAUSSCANNON);
-	this->controls.Add(SHIELD);
-	this->controls.Add(TOGGLESTATS);
-	this->controls.Add(CHANGE_LWING);
-	this->controls.Add(CHANGE_CPIT);
-	this->controls.Add(CHANGE_RWING);
-	this->controls.Add(CHANGE_AURA);
+	this->controls.Add(this->keyManager->Up(this->keyScheme));
+	this->controls.Add(this->keyManager->Down(this->keyScheme));
+	this->controls.Add(this->keyManager->Left(this->keyScheme));
+	this->controls.Add(this->keyManager->Right(this->keyScheme));
+	this->controls.Add(this->keyManager->Fire(this->keyScheme));
+	this->controls.Add(this->keyManager->GaussCannon(this->keyScheme));
+	this->controls.Add(this->keyManager->Shield(this->keyScheme));
+	this->controls.Add(this->keyManager->ToggleStats(this->keyScheme));
+	this->controls.Add(Keyboard::Num1);
+	this->controls.Add(Keyboard::Num2);
+	this->controls.Add(Keyboard::Num3);
+	this->controls.Add(Keyboard::Num4);
 }
 
 Player::~Player()

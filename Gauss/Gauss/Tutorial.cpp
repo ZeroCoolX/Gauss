@@ -224,7 +224,7 @@ void Tutorial::displayText(const float &dt) {
 	}
 	else {
 		this->textTimer = this->textTimerMax;
-		if (this->currentTextIndex < Tutorial::dialogTexts[this->currentStage].Size()) {
+		if (this->currentTextIndex < static_cast<int>(Tutorial::dialogTexts[this->currentStage].Size())) {
 			// Populate the current text characters into the array
 			if (textCharacters.Size() == 0) {
 				std::string str = Tutorial::dialogTexts[this->currentStage][this->currentTextIndex];
@@ -234,7 +234,7 @@ void Tutorial::displayText(const float &dt) {
 				str.copy(cstr, str.size() + 1);
 				cstr[str.size()] = '\0';
 
-				for (int i = 0; i < str.size(); i++) {
+				for (size_t i = 0; i < str.size(); i++) {
 					textCharacters.Add(cstr[i]);
 				}
 
@@ -245,7 +245,7 @@ void Tutorial::displayText(const float &dt) {
 			}
 			else {
 				// Loop through all the characters if we still have more to show
-				if (this->currentTextCharIndex < this->textCharacters.Size()) {
+				if (this->currentTextCharIndex < static_cast<int>(this->textCharacters.Size())) {
 					if (!this->dialog->isWithinBorderEdge() && textCharacters[this->currentTextCharIndex] == ' ') {
 						this->currentText += "\n";
 						this->dialog->resetCurrentTextWidth();
