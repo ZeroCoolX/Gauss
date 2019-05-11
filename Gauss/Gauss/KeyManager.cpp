@@ -95,7 +95,7 @@ KeyManager::KeyManager()
 	defaultKeys["DOWN"] = KeyManager::DEF_DOWN;
 	defaultKeys["LEFT"] = KeyManager::DEF_LEFT;
 	defaultKeys["RIGHT"] = KeyManager::DEF_RIGHT;
-	defaultKeys["FIRE"] = KeyManager::DEF_FIRE;
+	defaultKeys["LASER"] = KeyManager::DEF_LASER;
 	defaultKeys["MAC"] = KeyManager::DEF_MAC;
 	defaultKeys["SHIELD"] = KeyManager::DEF_SHIELD;
 	defaultKeys["STATS"] = KeyManager::DEF_STATS;
@@ -160,7 +160,7 @@ void KeyManager::_initDefaults() {
 	this->keys[0]["DOWN"] = KeyManager::DEF_DOWN;
 	this->keys[0]["LEFT"] = KeyManager::DEF_LEFT;
 	this->keys[0]["RIGHT"] = KeyManager::DEF_RIGHT;
-	this->keys[0]["FIRE"] = KeyManager::DEF_FIRE;
+	this->keys[0]["LASER"] = KeyManager::DEF_LASER;
 	this->keys[0]["MAC"] = KeyManager::DEF_MAC;
 	this->keys[0]["SHIELD"] = KeyManager::DEF_SHIELD;
 	this->keys[0]["STATS"] = KeyManager::DEF_STATS;

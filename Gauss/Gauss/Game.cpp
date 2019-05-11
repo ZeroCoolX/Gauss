@@ -326,12 +326,12 @@ void Game::Update(const float &dt, const Event *event) {
 
 	if (this->keybindMenu->isActive()) {
 		this->UpdateKeybindingMenu(dt, event);
+		this->UpdatePlayers(dt);
 		return;
 	}
 
 	if (this->shipBayMenu->isActive()) {
 		this->UpdateShipBayMenu(dt);
-		// UPDATE PLAYERS
 		this->UpdatePlayers(dt);
 		return;
 	}
@@ -493,6 +493,14 @@ void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
 			this->players[i].RefreshPlayerControls();
+		}
+	}
+	else if (this->keybindMenu->isKeyRefreshNeeded()) {
+		// Update the players with the new controls 
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].RefreshPlayerControls();
+			this->keybindMenu->resetKeyRefreshNeeded();
 		}
 	}
 }
@@ -1485,6 +1493,10 @@ void Game::Draw() {
 	// Draw only Keybinding menu is we are on that screen
 	if (this->keybindMenu->isActive()) {
 		this->keybindMenu->Draw(*this->window);
+		// draw the players
+		for (size_t i = 0; i < this->players.Size(); ++i) {
+			this->players[i].Draw(*this->window);
+		}
 		return;
 	}
 

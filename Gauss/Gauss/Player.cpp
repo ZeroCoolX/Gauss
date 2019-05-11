@@ -111,9 +111,9 @@ Player::Player(AudioManager* audioManager, KeyManager *keyManager) :
 	this->keyTime = this->keyTimeMax;
 
 	// Selectors
-	this->lWingSelect = 1;
-	this->rWingSelect = 1;
-	this->cPitSelect = 1;
+	this->lWingSelect = 0;
+	this->rWingSelect = 0;
+	this->cPitSelect = 0;
 	this->auraSelect = 0;
 
 	this->enemiesKilled = 0;

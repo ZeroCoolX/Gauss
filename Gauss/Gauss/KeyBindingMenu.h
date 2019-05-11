@@ -14,6 +14,7 @@ private:
 
 	int keybindPollingId;
 	bool keybindPolling;
+	bool keyRefreshNeeded;
 
 	float pressTimeMax;
 	float pressTime;
@@ -40,6 +41,9 @@ private:
 public:
 	KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *keyManager);
 	virtual ~KeyBindingMenu();
+
+	inline const bool isKeyRefreshNeeded() { return this->active && this->keyRefreshNeeded; }
+	inline void resetKeyRefreshNeeded() { this->keyRefreshNeeded = false; }
 
 	inline bool isActive() const { return this->active; }
 	void activate() { this->active = true; }
@@ -69,7 +73,7 @@ public:
 		BTN_CONTROL_DOWN,
 		BTN_CONTROL_LEFT,
 		BTN_CONTROL_RIGHT,
-		BTN_CONTROL_FIRE,
+		BTN_CONTROL_LASER,
 		BTN_CONTROL_MAC,
 		BTN_CONTROL_SHIELD,
 		BTN_CONTROL_STATS,

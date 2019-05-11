@@ -175,7 +175,7 @@
       <Filter>Source Files\GameControl</Filter>
     </ClCompile>
     <ClCompile Include="ShipBayMenu.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,7 +288,7 @@
       <Filter>Header Files\GameControl</Filter>
     </ClInclude>
     <ClInclude Include="ShipBayMenu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

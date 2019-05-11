@@ -9,12 +9,13 @@ KeyBindingMenu::KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *key
 	this->keyTime = this->keyTimeMax;
 	this->active = false;
 	this->keybindPolling = false;
+	this->keyRefreshNeeded = false;
 	this->keybindPollingId = -1;
 	this->font = font;
 	this->window = window;
 
 	this->lastChangeText.setFont(this->font);
-	this->lastChangeText.setCharacterSize(30);
+	this->lastChangeText.setCharacterSize(25);
 	this->lastChangeText.setFillColor(Color::White);
 	this->lastChangeText.setString("");
 
@@ -34,37 +35,37 @@ void KeyBindingMenu::Init() {
 
 void KeyBindingMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_UP, this->font, KeyManager::KeyName(this->keyManager->Up(0)), 18, Vector2f(300.f, 75.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_UP, this->font, KeyManager::KeyName(this->keyManager->Up(0)), 18, Vector2f(125.f, 105.f), 5));
 	this->buttonKeyNames.Add("UP");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_DOWN, this->font, KeyManager::KeyName(this->keyManager->Down(0)), 18, Vector2f(300.f, 175), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_DOWN, this->font, KeyManager::KeyName(this->keyManager->Down(0)), 18, Vector2f(125.f, 185), 5));
 	this->buttonKeyNames.Add("DOWN");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_LEFT, this->font, KeyManager::KeyName(this->keyManager->Left(0)), 18, Vector2f(300.f, 275.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_LEFT, this->font, KeyManager::KeyName(this->keyManager->Left(0)), 18, Vector2f(125.f, 275), 5));
 	this->buttonKeyNames.Add("LEFT");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_RIGHT, this->font, KeyManager::KeyName(this->keyManager->Right(0)), 18, Vector2f(300.f, 375.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_RIGHT, this->font, KeyManager::KeyName(this->keyManager->Right(0)), 18, Vector2f(125.f, 375), 5));
 	this->buttonKeyNames.Add("RIGHT");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_FIRE, this->font, KeyManager::KeyName(this->keyManager->Fire(0)), 18, Vector2f(300.f, 475.f), 0));
-	this->buttonKeyNames.Add("FIRE");
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_LASER, this->font, KeyManager::KeyName(this->keyManager->Fire(0)), 18, Vector2f(125.f, 460), 5));
+	this->buttonKeyNames.Add("LASER");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_MAC, this->font, KeyManager::KeyName(this->keyManager->Mac(0)), 18, Vector2f(300.f, 590.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_MAC, this->font, KeyManager::KeyName(this->keyManager->Mac(0)), 18, Vector2f(125.f, 560), 5));
 	this->buttonKeyNames.Add("MAC");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_SHIELD, this->font, KeyManager::KeyName(this->keyManager->Shield(0)), 18, Vector2f(300.f, 695.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_SHIELD, this->font, KeyManager::KeyName(this->keyManager->Shield(0)), 15, Vector2f(125.f, 645), 5));
 	this->buttonKeyNames.Add("SHIELD");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_STATS, this->font, KeyManager::KeyName(this->keyManager->ToggleStats(0)), 18, Vector2f(300.f, 805.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_CONTROL_STATS, this->font, KeyManager::KeyName(this->keyManager->ToggleStats(0)), 15, Vector2f(125.f, 735), 5));
 	this->buttonKeyNames.Add("STATS");
 
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_BACK, this->font, "Back", 18, Vector2f(window->getSize().x - 500.f, 100.f), 0));
-	this->buttons.Add(new MenuButton(ButtonTypes::BTN_RESET, this->font, "Reset To Defaults", 18, Vector2f(window->getSize().x - 500.f, 300.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_BACK, this->font, "Confirm", 18, Vector2f(125.f, 850.f), 0));
+	this->buttons.Add(new MenuButton(ButtonTypes::BTN_RESET, this->font, "Reset To Defaults", 18, Vector2f(450.f, 850.f), 0));
 }
 
 void KeyBindingMenu::InitBackground() {
 	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
-	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/keybindingBackground2.png");
+	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/keybinding02.png");
 	this->background.setTexture(&this->backgroundTexture);
 }
 
@@ -90,13 +91,13 @@ void KeyBindingMenu::UpdateKeybindPolling(const float &dt, const Event *event) {
 			}
 			else {
 				this->lastChangeText.setString("Changed key " + this->buttonKeyNames[this->keybindPollingId] + ": \tfrom \t" + this->buttons[this->keybindPollingId]->getName() + " \tto \t" + KeyManager::KeyName(event->key.code) + "");
-				
+				this->keyRefreshNeeded = true;
 				this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
 				this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
 			}
 			this->buttons[this->keybindPollingId]->resetColor();
 			this->keybindPollingId = -1;
-			this->lastChangeText.setPosition(Vector2f((this->window->getView().getSize().x / 2.f) - (this->lastChangeText.getGlobalBounds().width / 2.f), this->window->getView().getSize().y - 125.f));
+			this->lastChangeText.setPosition(Vector2f(425.f - (this->lastChangeText.getGlobalBounds().width / 2.f), 950.f));
 		}
 	}
 }
@@ -194,8 +195,8 @@ void KeyBindingMenu::_resetControlToDefault() {
 	this->keyManager->SetKey(0, "RIGHT", KeyManager::DefaultControls::DEF_RIGHT);
 	this->buttons[BTN_CONTROL_RIGHT]->updateText(KeyManager::KeyName(KeyManager::DefaultControls::DEF_RIGHT));
 
-	this->keyManager->SetKey(0, "FIRE", KeyManager::DefaultControls::DEF_FIRE);
-	this->buttons[BTN_CONTROL_FIRE]->updateText(KeyManager::KeyName(KeyManager::DefaultControls::DEF_FIRE));
+	this->keyManager->SetKey(0, "LASER", KeyManager::DefaultControls::DEF_LASER);
+	this->buttons[BTN_CONTROL_LASER]->updateText(KeyManager::KeyName(KeyManager::DefaultControls::DEF_LASER));
 
 	this->keyManager->SetKey(0, "MAC", KeyManager::DefaultControls::DEF_MAC);
 	this->buttons[BTN_CONTROL_MAC]->updateText(KeyManager::KeyName(KeyManager::DefaultControls::DEF_MAC));
@@ -212,7 +213,7 @@ void KeyBindingMenu::_resetControlToDefault() {
 
 	// Update history
 	this->lastChangeText.setString("Reset keys to defaults");
-	this->lastChangeText.setPosition(Vector2f((this->window->getView().getSize().x / 2.f) - (this->lastChangeText.getGlobalBounds().width / 2.f), this->window->getView().getSize().y - 125.f));
+	this->lastChangeText.setPosition(Vector2f(425.f - (this->lastChangeText.getGlobalBounds().width / 2.f), 950.f));
 
 	// Reset all button colors just in case
 	for (size_t i = 0; i < this->buttons.Size(); i++)
@@ -225,6 +226,7 @@ void KeyBindingMenu::_goBack() {
 	this->active = false;
 	this->pressTime = 0.f;
 	this->keyTime = 0.f;
+	this->keyRefreshNeeded = false;
 	this->keybindPolling = false;
 	this->keybindPollingId = -1;
 	this->lastChangeText.setString("");

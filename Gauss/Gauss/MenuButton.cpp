@@ -16,6 +16,8 @@ void MenuButton::InitTextures() {
 	MenuButton::textures.Add(temp);
 	temp.loadFromFile("Textures/Buttons/button06_sm.png");
 	MenuButton::textures.Add(temp);
+	temp.loadFromFile("Textures/Buttons/button02_sm.png");
+	MenuButton::textures.Add(temp);
 
 	MenuButton::numOfTextures = MenuButton::textures.Size();
 }

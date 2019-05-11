@@ -17,12 +17,13 @@ public:
 	KeyManager();
 	~KeyManager();
 
+
 	inline void SetKey(int scheme, std::string name, int key) { this->keys[scheme][name] = key; }
 	inline int Up(int scheme) { return this->keys[scheme]["UP"]; }
 	inline int Down(int scheme) { return this->keys[scheme]["DOWN"]; }
 	inline int Left(int scheme) { return this->keys[scheme]["LEFT"]; }
 	inline int Right(int scheme) { return this->keys[scheme]["RIGHT"]; }
-	inline int Fire(int scheme) { return this->keys[scheme]["FIRE"]; }
+	inline int Fire(int scheme) { return this->keys[scheme]["LASER"]; }
 	inline int Mac(int scheme) { return this->keys[scheme]["MAC"]; }
 	inline int Shield(int scheme) { return this->keys[scheme]["SHIELD"]; }
 	inline int ToggleStats(int scheme) { return this->keys[scheme]["STATS"]; }
@@ -38,7 +39,7 @@ public:
 		DEF_DOWN = Keyboard::S,
 		DEF_LEFT = Keyboard::A,
 		DEF_RIGHT = Keyboard::D,
-		DEF_FIRE = Keyboard::Space,
+		DEF_LASER = Keyboard::Space,
 		DEF_MAC = Keyboard::Q,
 		DEF_SHIELD = Keyboard::RAlt,
 		DEF_STATS = Keyboard::Tab
