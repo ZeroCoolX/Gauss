@@ -331,6 +331,8 @@ void Game::Update(const float &dt, const Event *event) {
 
 	if (this->shipBayMenu->isActive()) {
 		this->UpdateShipBayMenu(dt);
+		// UPDATE PLAYERS
+		this->UpdatePlayers(dt);
 		return;
 	}
 
@@ -467,6 +469,7 @@ void Game::UpdateMainMenu(const float &dt) {
 	else if (this->mainMenu->onShipBayPress()) {
 		this->mainMenu->Reset();
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->paused = false;
 		this->shipBayMenu->activate();
 	}
 }
@@ -612,7 +615,7 @@ void Game::UpdatePlayers(const float &dt) {
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
-			this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
+			this->players[i].Update(this->mainView, dt, ((this->keybindMenu->isActive() || this->shipBayMenu->isActive()) ? 0.f : this->stage->getScrollSpeed()));
 
 			// Check for game over state
 			if (this->gameMode == Mode::CAMPAIGN && this->players[i].campaignLevelBeat()) {
@@ -1494,6 +1497,10 @@ void Game::Draw() {
 	// Draw only ShipBay menu if we are on that screen
 	if (this->shipBayMenu->isActive()) {
 		this->shipBayMenu->Draw(*this->window);
+		// draw the players
+		for (size_t i = 0; i < this->players.Size(); ++i) {
+			this->players[i].Draw(*this->window);
+		}
 		return;
 	}
 

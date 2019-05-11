@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "MenuButton.h"
 #include "Gauss.h"
+#include "Player.h"
 
 class ShipBayMenu
 {
@@ -24,6 +25,13 @@ private:
 	Vector2f mousePosWorld;
 	Vector2i mousePosGrid;
 
+	// SHIP
+	Sprite body;
+	Sprite mainGunSprite;
+	Sprite lWing;
+	Sprite rWing;
+	Sprite cPit;
+
 	dArr<MenuButton*> buttons;
 
 	void _confirmSelection();
@@ -38,6 +46,7 @@ public:
 
 	// Init
 	void Init();
+	void InitShipParts();
 	void InitButtons();
 	void InitBackground();
 
@@ -51,6 +60,7 @@ public:
 	void Draw(RenderTarget &renderTarget);
 	void DrawButtons(RenderTarget &renderTarget);
 	void DrawBackground(RenderTarget &renderTarget);
+	void DrawShipParts(RenderTarget &renderTarget);
 
 	enum ButtonTypes {
 		BTN_CONFIRM = 13

@@ -18,8 +18,54 @@ ShipBayMenu::~ShipBayMenu()
 }
 
 void ShipBayMenu::Init() {
+	this->InitShipParts();
 	this->InitBackground();
 	this->InitButtons();
+}
+
+void ShipBayMenu::InitShipParts() {
+	this->body.setTexture(Player::shipBodyTextures[Player::DEFAULT_SHIP_BODY]);
+	this->body.setScale(0.3f, 0.3f);
+	this->body.setColor(Color(10, 10, 10, 255));
+	this->body.setPosition(Vector2f(700.f, 700.f));
+
+	const Vector2f shipCenter = Vector2f(
+		this->body.getPosition().x + this->body.getGlobalBounds().width / 2, 
+		this->body.getPosition().y + this->body.getGlobalBounds().height / 2
+	);
+
+	this->mainGunSprite.setTexture(Player::shipMainGunTextures[Player::DEFAULT_LASER]);
+	//this->mainGunSprite.setScale(0.1f, 0.1f);
+	this->mainGunSprite.setOrigin(
+		this->mainGunSprite.getGlobalBounds().width / 2,
+		this->mainGunSprite.getGlobalBounds().height / 2);
+	this->mainGunSprite.setRotation(90.f);
+	const float originX = shipCenter.x + this->body.getGlobalBounds().width / 6;
+	this->mainGunSprite.setPosition(
+		originX,
+		shipCenter.y);
+	this->mainGunSprite.setScale(1.3f, 1.3f);
+
+	this->lWing.setTexture(Player::shipLWingTextures[this->shipSelection]);
+	this->lWing.setOrigin(this->lWing.getGlobalBounds().width / 2,
+		this->lWing.getGlobalBounds().height / 2);
+	this->lWing.setPosition(shipCenter);
+	this->lWing.setRotation(90.f);
+	this->lWing.setScale(1.f, 1.f);
+
+	this->rWing.setTexture(Player::shipRWingTextures[this->shipSelection]);
+	this->rWing.setOrigin(this->rWing.getGlobalBounds().width / 2,
+		this->rWing.getGlobalBounds().height / 2);
+	this->rWing.setPosition(shipCenter);
+	this->rWing.setRotation(90.f);
+	this->rWing.setScale(1.f, 1.f);
+
+	this->cPit.setTexture(Player::shipCockpitTextures[this->shipSelection]);
+	this->cPit.setOrigin(this->cPit.getGlobalBounds().width / 2,
+		this->cPit.getGlobalBounds().height / 2);
+	this->cPit.setPosition(shipCenter);
+	this->cPit.setRotation(90.f);
+	this->cPit.setScale(1.f, 1.f);
 }
 
 void ShipBayMenu::InitButtons() {
@@ -59,8 +105,11 @@ void ShipBayMenu::UpdateButtons(const float &dt) {
 			else {
 				this->buttons[this->shipSelection]->resetColor();
 				this->shipSelection = i;
-				return;
-				// Update ship image
+
+				this->lWing.setTexture(Player::shipLWingTextures[this->shipSelection]);
+				this->rWing.setTexture(Player::shipLWingTextures[this->shipSelection]);
+				this->cPit.setTexture(Player::shipLWingTextures[this->shipSelection]);
+				break;
 			}
 		}
 	}
@@ -101,6 +150,7 @@ void ShipBayMenu::UpdateMousePosition() {
 void ShipBayMenu::Draw(RenderTarget &renderTarget) {
 	this->DrawBackground(renderTarget);
 	this->DrawButtons(renderTarget);
+	//this->DrawShipParts(renderTarget);
 }
 
 void ShipBayMenu::DrawButtons(RenderTarget &renderTarget) {
@@ -112,6 +162,15 @@ void ShipBayMenu::DrawButtons(RenderTarget &renderTarget) {
 
 void ShipBayMenu::DrawBackground(RenderTarget &renderTarget) {
 	renderTarget.draw(this->background);
+}
+
+void ShipBayMenu::DrawShipParts(RenderTarget &renderTarget) {
+	renderTarget.draw(this->mainGunSprite);
+	renderTarget.draw(this->body);
+
+	renderTarget.draw(this->cPit);
+	renderTarget.draw(this->lWing);
+	renderTarget.draw(this->rWing);
 }
 
 void ShipBayMenu::_confirmSelection() {
