@@ -470,7 +470,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		}
 
 		this->paused = false;
-		this->shipBayMenu->activate();
+		this->shipBayMenu->activate(this->playerShipSkin);
 	}
 }
 

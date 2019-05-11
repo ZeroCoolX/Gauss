@@ -47,7 +47,7 @@ public:
 	inline const bool selectionUpdateNeeded() const { return this->selectionUpdatedNeeded; }
 
 	inline bool isActive() const { return this->active; }
-	void activate() { this->active = true; }
+	void activate(int shipSkin = 0) { this->active = true; this->shipSelection = shipSkin; }
 	void deactivate() { this->active = false; }
 
 	// Init
