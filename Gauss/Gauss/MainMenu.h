@@ -12,6 +12,7 @@ private:
 	bool playCampaign = false;
 	bool playInfinite = false;
 	bool playTutorial = false;
+	bool changeKeybind = false;
 
 	float pressTimeMax;
 	float pressTime = this->pressTimeMax;
@@ -35,6 +36,7 @@ public:
 	inline const bool onCampaignPress() { return this->active && this->playCampaign; }
 	inline const bool onTutorialPress() { return this->active && this->playTutorial; }
 	inline const bool onInfinitePress() { return this->active && this->playInfinite; }
+	inline const bool onKeybindingPress() { return this->active && this->changeKeybind; }
 	void activate() { this->active = true; }
 	void deactivate() { this->active = false; }
 
@@ -64,7 +66,8 @@ public:
 		BTN_INFINITE,
 		BTN_COSMOS,
 		BTN_EXIT,
-		BTN_TUTORIAL
+		BTN_TUTORIAL,
+		BTN_KEYBIND
 	};
 };
 

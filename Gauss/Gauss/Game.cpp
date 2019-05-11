@@ -9,6 +9,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	// Init Menus
 	this->mainMenu = nullptr;
 	this->gameOverMenu = nullptr;
+	this->keybindMenu = nullptr;
 
 	// Init tutorial
 	this->tutorial = nullptr;
@@ -73,6 +74,7 @@ Game::~Game()
 	delete this->mainMenu;
 	delete this->audioManager;
 	delete this->gameOverMenu;
+	delete this->keybindMenu;
 	delete this->tutorial;
 	this->playerScoreMap.clear();
 }
@@ -299,6 +301,8 @@ void Game::InitMap() {
 void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
+	this->keybindMenu = new KeyBindingMenu(this->font, this->window, &this->keyManager);
+	KeyManager::InitKeyNames();
 	this->tutorial = new Tutorial(this->font, this->window, &this->players);
 	Tutorial::InitTexts();
 }
@@ -307,10 +311,15 @@ void Game::UpdateView(const float &dt) {
 	this->mainView.move(this->stage->getScrollSpeed() * dt * DeltaTime::dtMultiplier, 0.f);
 }
 
-void Game::Update(const float &dt) {
+void Game::Update(const float &dt, const Event *event) {
 	// Check for main menu actions
 	if (this->mainMenu->isActive()) {
 		this->UpdateMainMenu(dt);
+		return;
+	}
+
+	if (this->keybindMenu->isActive()) {
+		this->UpdateKeybindingMenu(dt, event);
 		return;
 	}
 
@@ -437,6 +446,15 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->paused = false;
 		this->tutorial->Activate();
 	}
+	else if (this->mainMenu->onKeybindingPress()) {
+		this->mainMenu->Reset();
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->keybindMenu->activate();
+	}
+}
+
+void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
+	this->keybindMenu->Update(dt, event);
 }
 
 void Game::UpdateGameOverMenu(const float &dt) {
@@ -1420,8 +1438,15 @@ void Game::Draw() {
 	// Set View
 	this->window->setView(this->mainView);
 
+	// Draw onyl menu if we are on that screen
 	if (this->mainMenu->isActive()) {
 		this->mainMenu->Draw(*this->window);
+		return;
+	}
+
+	// Draw only Keybinding menu is we are on that screen
+	if (this->keybindMenu->isActive()) {
+		this->keybindMenu->Draw(*this->window);
 		return;
 	}
 
@@ -1517,9 +1542,6 @@ void Game::DisplayGameEnd() {
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
 }
 
-void Game::ChangeKeybinding() {
-
-}
 
 
 void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score) {

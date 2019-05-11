@@ -34,6 +34,7 @@ MenuButton::MenuButton(int id,
 
 	// Set colors
 	this->colorIdle = Color(200, 200, 200, 240);
+	this->colorIdleDefault = colorIdle;
 	this->colorHover = Color(255, 255, 255, 240);
 	this->colorPressed = Color(50, 50, 50, 240);
 

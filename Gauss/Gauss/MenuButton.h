@@ -14,6 +14,7 @@ private:
 	bool pressing;
 	bool hovering;
 
+	Color colorIdleDefault;
 	Color colorIdle;
 	Color colorHover;
 	Color colorPressed;
@@ -31,6 +32,9 @@ public:
 
 	inline std::string getName() { return this->text.getString(); }
 	inline int getId() const { return this->ID; }
+	inline void updateText(std::string newText) { this->text.setString(newText); }
+	inline void changeColor(Color c) { this->colorIdle = c; }
+	inline void resetColor() { this->colorIdle = this->colorIdleDefault; }
 
 	void Update(Vector2f mousePos);
 	void Draw(RenderTarget &renderTarget);

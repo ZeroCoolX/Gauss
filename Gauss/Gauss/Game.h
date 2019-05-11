@@ -16,6 +16,7 @@
 #include "GameOverMenu.h"
 #include "PlayerScore.h"
 #include "Tutorial.h"
+#include "KeyBindingMenu.h"
 
 class Game
 {
@@ -60,6 +61,7 @@ private:
 	// Game
 	MainMenu *mainMenu;
 	GameOverMenu *gameOverMenu;
+	KeyBindingMenu *keybindMenu;
 
 	Tutorial* tutorial;
 
@@ -178,7 +180,7 @@ public:
 	void InitMenus();
 
 	void UpdateView(const float &dt);
-	void Update(const float &dt);
+	void Update(const float &dt, const Event *event);
 	void UpdateTimers(const float &dt);
 	void UpdateTimersUnpaused(const float &dt);
 	void UpdateDifficulty();
@@ -196,6 +198,7 @@ public:
 	void UpdateConsumables(const float &dt);
 	void UpdateParticles(const float &dt);
 	void UpdateMainMenu(const float &dt);
+	void UpdateKeybindingMenu(const float &dt, const Event *event);
 	void UpdateGameOverMenu(const float &dt);
 	void UpdateTutorial(const float &dt);
 

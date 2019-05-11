@@ -138,6 +138,7 @@
     <ClCompile Include="Gauss.cpp" />
     <ClCompile Include="ItemPickup.cpp" />
     <ClCompile Include="ItemUpgrade.cpp" />
+    <ClCompile Include="KeyBindingMenu.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Gauss.h" />
     <ClInclude Include="ItemPickup.h" />
     <ClInclude Include="ItemUpgrade.h" />
+    <ClInclude Include="KeyBindingMenu.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MathUtil.h" />

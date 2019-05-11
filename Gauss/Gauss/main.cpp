@@ -41,6 +41,10 @@ int main() {
 				window.close();
 			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
 				window.close();
+			if (event.type == Event::KeyPressed)
+			{
+				std::cout << "main.cpp - Key Pressed! " << std::to_string(event.key.code) << std::endl;
+			}
 		}
 
 		dt = clock.restart().asSeconds();
@@ -50,7 +54,7 @@ int main() {
 			mapEditor.Draw();
 		}
 		else {
-			game.Update(dt);
+			game.Update(dt, &event);
 			game.Draw();
 		}
 		if (JOYSTICK_TEST) {
