@@ -349,10 +349,6 @@ void Game::Update(const float &dt, const Event *event) {
 	// Pause check
 	this->PauseGame();
 
-	// Only allow changing accessories while paused
-	this->UpdateWhilePaused(dt);
-
-
 	// Update the world
 	if (!this->paused && this->playersExistInWorld()) {
 		// Update timers
@@ -593,19 +589,6 @@ void Game::UpdateMultipliers() {
 	}
 }
 
-void Game::UpdateWhilePaused(const float &dt) {
-	if (this->paused) {
-		for (size_t i = 0; i < this->players.Size(); i++)
-		{
-			if (!this->players[i].isDead() && this->keyTime >= this->keyTimeMax) {
-				if (this->players[i].ChangeAccessories(dt)) {
-					this->keyTime = 0.f;
-				}
-			}
-		}
-	}
-}
-
 void Game::UpdatePlayers(const float &dt) {
 	if (this->playersExistInWorld()) {
 		// Reset the total each calculation
@@ -615,7 +598,18 @@ void Game::UpdatePlayers(const float &dt) {
 		for (size_t i = 0; i < this->players.Size(); ++i) {
 
 			// Players update
-			this->players[i].Update(this->mainView, dt, ((this->keybindMenu->isActive() || this->shipBayMenu->isActive()) ? 0.f : this->stage->getScrollSpeed()));
+			if (this->keybindMenu->isActive() || this->shipBayMenu->isActive()) {
+				if (this->shipBayMenu->selectionUpdateNeeded()) {
+					this->players[i].ChangeAccessories(this->shipBayMenu->getShipSelection());
+				}
+				this->players[i].Update(
+					Vector2f((this->mainView.getSize().x / 2.f) - 100.f, this->mainView.getSize().x - 150.f),
+					Vector2f(100.f, this->mainView.getSize().y - 150.f),
+					dt, 0.f);
+			}
+			else {
+				this->players[i].Update(this->mainView, dt, this->stage->getScrollSpeed());
+			}
 
 			// Check for game over state
 			if (this->gameMode == Mode::CAMPAIGN && this->players[i].campaignLevelBeat()) {

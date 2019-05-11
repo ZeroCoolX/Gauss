@@ -171,25 +171,10 @@ void Player::TakeDamage(int damage) {
 	this->velocity.y += -this->normalizedDir.y * 10.f; // knockback amount
 }
 
-bool Player::ChangeAccessories(const float &dt) {
-	if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_LWING]))) {
-		this->lWingSelect = ++this->lWingSelect % ((int)Player::shipLWingTextures.Size() - 1);
-		this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
-		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_RWING]))) {
-		this->rWingSelect = ++this->rWingSelect % ((int)Player::shipRWingTextures.Size() - 1);
-		this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
-		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_AURA]))) { // Don't allow anyone to change this
-		this->auraSelect = ++this->auraSelect % ((int)Player::shipAuraTextures.Size() - 1);
-		this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
-		return true;
-	}else if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_CHANGE_CPIT]))) {
-		this->cPitSelect = ++this->cPitSelect % ((int)Player::shipCockpitTextures.Size() - 1);
-		this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
-		return true;
-	}
-	return false;
+void Player::ChangeAccessories(int selection) {
+	this->lWing.setTexture(Player::shipLWingTextures[selection]);
+	this->rWing.setTexture(Player::shipRWingTextures[selection]);
+	this->cPit.setTexture(Player::shipCockpitTextures[selection]);
 }
 
 void Player::Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed) {

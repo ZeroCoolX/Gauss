@@ -421,7 +421,7 @@ public:
 	void DrawUI(RenderTarget &renderTarget);
 
 	void Reset();
-	bool ChangeAccessories(const float &dt);
+	void ChangeAccessories(int selection);
 	void Combat(const float &dt);
 	void Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed);
 	void InitUI(Text t);

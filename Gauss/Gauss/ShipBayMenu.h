@@ -11,6 +11,7 @@ private:
 	bool active;
 
 	int shipSelection;
+	bool selectionUpdatedNeeded;
 
 	float pressTimeMax;
 	float pressTime;
@@ -34,11 +35,16 @@ private:
 
 	dArr<MenuButton*> buttons;
 
+
+
 	void _confirmSelection();
 
 public:
 	ShipBayMenu(Font &font, RenderWindow *window);
 	virtual ~ShipBayMenu();
+
+	inline const int getShipSelection() { this->selectionUpdatedNeeded = false; return this->shipSelection; }
+	inline const bool selectionUpdateNeeded() const { return this->selectionUpdatedNeeded; }
 
 	inline bool isActive() const { return this->active; }
 	void activate() { this->active = true; }
@@ -46,7 +52,6 @@ public:
 
 	// Init
 	void Init();
-	void InitShipParts();
 	void InitButtons();
 	void InitBackground();
 

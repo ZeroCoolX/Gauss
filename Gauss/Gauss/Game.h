@@ -187,7 +187,6 @@ public:
 	void UpdateTimersUnpaused(const float &dt);
 	void UpdateDifficulty();
 	void UpdateMultipliers();
-	void UpdateWhilePaused(const float &dt);
 	void UpdatePlayers(const float &dt);
 	void UpdatePlayerBullets(const float &dt, Player &currentPlayer);
 	void UpdatePlayerTileCollision(const float &dt, Player &currentPlayer);
