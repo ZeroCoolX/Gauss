@@ -4,11 +4,11 @@ KeyBindingMenu::KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *key
 {
 	this->keyManager = keyManager;
 	this->pressTimeMax = 10.f;
-	this->pressTime = this->pressTimeMax;
+	this->pressTime = 0.f;
 	this->keyTimeMax = 2.f;
 	this->keyTime = this->keyTimeMax;
 	this->active = false;
-	this->keybindPolling = true;
+	this->keybindPolling = false;
 	this->keybindPollingId = -1;
 	this->font = font;
 	this->window = window;
@@ -83,16 +83,20 @@ void KeyBindingMenu::UpdateKeybindPolling(const float &dt, const Event *event) {
 		// Key pressed
 		if (event->type == Event::KeyReleased || event->type == Event::KeyPressed)
 		{
-			if (event->key.code == Keyboard::Escape) {
-				this->keybindPolling = false;
-			}
 			this->keybindPolling = false;
-			this->lastChangeText.setString("Changed key " + this->buttonKeyNames[this->keybindPollingId] + ": \tfrom \t" + this->buttons[this->keybindPollingId]->getName() + " \tto \t" + KeyManager::KeyName(event->key.code) + "");
-			this->lastChangeText.setPosition(Vector2f((this->window->getView().getSize().x / 2.f) - (this->lastChangeText.getGlobalBounds().width / 2.f), this->window->getView().getSize().y - 125.f));
-			this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
+
+			if (KeyManager::KeyName(event->key.code) == "UNSUPPORTED") {
+				this->lastChangeText.setString("There is no supported key mapping for that key");
+			}
+			else {
+				this->lastChangeText.setString("Changed key " + this->buttonKeyNames[this->keybindPollingId] + ": \tfrom \t" + this->buttons[this->keybindPollingId]->getName() + " \tto \t" + KeyManager::KeyName(event->key.code) + "");
+				
+				this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
+				this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
+			}
 			this->buttons[this->keybindPollingId]->resetColor();
-			this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
 			this->keybindPollingId = -1;
+			this->lastChangeText.setPosition(Vector2f((this->window->getView().getSize().x / 2.f) - (this->lastChangeText.getGlobalBounds().width / 2.f), this->window->getView().getSize().y - 125.f));
 		}
 	}
 }
@@ -223,9 +227,14 @@ void KeyBindingMenu::_goBack() {
 	this->pressTime = this->pressTimeMax;
 	this->keyTimeMax = 2.f;
 	this->keyTime = this->keyTimeMax;
-	this->keybindPolling = true;
+	this->keybindPolling = false;
 	this->keybindPollingId = -1;
 	this->lastChangeText.setString("");
+
+	for (size_t i = 0; i < this->buttons.Size(); i++)
+	{
+		this->buttons[i]->resetColor();
+	}
 
 	this->keyManager->SaveBindingsToFile();
 }
