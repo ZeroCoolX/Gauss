@@ -15,7 +15,6 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->tutorial = nullptr;
 
 	this->audioManager = new AudioManager();
-	//this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 
 	this->gameMode = Mode::INFINTE;
 	this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_01;
@@ -91,8 +90,8 @@ void Game::InitRenderTexture() {
 void Game::InitView() {
 	this->mainView.setSize(Vector2f(this->window->getSize()));
 	this->mainView.setCenter(Vector2f(
-		this->window->getSize().x / 2.f,
-		this->window->getSize().y / 2.f));
+		this->window->getView().getSize().x / 2.f,
+		this->window->getView().getSize().y / 2.f));
 }
 
 //void Game::InitBossTextures() {
@@ -492,8 +491,8 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->_redeploy();
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 		this->mainView.setCenter(Vector2f(
-			this->window->getSize().x / 2.f,
-			this->window->getSize().y / 2.f));
+			this->window->getView().getSize().x / 2.f,
+			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
@@ -508,8 +507,8 @@ void Game::UpdateTutorial(const float &dt) {
 		this->audioManager->StopMusic(this->gameMusicSelection);
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
 		this->mainView.setCenter(Vector2f(
-			this->window->getSize().x / 2.f,
-			this->window->getSize().y / 2.f));
+			this->window->getView().getSize().x / 2.f,
+			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
@@ -1707,8 +1706,8 @@ void Game::_redeploy() {
 
 	// Reset Stage
 	this->mainView.setCenter(Vector2f(
-		this->window->getSize().x / 2.f,
-		this->window->getSize().y / 2.f));
+		this->window->getView().getSize().x / 2.f,
+		this->window->getView().getSize().y / 2.f));
 	this->stage->Reset(this->mainView);
 
 	// Reset all players
