@@ -23,11 +23,12 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(150.f, 400.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 500.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 600.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 700.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(150.f, 800.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(150.f, 350.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 450.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 550.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 650.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(150.f, 750.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(150.f, 850.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 950.f), 0));
 }
 
@@ -66,6 +67,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 					return;
 				case MainMenu::BTN_KEYBIND:
 					this->changeKeybind = true;
+					return;
+				case MainMenu::BTN_SHIPBAY:
+					this->enterShipBay = true;
 					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
@@ -128,6 +132,7 @@ void MainMenu::Reset() {
 	this->playInfinite = false;
 	this->playTutorial = false;
 	this->changeKeybind = false;
+	this->enterShipBay = false;
 	this->pressTime = 0.f;
 }
 

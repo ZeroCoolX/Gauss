@@ -13,6 +13,7 @@ private:
 	bool playInfinite = false;
 	bool playTutorial = false;
 	bool changeKeybind = false;
+	bool enterShipBay = false;
 
 	float pressTimeMax;
 	float pressTime = this->pressTimeMax;
@@ -37,6 +38,7 @@ public:
 	inline const bool onTutorialPress() { return this->active && this->playTutorial; }
 	inline const bool onInfinitePress() { return this->active && this->playInfinite; }
 	inline const bool onKeybindingPress() { return this->active && this->changeKeybind; }
+	inline const bool onShipBayPress() { return this->active && this->enterShipBay; }
 	void activate() { this->active = true; }
 	void deactivate() { this->active = false; }
 
@@ -67,7 +69,8 @@ public:
 		BTN_COSMOS,
 		BTN_EXIT,
 		BTN_TUTORIAL,
-		BTN_KEYBIND
+		BTN_KEYBIND,
+		BTN_SHIPBAY
 	};
 };
 

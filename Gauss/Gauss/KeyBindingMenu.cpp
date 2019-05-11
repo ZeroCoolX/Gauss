@@ -223,10 +223,8 @@ void KeyBindingMenu::_resetControlToDefault() {
 
 void KeyBindingMenu::_goBack() {
 	this->active = false;
-	this->pressTimeMax = 10.f;
-	this->pressTime = this->pressTimeMax;
-	this->keyTimeMax = 2.f;
-	this->keyTime = this->keyTimeMax;
+	this->pressTime = 0.f;
+	this->keyTime = 0.f;
 	this->keybindPolling = false;
 	this->keybindPollingId = -1;
 	this->lastChangeText.setString("");

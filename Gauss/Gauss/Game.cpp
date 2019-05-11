@@ -10,6 +10,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->mainMenu = nullptr;
 	this->gameOverMenu = nullptr;
 	this->keybindMenu = nullptr;
+	this->shipBayMenu = nullptr;
 
 	// Init tutorial
 	this->tutorial = nullptr;
@@ -74,6 +75,7 @@ Game::~Game()
 	delete this->audioManager;
 	delete this->gameOverMenu;
 	delete this->keybindMenu;
+	delete this->shipBayMenu;
 	delete this->tutorial;
 	this->playerScoreMap.clear();
 }
@@ -300,6 +302,8 @@ void Game::InitMap() {
 void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
 
+	this->shipBayMenu = new ShipBayMenu(this->font, this->window);
+
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
 
 	KeyManager::InitKeyNames();
@@ -322,6 +326,11 @@ void Game::Update(const float &dt, const Event *event) {
 
 	if (this->keybindMenu->isActive()) {
 		this->UpdateKeybindingMenu(dt, event);
+		return;
+	}
+
+	if (this->shipBayMenu->isActive()) {
+		this->UpdateShipBayMenu(dt);
 		return;
 	}
 
@@ -454,6 +463,22 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->mainMenu->Reset();
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->keybindMenu->activate();
+	}
+	else if (this->mainMenu->onShipBayPress()) {
+		this->mainMenu->Reset();
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->shipBayMenu->activate();
+	}
+}
+
+
+void Game::UpdateShipBayMenu(const float &dt) {
+	this->shipBayMenu->Update(dt);
+	
+	if (!this->shipBayMenu->isActive()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->mainMenu->Reset();
+		this->mainMenu->activate();
 	}
 }
 
@@ -1463,6 +1488,12 @@ void Game::Draw() {
 	// Draw only Keybinding menu is we are on that screen
 	if (this->keybindMenu->isActive()) {
 		this->keybindMenu->Draw(*this->window);
+		return;
+	}
+
+	// Draw only ShipBay menu if we are on that screen
+	if (this->shipBayMenu->isActive()) {
+		this->shipBayMenu->Draw(*this->window);
 		return;
 	}
 

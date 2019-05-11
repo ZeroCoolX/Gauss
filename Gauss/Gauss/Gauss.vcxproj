@@ -149,6 +149,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Powerup.cpp" />
+    <ClCompile Include="ShipBayMenu.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextTag.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerScore.h" />
     <ClInclude Include="Powerup.h" />
+    <ClInclude Include="ShipBayMenu.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextTag.h" />
     <ClInclude Include="Tile.h" />
