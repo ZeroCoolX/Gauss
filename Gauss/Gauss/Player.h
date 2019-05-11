@@ -140,11 +140,8 @@ private:
 	Sprite rWing;
 	Sprite aura;
 	Sprite cPit;
-
-	int lWingSelect;
-	int rWingSelect;
-	int cPitSelect;
-	int auraSelect;
+	// Player Skin
+	int shipSkinPreference;
 
 	// Player input controls
 	dArr<int> controls;
@@ -232,7 +229,7 @@ private:
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
-	Player(AudioManager* audioManager, KeyManager *keyManager);
+	Player(AudioManager* audioManager, KeyManager *keyManager, int shipSkinPref = 0);
 	virtual ~Player();
 
 	// Accessories
@@ -420,7 +417,7 @@ public:
 	void Draw(RenderTarget &renderTarget);
 	void DrawUI(RenderTarget &renderTarget);
 
-	void Reset();
+	void ResetPosition(Vector2f pos);
 	void ChangeAccessories(int selection);
 	void Combat(const float &dt);
 	void Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed);

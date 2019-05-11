@@ -125,6 +125,8 @@ private:
 	// Players
 	dArr<Player> players;
 	std::map<int,PlayerScore> playerScoreMap;
+	int playerShipType;
+	int playerShipSkin;
 
 	// Enemies
 	dArr<EnemyLifeform*> enemyLifeforms;
@@ -155,6 +157,8 @@ private:
 	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score);
 	void _storeLeaderboard(LeaderboardIndex leadIndex, std::string filename);
 	void _setPlayerLives();
+	void _loadPlayerShipPreferences();
+	void _savePlayerShipPreferences();
 
 public:
 	Game(RenderWindow *window);

@@ -80,7 +80,7 @@ void Player::InitTextures() {
 	}
 }
 
-Player::Player(AudioManager* audioManager, KeyManager *keyManager) :
+Player::Player(AudioManager* audioManager, KeyManager *keyManager, int shipSkinPref) :
 	level(1), 
 	lives(1), 
 	exp(0), 
@@ -111,10 +111,7 @@ Player::Player(AudioManager* audioManager, KeyManager *keyManager) :
 	this->keyTime = this->keyTimeMax;
 
 	// Selectors
-	this->lWingSelect = 0;
-	this->rWingSelect = 0;
-	this->cPitSelect = 0;
-	this->auraSelect = 0;
+	this->shipSkinPreference = shipSkinPref;
 
 	this->enemiesKilled = 0;
 	this->score = 0;
@@ -172,9 +169,10 @@ void Player::TakeDamage(int damage) {
 }
 
 void Player::ChangeAccessories(int selection) {
-	this->lWing.setTexture(Player::shipLWingTextures[selection]);
-	this->rWing.setTexture(Player::shipRWingTextures[selection]);
-	this->cPit.setTexture(Player::shipCockpitTextures[selection]);
+	this->shipSkinPreference = selection;
+	this->lWing.setTexture(Player::shipLWingTextures[this->shipSkinPreference]);
+	this->rWing.setTexture(Player::shipRWingTextures[this->shipSkinPreference]);
+	this->cPit.setTexture(Player::shipCockpitTextures[this->shipSkinPreference]);
 }
 
 void Player::Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed) {
@@ -648,85 +646,17 @@ void Player::SetGunLevel(int gunLevel) {
 	}
 }
 
-void Player::Reset() {
-	// Reset sprite
-	this->sprite.setPosition(Vector2f(500.f, 300.f));
-
+void Player::ResetPosition(Vector2f pos) {
+	// Reset sprite position
+	this->sprite.setPosition(pos);
 	this->_recalculatePlayerCenter();
-	
-	// Reset stats
-	this->hpMax = 10;
-	this->hp = this->hpMax;
-	this->hpAdded = 10;
-	this->shieldAdded = 0.f;
-	this->shieldRechargeRate = 0.5f;
-	this->level = 1;
-	this->exp = 0;
-	this->expNext = 20;
-	this->statPoints = 0;
-	this->maneuverability = 0;
-	this->cooling = 0;
-	this->power = 0;
-	this->plating = 0;
-	this->score = 0;
-	this->enemiesKilled = 0;
-	this->score = 0;
-	this->highestLevelAchieved = 1;
-	this->totalSecondsAlive = 1;
-	this->damageMax = 2;
-	this->UpdateStats();
 
-	// Reset game over state
-	this->gameOverOverride = false;
-	this->gameOverTimerMax = 150.f;
-	this->gameOverTimer = this->gameOverTimerMax;
-
-	// Reset Physics
-	this->velocity.x = 0;
-	this->velocity.y = 0;
-	this->warpVerticalBounds = false;
-
-	// Reset upgrades
-	this->dualMissiles01 = false;
-	this->dualMissiles02 = false;
-	this->sheild = false;
-	this->shieldActive = false;
-	this->powerupPiercingShot = false;
-	this->powerupRF = false;
-	this->powerupXP = false;
-	this->powerupAbsorb = false;
-	this->powerupGrind = false;
-	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
-	this->upgradesAcquired.Clear();
-
-	// Reset weapons
-	this->currentWeapon = Player::LASER_GUN;
-	this->SetGunLevel(Player::DEFAULT_LASER);
-	this->bullets.Clear();
-	this->mainGunLevel = Player::DEFAULT_LASER;
-
-	// Reset Timers
-	this->effectedByCosmo = false;
-	this->invertControlsEffectActive = false;
-	this->cosmoEffectTimerMax = 500.f;
-	this->cosmoEffectTimer = this->cosmoEffectTimerMax;
-	this->shootTimerMax = this->getCalculatedShootTimer();
-	this->shootTimer = this->shootTimerMax;
-	this->damageTimerMax = 40.f;
-	this->damageTimer = this->damageTimerMax;
-	this->gaussChargeTimerMax = 500.f;
-	this->gaussChargeTimer = 0.f;
-	this->gaussReloaded = false;
-	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
-	this->shieldChargeTimer = this->shieldChargeTimerMax;
-	// Powerups Timer
-	this->powerupTimerMax = 500.f;
-	this->powerupTimer = this->powerupTimerMax;
-
-	// Undo any tutorial overrides
-	this->enableAllControls();
+	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
+	this->mainGunSprite.setPosition(
+		origin,
+		this->playerCenter.y);
 }
-// Over time these two menthods do the same thing ^ and v
+
 void Player::ResetOnLifeLost(View &view) {
 	// Reset sprite
 	this->sprite.setPosition(view.getCenter());
@@ -1042,7 +972,7 @@ void Player::_initTextures() {
 
 	// Accessories
 	// Left wing
-	this->lWing.setTexture(Player::shipLWingTextures[this->lWingSelect]);
+	this->lWing.setTexture(Player::shipLWingTextures[this->shipSkinPreference]);
 	this->lWing.setOrigin(this->lWing.getGlobalBounds().width / 2,
 		this->lWing.getGlobalBounds().height / 2);
 	this->lWing.setPosition(this->playerCenter);
@@ -1050,7 +980,7 @@ void Player::_initTextures() {
 	this->lWing.setScale(0.7f, 0.7f);
 
 	// Right wing
-	this->rWing.setTexture(Player::shipRWingTextures[this->rWingSelect]);
+	this->rWing.setTexture(Player::shipRWingTextures[this->shipSkinPreference]);
 	this->rWing.setOrigin(this->rWing.getGlobalBounds().width / 2,
 		this->rWing.getGlobalBounds().height / 2);
 	this->rWing.setPosition(this->playerCenter);
@@ -1058,13 +988,13 @@ void Player::_initTextures() {
 	this->rWing.setScale(0.7f, 0.7f);
 
 	// Aura
-	this->aura.setTexture(Player::shipAuraTextures[this->auraSelect]);
+	this->aura.setTexture(Player::shipAuraTextures[0]);
 	this->aura.setPosition(this->playerCenter);
 	this->aura.setScale(0.85f, 0.85f);
 	this->aura.setOrigin(100.f, 100.f);
 
 	// Cockpit
-	this->cPit.setTexture(Player::shipCockpitTextures[this->cPitSelect]);
+	this->cPit.setTexture(Player::shipCockpitTextures[this->shipSkinPreference]);
 	this->cPit.setOrigin(this->cPit.getGlobalBounds().width / 2,
 		this->cPit.getGlobalBounds().height / 2);
 	this->cPit.setPosition(this->playerCenter);

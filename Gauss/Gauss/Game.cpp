@@ -41,6 +41,9 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->killboxAdder = 0;
 	this->killboxAdderMax = 10;
 
+	// Load the players preferred ship and skin
+	this->_loadPlayerShipPreferences();
+
 	// Init player
 	this->InitPlayersInWorld(1);
 
@@ -96,28 +99,14 @@ void Game::InitView() {
 		this->window->getView().getSize().y / 2.f));
 }
 
-//void Game::InitBossTextures() {
-//	// Body
-//	//Texture temp;
-//	//temp.loadFromFile("Textures/Bosses/Body/boss01.png");
-//	//this->bossBodyTextures.Add(Texture(temp));
-//	//// Gun
-//	//temp.loadFromFile("Textures/Bosses/Guns/bossGun01.png");
-//	//this->bossGunTextures.Add(Texture(temp));
-//	//temp.loadFromFile("Textures/Bosses/Guns/bossGun02.png");
-//	//this->bossGunTextures.Add(Texture(temp));
-//	//// Bullets
-//	//temp.loadFromFile("Textures/Bosses/Bullets/bossBullet01.png");
-//	//this->bossBodyTextures.Add(Texture(temp));
-//}
 
 void Game::InitPlayersInWorld(int quantity) {
 	// Always add at least 1 player
-	this->players.Add(Player(this->audioManager, &this->keyManager));
+	this->players.Add(Player(this->audioManager, &this->keyManager, this->playerShipSkin));
 
-	// Optionally add another
+	// Optionally add another - this doesn't work for keybinding...
 	if (quantity > 1) {
-		this->players.Add(Player(this->audioManager, &this->keyManager
+		this->players.Add(Player(this->audioManager, &this->keyManager, this->playerShipSkin
 			/*Keyboard::I,
 			Keyboard::K,
 			Keyboard::J,
@@ -460,11 +449,26 @@ void Game::UpdateMainMenu(const float &dt) {
 	else if (this->mainMenu->onKeybindingPress()) {
 		this->mainMenu->Reset();
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		
+		// Move the player into the menu box bounds on the middle right side of the screen
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].ResetPosition(Vector2f((this->mainView.getSize().x * 0.75f), (this->mainView.getSize().y / 2.f)));
+		}
+
+		this->paused = false;
 		this->keybindMenu->activate();
 	}
 	else if (this->mainMenu->onShipBayPress()) {
 		this->mainMenu->Reset();
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+
+		// Move the player into the menu box bounds on the middle right side of the screen
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].ResetPosition(Vector2f((this->mainView.getSize().x * 0.75f), (this->mainView.getSize().y / 2.f)));
+		}
+
 		this->paused = false;
 		this->shipBayMenu->activate();
 	}
@@ -478,6 +482,15 @@ void Game::UpdateShipBayMenu(const float &dt) {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
+		this->playerShipSkin = this->shipBayMenu->getShipSelection();
+		this->playerShipType = 0; // for now only 1 type of ship
+		this->_savePlayerShipPreferences();
+
+		// Move the player back to center screen
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].ResetPosition(this->mainView.getCenter());
+		}
 	}
 }
 
@@ -489,10 +502,11 @@ void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 
-		// Update the players with the new controls 
+		// Extra refresh in case 
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
 			this->players[i].RefreshPlayerControls();
+			this->players[i].ResetPosition(this->mainView.getCenter());
 		}
 	}
 	else if (this->keybindMenu->isKeyRefreshNeeded()) {
@@ -1602,6 +1616,50 @@ void Game::DisplayGameEnd() {
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
 }
 
+void Game::_loadPlayerShipPreferences() {
+	// Load ship and skin
+	std::ifstream fin;
+	std::string line;
+	fin.open("PlayerShipPrefs/prefs.txt");
+	if (fin.is_open()) {
+		// first line is comments
+		getline(fin, line);
+
+		while (getline(fin, line)) {
+			int shipType;
+			int shipSkin;
+			std::stringstream ss;
+			// extract the prefs
+			ss.str(line);
+			ss >> shipType;
+			ss >> shipSkin;
+			// store the prefs
+			this->playerShipType = shipType;
+			this->playerShipSkin = shipSkin;
+		}
+	}
+	else {
+		std::cerr << "Failure to open PlayerShipPrefs/prefs.txt" << std::endl;
+		this->playerShipType = 0;
+		this->playerShipSkin = 0;
+	}
+	fin.close();
+}
+
+void Game::_savePlayerShipPreferences() {
+	// Save bindings
+	std::ofstream fout;
+	std::string filename("PlayerShipPrefs/prefs.txt");
+	fout.open(filename, std::ofstream::out | std::ofstream::trunc);
+	if (fout.is_open()) {
+		fout << "#SHIP_TYPE SHIP_SKIN\n";
+		fout << this->playerShipType << " " << this->playerShipSkin;
+	}
+	else {
+		std::cerr << "Failure to open PlayerShipPrefs/prefs.txt file" << std::endl;
+	}
+	fout.close();
+}
 
 
 void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score) {
@@ -1651,7 +1709,6 @@ void Game::_sortLeaderboard(LeaderboardIndex leadIndex) {
 			std::swap(this->leaderboards[leadIndex][i], this->leaderboards[leadIndex][min]);
 		}
 }
-
 
 int Game::_calculateScore(PlayerScore &playerScore) {
 	// total score + enemies killed per second over lifetime + score per second over lifetime

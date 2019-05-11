@@ -143,7 +143,6 @@ void KeyManager::LoadBindingsFromFile() {
 			ss.str(line);
 			ss >> bindKeyName;
 			ss >> bindKeyCode;
-			std::cout << "this->keys[0][" << bindKeyName << "] = " << std::to_string(bindKeyCode) << std::endl;
 			// use the binding from file
 			this->keys[0][bindKeyName] = bindKeyCode;
 		}
