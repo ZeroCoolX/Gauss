@@ -300,9 +300,12 @@ void Game::InitMap() {
 
 void Game::InitMenus() {
 	this->mainMenu = new MainMenu(this->font, this->window);
+
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
-	this->keybindMenu = new KeyBindingMenu(this->font, this->window, &this->keyManager);
+
 	KeyManager::InitKeyNames();
+	this->keybindMenu = new KeyBindingMenu(this->font, this->window, &this->keyManager);
+
 	this->tutorial = new Tutorial(this->font, this->window, &this->players);
 	Tutorial::InitTexts();
 }
@@ -420,6 +423,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
 		this->_setPlayerLives(); // lives = 1
+		this->paused = false;
 	}
 	else if (this->mainMenu->onCosmosPress()) {
 		// Start each mode with the same music everytime, but swap on redeploys
@@ -432,6 +436,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->InitMap();
 		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS);
 		this->_setPlayerLives(); // lives = 1
+		this->paused = false;
 	}
 	else if (this->mainMenu->onTutorialPress()) {
 		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
@@ -455,6 +460,18 @@ void Game::UpdateMainMenu(const float &dt) {
 
 void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
 	this->keybindMenu->Update(dt, event);
+
+	if (!this->keybindMenu->isActive()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->mainMenu->Reset();
+		this->mainMenu->activate();
+
+		// Update the players with the new controls 
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].RefreshPlayerControls();
+		}
+	}
 }
 
 void Game::UpdateGameOverMenu(const float &dt) {
@@ -1565,7 +1582,7 @@ void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score
 
 void Game::_storeLeaderboard(LeaderboardIndex leadIndex, std::string leaderFile) {
 	std::ofstream fout;
-	std::string filename = "Leaderboards/" + leaderFile +"/leaderboard.txt";
+	std::string filename("Leaderboards/" + leaderFile +"/leaderboard.txt");
 	fout.open(filename, std::ofstream::out | std::ofstream::trunc);
 	if (fout.is_open()) {
 		for (size_t i = 0; i < this->leaderboards[leadIndex].Size(); i++)

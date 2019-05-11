@@ -232,20 +232,7 @@ private:
 
 public:
 	// Allows for the player to be created with a custom keybinding to represent WASD/Fire
-	Player(
-		AudioManager* audioManager, KeyManager *keyManager);
-		/*int UP = Keyboard::W, 
-		int DOWN = Keyboard::S,
-		int LEFT = Keyboard::A, 
-		int RIGHT = Keyboard::D,
-		int FIRE = Keyboard::Space,
-		int GAUSSCANNON = Keyboard::Q,
-		int SHIELD = Keyboard::RAlt,
-		int TOGGLESTATS = Keyboard::Tab,
-		int CHANGE_LWING = Keyboard::Num1,
-		int CHANGE_CPIT = Keyboard::Num2,
-		int CHANGE_RWING = Keyboard::Num3,
-		int CHANGE_AURA = Keyboard::Num4*/
+	Player(AudioManager* audioManager, KeyManager *keyManager);
 	virtual ~Player();
 
 	// Accessories
@@ -376,6 +363,10 @@ public:
 		return (v / length);
 	}
 
+	// End of game
+	inline const bool isGameOverActivated() const { return this->gameOverOverride; }
+	inline const bool campaignLevelBeat() const { return this->gameOverTimer <= 0.f; }
+
 	// Tutorial modification
 	inline dArr<int> *getControls() { return &this->controls; }
 	inline void enableAllControls() {
@@ -415,6 +406,7 @@ public:
 	inline const float getShieldChargeTimer() const { return this->shieldChargeTimer; }
 	inline void activateColorFlashTutorialOverride() { this->colorFlashTutorialOverride = true; }
 	inline void deactivateColorFlashTutorialOverride() { this->colorFlashTutorialOverride = false; }
+	inline void overrideControlsForTutorial() { this->tutorialOverride = true; }
 
 	// Functions
 	void UpdateAccessories(const float &dt, const float scollSpeed);
@@ -442,9 +434,7 @@ public:
 	std::string GetStatsAsString();
 	void ResetOnLifeLost(View &view);
 	void ActivateGameEnd(Vector2f pos);
-	inline const bool isGameOverActivated() const { return this->gameOverOverride; }
-	inline const bool campaignLevelBeat() const { return this->gameOverTimer <= 0.f; }
-	inline void overrideControlsForTutorial() { this->tutorialOverride = true; }
+	void RefreshPlayerControls();
 
 	// Cosmo Effects
 	inline const bool isEffectedByCosmo() const { return this->effectedByCosmo; }

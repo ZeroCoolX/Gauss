@@ -80,21 +80,23 @@ void Player::InitTextures() {
 	}
 }
 
-Player::Player(
-	AudioManager* audioManager, KeyManager *keyManager
-	/*int UP, 
-	int DOWN,
-	int LEFT, 
-	int RIGHT,
-	int FIRE,
-	int GAUSSCANNON,
-	int SHIELD,
-	int TOGGLESTATS,
-	int CHANGE_LWING,
-	int CHANGE_CPIT,
-	int CHANGE_RWING,
-	int CHANGE_AURA*/
-) :level(1), lives(1), exp(0), hp(10), hpMax(10), hpAdded(10), shieldAdded(0.f), shieldRechargeRate(0.5f), statPoints(0), cooling(0), maneuverability(0), plating(0), power(0), damage(1), damageMax(2), score(0)
+Player::Player(AudioManager* audioManager, KeyManager *keyManager) :
+	level(1), 
+	lives(1), 
+	exp(0), 
+	hp(10), 
+	hpMax(10), 
+	hpAdded(10), 
+	shieldAdded(0.f), 
+	shieldRechargeRate(0.5f), 
+	statPoints(0), 
+	cooling(0), 
+	maneuverability(0), 
+	plating(0), 
+	power(0), 
+	damage(1), 
+	damageMax(2), 
+	score(0)
 {
 	this->audioManager = audioManager;
 	// Stats
@@ -131,7 +133,7 @@ Player::Player(
 	this->controls.Add(this->keyManager->Left(this->keyScheme));
 	this->controls.Add(this->keyManager->Right(this->keyScheme));
 	this->controls.Add(this->keyManager->Fire(this->keyScheme));
-	this->controls.Add(this->keyManager->GaussCannon(this->keyScheme));
+	this->controls.Add(this->keyManager->Mac(this->keyScheme));
 	this->controls.Add(this->keyManager->Shield(this->keyScheme));
 	this->controls.Add(this->keyManager->ToggleStats(this->keyScheme));
 	this->controls.Add(Keyboard::Num1);
@@ -938,6 +940,17 @@ void Player::ActivateGameEnd(Vector2f pos) {
 
 	// turn off player input for WASD
 	this->gameOverOverride = true;
+}
+
+void Player::RefreshPlayerControls() {
+	this->controls[CONTROL_UP] = this->keyManager->Up(this->keyScheme);
+	this->controls[CONTROL_DOWN] = this->keyManager->Down(this->keyScheme);
+	this->controls[CONTROL_LEFT] = this->keyManager->Left(this->keyScheme);
+	this->controls[CONTROL_RIGHT] = this->keyManager->Right(this->keyScheme);
+	this->controls[CONTROL_FIRE] = this->keyManager->Fire(this->keyScheme);
+	this->controls[CONTROL_GAUSSCANNON] = this->keyManager->Mac(this->keyScheme);
+	this->controls[CONTROL_SHIELD] = this->keyManager->Shield(this->keyScheme);
+	this->controls[CONTROL_TOGGLE_STATS] = this->keyManager->ToggleStats(this->keyScheme);
 }
 
 void Player::_processPlayerInput(const float &dt) {

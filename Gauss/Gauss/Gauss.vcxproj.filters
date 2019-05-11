@@ -168,11 +168,11 @@
     <ClCompile Include="Dialog.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="KeyManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="KeyBindingMenu.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyManager.cpp">
+      <Filter>Source Files\GameControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,11 +278,11 @@
     <ClInclude Include="Dialog.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="KeyManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyBindingMenu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyManager.h">
+      <Filter>Header Files\GameControl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

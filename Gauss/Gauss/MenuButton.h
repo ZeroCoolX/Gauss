@@ -32,7 +32,13 @@ public:
 
 	inline std::string getName() { return this->text.getString(); }
 	inline int getId() const { return this->ID; }
-	inline void updateText(std::string newText) { this->text.setString(newText); }
+	inline void updateText(std::string newText) { 
+		this->text.setString(newText);
+		this->text.setPosition(
+			this->sprite.getPosition().x + (this->sprite.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+			this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
+		);
+	}
 	inline void changeColor(Color c) { this->colorIdle = c; }
 	inline void resetColor() { this->colorIdle = this->colorIdleDefault; }
 

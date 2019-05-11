@@ -90,8 +90,7 @@ void KeyManager::InitKeyNames() {
 KeyManager::KeyManager() 
 {
 	// Populate defaults
-	std::map<std::string, int> defaultKeys;
-
+	std::unordered_map<std::string, int> defaultKeys;
 	defaultKeys["UP"] = KeyManager::DEF_UP;
 	defaultKeys["DOWN"] = KeyManager::DEF_DOWN;
 	defaultKeys["LEFT"] = KeyManager::DEF_LEFT;
@@ -100,12 +99,70 @@ KeyManager::KeyManager()
 	defaultKeys["MAC"] = KeyManager::DEF_MAC;
 	defaultKeys["SHIELD"] = KeyManager::DEF_SHIELD;
 	defaultKeys["STATS"] = KeyManager::DEF_STATS;
-
 	this->keys.Add(defaultKeys);
+
+	this->LoadBindingsFromFile();
 }
 
 
 KeyManager::~KeyManager()
 {
+}
+
+void KeyManager::SaveBindingsToFile() {
+	// Save bindings
+	std::ofstream fout;
+	std::string filename("Keybinding/keybindings.txt");
+	fout.open(filename, std::ofstream::out | std::ofstream::trunc);
+	if (fout.is_open()) {
+		for (std::unordered_map<std::string, int>::iterator it = this->keys[0].begin(); it != this->keys[0].end();) {
+			fout << it->first << " " << it->second;
+			++it;
+			if (it != this->keys[0].end()) {
+				fout << "\n";
+			}
+		}
+	}
+	else {
+		std::cerr << "Failure to open keybindings file" << std::endl;
+	}
+	fout.close();
+}
+
+void KeyManager::LoadBindingsFromFile() {
+	// Load bindings
+	std::ifstream fin;
+	std::string line;
+	fin.open("Keybinding/keybindings.txt");
+	if (fin.is_open()) {
+		while (getline(fin, line)) {
+			std::string bindKeyName;
+			int bindKeyCode;
+			std::stringstream ss;
+			// extract the binding
+			ss.str(line);
+			ss >> bindKeyName;
+			ss >> bindKeyCode;
+			std::cout << "this->keys[0][" << bindKeyName << "] = " << std::to_string(bindKeyCode) << std::endl;
+			// use the binding from file
+			this->keys[0][bindKeyName] = bindKeyCode;
+		}
+	}
+	else {
+		std::cerr << "Failure to open Keybinding/keybindings.txt" << std::endl;
+		this->_initDefaults();
+	}
+	fin.close();
+}
+
+void KeyManager::_initDefaults() {
+	this->keys[0]["UP"] = KeyManager::DEF_UP;
+	this->keys[0]["DOWN"] = KeyManager::DEF_DOWN;
+	this->keys[0]["LEFT"] = KeyManager::DEF_LEFT;
+	this->keys[0]["RIGHT"] = KeyManager::DEF_RIGHT;
+	this->keys[0]["FIRE"] = KeyManager::DEF_FIRE;
+	this->keys[0]["MAC"] = KeyManager::DEF_MAC;
+	this->keys[0]["SHIELD"] = KeyManager::DEF_SHIELD;
+	this->keys[0]["STATS"] = KeyManager::DEF_STATS;
 }
 

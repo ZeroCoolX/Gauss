@@ -35,6 +35,7 @@ private:
 	dArr<std::string> buttonKeyNames;
 
 	void _resetControlToDefault();
+	void _goBack();
 
 public:
 	KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *keyManager);
