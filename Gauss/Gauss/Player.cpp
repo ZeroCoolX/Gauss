@@ -192,7 +192,7 @@ bool Player::ChangeAccessories(const float &dt) {
 	return false;
 }
 
-void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
+void Player::Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed) {
 	// Update normalized direction
 	this->normalizedDir = this->normalize(this->velocity, this->vectorLength(this->velocity));
 
@@ -207,7 +207,7 @@ void Player::Movement(const float &dt, View &view, const float scrollSpeed) {
 
 	// Bounds check for window collision
 	if (!(this->gameOverOverride || this->tutorialOverride)) {
-		this->_checkBounds(view, this->warpVerticalBounds);
+		this->_checkBounds(horizontalBounds, verticalBounds, this->warpVerticalBounds);
 	}
 }
 
@@ -426,7 +426,17 @@ void Player::UpdateStats() {
 	this->shieldRechargeRate = 0.5f + (static_cast<float>(this->cooling) / 10.f);
 }
 
+// Default update where the bounds are the screen
 void Player::Update(View &view, const float &dt, const float scrollSpeed) {
+	this->Update(
+		Vector2f(view.getCenter().x - (view.getSize().x / 2.f), view.getCenter().x + (view.getSize().x / 2.f)), 
+		Vector2f(view.getCenter().y - (view.getSize().y / 2.f), view.getCenter().y + (view.getSize().y / 2.f)),
+		dt, 
+		scrollSpeed);
+}
+
+// Bounds are supplied in case they are not the screen (tutorial, keybind or ship bay screen...etc)
+void Player::Update(Vector2f horizontalBounds, Vector2f verticalBounds, const float &dt, const float scrollSpeed) {
 	this->shootTimerMax = this->getCalculatedShootTimer();
 
 	// Update timers
@@ -503,7 +513,7 @@ void Player::Update(View &view, const float &dt, const float scrollSpeed) {
 		}
 	}
 
-	this->Movement(dt, view, scrollSpeed);
+	this->Movement(dt, horizontalBounds, verticalBounds, scrollSpeed);
 	this->UpdateAccessories(dt, scrollSpeed);
 	this->UpdatePowerups(dt);
 	this->Combat(dt);
@@ -1204,9 +1214,9 @@ void Player::_fireMissileHeavy(const Vector2f direction) {
 	}
 }
 
-void Player::_checkBounds(View &view, bool warpVertical) {
-	float viewLeft = view.getCenter().x - (view.getSize().x / 2.f);
-	float viewRight = view.getCenter().x + (view.getSize().x / 2.f);
+void Player::_checkBounds(Vector2f horizontalBounds, Vector2f verticalBounds, bool warpVertical) {
+	float viewLeft = horizontalBounds.x;
+	float viewRight = horizontalBounds.y;
 
 	if (this->getPosition().x <= viewLeft) {// LEFT BOUNDS
 		this->sprite.setPosition(viewLeft + 50.f/*offset so the player is not pinned to wall*/, this->sprite.getPosition().y);
@@ -1217,8 +1227,8 @@ void Player::_checkBounds(View &view, bool warpVertical) {
 		this->velocity.x = 0.f;
 	}
 
-	float viewTop = view.getCenter().y - (view.getSize().y/ 2.f);
-	float viewBottom = view.getCenter().y + (view.getSize().y / 2.f);
+	float viewTop = verticalBounds.x;
+	float viewBottom = verticalBounds.y;
 
 	if (warpVertical) {
 		if (this->getPosition().y + this->sprite.getGlobalBounds().height <= viewTop) { // TOP BOUNDS

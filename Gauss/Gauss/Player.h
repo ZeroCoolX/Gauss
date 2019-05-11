@@ -227,7 +227,7 @@ private:
 	void _fireGaussCannon(const Vector2f direction);
 	void _fireMissileLight(const Vector2f direction);
 	void _fireMissileHeavy(const Vector2f direction);
-	void _checkBounds(View &view, bool warpVertical = false);
+	void _checkBounds(Vector2f horizontalBounds, Vector2f verticalBounds, bool warpVertical = false);
 
 
 public:
@@ -413,6 +413,7 @@ public:
 	void UpdatePowerups(const float &dt);
 	bool UpdateLeveling();
 	void UpdateStatsUI();
+	void Update(Vector2f horizontalBounds, Vector2f verticalBounds, const float &dt, const float scrollSpeed);
 	void Update(View &view, const float &dt, const float scrollSpeed);
 	void UpdateStats();
 
@@ -422,7 +423,7 @@ public:
 	void Reset();
 	bool ChangeAccessories(const float &dt);
 	void Combat(const float &dt);
-	void Movement(const float &dt, View &view, const float scrollSpeed);
+	void Movement(const float &dt, Vector2f horizontalBounds, Vector2f verticalBounds, const float scrollSpeed);
 	void InitUI(Text t);
 	Bullet& BulletAt(unsigned index);
 	void RemoveBullet(unsigned index);
