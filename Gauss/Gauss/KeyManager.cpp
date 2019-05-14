@@ -46,6 +46,7 @@ void KeyManager::InitKeyNames() {
 	KeyManager::KeyNames[Keyboard::Comma] = ",";
 	KeyManager::KeyNames[Keyboard::Period] = ".";
 	KeyManager::KeyNames[Keyboard::Slash] = "/";
+	//KeyManager::KeyNames[Keyboard::BackSpace] = "Backspace";
 	KeyManager::KeyNames[Keyboard::BackSlash] = "\\";
 	KeyManager::KeyNames[Keyboard::Return] = "Enter";
 	KeyManager::KeyNames[Keyboard::RShift] = "Right Shift";

@@ -209,8 +209,8 @@ void Game::InitUI() {
 	this->controlsText.setFont(this->font);
 	this->controlsText.setCharacterSize(30);
 	this->controlsText.setFillColor(Color::White);
-	this->controlsText.setPosition(20.f, ((float)this->window->getSize().y / 3) + 50.f);
-	this->controlsText.setString("W: UP\nA: LEFT\nS: DOWN\nD: RIGHT\nSPACE: SHOOT\nP: PAUSE/CONTROLS (START GAME)\nESC: Quit\n1, 2, 3 & 4: CUSTOMIZE SHIP (ONLY WHILE PAUSED!)\nF11: FULLSCREEN\n\n\nTOP-LEFT SHIP: Player Number\nTOP-RIGHT SHIP: Hp/HpMax\nBOTTOM-LEFT SHIP: Level\nBOTTOM-RIGHT SHIP: Exp-bar");
+	this->controlsText.setPosition((float)this->window->getSize().x / 3.f, 150.f);
+	this->_refreshPauseControlText();
 
 	// Score text
 	this->scoreText.setFont(this->font);
@@ -500,6 +500,7 @@ void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
+		this->_refreshPauseControlText();
 
 		// Extra refresh in case 
 		for (size_t i = 0; i < this->players.Size(); i++)
@@ -1565,9 +1566,22 @@ void Game::ToggleFullscreen() {
 }
 
 void Game::PauseGame() {
-	if (Keyboard::isKeyPressed(Keyboard::P) && this->keyTime >= this->keyTimeMax) {
+	if (Keyboard::isKeyPressed(Keyboard::BackSpace) && this->keyTime >= this->keyTimeMax) {
 		this->paused = !this->paused;
 		this->keyTime = 0.f;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::Escape) && this->keyTime >= this->keyTimeMax) {
+		this->paused = true;
+		this->keyTime = 0.f;
+		this->audioManager->StopMusic(this->gameMusicSelection);
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->_redeploy();
+		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
+		this->mainView.setCenter(Vector2f(
+			this->window->getView().getSize().x / 2.f,
+			this->window->getView().getSize().y / 2.f));
+		this->mainMenu->Reset();
+		this->mainMenu->activate();
 	}
 }
 
@@ -1837,5 +1851,32 @@ void Game::_setPlayerLives() {
 	{
 		this->players[i].setLives(pLives);
 	}
+}
+
+void Game::_refreshPauseControlText() {
+	std::string ctrlText = "[PLAYER CONTROLS]\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_UP]) + ": \tUP\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_DOWN]) + ": \tDOWN\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_LEFT]) + ": \tLEFT\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_RIGHT]) + ": \tRIGHT\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_FIRE]) + ": \tLASER\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_GAUSSCANNON]) + ": \tMAC\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_SHIELD]) + ": \tSHIELD\n";
+	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_TOGGLE_STATS]) + ": \tSTATS\n";
+	ctrlText += "\n";
+
+	ctrlText += "[GAME CONTROL]\n";
+	ctrlText += "BACKSPACE: \tPAUSE/CONTROLS\n";
+	ctrlText += "ESC: \tBACK TO MENU\n";
+	ctrlText += "\n";
+
+	ctrlText += "[HUD HELP]\n";
+	ctrlText += "TOP-LEFT SHIP: Player Level\n";
+	ctrlText += "TOP-RIGHT SHIP: Shield Charge\n";
+	ctrlText += "BOTTOM-LEFT SHIP: MAC Charge\n";
+	ctrlText += "BOTTOM BLUE BAR: XP/Next Level\n";
+	ctrlText += "BOTTOM RED BAR: Hp/HpMax\n";
+
+	this->controlsText.setString(ctrlText);
 }
 

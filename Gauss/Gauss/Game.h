@@ -159,6 +159,7 @@ private:
 	void _setPlayerLives();
 	void _loadPlayerShipPreferences();
 	void _savePlayerShipPreferences();
+	void _refreshPauseControlText();
 
 public:
 	Game(RenderWindow *window);

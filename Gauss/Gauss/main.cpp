@@ -39,12 +39,6 @@ int main() {
 		while (window.pollEvent(event)) {
 			if (event.type == Event::Closed)
 				window.close();
-			if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
-				window.close();
-			if (event.type == Event::KeyPressed)
-			{
-				std::cout << "main.cpp - Key Pressed! " << std::to_string(event.key.code) << std::endl;
-			}
 		}
 
 		dt = clock.restart().asSeconds();
