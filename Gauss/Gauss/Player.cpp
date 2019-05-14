@@ -704,7 +704,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
 	this->gaussReloaded = false;
-	this->shieldChargeTimerMax = 300.f + (this->cooling * 5) + (this->maneuverability / 2);
+	this->shieldChargeTimerMax = 200.f + (this->cooling * 5) + (this->maneuverability / 2);
 	this->shieldChargeTimer = this->shieldChargeTimerMax;
 	// Powerups Timer
 	this->powerupTimerMax = 500.f;

@@ -22,6 +22,8 @@ public:
 	};
 
 private:
+	dArr<dArr<std::string>> dialogTexts;
+
 	bool active;
 	bool tutorialComplete;
 
@@ -88,6 +90,8 @@ public:
 	Tutorial(Font &font, RenderWindow *window, dArr<Player> *players);
 	virtual ~Tutorial();
 
+	void InitTexts();
+
 	void Update(const float &dt);
 	void Draw(RenderTarget &renderTarget);
 	void Reset();
@@ -96,10 +100,8 @@ public:
 		this->tutorialComplete = false;
 		(*this->players)[0].disableAllControls();
 		(*this->players)[0].activateColorFlashTutorialOverride();
+		this->InitTexts();
 	}
 	inline const bool IsTutorialComplete() const { return this->active && this->tutorialComplete; }
-
-	static dArr<dArr<std::string>> dialogTexts;
-	static void InitTexts();
 };
 

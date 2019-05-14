@@ -299,7 +299,6 @@ void Game::InitMenus() {
 	this->keybindMenu = new KeyBindingMenu(this->font, this->window, &this->keyManager);
 
 	this->tutorial = new Tutorial(this->font, this->window, &this->players);
-	Tutorial::InitTexts();
 }
 
 void Game::UpdateView(const float &dt) {
