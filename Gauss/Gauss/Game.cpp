@@ -4,6 +4,8 @@
 Game::Game(RenderWindow *window) : leaderboards(2)
 {
 	this->window = window;
+	this->window->setMouseCursorVisible(true);
+
 	// Init stage
 	this->stage = nullptr;
 	// Init Menus
@@ -106,19 +108,7 @@ void Game::InitPlayersInWorld(int quantity) {
 
 	// Optionally add another - this doesn't work for keybinding...
 	if (quantity > 1) {
-		this->players.Add(Player(this->audioManager, &this->keyManager, this->playerShipSkin
-			/*Keyboard::I,
-			Keyboard::K,
-			Keyboard::J,
-			Keyboard::L,
-			Keyboard::RShift,
-			Keyboard::U,
-			Keyboard::RControl,
-			Keyboard::Return,
-			Keyboard::Num7,
-			Keyboard::Num8,
-			Keyboard::Num9,
-			Keyboard::Num0*/));
+		this->players.Add(Player(this->audioManager, &this->keyManager, this->playerShipSkin));
 	}
 
 	this->InitPlayerScoreStats();
@@ -395,6 +385,7 @@ void Game::UpdateMainMenu(const float &dt) {
 	this->mainMenu->Update(dt);
 
 	if (this->mainMenu->onCampaignPress()) {
+		this->window->setMouseCursorVisible(false);
 		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
 		this->gameMusicSelection = AudioManager::AudioMusic::CAMPAIGN;
 		this->audioManager->PlayMusic(this->gameMusicSelection);
@@ -407,6 +398,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->paused = false;
 	}
 	else if (this->mainMenu->onInfinitePress()) {
+		this->window->setMouseCursorVisible(false);
 		// Start each mode with the same music everytime, but swap on redeploys
 		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_01;
 		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
@@ -420,6 +412,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->paused = false;
 	}
 	else if (this->mainMenu->onCosmosPress()) {
+		this->window->setMouseCursorVisible(false);
 		// Start each mode with the same music everytime, but swap on redeploys
 		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_02;
 		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
@@ -433,6 +426,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->paused = false;
 	}
 	else if (this->mainMenu->onTutorialPress()) {
+		this->window->setMouseCursorVisible(false);
 		this->audioManager->StopMusic(AudioManager::AudioMusic::MENU);
 		this->gameMusicSelection = AudioManager::AudioMusic::INF_COS_03;
 		this->audioManager->PlayMusic(this->gameMusicSelection);
@@ -532,6 +526,7 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->audioManager->PlayMusic(this->gameMusicSelection);
 	}
 	else if (this->gameOverMenu->onMenuPress()) {
+		this->window->setMouseCursorVisible(true);
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
@@ -548,6 +543,7 @@ void Game::UpdateTutorial(const float &dt) {
 	this->tutorial->Update(dt);
 
 	if (this->tutorial->IsTutorialComplete()) {
+		this->window->setMouseCursorVisible(true);
 		this->tutorial->Reset();
 		this->_redeploy();
 		this->audioManager->StopMusic(this->gameMusicSelection);
@@ -1571,6 +1567,7 @@ void Game::PauseGame() {
 		this->keyTime = 0.f;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::Escape) && this->keyTime >= this->keyTimeMax) {
+		this->window->setMouseCursorVisible(true);
 		this->paused = true;
 		this->keyTime = 0.f;
 		this->audioManager->StopMusic(this->gameMusicSelection);
