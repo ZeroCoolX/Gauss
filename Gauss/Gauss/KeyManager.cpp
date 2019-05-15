@@ -86,6 +86,12 @@ void KeyManager::InitKeyNames() {
 	KeyManager::KeyNames[Keyboard::Numpad8] = "Numpad 8";
 	KeyManager::KeyNames[Keyboard::Numpad9] = "Numpad 9";
 	KeyManager::KeyNames[Keyboard::Numpad0] = "Numpad 0";
+	// Mouse
+	KeyManager::KeyNames[(Mouse::Left + Keyboard::KeyCount + 1)] = "Mouse Left";
+	KeyManager::KeyNames[(Mouse::Right + Keyboard::KeyCount + 1)] = "Mouse Right";
+	KeyManager::KeyNames[(Mouse::Middle + Keyboard::KeyCount + 1)] = "Mouse Middle";
+	KeyManager::KeyNames[(Mouse::XButton1 + Keyboard::KeyCount + 1)] = "Mouse X1";
+	KeyManager::KeyNames[(Mouse::XButton2 + Keyboard::KeyCount + 1)] = "Mouse X2";
 }
 
 KeyManager::KeyManager() 

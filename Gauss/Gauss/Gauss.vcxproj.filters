@@ -290,5 +290,8 @@
     <ClInclude Include="ShipBayMenu.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="KeyMouseBoard.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -177,6 +177,7 @@
     <ClInclude Include="ItemUpgrade.h" />
     <ClInclude Include="KeyBindingMenu.h" />
     <ClInclude Include="KeyManager.h" />
+    <ClInclude Include="KeyMouseBoard.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="MenuButton.h" />

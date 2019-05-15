@@ -326,14 +326,14 @@ void Tutorial::updateHorizontal(const float &dt) {
 		// start looking for keypresses and hide the dialogue
 		(*this->players)[0].setDisableHorizontal(false);
 
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::CONTROL_LEFT]
-		))) {
+		)) {
 			this->leftPressed = true;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::CONTROL_RIGHT]
-		))) {
+		)) {
 			this->rightPressed = true;
 		}
 		if (this->leftPressed && this->rightPressed) {
@@ -359,14 +359,14 @@ void Tutorial::updateVertical(const float &dt) {
 		// start looking for keypresses and hide the dialogue
 		(*this->players)[0].setDisableVertical(false);
 
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::CONTROL_UP]
-		))) {
+		)) {
 			this->upPressed = true;
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::CONTROL_DOWN]
-		))) {
+		)) {
 			this->downPressed = true;
 		}
 		if (this->upPressed && this->downPressed) {
@@ -393,9 +393,9 @@ void Tutorial::updateLaser(const float &dt) {
 		(*this->players)[0].setDisableLaser(false);
 
 
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_FIRE]
-		))) {
+		)) {
 			this->firePressed = true;
 		}
 		if (this->firePressed) {
@@ -421,9 +421,9 @@ void Tutorial::updateGaussCannon(const float &dt) {
 		// start looking for keypresses and hide the dialogue
 		(*this->players)[0].setDisableGaussCannon(false);
 
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_GAUSSCANNON]
-		))) {
+		)) {
 			this->gaussCannonPressed = true;
 		}
 		if (this->gaussCannonPressed) {
@@ -449,9 +449,9 @@ void Tutorial::updateShield(const float &dt) {
 		// start looking for keypresses and hide the dialogue
 		(*this->players)[0].setDisableShield(false);
 
-		if (Keyboard::isKeyPressed(Keyboard::Key(
+		if (KeyMouseBoard::isPressed(
 			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_SHIELD]
-		))) {
+		)) {
 			this->shieldPressed = true;
 		}
 		if (this->shieldPressed) {

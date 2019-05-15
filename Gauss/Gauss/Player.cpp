@@ -199,7 +199,7 @@ void Player::Combat(const float &dt) {
 	
 	// Main laser
 	if (!this->disableLaser) {
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_FIRE])) && this->shootTimer >= this->shootTimerMax)
+		if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_FIRE]) && this->shootTimer >= this->shootTimerMax)
 		{
 			this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_LASER);
 			switch (this->currentWeapon) {
@@ -220,7 +220,7 @@ void Player::Combat(const float &dt) {
 
 	// Gauss Cannon
 	if (!this->disableGaussCannon) {
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_GAUSSCANNON])) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
+		if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_GAUSSCANNON]) && this->gaussChargeTimer >= this->gaussChargeTimerMax) {
 			this->audioManager->PlaySound(AudioManager::AudioSounds::GAUSS_CANNON);
 			// Fire a deadly gauss cannon shot
 			this->gaussChargeTimer = 0.f;
@@ -240,7 +240,7 @@ void Player::Combat(const float &dt) {
 		}
 	}
 	if (!this->disableSheild) {
-		this->shieldActive = Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD])) && this->shieldChargeTimer > 0;
+		this->shieldActive = KeyMouseBoard::isPressed(this->controls[Player::CONTROL_SHIELD]) && this->shieldChargeTimer > 0;
 	}
 
 	if (this->isDamageCooldown()) {
@@ -489,7 +489,7 @@ void Player::Update(Vector2f horizontalBounds, Vector2f verticalBounds, const fl
 		this->shieldChargeTimer = std::max(0.f, this->shieldChargeTimer - 1.f * dt * DeltaTime::dtMultiplier);
 	}
 	// Make sure they let go of the key
-	else if(!Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_SHIELD]))){
+	else if(!KeyMouseBoard::isPressed(this->controls[Player::CONTROL_SHIELD])){
 		this->shieldChargeTimer = std::min(this->shieldChargeTimerMax, this->shieldChargeTimer + this->shieldRechargeRate * dt * DeltaTime::dtMultiplier);
 		if (!this->colorFlashTutorialOverride) {
 			this->playerShieldChargeCircle.setFillColor(this->shieldChargingColor);
@@ -739,7 +739,7 @@ void Player::AddStatPointRandom() {
 }
 
 bool Player::PlayerShowStatsIsPressed() {
-	return Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_TOGGLE_STATS]));
+	return KeyMouseBoard::isPressed(this->controls[Player::CONTROL_TOGGLE_STATS]);
 }
 
 std::string Player::GetStatsAsString() {
@@ -895,13 +895,13 @@ void Player::_processPlayerInput(const float &dt) {
 			}
 		}
 		else {
-			if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_UP]))) {
+			if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_UP])) {
 				this->direction.y = -1;
 				if (this->velocity.y > -this->maxVelocity && this->direction.y < 0) {
 					this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
 				}
 			}
-			if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_DOWN]))) {
+			if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_DOWN])) {
 				this->direction.y = 1;
 				if (this->velocity.y < this->maxVelocity && this->direction.y > 0) {
 					this->velocity.y += direction.y * this->acceleration * dt * DeltaTime::dtMultiplier;
@@ -912,13 +912,13 @@ void Player::_processPlayerInput(const float &dt) {
 
 	// Horizontal
 	if (!this->disableHorizontal) {
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_LEFT]))) {
+		if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_LEFT])) {
 			this->direction.x = -1;
 			if (this->velocity.x > -this->maxVelocity && this->direction.x < 0) {
 				this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Key(this->controls[Player::CONTROL_RIGHT]))) {
+		if (KeyMouseBoard::isPressed(this->controls[Player::CONTROL_RIGHT])) {
 			this->direction.x = 1;
 			if (this->velocity.x < this->maxVelocity && this->direction.x > 0) {
 				this->velocity.x += direction.x * this->acceleration * dt * DeltaTime::dtMultiplier;

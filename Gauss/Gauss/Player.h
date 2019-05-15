@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "AudioManager.h"
 #include "KeyManager.h"
+#include "KeyMouseBoard.h"
 
 class Player
 {

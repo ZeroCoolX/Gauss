@@ -80,20 +80,24 @@ void KeyBindingMenu::Update(const float &dt, const Event *event) {
 }
 
 void KeyBindingMenu::UpdateKeybindPolling(const float &dt, const Event *event) {
-	if (this->keybindPolling && this->keybindPollingId >= 0 && this->keyTime >= this->keyTimeMax) {
+	if (this->keybindPolling && this->keybindPollingId >= 0 && this->keyTime >= this->keyTimeMax && this->pressTime >= this->pressTimeMax) {
 		// Key pressed
-		if (event->type == Event::KeyReleased || event->type == Event::KeyPressed)
+		if (event->type == Event::KeyReleased || event->type == Event::KeyPressed || event->type == Event::MouseButtonPressed)
 		{
 			this->keybindPolling = false;
+			const int key = KeyMouseBoard::key(event);
 
-			if (KeyManager::KeyName(event->key.code) == "UNSUPPORTED") {
+			if (KeyManager::KeyName(key) == "UNSUPPORTED") {
+			//if (KeyManager::KeyName(event->key.code) == "UNSUPPORTED") {
 				this->lastChangeText.setString("There is no supported key mapping for that key");
 			}
 			else {
-				this->lastChangeText.setString("Changed key " + this->buttonKeyNames[this->keybindPollingId] + ": \tfrom \t" + this->buttons[this->keybindPollingId]->getName() + " \tto \t" + KeyManager::KeyName(event->key.code) + "");
+				this->lastChangeText.setString("Changed key " + this->buttonKeyNames[this->keybindPollingId] + ": \tfrom \t" + this->buttons[this->keybindPollingId]->getName() + " \tto \t" + KeyManager::KeyName(key) + "");
 				this->keyRefreshNeeded = true;
-				this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
-				this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
+				this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(key));
+				this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], key);
+				//this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
+				//this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
 			}
 			this->buttons[this->keybindPollingId]->resetColor();
 			this->keybindPollingId = -1;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GameObject.h"
 #include "MenuButton.h"
 #include "Gauss.h"
 #include "KeyManager.h"
+#include "KeyMouseBoard.h"
 
 class KeyBindingMenu
 {
@@ -20,6 +20,7 @@ private:
 	float pressTime;
 	float keyTimeMax;
 	float keyTime;
+
 
 	Font font;
 	Text lastChangeText;
