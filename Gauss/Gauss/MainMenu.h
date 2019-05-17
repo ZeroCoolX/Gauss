@@ -21,12 +21,19 @@ private:
 	Font font;
 	Texture backgroundTexture;
 	RectangleShape background;
+
+	Texture infoPanelTextures[4];
+	Sprite infoPanel;
+	int currentInfoPanel;
+
 	RenderWindow *window;
 
 	// MOUSE 
 	Vector2i mousePosWindow;
 	Vector2f mousePosWorld;
 	Vector2i mousePosGrid;
+
+	void _cycleInfoPanel();
 
 public:
 	MainMenu(Font &font, RenderWindow *window);
@@ -70,7 +77,15 @@ public:
 		BTN_EXIT,
 		BTN_TUTORIAL,
 		BTN_KEYBIND,
-		BTN_SHIPBAY
+		BTN_SHIPBAY,
+		BTN_INFO_CYCLE
+	};
+
+	enum InfoPanels {
+		PROMO = 0,
+		POWERUPS,
+		UPGRADES,
+		ENEMIES
 	};
 };
 

@@ -18,16 +18,19 @@ void MenuButton::InitTextures() {
 	MenuButton::textures.Add(temp);
 	temp.loadFromFile("Textures/Buttons/button02_sm.png");
 	MenuButton::textures.Add(temp);
+	temp.loadFromFile("Textures/Buttons/button01.png");
+	MenuButton::textures.Add(temp);
 
 	MenuButton::numOfTextures = MenuButton::textures.Size();
 }
 
 MenuButton::MenuButton(int id,
 	Font &font,
-	std::string text, 
+	std::string text,
 	const unsigned int charSize,
-	Vector2f pos, 
-	int textureIndex)
+	Vector2f pos,
+	int textureIndex,
+	bool locked)
 {
 	this->ID = id;
 
@@ -42,6 +45,7 @@ MenuButton::MenuButton(int id,
 	this->colorHover = Color(255, 255, 255, 240);
 	this->colorPressed = Color(50, 50, 50, 240);
 
+	this->locked = locked;
 	this->idle = true;
 	this->hovering = false;
 	this->pressing = false;
@@ -67,6 +71,11 @@ MenuButton::~MenuButton()
 }
 
 void MenuButton::Update(Vector2f mousePos) {
+	if (this->locked) {
+		this->sprite.setColor(this->colorPressed);
+		return;
+	}
+
 	// Set Idle state
 	this->idle = !this->sprite.getGlobalBounds().contains(mousePos);
 

@@ -6,6 +6,7 @@ MainMenu::MainMenu(Font &font, RenderWindow *window)
 	this->pressTimeMax = 10.f;
 	this->pressTime = this->pressTimeMax;
 	this->active = true;
+	this->currentInfoPanel = 0;
 	this->font = font;
 	this->window = window;
 	this->Init();
@@ -23,19 +24,32 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(150.f, 350.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 450.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(150.f, 550.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(150.f, 650.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(150.f, 750.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(150.f, 850.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(150.f, 950.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(100.f, 350.f), 0));
+	//this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 450.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Campaign under construction", 18, Vector2f(250.f, 450.f), 3, true));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(250.f, 550.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(250.f, 650.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(100.f, 750.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(100.f, 850.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(100.f, 950.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE, this->font, "More Info", 18, Vector2f((this->window->getSize().x / 2.f) + 430, 1000.f), 5));
 }
 
 void MainMenu::InitBackground() {
 	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
 	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/background.png");
 	this->background.setTexture(&this->backgroundTexture);
+
+	this->infoPanelTextures[InfoPanels::PROMO].loadFromFile("Textures/Backgrounds/UI/InfoPanels/promo.png");
+	this->infoPanelTextures[InfoPanels::POWERUPS].loadFromFile("Textures/Backgrounds/UI/InfoPanels/powerups.png");
+	this->infoPanelTextures[InfoPanels::UPGRADES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/upgrades.png");
+	this->infoPanelTextures[InfoPanels::ENEMIES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/enemies.png");
+	this->infoPanel.setTexture(this->infoPanelTextures[this->currentInfoPanel]);
+	this->infoPanel.setOrigin(
+		this->infoPanel.getGlobalBounds().width / 2,
+		this->infoPanel.getGlobalBounds().height / 2
+	);
+	this->infoPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) + 500, (this->window->getSize().y / 2.f) + 50.f));
 }
 
 void MainMenu::Update(const float &dt) {
@@ -56,9 +70,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 				case MainMenu::BTN_TUTORIAL:
 					this->playTutorial = true;
 					return;
-				case MainMenu::BTN_CAMPAIGN:
-					this->playCampaign = true;
-					return;
+				//case MainMenu::BTN_CAMPAIGN:
+				//	this->playCampaign = true;
+				//	return;
 				case MainMenu::BTN_INFINITE:
 					this->playInfinite = true;
 					return;
@@ -70,6 +84,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 					return;
 				case MainMenu::BTN_SHIPBAY:
 					this->enterShipBay = true;
+					return;
+				case MainMenu::BTN_INFO_CYCLE:
+					this->_cycleInfoPanel();
 					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
@@ -112,6 +129,8 @@ void MainMenu::UpdateMousePosition() {
 void MainMenu::Draw(RenderTarget &renderTarget) {
 	this->DrawBackground(renderTarget);
 	this->DrawButtons(renderTarget);
+
+	renderTarget.draw(this->infoPanel);
 }
 
 void MainMenu::DrawButtons(RenderTarget &renderTarget) {
@@ -134,5 +153,10 @@ void MainMenu::Reset() {
 	this->changeKeybind = false;
 	this->enterShipBay = false;
 	this->pressTime = 0.f;
+}
+
+void MainMenu::_cycleInfoPanel() {
+	this->currentInfoPanel = (this->currentInfoPanel + 1) % 4;
+	this->infoPanel.setTexture(this->infoPanelTextures[this->currentInfoPanel]);
 }
 

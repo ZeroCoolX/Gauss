@@ -10,6 +10,7 @@ private:
 	Sprite sprite;
 	Text text;
 
+	bool locked;
 	bool idle;
 	bool pressing;
 	bool hovering;
@@ -22,11 +23,12 @@ private:
 public:
 	MenuButton(
 		int id,
-		Font &font, 
-		std::string text, 
+		Font &font,
+		std::string text,
 		const unsigned int charSize,
-		Vector2f pos, 
-		int textureIndex);
+		Vector2f pos,
+		int textureIndex,
+		bool locked = false);
 
 	virtual ~MenuButton();
 
