@@ -18,7 +18,7 @@ public:
 
 		// STATS
 		this->damageRange = Vector2i(2, 1);
-		this->hpMax = (rand() % 4 + 2) * playerLvlScaleFactor;
+		this->hpMax = (rand() % 15 + 5) * playerLvlScaleFactor;
 		this->hp = this->hpMax;
 
 		this->InitSpritePoisition(view, forcedPosition);

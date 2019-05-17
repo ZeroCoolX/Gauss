@@ -348,7 +348,6 @@ bool Stage::LoadStage(std::string filename, View &view) {
 		}
 
 		successLoading = true;
-		std::cout << "Success loading" << std::endl;
 	}
 	else {
 		std::cout << "File failed to open " << std::endl;

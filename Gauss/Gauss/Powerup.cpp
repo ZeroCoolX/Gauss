@@ -33,7 +33,6 @@ void Powerup::Draw(RenderTarget &renderTarget) {
 }
 
 void Powerup::Consume(dArr<TextTag> &tags, Font *font, Player *player) {
-	std::cout << "Powerup acquired" << std::endl;
 	switch (this->type) {
 		case RF:
 			player->enablePowerupRF();

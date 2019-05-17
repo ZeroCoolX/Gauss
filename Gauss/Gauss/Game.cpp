@@ -515,8 +515,10 @@ void Game::UpdateKeybindingMenu(const float &dt, const Event *event) {
 
 void Game::UpdateGameOverMenu(const float &dt) {
 	this->gameOverMenu->Update(dt);
+	this->window->setMouseCursorVisible(true);
 
 	if (this->gameOverMenu->onRedeployPress()) {
+		this->window->setMouseCursorVisible(false);
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->gameOverMenu->Reset();
 		this->_redeploy();
@@ -524,6 +526,7 @@ void Game::UpdateGameOverMenu(const float &dt) {
 			this->gameMusicSelection = rand() % 3 + 2;
 		}
 		this->audioManager->PlayMusic(this->gameMusicSelection);
+		this->paused = false;
 	}
 	else if (this->gameOverMenu->onMenuPress()) {
 		this->window->setMouseCursorVisible(true);
@@ -579,6 +582,7 @@ void Game::UpdateTimersUnpaused(const float &dt) {
 		this->killboxTimer = 0.f;
 		this->killboxAdder = 0;
 		this->killboxMultiplier = 1;
+		this->killboxAdderMax = 10;
 	}
 }
 
@@ -974,16 +978,16 @@ void Game::UpdateMap(const float &dt) {
 
 void Game::UpdateScoreUI() {
 	this->scoreText.setString(
-		this->_getPlayerLivesText() +
-		+ "\nScore: " + std::to_string(this->totalScore)
+		//this->_getPlayerLivesText() +
+		+"Score: " + std::to_string(this->totalScore)
 		+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
 		+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
 		+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
 		+ "\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
-		+ "\nKillbox Seconds Remaining: " + std::to_string((int)this->killboxTimer) + "s"
-		+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds())
-		+ "\nDifficulty: " + std::to_string(this->difficulty)
-		+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
+		+ "\nSeconds Remaining to get a kill: " + std::to_string((int)this->killboxTimer) + "s"
+		+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds()));
+		//+ "\nDifficulty: " + std::to_string(this->difficulty)
+		//+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
 }
 
 void Game::UpdateEnemySpawns(const float &dt) {
@@ -1222,6 +1226,7 @@ void Game::UpdateEnemies(const float &dt) {
 					// Collision resets the perfection streak
 					this->killPerfectionAdder = 0;
 					this->killPerfectionMultiplier = 1;
+					this->killPerfectionAdderMax = 15;
 
 					currentEnemy->Collision();
 
@@ -1564,9 +1569,10 @@ void Game::ToggleFullscreen() {
 void Game::PauseGame() {
 	if (Keyboard::isKeyPressed(Keyboard::BackSpace) && this->keyTime >= this->keyTimeMax) {
 		this->paused = !this->paused;
+		this->window->setMouseCursorVisible(this->paused);
 		this->keyTime = 0.f;
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::Escape) && this->keyTime >= this->keyTimeMax) {
+	else if (this->paused && Keyboard::isKeyPressed(Keyboard::Escape) && this->keyTime >= this->keyTimeMax) {
 		this->window->setMouseCursorVisible(true);
 		this->paused = true;
 		this->keyTime = 0.f;
