@@ -1852,19 +1852,19 @@ void Game::_setPlayerLives() {
 
 void Game::_refreshPauseControlText() {
 	std::string ctrlText = "[PLAYER CONTROLS]\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_UP]) + ": \tUP\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_DOWN]) + ": \tDOWN\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_LEFT]) + ": \tLEFT\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_RIGHT]) + ": \tRIGHT\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_FIRE]) + ": \tLASER\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_GAUSSCANNON]) + ": \tMAC\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_SHIELD]) + ": \tSHIELD\n";
-	ctrlText += KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_TOGGLE_STATS]) + ": \tSTATS\n";
+	ctrlText += "UP: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_UP]) + "\n";
+	ctrlText += "DOWN: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_DOWN]) + "\n";
+	ctrlText += "LEFT: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_LEFT]) + "\n";
+	ctrlText += "RIGHT: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_RIGHT]) + "\n";
+	ctrlText += "LASER: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_FIRE]) + "\n";
+	ctrlText += "MAC: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_GAUSSCANNON]) + "\n";
+	ctrlText += "SHIELD: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_SHIELD]) + "\n";
+	ctrlText += "STATS: " + KeyManager::KeyName((*(this->players[0].getControls()))[Player::CONTROL_TOGGLE_STATS]) + "\n";
 	ctrlText += "\n";
 
 	ctrlText += "[GAME CONTROL]\n";
-	ctrlText += "BACKSPACE: \tPAUSE/CONTROLS\n";
-	ctrlText += "ESC: \tBACK TO MENU\n";
+	ctrlText += "PAUSE/CONTROLS: Backspace Key\n";
+	ctrlText += "BACK TO MENU: Escape Key\n";
 	ctrlText += "\n";
 
 	ctrlText += "[HUD HELP]\n";
