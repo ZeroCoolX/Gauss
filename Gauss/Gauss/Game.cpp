@@ -296,6 +296,12 @@ void Game::UpdateView(const float &dt) {
 }
 
 void Game::Update(const float &dt, const Event *event) {
+	// Keytime update
+	this->UpdateTimers(dt);
+
+	// Fullscreen check
+	this->ToggleFullscreen();
+
 	// Check for main menu actions
 	if (this->mainMenu->isActive()) {
 		this->UpdateMainMenu(dt);
@@ -317,12 +323,6 @@ void Game::Update(const float &dt, const Event *event) {
 	if (this->gameMode == Mode::TUTORIAL) {
 		this->UpdateTutorial(dt);
 	}
-
-	// Keytime update
-	this->UpdateTimers(dt);
-
-	// Fullscreen check
-	this->ToggleFullscreen();
 
 	// Pause check
 	this->PauseGame();
@@ -996,17 +996,19 @@ void Game::UpdateMap(const float &dt) {
 }
 
 void Game::UpdateScoreUI() {
-	this->scoreText.setString(
-		(this->gameMode != Mode::CAMPAIGN ? this->_getPlayerLivesText() + "\n" : "")
-		+ "Score: " + std::to_string(this->totalScore)
-		+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
-		+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
-		+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
-		+ "\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
-		+ "\nSeconds Remaining to get a kill: " + std::to_string((int)this->killboxTimer) + "s"
-		+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds()));
-		//+ "\nDifficulty: " + std::to_string(this->difficulty)
-		//+ "\nBest Score/Second: " + std::to_string(this->bestScorePerSecond));
+	if (this->gameMode == Mode::CAMPAIGN) {
+		this->scoreText.setString(this->_getPlayerLivesText());
+	}
+	else {
+		this->scoreText.setString(
+			+"Score: " + std::to_string(this->totalScore)
+			+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
+			+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
+			+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
+			+ "\nKillbox Kills / Next: " + std::to_string(this->killboxAdder) + " / " + std::to_string(this->killboxAdderMax)
+			+ "\nSeconds Remaining to get a kill: " + std::to_string((int)this->killboxTimer) + "s"
+			+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds()));
+	}
 }
 
 void Game::UpdateEnemySpawns(const float &dt) {
@@ -1906,6 +1908,7 @@ void Game::_refreshPauseControlText() {
 	ctrlText += "[GAME CONTROL]\n";
 	ctrlText += "PAUSE/CONTROLS: Backspace Key\n";
 	ctrlText += "BACK TO MENU: Escape Key\n";
+	ctrlText += "FULL SCREEN: F11 Key\n";
 	ctrlText += "\n";
 
 	ctrlText += "[HUD HELP]\n";

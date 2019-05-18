@@ -18,6 +18,7 @@ KeyBindingMenu::KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *key
 	this->lastChangeText.setCharacterSize(25);
 	this->lastChangeText.setFillColor(Color::White);
 	this->lastChangeText.setString("Press a control button then press a KEY or MOUSE button to bind");
+	this->lastChangeText.setPosition(Vector2f(425.f - (this->lastChangeText.getGlobalBounds().width / 2.f), 950.f));
 
 	this->Init();
 }
@@ -126,6 +127,7 @@ void KeyBindingMenu::UpdateButtons(const float &dt) {
 			if (this->keybindPolling) {
 				this->buttons[i]->changeColor(Color::Red);
 				this->lastChangeText.setString("Press a KEY or MOUSE button to bind");
+				this->lastChangeText.setPosition(Vector2f(425.f - (this->lastChangeText.getGlobalBounds().width / 2.f), 950.f));
 			}
 			else {
 				this->buttons[i]->resetColor();
