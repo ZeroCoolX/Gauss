@@ -191,8 +191,8 @@ private:
 	int damageMax;
 
 	// SCORE STATS
-	int score;
-	int enemiesKilled;
+	unsigned long int score;
+	unsigned long int enemiesKilled;
 	int highestLevelAchieved;
 	float totalSecondsAlive;
 
@@ -260,6 +260,8 @@ public:
 		this->setupPowerupSprite();
 	}
 	inline void enablePowerupAbsorb() {
+		this->powerupGrind = false;
+		this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 		this->powerupAbsorb = true;
 		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[2]);
 		this->aura.setTexture(Player::shipAuraTextures[Auras::ABSORB]);
@@ -268,6 +270,7 @@ public:
 	inline void enablePowerupGrind() {
 		// Start looping the idle sound for duration of powerup
 		this->audioManager->PlaySound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
+		this->powerupAbsorb = false;
 		this->powerupGrind = true;
 		this->powerupSprite.setTexture(Player::powerupIndicatorTextures[3]);
 		this->aura.setTexture(Player::shipAuraTextures[Auras::GRIND]);
@@ -284,6 +287,7 @@ public:
 		this->powerupSprite.setScale(0.3f, 0.3f);
 		this->powerupSprite.setOrigin(this->powerupSprite.getGlobalBounds().width / 2, this->powerupSprite.getGlobalBounds().height / 2);
 	}
+
 	inline const bool isAnyPowerupActive() const { return (this->powerupRF || this->powerupXP || this->powerupAbsorb || this->powerupGrind || this->powerupPiercingShot); }
 	inline bool getPowerupXP() const { return this->powerupXP; }
 	inline bool getPowerupPiercingShot() const { return this->powerupPiercingShot; }

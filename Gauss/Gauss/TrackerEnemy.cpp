@@ -1,5 +1,5 @@
 #include "TrackerEnemy.h"
-
+#include "MathUtil.h"
 
 
 TrackerEnemy::~TrackerEnemy()
@@ -24,7 +24,7 @@ void TrackerEnemy::Update(const float &dt, Vector2f target) {
 		// Normalize direction
 		this->normalizedMoveDirection = this->normalize(this->moveDirection, this->vectorLength(this->moveDirection));
 		// Angle needed to go from current facing dir to face player
-		float angle = atan2(this->normalizedMoveDirection.y, this->normalizedMoveDirection.x) * 180.f / 3.14159265359f + 180.f; // TODO: DEFINE PI
+		float angle = atan2(this->normalizedMoveDirection.y, this->normalizedMoveDirection.x) * 180.f / MathUtil::PI + 180.f; // TODO: DEFINE PI
 		// Rotate
 		this->sprite.setRotation(angle);
 		adjustedMoveSpeed = this->moveSpeed * 0.75f;

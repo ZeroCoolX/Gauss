@@ -39,7 +39,7 @@ private:
 	struct Leaderboard {
 	public:
 		int id;
-		int score;
+		unsigned long int score;
 		inline bool operator== (const Leaderboard &i)
 		{
 			if (this == nullptr) return false;
@@ -82,7 +82,7 @@ private:
 	// Score
 	Clock scoreTimer;
 	int scoreTime;
-	unsigned totalScore;
+	unsigned long int totalScore;
 	// Increasingly massive multiplier for killing enemies without ever taking damage
 	// Effects the score AFTER the killbox multiplier has been applied
 	// It resets on any damage taken
@@ -152,7 +152,7 @@ private:
 	void _spawnEnemy(int enemyType, int velocity = -1, Vector2f position = Vector2f(0.f, 0.f));
 	std::string _getPlayerLivesText();
 	void _redeploy();
-	int _calculateScore(PlayerScore &playerScore);
+	unsigned long int _calculateScore(PlayerScore &playerScore);
 	void _sortLeaderboard(LeaderboardIndex leadIndex);
 	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score);
 	void _storeLeaderboard(LeaderboardIndex leadIndex, std::string filename);

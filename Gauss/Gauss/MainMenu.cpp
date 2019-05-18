@@ -26,7 +26,7 @@ void MainMenu::InitButtons() {
 
 	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(100.f, 350.f), 0));
 	//this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(150.f, 450.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Campaign under construction", 18, Vector2f(250.f, 450.f), 3, true));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Campaign under construction", 18, Vector2f(250.f, 450.f), 3, false));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(250.f, 550.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(250.f, 650.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(100.f, 750.f), 0));
@@ -70,9 +70,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 				case MainMenu::BTN_TUTORIAL:
 					this->playTutorial = true;
 					return;
-				//case MainMenu::BTN_CAMPAIGN:
-				//	this->playCampaign = true;
-				//	return;
+				case MainMenu::BTN_CAMPAIGN:
+					this->playCampaign = true;
+					return;
 				case MainMenu::BTN_INFINITE:
 					this->playInfinite = true;
 					return;

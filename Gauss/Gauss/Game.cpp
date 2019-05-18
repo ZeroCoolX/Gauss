@@ -367,7 +367,9 @@ void Game::Update(const float &dt, const Event *event) {
 
 		// Activate the game over screen if it's not already turned on
 		if (!this->gameOverMenu->isActive()) {
-			this->audioManager->PlaySound(AudioManager::AudioSounds::GAME_OVER);
+			if (this->gameMode != Mode::CAMPAIGN) {
+				this->audioManager->PlaySound(AudioManager::AudioSounds::GAME_OVER);
+			}
 			// This is just in case you die with the grinder on...otherwise it plays into the menu
 			this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 			this->audioManager->StopMusic(this->gameMusicSelection);
@@ -749,7 +751,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						this->killPerfectionAdder++;
 
 						// Total Score = (EnemyMaxHp + (EnemyMaxHp * KillboxMultiplier)) * PerfectionMultiplier 
-						int score = (currentEnemy->getHpMax() + (currentEnemy->getHpMax() * this->killboxMultiplier)) * this->killPerfectionMultiplier;
+						int score = (currentEnemy->getHpMax() * this->killboxMultiplier) * this->killPerfectionMultiplier;
 						currentPlayer.gainScore(score);
 
 						// Score text tag
@@ -797,10 +799,18 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						int dropChance = rand() % 100 + 1;
 						int uType = 0;
 						int consumableType = rand() % 9 + 1;
+
+						const int upgradeDropChance = 85 + (currentPlayer.getGunLevel() * 5); // 15%, 10%, 5%
+						const int itemDropChance = 50; // always 50/50 chance to drop health
+						const int powerupDropChance = (
+							currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER ? 75 
+							: currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER ? 85 
+							: 96); // 25%, 15%, 3%
+
 						switch (consumableType) {
 						case 1: case 2: case 3:
 						{
-							if (dropChance > 85) { // 10% chance for an upgrade
+							if (dropChance > upgradeDropChance) { // chance for an upgrade
 
 								// Only drop an upgrade we don't have - otherwise randomly choose stat point upgrade, or health
 								uType = rand() % ItemUpgrade::numberOfUpgrades;
@@ -814,10 +824,11 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 
 								// Want to make it really hard to get double and triple ray upgrades
 								if (uType == ItemUpgrade::Type::DOUBLE_RAY) {
-									if (currentPlayer.getLevel() >= 6 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER) {
+									if (!(currentPlayer.getLevel() >= 10 && currentPlayer.getGunLevel() == Player::LaserLevels::DEFAULT_LASER)) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 30) {
-											// Spawn random powerup instead
+
+										// Chance to spawn random powerup instead
+										if (dropChance > powerupDropChance) {
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
 												currentEnemy->getPosition(),
@@ -825,16 +836,17 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 												300.f));
 											break;
 										}
-									}
-									else {
-										uType = rand() % 3;
+										else {
+											uType = rand() % 3;
+										}
 									}
 								}
 								if (uType == ItemUpgrade::Type::TRIPLE_RAY) {
-									if (currentPlayer.getLevel() >= 10 && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER) {
+									if (!(currentPlayer.getLevel() >= 18 && currentPlayer.getGunLevel() == Player::LaserLevels::LEVEL_2_LASER)) {
 										dropChance = rand() % 100 + 1;
-										if (dropChance < 30) {
-											// Spawn random powerup instead
+
+										// Chance to spawn random powerup instead
+										if (dropChance > powerupDropChance) {
 											uType = rand() % Powerup::numberOfPowerups;
 											this->consumables.Add(new Powerup(
 												currentEnemy->getPosition(),
@@ -842,9 +854,9 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 												300.f));
 											break;
 										}
-									}
-									else {
-										uType = rand() % 3;
+										else {
+											uType = rand() % 3;
+										}
 									}
 								}
 
@@ -857,7 +869,7 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 						}
 						case 4: case 5:
 						{
-							if (dropChance > 50) { // 50% chance health is dropped
+							if (dropChance > itemDropChance) { // chance health is dropped
 								this->consumables.Add(new ItemPickup(
 									currentEnemy->getPosition(),
 									ItemPickup::HEALTH, // health item for now
@@ -865,10 +877,19 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 							}
 							break;
 						}
-						case 6: case 7: case 8: case 9:
+						case 6: case 7: case 8: case 9: // chance for a powerup
 						{
 							uType = rand() % Powerup::numberOfPowerups;
-							if (dropChance > 78) { // 20% chance powerup is dropped
+							if (dropChance > powerupDropChance) { // 25% chance powerup is dropped
+								if (uType == Powerup::GRIND && currentPlayer.getPowerupGrind() || 
+									uType == Powerup::ABSORB && currentPlayer.getPowerupAbsorb()) {
+									uType = rand() % 3;
+								}
+								else if (uType == Powerup::GRIND || uType == Powerup::ABSORB) {
+									if (dropChance < (powerupDropChance + 5)) { // make it slightly harder to get the grinder and absorber
+										break;
+									}
+								}
 								this->consumables.Add(new Powerup(
 									currentEnemy->getPosition(),
 									uType,
@@ -892,8 +913,6 @@ void Game::UpdatePlayerBullets(const float &dt, Player &currentPlayer) {
 					else if (currentPlayer.getPowerupPiercingShot()) {
 						// Move to the end of the sprite it hit so that there is only a single point of damage calculation
 						currentPlayer.BulletAt(j).setPosition(Vector2f(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width + 1.f, currentPlayer.BulletAt(j).getPosition().y));
-						std::cout << "Current enemy position far right x = " << std::to_string(currentEnemy->getPosition().x + currentEnemy->getGlobalBounds().width) << std::endl;
-						std::cout << "Bullet position.x = " << std::to_string(currentPlayer.BulletAt(j).getPosition().x) << std::endl;
 					}
 					break;
 				}
@@ -978,8 +997,8 @@ void Game::UpdateMap(const float &dt) {
 
 void Game::UpdateScoreUI() {
 	this->scoreText.setString(
-		//this->_getPlayerLivesText() +
-		+"Score: " + std::to_string(this->totalScore)
+		(this->gameMode != Mode::CAMPAIGN ? this->_getPlayerLivesText() + "\n" : "")
+		+ "Score: " + std::to_string(this->totalScore)
 		+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
 		+ "\nPerfect Kills / Next: " + std::to_string(this->killPerfectionAdder) + " / " + std::to_string(this->killPerfectionAdderMax)
 		+ "\nKill Mult: x" + std::to_string(killboxMultiplier)
@@ -1420,9 +1439,19 @@ void Game::UpdateParticles(const float &dt) {
 	{
 		this->particles[i].Update(dt);
 
+		// lifetime check
 		if (this->particles[i].canDelete()) {
 			this->particles.Remove(i);
 			continue;
+		}
+
+		// Window bounds check
+		if (this->particles[i].getPosition().x > (this->mainView.getCenter().x + (this->mainView.getSize().x / 2))
+			|| this->particles[i].getPosition().y > (this->mainView.getCenter().y + (this->mainView.getSize().y / 2))
+			|| this->particles[i].getPosition().x <= this->mainView.getCenter().x - (this->mainView.getSize().x / 2)
+			|| this->particles[i].getPosition().y <= this->mainView.getCenter().y - (this->mainView.getSize().y / 2)) {
+			this->particles.Remove(i);
+			break;
 		}
 	}
 }
@@ -1569,6 +1598,12 @@ void Game::ToggleFullscreen() {
 void Game::PauseGame() {
 	if (Keyboard::isKeyPressed(Keyboard::BackSpace) && this->keyTime >= this->keyTimeMax) {
 		this->paused = !this->paused;
+		if (this->paused) {
+			this->audioManager->PauseMusic(this->gameMusicSelection);
+		}
+		else {
+			this->audioManager->UnpauseMusic(this->gameMusicSelection);
+		}
 		this->window->setMouseCursorVisible(this->paused);
 		this->keyTime = 0.f;
 	}
@@ -1599,7 +1634,7 @@ void Game::DisplayGameEnd() {
 
 	while (it != this->playerScoreMap.end()) {
 		// calculate the final player score
-		const int finalPlayerScore = this->_calculateScore(it->second);
+		const unsigned long int finalPlayerScore = this->_calculateScore(it->second);
 		
 		// insert it into the leaderboard if possible
 	   this->_insertLeaderboardEntry(leadIndex, it->first,finalPlayerScore);
@@ -1726,9 +1761,9 @@ void Game::_sortLeaderboard(LeaderboardIndex leadIndex) {
 		}
 }
 
-int Game::_calculateScore(PlayerScore &playerScore) {
+unsigned long int Game::_calculateScore(PlayerScore &playerScore) {
 	// total score + enemies killed per second over lifetime + score per second over lifetime
-	return static_cast<int>(playerScore.getScore() + (static_cast<float>(playerScore.getEnemiesKilled()) / playerScore.getSecondsSurvived()) + (static_cast<float>(totalScore) / playerScore.getSecondsSurvived()) + (playerScore.getHighestLevelAchieved() * 10));
+	return static_cast<unsigned long int>(playerScore.getScore() + (static_cast<float>(playerScore.getEnemiesKilled()) / playerScore.getSecondsSurvived()) + (static_cast<float>(totalScore) / playerScore.getSecondsSurvived()) + (playerScore.getHighestLevelAchieved() * 10));
 }
 
 void Game::_spawnEnemy(int enemyType, int forcedVelocity, Vector2f position) {

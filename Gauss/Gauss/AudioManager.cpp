@@ -39,17 +39,17 @@ AudioManager::AudioManager()
 	this->musicContainer.Add(new Music());
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->setLoop(true);
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->setVolume(25.f);
-	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->openFromFile("Audio/Music/infinite_cosmos_01.ogg");
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_01]->openFromFile("Audio/Music/infinite_cosmos_01-trimmed.ogg");
 
 	this->musicContainer.Add(new Music());
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->setLoop(true);
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->setVolume(25.f);
-	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->openFromFile("Audio/Music/infinite_cosmos_02.ogg");
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_02]->openFromFile("Audio/Music/infinite_cosmos_02-trimmed.ogg");
 
 	this->musicContainer.Add(new Music());
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->setLoop(true);
 	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->setVolume(25.f);
-	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->openFromFile("Audio/Music/infinite_cosmos_03.ogg");
+	this->musicContainer[AudioManager::AudioMusic::INF_COS_03]->openFromFile("Audio/Music/infinite_cosmos_03-trimmed.ogg");
 }
 
 
@@ -85,4 +85,14 @@ void AudioManager::PlayMusic(int mIndex) {
 
 void AudioManager::StopMusic(int mIndex) {
 	this->musicContainer[mIndex]->stop();
+}
+
+void AudioManager::PauseMusic(int mIndex) {
+	this->musicContainer[mIndex]->pause();
+}
+
+void AudioManager::UnpauseMusic(int mIndex) {
+	if (this->musicContainer[mIndex]->getStatus() == Music::Paused) {
+		this->musicContainer[mIndex]->play();
+	}
 }

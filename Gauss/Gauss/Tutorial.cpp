@@ -77,7 +77,7 @@ void Tutorial::InitTexts() {
 
 	// TutorialStage::LASER
 	tempText.Add("Well done comrad. Mastering the movement controls of your Gauss will give you that extra edge in battle that might save your life one day.");
-	tempText.Add("Remember that TAPPING (wasd) vs HOLDING (wasd) will yield difference accelerations.");
+	tempText.Add("Remember that TAPPING (moement) vs HOLDING (movement) will yield difference accelerations.");
 	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
 	tempText.Add("Your Gauss is equipped with an electro magnetic laser as its main fire mode");
 	tempText.Add("This laser is your most reliable way to cleanup the universe of alien scum.");
@@ -96,7 +96,7 @@ void Tutorial::InitTexts() {
 	tempText.Clear();
 
 	// TutorialStage::SHIELD
-	tempText.Add("WOOOhhoo I could feel the power of that shot from all the way up here in!");
+	tempText.Add("WOOOhhoo I could feel the power of that shot from all the way up here!");
 	tempText.Add("The MAC will plow through multiple enemies so use it when you're in a tight spot or want to completely clear the area in front of you.");
 	tempText.Add("The Gauss is also equipped with a deflector shield.");
 	tempText.Add("This shield will REFLECT enemy projectiles and minimize the damage done to head on collisions.");
@@ -144,11 +144,11 @@ void Tutorial::InitTexts() {
 	tempText.Clear();
 
 	// TutorialStage::TUTORIAL_OVER
-	tempText.Add("Alright soldier, time to cut the chit-chat and get out there!");
 	tempText.Add("Just remember these few key battle tips...");
 	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
 	tempText.Add("Leveling up refills your Gauss's health so if you're going down on health, go up on killing!");
 	tempText.Add("Lastly, don't forget to use the reflect shield to reflect enemy projectiles, and to give you some extra buffer if enemy collision is inevitable.");
+	tempText.Add("Alright soldier, time to cut the chit-chat and get out there!");
 	this->dialogTexts.Add(tempText);
 }
 

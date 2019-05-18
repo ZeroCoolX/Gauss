@@ -23,9 +23,9 @@ public:
 	enum PowerupTypes { 
 		RF = 0, 
 		XP2,
+		PIERCE,
 		ABSORB,
-		GRIND,
-		PIERCE
+		GRIND
 	};
 
 	static dArr<Texture> powerupTextures;

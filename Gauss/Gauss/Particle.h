@@ -24,6 +24,7 @@ class Particle {
 		~Particle();
 
 		inline bool canDelete() const { return this->lifetime <= 0.f; }
+		inline const Vector2f& getPosition() const { return this->sprite.getPosition(); }
 		// Vector Utility
 		inline float vectorLength(Vector2f v) { return sqrt(pow(v.x, 2) + pow(v.y, 2)); }
 		inline Vector2f normalize(Vector2f v, float length) {

@@ -80,5 +80,7 @@ public:
 	void StopSound(AudioSounds sIndex);
 	void PlayMusic(int mIndex);
 	void StopMusic(int mIndex);
+	void PauseMusic(int mIndex);
+	void UnpauseMusic(int mIndex);
 };
 
