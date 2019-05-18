@@ -17,7 +17,7 @@ KeyBindingMenu::KeyBindingMenu(Font &font, RenderWindow *window, KeyManager *key
 	this->lastChangeText.setFont(this->font);
 	this->lastChangeText.setCharacterSize(25);
 	this->lastChangeText.setFillColor(Color::White);
-	this->lastChangeText.setString("");
+	this->lastChangeText.setString("Press a control button then press a KEY or MOUSE button to bind");
 
 	this->Init();
 }
@@ -88,7 +88,6 @@ void KeyBindingMenu::UpdateKeybindPolling(const float &dt, const Event *event) {
 			const int key = KeyMouseBoard::key(event);
 
 			if (KeyManager::KeyName(key) == "UNSUPPORTED") {
-			//if (KeyManager::KeyName(event->key.code) == "UNSUPPORTED") {
 				this->lastChangeText.setString("There is no supported key mapping for that key");
 			}
 			else {
@@ -96,8 +95,6 @@ void KeyBindingMenu::UpdateKeybindPolling(const float &dt, const Event *event) {
 				this->keyRefreshNeeded = true;
 				this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(key));
 				this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], key);
-				//this->buttons[this->keybindPollingId]->updateText(KeyManager::KeyName(event->key.code));
-				//this->keyManager->SetKey(0, this->buttonKeyNames[this->keybindPollingId], event->key.code);
 			}
 			this->buttons[this->keybindPollingId]->resetColor();
 			this->keybindPollingId = -1;
@@ -128,6 +125,7 @@ void KeyBindingMenu::UpdateButtons(const float &dt) {
 			this->keybindPolling = !this->keybindPolling;
 			if (this->keybindPolling) {
 				this->buttons[i]->changeColor(Color::Red);
+				this->lastChangeText.setString("Press a KEY or MOUSE button to bind");
 			}
 			else {
 				this->buttons[i]->resetColor();

@@ -56,5 +56,15 @@ public:
 	static int numOfTextures;
 
 	static void InitTextures();
+
+	enum ButtonTextures {
+		MAIN_MENU = 0,
+		INFINITE_INVASION,
+		COSMOS,
+		CAMPAIGN_LOSE,
+		MAIN_MENU_EXTRA_SM,
+		MAIN_MENU_SM,
+		UNCOLOURED
+	};
 };
 

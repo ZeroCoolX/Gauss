@@ -395,7 +395,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::CAMPAIGN;
 		this->mainMenu->Reset();
 		this->InitMap();
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN, MenuButton::ButtonTextures::CAMPAIGN_LOSE);
 		this->_setPlayerLives(); // lives = 3
 		this->paused = false;
 	}
@@ -409,7 +409,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::INFINTE;
 		this->mainMenu->Reset();
 		this->InitMap();
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE);
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::INFINTE, MenuButton::ButtonTextures::INFINITE_INVASION);
 		this->_setPlayerLives(); // lives = 1
 		this->paused = false;
 	}
@@ -423,7 +423,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::COSMOS;
 		this->mainMenu->Reset();
 		this->InitMap();
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS);
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::COSMOS, MenuButton::ButtonTextures::COSMOS);
 		this->_setPlayerLives(); // lives = 1
 		this->paused = false;
 	}
@@ -436,7 +436,7 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->gameMode = Mode::TUTORIAL;
 		this->mainMenu->Reset();
 		this->InitMap();
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);// Needs to be TUTORIAL
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN, MenuButton::ButtonTextures::CAMPAIGN_LOSE);// Needs to be TUTORIAL
 		this->_setPlayerLives(); // lives = 3 // Irrelevent for tutorial
 		this->paused = false;
 		this->tutorial->Activate();
@@ -638,7 +638,7 @@ void Game::UpdatePlayers(const float &dt) {
 			// Check for game over state
 			if (this->gameMode == Mode::CAMPAIGN && this->players[i].campaignLevelBeat()) {
 				this->campaignOver = true;
-				this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN_BEAT);
+				this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN_BEAT, MenuButton::ButtonTextures::MAIN_MENU);
 				this->players.Remove(i);
 				return;
 			}
@@ -1713,12 +1713,12 @@ void Game::_savePlayerShipPreferences() {
 }
 
 
-void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score) {
-	if (this->leaderboards[leadIndex].Size() == this->LEADERBOARD_MAX && score < this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
+void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, unsigned long int score) {
+	if (static_cast<int>(this->leaderboards[leadIndex].Size()) == this->LEADERBOARD_MAX && score < this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
 		return; 
 	}
 
-	if (this->leaderboards[leadIndex].Size() == this->LEADERBOARD_MAX && score >= this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
+	if (static_cast<int>(this->leaderboards[leadIndex].Size()) == this->LEADERBOARD_MAX && score >= this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
 		// Remove lowest
 		this->leaderboards[leadIndex].Remove(this->leaderboards[leadIndex].Size() - 1);
 	}
@@ -1822,7 +1822,7 @@ std::string Game::_getPlayerLivesText() {
 
 void Game::_redeploy() {
 	if (this->gameMode == Mode::CAMPAIGN) {
-		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN);
+		this->gameOverMenu->LoadGameOverBackground(GameOverMenu::Backgrounds::CAMPAIGN, MenuButton::ButtonTextures::CAMPAIGN_LOSE);
 		this->paused = false;
 	}
 	else {

@@ -62,7 +62,7 @@ public:
 	void DrawBackground(RenderTarget &renderTarget);
 
 	void Reset();
-	void LoadGameOverBackground(Backgrounds bIndex);
+	void LoadGameOverBackground(Backgrounds backgroundIndex, int buttonIndex);
 	void LoadButtons(int buttonTextureIndex);
 
 	dArr<MenuButton*> buttons;

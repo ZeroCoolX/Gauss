@@ -37,10 +37,10 @@ void GameOverMenu::LoadButtons(int buttonTextureIndex) {
 }
 
 
-void GameOverMenu::LoadGameOverBackground(Backgrounds bIndex) {
-	this->background.setTexture(&GameOverMenu::backgroundTextures[bIndex]);
+void GameOverMenu::LoadGameOverBackground(Backgrounds backgroundIndex, int buttonIndex) {
+	this->background.setTexture(&GameOverMenu::backgroundTextures[backgroundIndex]);
 	this->buttons.Clear();
-	LoadButtons((bIndex + 1) % MenuButton::numOfTextures);
+	LoadButtons(buttonIndex);
 }
 
 

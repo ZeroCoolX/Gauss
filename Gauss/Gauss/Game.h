@@ -154,7 +154,7 @@ private:
 	void _redeploy();
 	unsigned long int _calculateScore(PlayerScore &playerScore);
 	void _sortLeaderboard(LeaderboardIndex leadIndex);
-	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, int score);
+	void _insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, unsigned long int score);
 	void _storeLeaderboard(LeaderboardIndex leadIndex, std::string filename);
 	void _setPlayerLives();
 	void _loadPlayerShipPreferences();
