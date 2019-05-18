@@ -52,23 +52,23 @@ void Particle::Update(const float &dt) {
 		this->lifetime -= 1.f * dt * DeltaTime::dtMultiplier;
 
 		// Reduce the alpha over time
-		if (this->sprite.getColor().a > 0) {
-			this->sprite.setColor(Color(
-				this->color.r, 
-				this->color.g, 
-				this->color.b, 
-				this->sprite.getColor().a - 1) // TODO: this is not framerate independent
-			);
-			// Once it drops below 0 it goes above 255 because unsigned int
-			if (this->sprite.getColor().a > 255) {
-				this->sprite.setColor(Color(
-					this->color.r, 
-					this->color.g, 
-					this->color.b, 
-					0)
-				);
-			}
-		}
+		//if (this->sprite.getColor().a > 0) {
+		//	this->sprite.setColor(Color(
+		//		this->color.r, 
+		//		this->color.g, 
+		//		this->color.b, 
+		//		this->sprite.getColor().a - 1) // TODO: this is not framerate independent
+		//	);
+		//	// Once it drops below 0 it goes above 255 because unsigned int
+		//	if (this->sprite.getColor().a > 255) {
+		//		this->sprite.setColor(Color(
+		//			this->color.r, 
+		//			this->color.g, 
+		//			this->color.b, 
+		//			0)
+		//		);
+		//	}
+		//}
 		//Movement
 		// Slow down
 		this->velocity.x += this->deceleration * -this->dir.x * dt * DeltaTime::dtMultiplier;
