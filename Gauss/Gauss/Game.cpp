@@ -54,13 +54,17 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	// Init timers
 	this->enemySpawnTimerMax = 35.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
-	this->fullscreen = false;
+	this->fullscreen = true;
 	this->totalScore = 0;
 	this->scoreTimer.restart();
 	this->scoreTime = 0;
 	this->bestScorePerSecond = 0.0;
 	this->difficulty = 0;
 	this->difficultyTimer = 0;
+
+	// Player respawn timer
+	this->playerRespawnTimerMax = 200.f; // about 5 seconds
+	this->playerRespawnTimer = this->playerRespawnTimerMax;
 
 	// Init Game controls
 	this->paused = true;
@@ -211,6 +215,13 @@ void Game::InitUI() {
 	this->scoreText.setFillColor(Color(200, 200, 200, 150));
 	this->scoreText.setString("Score: 0");
 	this->scoreText.setPosition(10.f, 10.f);
+
+	// Pause Helper Text
+	this->pauseKeyHelperText.setFont(this->font);
+	this->pauseKeyHelperText.setCharacterSize(18);
+	this->pauseKeyHelperText.setFillColor(Color(255, 255, 255, 255));
+	this->pauseKeyHelperText.setString("[BACKSPACE] to pause");
+	this->pauseKeyHelperText.setPosition(10.f, (float)this->window->getSize().y - 25.f);
 }
 
 void Game::InitLeaderboards() {
@@ -330,8 +341,11 @@ void Game::Update(const float &dt, const Event *event) {
 	// Pause check
 	this->PauseGame();
 
+	// Respawn Pause Check
+	this->PausedForRespawn(dt);
+
 	// Update the world
-	if (!this->paused && this->playersExistInWorld()) {
+	if (!this->paused && !this->pausedForRespawn && this->playersExistInWorld()) {
 		// Update timers
 		this->UpdateTimersUnpaused(dt);
 
@@ -666,7 +680,26 @@ void Game::UpdatePlayers(const float &dt) {
 					this->players.Remove(i);
 					return;
 				}
-				this->players[i].ResetOnLifeLost(this->mainView);
+				// Indicate that a life was lost
+				this->textTags.Add(
+					TextTag(
+						&this->font,
+						this->players[0].getPosition(),
+						"LIFE DESTROYED", Color::Yellow,
+						Vector2f(1.f, 0.f),
+						35, 100.f, true
+					)
+				);
+
+				// Reset body and gun of the player  off screen to simulate the ship exploded
+				this->players[i].ResetPosition(Vector2f(-100.f, -100.f));
+
+				// Turn off any potential powerups
+				this->players[i].ResetPowerupsOnLifeLost();
+
+				// Pause briefly and take away a life badge
+				this->pausedForRespawn = true;
+				break;
 
 			}else if (this->players[i].isDead()) {
 				this->audioManager->PlaySound(AudioManager::AudioSounds::PLAYER_DEATH);
@@ -970,7 +1003,7 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 				&& currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
 				if (this->stage->getTiles()[i][j].isDamageType()) {
 					// Once touch and only death awaits
-					currentPlayer.TakeDamage(999);
+					currentPlayer.TakeDamage(static_cast<int>(currentPlayer.getHpMax() / 4));
 					// Explode into particles
 					const int nrOfPatricles = rand() % 20 + 5;
 					for (int m = 0; m < nrOfPatricles; m++)
@@ -982,6 +1015,8 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 							rand() % 30 + 1.f,
 							50.f));
 					}
+					// Not great but not all together aweful
+					currentPlayer.move(0.f, -currentPlayer.getNormDir().y * 100 * dt * DeltaTime::dtMultiplier);
 					return;
 				}
 				// Not great but not all together aweful
@@ -998,10 +1033,7 @@ void Game::UpdateMap(const float &dt) {
 }
 
 void Game::UpdateScoreUI() {
-	if (this->gameMode == Mode::CAMPAIGN) {
-		//this->scoreText.setString(this->_getPlayerLivesText());
-	}
-	else {
+	if (this->gameMode != Mode::CAMPAIGN) {
 		this->scoreText.setString(
 			+"Score: " + std::to_string(this->totalScore)
 			+ "\nPerfection Score Mult: x" + std::to_string(killPerfectionMultiplier)
@@ -1012,7 +1044,6 @@ void Game::UpdateScoreUI() {
 			+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds()));
 	}
 }
-
 
 void Game::UpdateEnemySpawns(const float &dt) {
 	// Safety check in case there are no more players in the world
@@ -1469,10 +1500,12 @@ void Game::DrawUI() {
 		this->window->draw(this->leaderboardText);
 	}
 	else {
+		this->window->draw(this->pauseKeyHelperText);
+
 		if (this->gameMode == Mode::COSMOS) {
 			this->window->draw(this->cosmoEffectText);
 		}
-		else if (this->gameMode == Mode::INFINTE || this->gameMode == Mode::CAMPAIGN) {
+		else if (this->gameMode == Mode::INFINTE) {
 			this->window->draw(this->scoreText);
 		}
 	}
@@ -1493,7 +1526,7 @@ void Game::DrawPlayerLivesUI() {
 		lives += this->players[i].getLives();
 	}
 
-	for (size_t i = 0; i < lives; i++)
+	for (int i = 0; i < lives; i++)
 	{
 		this->window->draw(this->playerLives[i]);
 	}
@@ -1642,6 +1675,41 @@ void Game::PauseGame() {
 			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
+	}
+}
+
+void Game::PausedForRespawn(const float &dt) {
+	if (this->pausedForRespawn) {
+
+		for (size_t i = 0; i < this->players.Size(); i++)
+		{
+			this->players[i].disableAllControls();
+		}
+
+		// UPDATE ENEMIES
+		this->UpdateEnemies(dt);
+
+		// Update Texttags
+		this->UpdateTextTags(dt);
+
+		// Update Particles 
+		this->UpdateParticles(dt);
+
+		if (this->playerRespawnTimer > 0.f) {
+			this->playerRespawnTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+		}
+		else {
+			this->pausedForRespawn = false;
+			this->playerRespawnTimer = this->playerRespawnTimerMax;
+
+			// Reeneable all the controls
+			for (size_t i = 0; i < this->players.Size(); i++)
+			{
+				this->players[i].ResetOnLifeLost(this->mainView);
+				this->players[i].enableAllControls();
+			}
+		}
+
 	}
 }
 

@@ -436,6 +436,7 @@ public:
 	bool PlayerShowStatsIsPressed();
 	std::string GetStatsAsString();
 	void ResetOnLifeLost(View &view);
+	void ResetPowerupsOnLifeLost();
 	void ActivateGameEnd(Vector2f pos);
 	void RefreshPlayerControls();
 

@@ -13,9 +13,9 @@ Text debugText;
 
 int main() {
 
-	srand(time(NULL));
+	//srand(time(NULL));
 
-	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Default);
+	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Fullscreen);
 	//window.setFramerateLimit(60);
 	Clock clock;
 	float dt = 0.f;

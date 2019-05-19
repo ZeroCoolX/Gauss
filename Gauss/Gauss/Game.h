@@ -114,6 +114,7 @@ private:
 	Text cosmoEffectText;
 	Text leaderboardText;
 	Text scoreText;
+	Text pauseKeyHelperText;
 	Text controlsText;
 
 	// Texttags
@@ -132,6 +133,10 @@ private:
 	int playerShipType;
 	int playerShipSkin;
 	dArr<Sprite> playerLives;
+	float playerRespawnTimer;
+	float playerRespawnTimerMax;
+	bool pausedForRespawn;
+
 
 	// Enemies
 	dArr<EnemyLifeform*> enemyLifeforms;
@@ -226,6 +231,7 @@ public:
 	void InitPlayerScoreStats();
 	void ToggleFullscreen();
 	void PauseGame();
+	void PausedForRespawn(const float &dt);
 	void DisplayGameEnd();
 };
 

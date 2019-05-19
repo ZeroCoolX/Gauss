@@ -677,16 +677,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->gameOverTimer = this->gameOverTimerMax;
 
 	// Reset upgrades
-	this->dualMissiles01 = false;
-	this->dualMissiles02 = false;
-	this->sheild = false;
-	this->shieldActive = false;
-	this->powerupPiercingShot = false;
-	this->powerupRF = false;
-	this->powerupXP = false;
-	this->powerupAbsorb = false;
-	this->powerupGrind = false;
-	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
+	this->ResetPowerupsOnLifeLost();
 
 	this->upgradesAcquired.Clear();
 
@@ -715,6 +706,20 @@ void Player::ResetOnLifeLost(View &view) {
 
 	// Undo any tutorial overrides
 	this->enableAllControls();
+}
+
+void Player::ResetPowerupsOnLifeLost() {
+	// Reset upgrades
+	this->dualMissiles01 = false;
+	this->dualMissiles02 = false;
+	this->sheild = false;
+	this->shieldActive = false;
+	this->powerupPiercingShot = false;
+	this->powerupRF = false;
+	this->powerupXP = false;
+	this->powerupAbsorb = false;
+	this->powerupGrind = false;
+	this->audioManager->StopSound(AudioManager::AudioSounds::POWERUP_GRIND_IDLE);
 }
 
 void Player::AddStatPointRandom() {
