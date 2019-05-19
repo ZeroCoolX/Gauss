@@ -16,7 +16,7 @@ Tutorial::Tutorial(Font &font, RenderWindow *window, dArr<Player> *players)
 	this->textTimerMax = 1.f;
 	this->textTimer = this->textTimerMax;
 
-	this->sentenceDelayTimerMax = 10.f;
+	this->sentenceDelayTimerMax = 200.f;
 	this->sentenceDelayTimer = this->sentenceDelayTimerMax;
 
 	this->instructionDelayTimerMax = 20.f;
@@ -55,7 +55,7 @@ void Tutorial::InitTexts() {
 	dArr<std::string> tempText(4);
 
 	// TutorialStage::INTRO
-	tempText.Add("Welcome to the Gaussian Fleet comrade.");
+	tempText.Add("Welcome to the Gaussian Fleet comrade - Hands off those controls!");
 	tempText.Add("Before we send you off to the front lines we need to make sure your Gauss is operating at max capacity.");
 	tempText.Add("Don't want that bad boy malfunctioning during the middle of a firefight.");
 	tempText.Add("Follow my orders and you'll be on your way to protecting humanity in no time soldier!");
@@ -221,10 +221,12 @@ void Tutorial::displayText(const float &dt) {
 		this->textTimer -= 1.f * dt * DeltaTime::dtMultiplier;
 	}
 	else {
-		this->textTimer = this->textTimerMax;
 		if (this->currentTextIndex < static_cast<int>(Tutorial::dialogTexts[this->currentStage].Size())) {
 			// Populate the current text characters into the array
-			if (textCharacters.Size() == 0) {
+			if (textCharacters.Size() == 0) 
+			{
+				this->textTimer = this->textTimerMax;
+				
 				std::string str = Tutorial::dialogTexts[this->currentStage][this->currentTextIndex];
 
 				// declaring character array 
@@ -252,15 +254,26 @@ void Tutorial::displayText(const float &dt) {
 						this->currentText += textCharacters[this->currentTextCharIndex];
 						this->dialog->incrementCurrentTextWidth();
 					}
+					//// TEST
+					//this->currentText = std::to_string(dt);
+					//this->dialog->setText(currentText);
+					//// TEST
 					this->dialog->setText(currentText);
 					++this->currentTextCharIndex;
+					this->textTimer = this->textTimerMax;
 				}
 				// End of the text line, so move to the next one
 				else {
 					if (this->sentenceDelayTimer > 0.f) {
 						this->sentenceDelayTimer -= 1.f * dt * DeltaTime::dtMultiplier;
+						//// TEST
+						////std::cout << std::to_string(this->sentenceDelayTimer) << std::endl;
+						//this->currentText = std::to_string(this->sentenceDelayTimer);
+						//this->dialog->setText(currentText);
+						//// TEST
 					}
 					else {
+						this->textTimer = this->textTimerMax;
 						this->dialog->resetCurrentTextWidth();
 						this->textCharacters.Clear();
 						this->currentText = "";
@@ -322,20 +335,21 @@ void Tutorial::updateTutorialOver(const float &dt) {
 }
 
 void Tutorial::updateHorizontal(const float &dt) {
-	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		(*this->players)[0].setDisableHorizontal(false);
+	// start looking for keypresses and hide the dialogue
+	(*this->players)[0].setDisableHorizontal(false);
 
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::CONTROL_LEFT]
-		)) {
-			this->leftPressed = true;
-		}
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::CONTROL_RIGHT]
-		)) {
-			this->rightPressed = true;
-		}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::CONTROL_LEFT]
+	)) {
+		this->leftPressed = true;
+	}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::CONTROL_RIGHT]
+	)) {
+		this->rightPressed = true;
+	}
+
+	if (this->dialogueFinished) {
 		if (this->leftPressed && this->rightPressed) {
 			this->currentStage = TutorialStage::VERTICAL;
 			this->moveToNextStage = true;
@@ -355,20 +369,21 @@ void Tutorial::updateHorizontal(const float &dt) {
 }
 
 void Tutorial::updateVertical(const float &dt) {
-	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		(*this->players)[0].setDisableVertical(false);
+	// start looking for keypresses and hide the dialogue
+	(*this->players)[0].setDisableVertical(false);
 
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::CONTROL_UP]
-		)) {
-			this->upPressed = true;
-		}
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::CONTROL_DOWN]
-		)) {
-			this->downPressed = true;
-		}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::CONTROL_UP]
+	)) {
+		this->upPressed = true;
+	}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::CONTROL_DOWN]
+	)) {
+		this->downPressed = true;
+	}
+
+	if (this->dialogueFinished) {
 		if (this->upPressed && this->downPressed) {
 			this->currentStage = TutorialStage::LASER;
 			this->moveToNextStage = true;
@@ -388,16 +403,17 @@ void Tutorial::updateVertical(const float &dt) {
 }
 
 void Tutorial::updateLaser(const float &dt) {
+	// start looking for keypresses and hide the dialogue
+	(*this->players)[0].setDisableLaser(false);
+
+
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_FIRE]
+	)) {
+		this->firePressed = true;
+	}
+
 	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		(*this->players)[0].setDisableLaser(false);
-
-
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_FIRE]
-		)) {
-			this->firePressed = true;
-		}
 		if (this->firePressed) {
 			this->currentStage = TutorialStage::GAUSS_CANNON;
 			this->moveToNextStage = true;
@@ -417,15 +433,16 @@ void Tutorial::updateLaser(const float &dt) {
 }
 
 void Tutorial::updateGaussCannon(const float &dt) {
-	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		(*this->players)[0].setDisableGaussCannon(false);
+	// start looking for keypresses and hide the dialogue
+	(*this->players)[0].setDisableGaussCannon(false);
 
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_GAUSSCANNON]
-		)) {
-			this->gaussCannonPressed = true;
-		}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_GAUSSCANNON]
+	)) {
+		this->gaussCannonPressed = true;
+	}
+
+	if (this->dialogueFinished) {
 		if (this->gaussCannonPressed) {
 			this->currentStage = TutorialStage::SHIELD;
 			this->moveToNextStage = true;
@@ -445,15 +462,16 @@ void Tutorial::updateGaussCannon(const float &dt) {
 }
 
 void Tutorial::updateShield(const float &dt) {
-	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		(*this->players)[0].setDisableShield(false);
+	// start looking for keypresses and hide the dialogue
+	(*this->players)[0].setDisableShield(false);
 
-		if (KeyMouseBoard::isPressed(
-			(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_SHIELD]
-		)) {
-			this->shieldPressed = true;
-		}
+	if (KeyMouseBoard::isPressed(
+		(*((*this->players)[0].getControls()))[Player::Controls::CONTROL_SHIELD]
+	)) {
+		this->shieldPressed = true;
+	}
+
+	if (this->dialogueFinished) {
 		if (this->shieldPressed) {
 			this->currentStage = TutorialStage::SHIELD_HOLD;
 			this->moveToNextStage = true;

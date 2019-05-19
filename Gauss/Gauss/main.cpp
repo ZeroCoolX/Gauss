@@ -13,10 +13,10 @@ Text debugText;
 
 int main() {
 
-	//srand(time(NULL));
+	srand(time(NULL));
 
 	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Default);
-	//window.setFramerateLimit(20);
+	//window.setFramerateLimit(60);
 	Clock clock;
 	float dt = 0.f;
 
