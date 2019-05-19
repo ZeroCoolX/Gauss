@@ -29,6 +29,10 @@ public:
 		TUTORIAL
 	};
 
+	enum DataTextures {
+		PLAYER_LIFE = 0
+	};
+
 	enum LeaderboardIndex {
 		INF = 0,
 		COS
@@ -127,6 +131,7 @@ private:
 	std::map<int,PlayerScore> playerScoreMap;
 	int playerShipType;
 	int playerShipSkin;
+	dArr<Sprite> playerLives;
 
 	// Enemies
 	dArr<EnemyLifeform*> enemyLifeforms;
@@ -143,10 +148,8 @@ private:
 	// Particles
 	dArr<Particle> particles;
 
-	// Enemy Textures
-	dArr<Texture> enemyTextures;
-	dArr<Texture> enemyBulletTextures;
-
+	// Game Textures
+	dArr<Texture> gameDataTextures;
 
 	// Utility Functions
 	void _spawnEnemy(int enemyType, int velocity = -1, Vector2f position = Vector2f(0.f, 0.f));
@@ -185,6 +188,8 @@ public:
 	void InitLeaderboards();
 	void InitMap();
 	void InitMenus();
+	void InitGameTextures();
+	void InitPlayerLivesUI();
 
 	void UpdateView(const float &dt);
 	void Update(const float &dt, const Event *event);
@@ -210,6 +215,7 @@ public:
 	void UpdateTutorial(const float &dt);
 
 	void DrawUI();
+	void DrawPlayerLivesUI();
 	void DrawTextTags();
 	void Draw();
 	void DrawEnemy();

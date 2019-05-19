@@ -150,6 +150,9 @@ void Game::InitTextures() {
 
 	// Load Stage Textures
 	Stage::InitTextures();
+
+	// Load Other Game Texures
+	this->InitGameTextures();
 }
 
 void Game::InitUI() {
@@ -680,8 +683,7 @@ void Game::UpdatePlayers(const float &dt) {
 			this->cosmoEffectText.setString("");
 		}
 
-		this->UpdateScoreUI();
-
+		this->UpdateScoreUI();	
 	}
 }
 
@@ -997,7 +999,7 @@ void Game::UpdateMap(const float &dt) {
 
 void Game::UpdateScoreUI() {
 	if (this->gameMode == Mode::CAMPAIGN) {
-		this->scoreText.setString(this->_getPlayerLivesText());
+		//this->scoreText.setString(this->_getPlayerLivesText());
 	}
 	else {
 		this->scoreText.setString(
@@ -1010,6 +1012,7 @@ void Game::UpdateScoreUI() {
 			+ "\nGame time: " + std::to_string((int)this->scoreTimer.getElapsedTime().asSeconds()));
 	}
 }
+
 
 void Game::UpdateEnemySpawns(const float &dt) {
 	// Safety check in case there are no more players in the world
@@ -1474,8 +1477,25 @@ void Game::DrawUI() {
 		}
 	}
 
+	if (this->gameMode == Mode::CAMPAIGN && this->playersExistInWorld()) {
+		this->DrawPlayerLivesUI();
+	}
+
 	if (this->paused) {
 		this->window->draw(this->controlsText);
+	}
+}
+
+void Game::DrawPlayerLivesUI() {
+	int lives = 0;
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		lives += this->players[i].getLives();
+	}
+
+	for (size_t i = 0; i < lives; i++)
+	{
+		this->window->draw(this->playerLives[i]);
 	}
 }
 
@@ -1669,6 +1689,32 @@ void Game::DisplayGameEnd() {
 	this->_storeLeaderboard(leadIndex, (leadIndex == LeaderboardIndex::COS ? "Cosmos" : "Infinite"));
 }
 
+void Game::InitGameTextures() {
+	// Load Other Game Texures
+	Texture temp;
+	temp.loadFromFile("Textures/Ships/Player/gaussLife.png");
+	this->gameDataTextures.Add(Texture(temp));
+
+	this->InitPlayerLivesUI();
+}
+
+void Game::InitPlayerLivesUI() {
+	float xPos = 20.f;
+	for (size_t i = 0; i < 3; i++)
+	{
+		Sprite sTemp;
+		sTemp.setTexture(this->gameDataTextures[DataTextures::PLAYER_LIFE]);
+		sTemp.setScale(0.25f, 0.25f);
+		sTemp.setOrigin(
+			sTemp.getGlobalBounds().width / 2,
+			sTemp.getGlobalBounds().height / 2
+		);
+		sTemp.setPosition(xPos, 20.f);
+		this->playerLives.Add(sTemp);
+		xPos += sTemp.getGlobalBounds().width + 5.f;
+	}
+}
+
 void Game::_loadPlayerShipPreferences() {
 	// Load ship and skin
 	std::ifstream fin;
@@ -1713,7 +1759,6 @@ void Game::_savePlayerShipPreferences() {
 	}
 	fout.close();
 }
-
 
 void Game::_insertLeaderboardEntry(LeaderboardIndex leadIndex, int id, unsigned long int score) {
 	if (static_cast<int>(this->leaderboards[leadIndex].Size()) == this->LEADERBOARD_MAX && score < this->leaderboards[leadIndex][this->leaderboards[leadIndex].Size() - 1].score) {
