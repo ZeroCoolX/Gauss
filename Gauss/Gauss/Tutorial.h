@@ -37,6 +37,7 @@ private:
 	// Indicates ready to move to next stage
 	bool moveToNextStage;
 	bool dialogueFinished;
+	bool collectInput;
 
 	// Tutorial specific keypress triggers
 	bool leftPressed;
@@ -59,9 +60,6 @@ private:
 	// time in between each sentence being written out
 	float sentenceDelayTimer;
 	float sentenceDelayTimerMax;
-	// time in between completing instructions
-	float instructionDelayTimer;
-	float instructionDelayTimerMax;
 	// time in between each flash indicating a part of the hud
 	float hudFlashIndicatorTimer;
 	float hudFlashIndicatorTimerMax;
@@ -85,6 +83,7 @@ private:
 	void updateGaussChargeHud(const float &dt);
 	void updateXpChargeHud(const float &dt);
 	void updateTutorialOver(const float &dt);
+	bool isLastSentence();
 
 public:
 	Tutorial(Font &font, RenderWindow *window, dArr<Player> *players);
