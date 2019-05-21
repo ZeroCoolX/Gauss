@@ -75,7 +75,7 @@ void Tutorial::InitTexts() {
 
 	// TutorialStage::LASER
 	tempText.Add("Well done comrad. Mastering the movement controls of your Gauss will give you that extra edge in battle.");
-	tempText.Add("Remember that TAPPING (moement) vs HOLDING (movement) will yield difference accelerations.");
+	tempText.Add("Remember that TAPPING vs HOLDING will yield difference accelerations.");
 	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
 	tempText.Add("Your Gauss is equipped with an electro magnetic laser as its main fire mode");
 	tempText.Add("This laser is your most reliable way to cleanup the universe of alien scum.");

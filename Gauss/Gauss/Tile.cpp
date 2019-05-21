@@ -4,7 +4,7 @@ Texture Tile::tileTextures;
 int Tile::numberOfTiles;
 
 void Tile::InitTextures() {
-	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet.png");
+	Tile::tileTextures.loadFromFile("Textures/Map/textureSheet_nd.png");
 	Tile::numberOfTiles = 1;
 }
 

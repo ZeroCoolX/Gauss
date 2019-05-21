@@ -1681,6 +1681,8 @@ void Game::PauseGame() {
 void Game::PausedForRespawn(const float &dt) {
 	if (this->pausedForRespawn) {
 
+		this->audioManager->PauseMusic(this->gameMusicSelection);
+
 		for (size_t i = 0; i < this->players.Size(); i++)
 		{
 			this->players[i].disableAllControls();
@@ -1701,6 +1703,7 @@ void Game::PausedForRespawn(const float &dt) {
 		else {
 			this->pausedForRespawn = false;
 			this->playerRespawnTimer = this->playerRespawnTimerMax;
+			this->audioManager->UnpauseMusic(this->gameMusicSelection);
 
 			// Reeneable all the controls
 			for (size_t i = 0; i < this->players.Size(); i++)
