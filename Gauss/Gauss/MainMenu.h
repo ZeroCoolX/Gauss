@@ -22,9 +22,17 @@ private:
 	Texture backgroundTexture;
 	RectangleShape background;
 
-	Texture infoPanelTextures[4];
+	Texture panelTextures[8];
 	Sprite infoPanel;
 	int currentInfoPanel;
+	float infoPanelTimerMax;
+	float infoPanelTimer;
+
+	Sprite summaryPanel;
+	int currentSummaryPanel;
+	float summaryPanelFadeTimer;
+	float summaryPanelFadeTimerMax;
+
 
 	RenderWindow *window;
 
@@ -33,7 +41,8 @@ private:
 	Vector2f mousePosWorld;
 	Vector2i mousePosGrid;
 
-	void _cycleInfoPanel();
+	void _cycleInfoPanel(int direction);
+	void _setSummaryPanel();
 
 public:
 	MainMenu(Font &font, RenderWindow *window);
@@ -59,6 +68,8 @@ public:
 	void UpdateButtons(const float &dt);
 	void UpdateMousePosition();
 	void UpdateTimers(const float &dt);
+	void UpdateInfoPanels(const float &dt);
+	void UpdateSummaryPanels(const float &dt);
 	
 	// Draw
 	void Draw(RenderTarget &renderTarget);
@@ -78,7 +89,8 @@ public:
 		BTN_TUTORIAL,
 		BTN_KEYBIND,
 		BTN_SHIPBAY,
-		BTN_INFO_CYCLE
+		BTN_INFO_CYCLE_FWD,
+		BTN_INFO_CYCLE_BACK,
 	};
 
 	enum InfoPanels {
@@ -86,6 +98,13 @@ public:
 		POWERUPS,
 		UPGRADES,
 		ENEMIES
+	};
+
+	enum SummaryPanels {
+		CAMPAIGN = 4,
+		INFINITE = 5,
+		COSMOS = 6,
+		BACKSTORY
 	};
 };
 

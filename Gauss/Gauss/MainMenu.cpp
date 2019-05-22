@@ -6,9 +6,14 @@ MainMenu::MainMenu(Font &font, RenderWindow *window)
 	this->pressTimeMax = 10.f;
 	this->pressTime = this->pressTimeMax;
 	this->active = true;
+	this->currentSummaryPanel = SummaryPanels::BACKSTORY;
 	this->currentInfoPanel = 0;
 	this->font = font;
 	this->window = window;
+	this->infoPanelTimerMax = 800.f;
+	this->infoPanelTimer = 0.f;
+	this->summaryPanelFadeTimerMax = 255.f;
+	this->summaryPanelFadeTimer = this->summaryPanelFadeTimerMax;
 	this->Init();
 }
 
@@ -25,14 +30,14 @@ void MainMenu::Init() {
 void MainMenu::InitButtons() {
 
 	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(100.f, 350.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(250.f, 450.f), 0));
-	//this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Campaign under construction", 18, Vector2f(250.f, 450.f), 3, true));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(250.f, 550.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(250.f, 650.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(100.f, 450.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(100.f, 550.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(100.f, 650.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(100.f, 750.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(100.f, 850.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(100.f, 950.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE, this->font, "More Info", 18, Vector2f((this->window->getSize().x / 2.f) + 430, 1000.f), 5));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_BACK, this->font, "prev", 18, Vector2f((this->window->getSize().x / 2.f) + 360, 1000.f), 5));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_FWD, this->font, "next", 18, Vector2f((this->window->getSize().x / 2.f) + 600, 1000.f), 5));
 }
 
 void MainMenu::InitBackground() {
@@ -40,27 +45,44 @@ void MainMenu::InitBackground() {
 	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/background.png");
 	this->background.setTexture(&this->backgroundTexture);
 
-	this->infoPanelTextures[InfoPanels::PROMO].loadFromFile("Textures/Backgrounds/UI/InfoPanels/promo.png");
-	this->infoPanelTextures[InfoPanels::POWERUPS].loadFromFile("Textures/Backgrounds/UI/InfoPanels/powerups.png");
-	this->infoPanelTextures[InfoPanels::UPGRADES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/upgrades.png");
-	this->infoPanelTextures[InfoPanels::ENEMIES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/enemies.png");
-	this->infoPanel.setTexture(this->infoPanelTextures[this->currentInfoPanel]);
+	this->panelTextures[InfoPanels::PROMO].loadFromFile("Textures/Backgrounds/UI/InfoPanels/promo.png");
+	this->panelTextures[InfoPanels::POWERUPS].loadFromFile("Textures/Backgrounds/UI/InfoPanels/powerups.png");
+	this->panelTextures[InfoPanels::UPGRADES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/upgrades.png");
+	this->panelTextures[InfoPanels::ENEMIES].loadFromFile("Textures/Backgrounds/UI/InfoPanels/enemies.png");
+	this->panelTextures[SummaryPanels::CAMPAIGN].loadFromFile("Textures/Backgrounds/UI/SummaryPanels/CampaignSummaryPanel.png");
+	this->panelTextures[SummaryPanels::COSMOS].loadFromFile("Textures/Backgrounds/UI/SummaryPanels/CosmosSummaryPanel.png");
+	this->panelTextures[SummaryPanels::INFINITE].loadFromFile("Textures/Backgrounds/UI/SummaryPanels/InfiniteSummaryPanel.png");
+	this->panelTextures[SummaryPanels::BACKSTORY].loadFromFile("Textures/Backgrounds/UI/SummaryPanels/GaussBackstoryPanel2.png");
+
+	// Setup info panel
+	this->infoPanel.setTexture(this->panelTextures[this->currentInfoPanel]);
 	this->infoPanel.setOrigin(
 		this->infoPanel.getGlobalBounds().width / 2,
 		this->infoPanel.getGlobalBounds().height / 2
 	);
-	this->infoPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) + 500, (this->window->getSize().y / 2.f) + 50.f));
+	this->infoPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) + 550, (this->window->getSize().y / 2.f) + 50.f));
+
+	// Setup Summary panel
+	this->summaryPanel.setTexture(this->panelTextures[this->currentSummaryPanel]);
+	this->summaryPanel.setOrigin(
+		this->summaryPanel.getGlobalBounds().width / 2,
+		this->summaryPanel.getGlobalBounds().height / 2
+	);
+	this->summaryPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) - 100, (this->window->getSize().y / 2.f) + 50.f));
 }
 
 void MainMenu::Update(const float &dt) {
 	// Presstime update
 	this->UpdateTimers(dt);
+	this->UpdateInfoPanels(dt);
 	this->UpdateMousePosition();
 	this->UpdateButtons(dt);
+	//this->UpdateSummaryPanels(dt);
 }
 
 // For now - this is rather ugly
 void MainMenu::UpdateButtons(const float &dt) {
+	const Color summaryPanelColor = this->summaryPanel.getColor();
 	for (size_t i = 0; i < this->buttons.Size(); i++)
 	{
 		this->buttons[i]->Update(this->mousePosWorld);
@@ -85,20 +107,92 @@ void MainMenu::UpdateButtons(const float &dt) {
 				case MainMenu::BTN_SHIPBAY:
 					this->enterShipBay = true;
 					return;
-				case MainMenu::BTN_INFO_CYCLE:
-					this->_cycleInfoPanel();
+				case MainMenu::BTN_INFO_CYCLE_FWD:
+					// Temporarily set the info panel very high so the user has time to read
+					this->infoPanelTimer = 0.f;
+					this->infoPanelTimerMax = 800.f;
+					this->_cycleInfoPanel(1);
+					return;
+				case MainMenu::BTN_INFO_CYCLE_BACK:
+					// Temporarily set the info panel very high so the user has time to read
+					this->infoPanelTimer = 0.f;
+					this->infoPanelTimerMax = 800.f;
+					this->_cycleInfoPanel(-1);
 					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
 					return;
 			}
 		}
+		else {
+			if (this->buttons[i]->IsHover()) {
+
+				switch (this->buttons[i]->getId()) {
+				case MainMenu::BTN_CAMPAIGN:
+					if (this->currentSummaryPanel != SummaryPanels::CAMPAIGN) {
+						this->summaryPanelFadeTimer = 0.f;
+						this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
+						this->currentSummaryPanel = SummaryPanels::CAMPAIGN;
+						this->_setSummaryPanel();
+					}
+					return;
+				case MainMenu::BTN_INFINITE:
+					if (this->currentSummaryPanel != SummaryPanels::INFINITE) {
+						this->summaryPanelFadeTimer = 0.f;
+						this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
+						this->currentSummaryPanel = SummaryPanels::INFINITE;
+						this->_setSummaryPanel();
+					}
+					return;
+				case MainMenu::BTN_COSMOS:
+					if (this->currentSummaryPanel != SummaryPanels::COSMOS) {
+						this->summaryPanelFadeTimer = 0.f;
+						this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
+						this->currentSummaryPanel = SummaryPanels::COSMOS;
+						this->_setSummaryPanel();
+					}
+					return;
+				}
+			}
+		}
+	}
+	this->currentSummaryPanel = SummaryPanels::BACKSTORY;
+	this->_setSummaryPanel();
+	if (this->summaryPanelFadeTimer < this->summaryPanelFadeTimerMax) {
+		this->summaryPanelFadeTimer += 1.f * dt * DeltaTime::dtMultiplier;
+		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, static_cast<Uint8>(this->summaryPanelFadeTimer)));
+	}
+	else {
+		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
 	}
 }
 
 void MainMenu::UpdateTimers(const float &dt) {
 	if (this->pressTime < this->pressTimeMax) {
 		this->pressTime += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+}
+
+void MainMenu::UpdateSummaryPanels(const float &dt) {
+	const Color summaryPanelColor = this->summaryPanel.getColor();
+	if (this->summaryPanelFadeTimer < this->summaryPanelFadeTimerMax) {
+		this->summaryPanelFadeTimer += 1.f * dt * DeltaTime::dtMultiplier;
+		std::cout << std::to_string(this->summaryPanelFadeTimer) << std::endl;
+		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255 - this->summaryPanelFadeTimer));
+	}
+	else {
+		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
+	}
+}
+
+void MainMenu::UpdateInfoPanels(const float &dt) {
+	if (this->infoPanelTimer < this->infoPanelTimerMax) {
+		this->infoPanelTimer += 1.f * dt * DeltaTime::dtMultiplier;
+	}
+	else {
+		this->_cycleInfoPanel(1);
+		this->infoPanelTimerMax = 400.f;
+		this->infoPanelTimer = 0.f;
 	}
 }
 
@@ -130,6 +224,8 @@ void MainMenu::Draw(RenderTarget &renderTarget) {
 	this->DrawBackground(renderTarget);
 	this->DrawButtons(renderTarget);
 
+	renderTarget.draw(this->summaryPanel);
+
 	renderTarget.draw(this->infoPanel);
 }
 
@@ -153,10 +249,23 @@ void MainMenu::Reset() {
 	this->changeKeybind = false;
 	this->enterShipBay = false;
 	this->pressTime = 0.f;
+	this->infoPanelTimerMax = 400.f;
+	this->infoPanelTimer = 0.f;
+	this->currentSummaryPanel = SummaryPanels::BACKSTORY;
+	this->currentInfoPanel = InfoPanels::PROMO;
 }
 
-void MainMenu::_cycleInfoPanel() {
-	this->currentInfoPanel = (this->currentInfoPanel + 1) % 4;
-	this->infoPanel.setTexture(this->infoPanelTextures[this->currentInfoPanel]);
+void MainMenu::_cycleInfoPanel(int direction) {
+	if (this->currentInfoPanel + direction < 0) {
+		this->currentInfoPanel = 3;
+	}
+	else {
+		this->currentInfoPanel = (this->currentInfoPanel + direction) % 4;
+	}
+	this->infoPanel.setTexture(this->panelTextures[this->currentInfoPanel]);
+}
+
+void MainMenu::_setSummaryPanel() {
+	this->summaryPanel.setTexture(this->panelTextures[this->currentSummaryPanel]);
 }
 

@@ -43,6 +43,13 @@ public:
 	}
 	inline void changeColor(Color c) { this->colorIdle = c; }
 	inline void resetColor() { this->colorIdle = this->colorIdleDefault; }
+	inline void setPositionX(float newX) { 
+		this->sprite.setPosition(Vector2f(newX, this->sprite.getPosition().y));
+		this->text.setPosition(
+			this->sprite.getPosition().x + (this->sprite.getGlobalBounds().width / 2.f) - this->text.getGlobalBounds().width / 2.f,
+			this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
+		);
+	}
 
 	void Update(Vector2f mousePos);
 	void Draw(RenderTarget &renderTarget);
