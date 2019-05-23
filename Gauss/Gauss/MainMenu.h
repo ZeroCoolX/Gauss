@@ -69,7 +69,6 @@ public:
 	void UpdateMousePosition();
 	void UpdateTimers(const float &dt);
 	void UpdateInfoPanels(const float &dt);
-	void UpdateSummaryPanels(const float &dt);
 	
 	// Draw
 	void Draw(RenderTarget &renderTarget);

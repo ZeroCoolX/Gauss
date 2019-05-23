@@ -63,7 +63,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->difficultyTimer = 0;
 
 	// Player respawn timer
-	this->playerRespawnTimerMax = 200.f; // about 5 seconds
+	this->playerRespawnTimerMax = 100.f; // about 2.5 seconds
 	this->playerRespawnTimer = this->playerRespawnTimerMax;
 
 	// Init Game controls
@@ -685,17 +685,26 @@ void Game::UpdatePlayers(const float &dt) {
 					TextTag(
 						&this->font,
 						this->players[0].getPosition(),
-						"LIFE DESTROYED", Color::Yellow,
+						"LIFE DESTROYED", Color::Red,
 						Vector2f(1.f, 0.f),
 						35, 100.f, true
 					)
 				);
+
+				// Store the future respawn point
+				this->players[i].storeDeathPositionalData();
 
 				// Reset body and gun of the player  off screen to simulate the ship exploded
 				this->players[i].ResetPosition(Vector2f(-100.f, -100.f));
 
 				// Turn off any potential powerups
 				this->players[i].ResetPowerupsOnLifeLost();
+
+				// Make sure the player turns red in case this was a death after their update - which handles such things
+				this->players[i].setDamageColor();
+
+				// Must update the stats so that the healthbar updates accordingly
+				this->players[i].UpdateStatsUI();
 
 				// Pause briefly and take away a life badge
 				this->pausedForRespawn = true;
@@ -992,6 +1001,20 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 	if (this->toRow >= this->stage->getSizeY()) {
 		this->toRow = this->stage->getSizeY();
 	}
+	// Necessary for wall collision raycasting
+	bool collideAbove = false;
+	bool collideBelow = false;
+	bool collideRight = false;
+	bool collideLeft = false;
+
+	// left to middle
+	const FloatRect leftRaycast(currentPlayer.getPosition().x - 10, currentPlayer.getPosition().y + (currentPlayer.getGlobalBounds().height / 2.f), currentPlayer.getGlobalBounds().width /2, 1);
+	// middle to right
+	const FloatRect rightRaycast(currentPlayer.getPosition().x + currentPlayer.getGlobalBounds().width + 10, currentPlayer.getPosition().y + (currentPlayer.getGlobalBounds().height / 2.f), currentPlayer.getGlobalBounds().width / 2, 1);
+	// middle to top	
+	const FloatRect upRaycast(currentPlayer.getPosition().x + (currentPlayer.getGlobalBounds().width / 2.f), currentPlayer.getPosition().y - 15, 1, currentPlayer.getGlobalBounds().height / 2);
+	// middle to bottom
+	const FloatRect downRaycast(currentPlayer.getPosition().x + (currentPlayer.getGlobalBounds().width / 2.f), currentPlayer.getPosition().y + currentPlayer.getGlobalBounds().height + 5, 1, currentPlayer.getGlobalBounds().height / 2);
 
 	for (int i = fromCol; i < toCol; i++)
 	{
@@ -999,30 +1022,73 @@ void Game::UpdatePlayerTileCollision(const float &dt, Player &currentPlayer) {
 		{
 			// Collision!
 			if (!this->stage->getTiles()[i].IsNull(j)
-				&& this->stage->getTiles()[i][j].isColliderType()
-				&& currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
-				if (this->stage->getTiles()[i][j].isDamageType()) {
-					// Once touch and only death awaits
-					currentPlayer.TakeDamage(static_cast<int>(currentPlayer.getHpMax() / 4));
-					// Explode into particles
-					const int nrOfPatricles = rand() % 20 + 5;
-					for (int m = 0; m < nrOfPatricles; m++)
-					{
-						this->particles.Add(Particle(currentPlayer.getPosition(),
-							0,
-							Vector2f(-currentPlayer.getNormDir().x, -currentPlayer.getNormDir().y),
-							rand() % 40 + 10.f,
-							rand() % 30 + 1.f,
-							50.f));
+				&& this->stage->getTiles()[i][j].isColliderType()){
+
+				collideLeft = leftRaycast.intersects(this->stage->getTiles()[i][j].getBounds());
+
+				collideRight = rightRaycast.intersects(this->stage->getTiles()[i][j].getBounds());
+
+				collideAbove = upRaycast.intersects(this->stage->getTiles()[i][j].getBounds());
+
+				collideBelow = downRaycast.intersects(this->stage->getTiles()[i][j].getBounds());
+
+
+				if(collideLeft || collideRight || collideAbove || collideBelow){	
+				//if (currentPlayer.collidesWith(this->stage->getTiles()[i][j].getBounds())) {
+					if (this->stage->getTiles()[i][j].isDamageType()) {
+						// Only damage if we're not invincible
+						if (!currentPlayer.isDamageCooldown()) {
+							currentPlayer.TakeDamage(static_cast<int>(currentPlayer.getHpMax() / 2));
+							// Explode into particles
+							const int nrOfPatricles = rand() % 20 + 5;
+							for (int m = 0; m < nrOfPatricles; m++)
+							{
+								this->particles.Add(Particle(currentPlayer.getPosition(),
+									0,
+									Vector2f(-currentPlayer.getNormDir().x, -currentPlayer.getNormDir().y),
+									rand() % 40 + 10.f,
+									rand() % 30 + 1.f,
+									50.f));
+							}
+						}
+						float xMove = 0.f;
+						float yMove = 0.f;
+						if (collideLeft) {
+							xMove = -currentPlayer.getNormDir().x * 100 * dt * DeltaTime::dtMultiplier;
+						}
+						else if (collideRight) {
+							xMove = 100 * -this->stage->getScrollSpeed() * dt * DeltaTime::dtMultiplier;
+						}
+						if (collideAbove) {
+							yMove = 100 * dt * DeltaTime::dtMultiplier;
+						}
+						else if (collideBelow) {
+							yMove = -100 * dt * DeltaTime::dtMultiplier;
+						}
+						// Not great but not all together aweful
+						currentPlayer.move(xMove, yMove);
+						currentPlayer.resetVelocityY();
+						return;
+					}
+					float xMove = 0.f;
+					float yMove = 0.f;
+					if (collideLeft) {
+						xMove = -currentPlayer.getNormDir().x * 50 * dt * DeltaTime::dtMultiplier;
+					}
+					else if (collideRight) {
+						xMove = 50 * -this->stage->getScrollSpeed() * dt * DeltaTime::dtMultiplier;
+					}
+					if (collideAbove) {
+						yMove = 50 * dt * DeltaTime::dtMultiplier;
+					}
+					else if (collideBelow) {
+						yMove = -50 * dt * DeltaTime::dtMultiplier;
 					}
 					// Not great but not all together aweful
-					currentPlayer.move(0.f, -currentPlayer.getNormDir().y * 100 * dt * DeltaTime::dtMultiplier);
+					currentPlayer.move(xMove, yMove);
+					currentPlayer.resetVelocityY();
 					return;
 				}
-				// Not great but not all together aweful
-				currentPlayer.move(0.f, -currentPlayer.getNormDir().y * 50 * dt * DeltaTime::dtMultiplier);
-				currentPlayer.resetVelocityY();
-				return;
 			}
 		}
 	}
@@ -1359,7 +1425,7 @@ void Game::UpdateEnemyBullets(const float &dt) {
 						EnemyLifeform::bullets.Remove(i);
 						break;
 					}
-					else {
+					else{
 						// Reflect bullet
 						this->players[j].getDeflectorShield().setColor(Color::Red);
 

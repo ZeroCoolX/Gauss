@@ -245,9 +245,7 @@ void Player::Combat(const float &dt) {
 
 	if (this->isDamageCooldown()) {
 		if ((int)this->damageTimer % 2 == 0) {
-			this->lWing.setColor(Color::Red);
-			this->rWing.setColor(Color::Red);
-			this->cPit.setColor(Color::Red);
+			this->setDamageColor();
 		}
 		else {
 			this->lWing.setColor(Color::White);
@@ -658,8 +656,7 @@ void Player::ResetPosition(Vector2f pos) {
 }
 
 void Player::ResetOnLifeLost(View &view) {
-	// Reset sprite
-	this->sprite.setPosition(view.getCenter());
+	this->sprite.setPosition(this->getDeathPosition());
 	this->_recalculatePlayerCenter();
 
 	const float origin = this->playerCenter.x + this->sprite.getGlobalBounds().width / 6;
@@ -673,7 +670,7 @@ void Player::ResetOnLifeLost(View &view) {
 
 	// Reset game over state
 	this->gameOverOverride = false;
-	this->gameOverTimerMax = 150.f;
+	this->gameOverTimerMax = 300.f;
 	this->gameOverTimer = this->gameOverTimerMax;
 
 	// Reset upgrades
@@ -691,7 +688,7 @@ void Player::ResetOnLifeLost(View &view) {
 	this->shootTimerMax = this->getCalculatedShootTimer();
 	this->shootTimer = this->shootTimerMax;
 	this->damageTimerMax = 40.f;
-	this->damageTimer = this->damageTimerMax;
+	this->damageTimer = -100.f; // purposely adding additional time so the player is invincible for a few seconds after respawning
 	this->gaussChargeTimerMax = 500.f;
 	this->gaussChargeTimer = 0.f;
 	this->gaussReloaded = false;
@@ -886,7 +883,7 @@ void Player::RefreshPlayerControls() {
 void Player::_processPlayerInput(const float &dt) {
 	if (this->gameOverOverride || this->tutorialOverride) {
 		this->velocity.y = 0.f;
-		this->velocity.x = this->maxVelocity * 10.f * dt * DeltaTime::dtMultiplier;
+		this->velocity.x = this->maxVelocity * 15.f * dt * DeltaTime::dtMultiplier;
 		return;
 	}
 

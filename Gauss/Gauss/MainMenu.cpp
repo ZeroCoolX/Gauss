@@ -29,7 +29,7 @@ void MainMenu::Init() {
 
 void MainMenu::InitButtons() {
 
-	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial", 18, Vector2f(100.f, 350.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_TUTORIAL, this->font, "Tutorial - Strongly Recommended", 18, Vector2f(100.f, 350.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_CAMPAIGN, this->font, "Play Campaign", 18, Vector2f(100.f, 450.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_INFINITE, this->font, "Play Infinite Invasion", 18, Vector2f(100.f, 550.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_COSMOS, this->font, "Play Cosmos", 18, Vector2f(100.f, 650.f), 0));
@@ -170,18 +170,6 @@ void MainMenu::UpdateButtons(const float &dt) {
 void MainMenu::UpdateTimers(const float &dt) {
 	if (this->pressTime < this->pressTimeMax) {
 		this->pressTime += 1.f * dt * DeltaTime::dtMultiplier;
-	}
-}
-
-void MainMenu::UpdateSummaryPanels(const float &dt) {
-	const Color summaryPanelColor = this->summaryPanel.getColor();
-	if (this->summaryPanelFadeTimer < this->summaryPanelFadeTimerMax) {
-		this->summaryPanelFadeTimer += 1.f * dt * DeltaTime::dtMultiplier;
-		std::cout << std::to_string(this->summaryPanelFadeTimer) << std::endl;
-		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255 - this->summaryPanelFadeTimer));
-	}
-	else {
-		this->summaryPanel.setColor(Color(summaryPanelColor.r, summaryPanelColor.g, summaryPanelColor.b, 255));
 	}
 }
 

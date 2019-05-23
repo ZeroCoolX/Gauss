@@ -186,6 +186,9 @@ private:
 	int hpAdded;
 
 	int lives;
+	// Used to reset player on death with wall colliders
+	Vector2f deathPosition;
+	Vector2f deathNormal;
 
 	int damage;
 	int damageMax;
@@ -303,6 +306,12 @@ public:
 	inline void move(float x, float y) { this->sprite.move(Vector2f(x, y)); this->mainGunSprite.move(Vector2f(x, y)); }
 	inline const Vector2f& getNormDir() const { return this->normalizedDir; }
 	inline const bool collidesWith(FloatRect other) const { return this->sprite.getGlobalBounds().intersects(other); }
+	inline void storeDeathPositionalData() {
+		this->deathPosition = this->sprite.getPosition();
+		this->deathNormal = this->normalizedDir;
+	}
+	inline const Vector2f& getDeathPosition() { return this->deathPosition; }
+	inline const Vector2f& getDeathNormal() { return this->deathNormal; }
 
 	// Life
 	inline const int getPlayerNumber() const { return this->playerNumber; }
@@ -324,6 +333,11 @@ public:
 		this->hpAdded += 10;
 		this->UpdateStats();
 		this->hp = this->hpMax;
+	}
+	inline void setDamageColor() {
+		this->lWing.setColor(Color::Red);
+		this->rWing.setColor(Color::Red);
+		this->cPit.setColor(Color::Red);
 	}
 
 	// Experience
