@@ -177,6 +177,9 @@
     <ClCompile Include="ShipBayMenu.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CreditsMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dArr.h">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="KeyMouseBoard.h">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditsMenu.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

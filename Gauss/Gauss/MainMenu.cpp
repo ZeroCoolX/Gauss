@@ -36,6 +36,7 @@ void MainMenu::InitButtons() {
 	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(100.f, 750.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(100.f, 850.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(100.f, 950.f), 0));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CREDITS, this->font, "Credits", 15, Vector2f(this->window->getSize().x - 150.f, 25.f), 6));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_BACK, this->font, "prev", 18, Vector2f((this->window->getSize().x / 2.f) + 360, 1000.f), 5));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_FWD, this->font, "next", 18, Vector2f((this->window->getSize().x / 2.f) + 600, 1000.f), 5));
 }
@@ -118,6 +119,9 @@ void MainMenu::UpdateButtons(const float &dt) {
 					this->infoPanelTimer = 0.f;
 					this->infoPanelTimerMax = 800.f;
 					this->_cycleInfoPanel(-1);
+					return;
+				case MainMenu::BTN_CREDITS:
+					this->enterCredits = true;
 					return;
 				case MainMenu::BTN_EXIT:
 					this->window->close();
@@ -236,6 +240,7 @@ void MainMenu::Reset() {
 	this->playTutorial = false;
 	this->changeKeybind = false;
 	this->enterShipBay = false;
+	this->enterCredits = false;
 	this->pressTime = 0.f;
 	this->infoPanelTimerMax = 400.f;
 	this->infoPanelTimer = 0.f;

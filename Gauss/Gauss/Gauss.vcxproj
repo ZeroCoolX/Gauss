@@ -129,6 +129,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Consumable.cpp" />
     <ClCompile Include="CosmoEnemy.cpp" />
+    <ClCompile Include="CreditsMenu.cpp" />
     <ClCompile Include="Dialog.cpp" />
     <ClCompile Include="EnemyLifeform.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Consumable.h" />
     <ClInclude Include="CosmoEnemy.h" />
+    <ClInclude Include="CreditsMenu.h" />
     <ClInclude Include="Dialog.h" />
     <ClInclude Include="EnemyLifeform.h" />
     <ClInclude Include="EnemySpawner.h" />

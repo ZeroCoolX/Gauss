@@ -13,6 +13,7 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->gameOverMenu = nullptr;
 	this->keybindMenu = nullptr;
 	this->shipBayMenu = nullptr;
+	this->creditsMenu = nullptr;
 
 	// Init tutorial
 	this->tutorial = nullptr;
@@ -85,6 +86,7 @@ Game::~Game()
 	delete this->gameOverMenu;
 	delete this->keybindMenu;
 	delete this->shipBayMenu;
+	delete this->creditsMenu;
 	delete this->tutorial;
 	this->playerScoreMap.clear();
 }
@@ -297,6 +299,8 @@ void Game::InitMenus() {
 
 	this->shipBayMenu = new ShipBayMenu(this->font, this->window);
 
+	this->creditsMenu = new CreditsMenu(this->font, this->window);
+
 	this->gameOverMenu = new GameOverMenu(this->font, this->window);
 
 	KeyManager::InitKeyNames();
@@ -331,6 +335,11 @@ void Game::Update(const float &dt, const Event *event) {
 	if (this->shipBayMenu->isActive()) {
 		this->UpdateShipBayMenu(dt);
 		this->UpdatePlayers(dt);
+		return;
+	}
+
+	if (this->creditsMenu->isActive()) {
+		this->UpdateCreditsMenu(dt);
 		return;
 	}
 
@@ -484,6 +493,11 @@ void Game::UpdateMainMenu(const float &dt) {
 		this->paused = false;
 		this->shipBayMenu->activate(this->playerShipSkin);
 	}
+	else if (this->mainMenu->onCreditsPress()) {
+		this->mainMenu->Reset();
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->creditsMenu->activate();
+	}
 }
 
 
@@ -503,6 +517,16 @@ void Game::UpdateShipBayMenu(const float &dt) {
 		{
 			this->players[i].ResetPosition(this->mainView.getCenter());
 		}
+	}
+}
+
+void Game::UpdateCreditsMenu(const float &dt) {
+	this->creditsMenu->Update(dt);
+
+	if (!this->creditsMenu->isActive()) {
+		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
+		this->mainMenu->Reset();
+		this->mainMenu->activate();
 	}
 }
 
@@ -1649,9 +1673,15 @@ void Game::Draw() {
 	// Set View
 	this->window->setView(this->mainView);
 
-	// Draw onyl menu if we are on that screen
+	// Draw only menu if we are on that screen
 	if (this->mainMenu->isActive()) {
 		this->mainMenu->Draw(*this->window);
+		return;
+	}
+
+	// Draw only credits if we are on that screen
+	if (this->creditsMenu->isActive()) {
+		this->creditsMenu->Draw(*this->window);
 		return;
 	}
 

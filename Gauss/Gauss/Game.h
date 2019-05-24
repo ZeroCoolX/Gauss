@@ -18,6 +18,7 @@
 #include "Tutorial.h"
 #include "KeyBindingMenu.h"
 #include "ShipBayMenu.h"
+#include "CreditsMenu.h"
 
 class Game
 {
@@ -68,6 +69,7 @@ private:
 	GameOverMenu *gameOverMenu;
 	KeyBindingMenu *keybindMenu;
 	ShipBayMenu *shipBayMenu;
+	CreditsMenu *creditsMenu;
 
 	Tutorial* tutorial;
 
@@ -215,6 +217,7 @@ public:
 	void UpdateParticles(const float &dt);
 	void UpdateMainMenu(const float &dt);
 	void UpdateShipBayMenu(const float &dt);
+	void UpdateCreditsMenu(const float &dt);
 	void UpdateKeybindingMenu(const float &dt, const Event *event);
 	void UpdateGameOverMenu(const float &dt);
 	void UpdateTutorial(const float &dt);

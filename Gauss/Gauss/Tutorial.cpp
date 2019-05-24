@@ -87,7 +87,7 @@ void Tutorial::InitTexts() {
 	tempText.Add("Good...At least they did something right.");
 	tempText.Add("The laser will never run out of ammo, and will never overheat - so fire at will.");
 	tempText.Add("You can fire a single shot by TAPPING (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_FIRE]) + ") or achieve automatic fire by HOLDING (SPACE).");
-	tempText.Add("Each Gauss is also equipped with an insancely powerful magnetic acceleration cannon - or MAC.");
+	tempText.Add("Each Gauss is also equipped with an insanely powerful magnetic acceleration cannon - or MAC.");
 	tempText.Add("The MAC needs to powerup and can only be shot once fully charged.");
 	tempText.Add("Fire the MAC by pressing (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_GAUSSCANNON]) + ").");
 	this->dialogTexts.Add(tempText);
@@ -101,7 +101,7 @@ void Tutorial::InitTexts() {
 	tempText.Add("Using the deflector shield will drain its charge.");
 	tempText.Add("If used for too long, it will burst and need time to charge back up.");
 	tempText.Add("The shield will shrink over time to indicate when its losing too much charge.");
-	tempText.Add("Reflecting enemy projectiles will not imapact the charge.");
+	tempText.Add("Reflecting enemy projectiles will not impact the charge.");
 	tempText.Add("But deflecting head on collisions will destroy 1/3 of the current charge.");
 	tempText.Add("Activate your shield by pressing (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_SHIELD]) + ")");
 	this->dialogTexts.Add(tempText);
