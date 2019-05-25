@@ -86,7 +86,7 @@ void Tutorial::InitTexts() {
 	// TutorialStage::GAUSS_CANNON
 	tempText.Add("Good...At least they did something right.");
 	tempText.Add("The laser will never run out of ammo, and will never overheat - so fire at will.");
-	tempText.Add("You can fire a single shot by TAPPING (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_FIRE]) + ") or achieve automatic fire by HOLDING (SPACE).");
+	tempText.Add("You can fire a single shot by TAPPING (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_FIRE]) + ") or achieve automatic fire by HOLDING (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_FIRE]) + ").");
 	tempText.Add("Each Gauss is also equipped with an insanely powerful magnetic acceleration cannon - or MAC.");
 	tempText.Add("The MAC needs to powerup and can only be shot once fully charged.");
 	tempText.Add("Fire the MAC by pressing (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_GAUSSCANNON]) + ").");

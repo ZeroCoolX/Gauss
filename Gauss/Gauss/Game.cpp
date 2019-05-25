@@ -67,8 +67,10 @@ Game::Game(RenderWindow *window) : leaderboards(2)
 	this->playerRespawnTimerMax = 100.f; // about 2.5 seconds
 	this->playerRespawnTimer = this->playerRespawnTimerMax;
 
-	// Init Game controls
+	// Init Pause
 	this->paused = true;
+
+	// Init Game controls
 	this->keyTimeMax = 10.f;
 	this->keyTime = this->keyTimeMax;
 
@@ -1605,6 +1607,7 @@ void Game::DrawUI() {
 	}
 
 	if (this->paused) {
+		this->window->draw(this->pauseBackground);
 		this->window->draw(this->controlsText);
 	}
 }
@@ -1859,8 +1862,20 @@ void Game::DisplayGameEnd() {
 void Game::InitGameTextures() {
 	// Load Other Game Texures
 	Texture temp;
+
 	temp.loadFromFile("Textures/Ships/Player/gaussLife.png");
 	this->gameDataTextures.Add(Texture(temp));
+
+	temp.loadFromFile("Textures/Backgrounds/UI/pauseBackground.png");
+	this->gameDataTextures.Add(Texture(temp));
+
+	this->pauseBackground.setTexture(this->gameDataTextures[DataTextures::PAUSE_OVERLAY]);
+	this->pauseBackground.setScale(1.f, 1.f);
+	this->pauseBackground.setOrigin(
+		this->pauseBackground.getGlobalBounds().width / 2,
+		this->pauseBackground.getGlobalBounds().height / 2
+	);
+	this->pauseBackground.setPosition(Vector2f(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f));
 
 	this->InitPlayerLivesUI();
 }

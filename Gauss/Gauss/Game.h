@@ -31,7 +31,8 @@ public:
 	};
 
 	enum DataTextures {
-		PLAYER_LIFE = 0
+		PLAYER_LIFE = 0,
+		PAUSE_OVERLAY
 	};
 
 	enum LeaderboardIndex {
@@ -79,11 +80,14 @@ private:
 	View mainView;
 	RenderTexture mainRenderTexture;
 	Sprite mainRenderSprite;
-	bool paused;
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
 	int gameMode;
+
+	// Pause 
+	bool paused;
+	Sprite pauseBackground;
 
 	// Score
 	Clock scoreTimer;
