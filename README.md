@@ -1,4 +1,5 @@
 # Gauss
+#### https://cooperpatton.itch.io/gauss
 ## Side scrolling bullet hell space shooter made using SFML.
 ### Pilot a Gauss - one of the most powerful space crafts in existence 
 ### Become a protector of humanity from the bloodthirsty Hunters of the insidious abyss who would otherwise see humans wiped off the face of this universe.
