@@ -24,7 +24,7 @@ void CreditsMenu::Init() {
 
 
 void CreditsMenu::InitButtons() {
-	this->backButton = new MenuButton(0, this->font, "Back", 18, Vector2f(this->window->getSize().x - 150.f, 25.f), 6);
+	this->backButton = new MenuButton(0, this->font, "Back", 18, Vector2f(this->window->getDefaultView().getSize().x - 150.f, 25.f), 6);
 }
 
 void CreditsMenu::InitBackground() {

@@ -9,13 +9,13 @@ Dialog::Dialog(Font &font, RenderWindow *window)
 	// Load texture
 	this->backgroundTexture.loadFromFile("Textures/Backgrounds/GaussDialog.png");
 
-	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x / 3.f), static_cast<float>(window->getSize().y / 4)));
+	this->background.setSize(Vector2f(static_cast<float>(this->window->getDefaultView().getSize().x / 3.f), static_cast<float>(this->window->getDefaultView().getSize().y / 4)));
 	this->background.setFillColor(Color(255, 255, 255, 255));
 	this->background.setTexture(&this->backgroundTexture);
 	// Set position at the bottom middle
 	this->background.setPosition(
-		(this->window->getSize().x / 2.f) - (this->background.getGlobalBounds().width / 2.f), 
-		this->window->getSize().y - this->background.getGlobalBounds().height
+		(this->window->getDefaultView().getSize().x / 2.f) - (this->background.getGlobalBounds().width / 2.f), 
+		this->window->getDefaultView().getSize().y - this->background.getGlobalBounds().height
 	);
 	
 	this->text.setFont(font);

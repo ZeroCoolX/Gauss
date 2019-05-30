@@ -1,6 +1,5 @@
 #include "MainMenu.h"
 
-
 MainMenu::MainMenu(Font &font, RenderWindow *window)
 {
 	this->pressTimeMax = 10.f;
@@ -36,13 +35,13 @@ void MainMenu::InitButtons() {
 	this->buttons.Add(new MenuButton(MainMenu::BTN_KEYBIND, this->font, "Change Keybinding", 18, Vector2f(100.f, 750.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_SHIPBAY, this->font, "Ship Bay", 18, Vector2f(100.f, 850.f), 0));
 	this->buttons.Add(new MenuButton(MainMenu::BTN_EXIT, this->font, "Quit", 18, Vector2f(100.f, 950.f), 0));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_CREDITS, this->font, "Credits", 15, Vector2f(this->window->getSize().x - 150.f, 25.f), 6));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_BACK, this->font, "prev", 18, Vector2f((this->window->getSize().x / 2.f) + 360, 1000.f), 5));
-	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_FWD, this->font, "next", 18, Vector2f((this->window->getSize().x / 2.f) + 600, 1000.f), 5));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_CREDITS, this->font, "Credits", 15, Vector2f(this->window->getDefaultView().getSize().x - 150.f, 25.f), 6));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_BACK, this->font, "prev", 18, Vector2f((this->window->getDefaultView().getSize().x / 2.f) + 360, 1000.f), 5));
+	this->buttons.Add(new MenuButton(MainMenu::BTN_INFO_CYCLE_FWD, this->font, "next", 18, Vector2f((this->window->getDefaultView().getSize().x / 2.f) + 600, 1000.f), 5));
 }
 
 void MainMenu::InitBackground() {
-	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
+	this->background.setSize(Vector2f(static_cast<float>(this->window->getDefaultView().getSize().x), static_cast<float>(this->window->getDefaultView().getSize().y)));
 	this->backgroundTexture.loadFromFile("Textures/Backgrounds/UI/background.png");
 	this->background.setTexture(&this->backgroundTexture);
 
@@ -61,7 +60,7 @@ void MainMenu::InitBackground() {
 		this->infoPanel.getGlobalBounds().width / 2,
 		this->infoPanel.getGlobalBounds().height / 2
 	);
-	this->infoPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) + 550, (this->window->getSize().y / 2.f) + 50.f));
+	this->infoPanel.setPosition(Vector2f((this->window->getDefaultView().getSize().x / 2.f) + 550, (this->window->getDefaultView().getSize().y / 2.f) + 50.f));
 
 	// Setup Summary panel
 	this->summaryPanel.setTexture(this->panelTextures[this->currentSummaryPanel]);
@@ -69,7 +68,7 @@ void MainMenu::InitBackground() {
 		this->summaryPanel.getGlobalBounds().width / 2,
 		this->summaryPanel.getGlobalBounds().height / 2
 	);
-	this->summaryPanel.setPosition(Vector2f((this->window->getSize().x / 2.f) - 100, (this->window->getSize().y / 2.f) + 50.f));
+	this->summaryPanel.setPosition(Vector2f((this->window->getDefaultView().getSize().x / 2.f) - 100, (this->window->getDefaultView().getSize().y / 2.f) + 50.f));
 }
 
 void MainMenu::Update(const float &dt) {
@@ -78,7 +77,6 @@ void MainMenu::Update(const float &dt) {
 	this->UpdateInfoPanels(dt);
 	this->UpdateMousePosition();
 	this->UpdateButtons(dt);
-	//this->UpdateSummaryPanels(dt);
 }
 
 // For now - this is rather ugly

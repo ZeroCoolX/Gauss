@@ -76,10 +76,13 @@ private:
 
 	bool campaignOver;
 
+	// Necessary to support multiple resolutions
+	Vector2f center;
+	View originalView;
+	Vector2u screenResolutionSize;
+
 	RenderWindow *window;
 	View mainView;
-	RenderTexture mainRenderTexture;
-	Sprite mainRenderSprite;
 	float keyTimeMax;
 	float keyTime;
 	bool fullscreen;
@@ -176,7 +179,7 @@ private:
 	void _refreshPauseControlText();
 
 public:
-	Game(RenderWindow *window);
+	Game(RenderWindow *window, Vector2u screenResolutionSize);
 	virtual ~Game();
 
 	// Accessors
@@ -192,7 +195,6 @@ public:
 
 	// Functions
 	void InitPlayersInWorld(int quantity);
-	void InitRenderTexture();
 	void InitView();
 	void InitTextures();
 	void InitUI();
@@ -240,5 +242,6 @@ public:
 	void PauseGame();
 	void PausedForRespawn(const float &dt);
 	void DisplayGameEnd();
+	void RedeployUI();
 };
 

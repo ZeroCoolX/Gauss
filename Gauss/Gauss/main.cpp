@@ -12,15 +12,19 @@ void GetJoystickInput();
 Text debugText;
 
 int main() {
+	// Allows the support of multiple screen resolutions
+	unsigned clientWidth = VideoMode::getDesktopMode().width;
+	unsigned clientHeight = VideoMode::getDesktopMode().height;
 
 	//srand(time(NULL));
-
-	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Fullscreen);
+	RenderWindow window(VideoMode(1920, 1080), "Gauss", Style::Default);
 	//window.setFramerateLimit(60);
 	Clock clock;
 	float dt = 0.f;
+	Game game(&window, Vector2u(clientWidth, clientHeight));
 
-	Game game(&window);
+	window.create(sf::VideoMode(clientWidth, clientHeight), "Gauss", Style::Fullscreen);
+
 	GameMapEditor mapEditor(&window);
 
 	Font f;

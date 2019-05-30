@@ -21,8 +21,9 @@ GameOverMenu::GameOverMenu(Font &font, RenderWindow *window)
 	this->active = false;
 	this->font = font;
 	this->window = window;
-	this->background.setSize(Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y)));
+	this->background.setSize(Vector2f(static_cast<float>(this->window->getDefaultView().getSize().x), static_cast<float>(this->window->getDefaultView().getSize().y)));
 	this->background.setFillColor(Color(255, 255, 255, 255));
+	this->background.setTexture(&GameOverMenu::backgroundTextures[0]);
 }
 
 
@@ -92,13 +93,13 @@ void GameOverMenu::UpdateMousePosition() {
 #pragma warning(pop)
 
 #pragma warning(push)
-#pragma warning(disable:4018)
+#pragma warning(disable:4244)
 	// Max bounds check
-	if (this->mousePosGrid.x >= window->getSize().x) {
-		this->mousePosGrid.x = window->getSize().x - 1;
+	if (this->mousePosGrid.x >= window->getDefaultView().getSize().x) {
+		this->mousePosGrid.x = window->getDefaultView().getSize().x - 1;
 	}
-	if (this->mousePosGrid.y >= window->getSize().y) {
-		this->mousePosGrid.y = window->getSize().y - 1;
+	if (this->mousePosGrid.y >= window->getDefaultView().getSize().y) {
+		this->mousePosGrid.y = window->getDefaultView().getSize().y - 1;
 	}
 #pragma warning(pop)
 }

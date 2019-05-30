@@ -1,11 +1,11 @@
 #include "Game.h"
 #include <sstream>
 
-Game::Game(RenderWindow *window) : leaderboards(2)
+Game::Game(RenderWindow *window, Vector2u screenResolutionSize) : leaderboards(2)
 {
 	this->window = window;
 	this->window->setMouseCursorVisible(true);
-
+	this->screenResolutionSize = screenResolutionSize;
 	// Init stage
 	this->stage = nullptr;
 	// Init Menus
@@ -93,18 +93,18 @@ Game::~Game()
 	this->playerScoreMap.clear();
 }
 
-void Game::InitRenderTexture() {
-	this->mainRenderTexture.create(
-		this->window->getSize().x, 
-		this->window->getSize().y
-	);
-
-	this->mainRenderSprite.setTexture(this->mainRenderTexture.getTexture());
-}
-
 void Game::InitView() {
-	this->mainView.setSize(Vector2f(this->window->getSize()));
+	this->center = Vector2f(
+		this->window->getView().getSize().x / 2.f,
+		this->window->getView().getSize().y / 2.f);
+	this->mainView.setSize(Vector2f(this->window->getDefaultView().getSize()));
 	this->mainView.setCenter(Vector2f(
+		this->window->getView().getSize().x / 2.f,
+		this->window->getView().getSize().y / 2.f));
+
+	// In order to support multiple resolutions we need to store the initial view creation
+	this->originalView.setSize(Vector2f(this->window->getDefaultView().getSize()));
+	this->originalView.setCenter(Vector2f(
 		this->window->getView().getSize().x / 2.f,
 		this->window->getView().getSize().y / 2.f));
 }
@@ -163,6 +163,23 @@ void Game::InitTextures() {
 	this->InitGameTextures();
 }
 
+void Game::RedeployUI() {
+	Text tempText;
+	tempText.setFont(this->font);
+	tempText.setCharacterSize(14);
+	tempText.setFillColor(Color::White);
+
+	for (size_t i = 0; i < this->players.Size(); i++)
+	{
+		// Follow Text init - belongs to the player
+		this->players[i].InitUI(tempText);
+		this->staticPlayerText.setString("");
+	}
+	this->gameOverText.setString("");
+	this->leaderboardText.setString("");
+	this->scoreText.setString("Score: 0");
+}
+
 void Game::InitUI() {
 	Text tempText;
 	tempText.setFont(this->font);
@@ -197,20 +214,20 @@ void Game::InitUI() {
 	this->gameOverText.setCharacterSize(20);
 	this->gameOverText.setFillColor(Color::Red);
 	this->gameOverText.setString("");
-	this->gameOverText.setPosition(50.f, (float)this->window->getSize().y / 4);
+	this->gameOverText.setPosition(50.f, (float)this->window->getDefaultView().getSize().y / 4);
 
 	// Leaderboard Text
 	this->leaderboardText.setFont(this->font);
 	this->leaderboardText.setCharacterSize(30);
 	this->leaderboardText.setFillColor(Color::White);
 	this->leaderboardText.setString("");
-	this->leaderboardText.setPosition((float)this->window->getSize().x - 600.f, 300.f);
+	this->leaderboardText.setPosition((float)this->window->getDefaultView().getSize().x - 600.f, 300.f);
 
 	// Controls / Pause text
 	this->controlsText.setFont(this->font);
 	this->controlsText.setCharacterSize(30);
 	this->controlsText.setFillColor(Color::White);
-	this->controlsText.setPosition((float)this->window->getSize().x / 3.f, 150.f);
+	this->controlsText.setPosition((float)this->window->getDefaultView().getSize().x / 3.f, 150.f);
 	this->_refreshPauseControlText();
 
 	// Score text
@@ -225,7 +242,7 @@ void Game::InitUI() {
 	this->pauseKeyHelperText.setCharacterSize(18);
 	this->pauseKeyHelperText.setFillColor(Color(255, 255, 255, 255));
 	this->pauseKeyHelperText.setString("[BACKSPACE] to pause");
-	this->pauseKeyHelperText.setPosition(10.f, (float)this->window->getSize().y - 25.f);
+	this->pauseKeyHelperText.setPosition(10.f, (float)this->window->getDefaultView().getSize().y - 25.f);
 }
 
 void Game::InitLeaderboards() {
@@ -345,12 +362,12 @@ void Game::Update(const float &dt, const Event *event) {
 		return;
 	}
 
-	if (this->gameMode == Mode::TUTORIAL) {
-		this->UpdateTutorial(dt);
-	}
-
 	// Pause check
 	this->PauseGame();
+
+	if (!this->paused && this->gameMode == Mode::TUTORIAL) {
+		this->UpdateTutorial(dt);
+	}
 
 	// Respawn Pause Check
 	this->PausedForRespawn(dt);
@@ -579,9 +596,6 @@ void Game::UpdateGameOverMenu(const float &dt) {
 		this->gameOverMenu->Reset();
 		this->_redeploy();
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
-		this->mainView.setCenter(Vector2f(
-			this->window->getView().getSize().x / 2.f,
-			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
@@ -596,9 +610,6 @@ void Game::UpdateTutorial(const float &dt) {
 		this->_redeploy();
 		this->audioManager->StopMusic(this->gameMusicSelection);
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
-		this->mainView.setCenter(Vector2f(
-			this->window->getView().getSize().x / 2.f,
-			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
@@ -1585,13 +1596,18 @@ void Game::UpdateParticles(const float &dt) {
 }
 
 void Game::DrawUI() {
-	// Draw Game Over Text - if needed
+	// Draw game over menus
 	if (!this->playersExistInWorld()) {
+		// reset view position
+		if (this->mainView.getCenter() != this->center) {
+			this->mainView.setCenter(this->center);
+		}
+
 		this->gameOverMenu->Draw(*this->window);
 		this->window->draw(this->gameOverText);
 		this->window->draw(this->leaderboardText);
-	}
-	else {
+		return;
+	}else {
 		this->window->draw(this->pauseKeyHelperText);
 
 		if (this->gameMode == Mode::COSMOS) {
@@ -1602,13 +1618,16 @@ void Game::DrawUI() {
 		}
 	}
 
-	if (this->gameMode == Mode::CAMPAIGN && this->playersExistInWorld()) {
-		this->DrawPlayerLivesUI();
-	}
-
 	if (this->paused) {
 		this->window->draw(this->pauseBackground);
 		this->window->draw(this->controlsText);
+	}
+	else if (this->gameMode == Mode::TUTORIAL) {
+		this->tutorial->Draw(*this->window);
+	}
+
+	if (this->gameMode == Mode::CAMPAIGN && this->playersExistInWorld()) {
+		this->DrawPlayerLivesUI();
 	}
 }
 
@@ -1708,6 +1727,19 @@ void Game::Draw() {
 		return;
 	}
 
+	// Draw game over menus
+	if (!this->playersExistInWorld()) {
+		// reset view position
+		if (this->mainView.getCenter() != this->center) {
+			this->mainView.setCenter(this->center);
+		}
+
+		this->gameOverMenu->Draw(*this->window);
+		this->window->draw(this->gameOverText);
+		this->window->draw(this->leaderboardText);
+		return;
+	}
+
 	// Draw Map and Players
 	this->DrawPlayersAndMap();
 
@@ -1724,12 +1756,9 @@ void Game::Draw() {
 	this->DrawTextTags();
 
 	// Draw UI - update view
-	this->window->setView(this->window->getDefaultView());
-	this->DrawUI();
+	this->window->setView(this->originalView);
 
-	if (this->gameMode == Mode::TUTORIAL) {
-		this->tutorial->Draw(*this->window);
-	}
+	this->DrawUI();
 }
 
 void Game::InitPlayerScoreStats() {
@@ -1745,7 +1774,7 @@ void Game::ToggleFullscreen() {
 
 		this->window->close();
 		this->fullscreen = !this->fullscreen;
-		this->window->create(sf::VideoMode(1920, 1080), "Gauss", this->fullscreen ? Style::Fullscreen : Style::Default);
+		this->window->create(sf::VideoMode(this->screenResolutionSize.x, this->screenResolutionSize.y), "Gauss", this->fullscreen ? Style::Fullscreen : Style::Default);
 	}
 }
 
@@ -1769,9 +1798,6 @@ void Game::PauseGame() {
 		this->audioManager->PlaySound(AudioManager::AudioSounds::BUTTON_CLICK);
 		this->_redeploy();
 		this->audioManager->PlayMusic(AudioManager::AudioMusic::MENU);
-		this->mainView.setCenter(Vector2f(
-			this->window->getView().getSize().x / 2.f,
-			this->window->getView().getSize().y / 2.f));
 		this->mainMenu->Reset();
 		this->mainMenu->activate();
 	}
@@ -1875,7 +1901,7 @@ void Game::InitGameTextures() {
 		this->pauseBackground.getGlobalBounds().width / 2,
 		this->pauseBackground.getGlobalBounds().height / 2
 	);
-	this->pauseBackground.setPosition(Vector2f(this->window->getSize().x / 2.f, this->window->getSize().y / 2.f));
+	this->pauseBackground.setPosition(Vector2f(this->window->getDefaultView().getSize().x / 2.f, this->window->getDefaultView().getSize().y / 2.f));
 
 	this->InitPlayerLivesUI();
 }
@@ -2086,10 +2112,9 @@ void Game::_redeploy() {
 	this->bosses.Clear();
 
 	// Reset Stage
-	this->mainView.setCenter(Vector2f(
-		this->window->getView().getSize().x / 2.f,
-		this->window->getView().getSize().y / 2.f));
+	this->mainView.setCenter(this->center);
 	this->stage->Reset(this->mainView);
+
 
 	// Reset all players
 	this->players.Clear();
@@ -2104,7 +2129,7 @@ void Game::_redeploy() {
 	// Set player lives 
 	this->_setPlayerLives();
 
-	this->InitUI();
+	this->RedeployUI();
 	this->InitMap();
 }
 
