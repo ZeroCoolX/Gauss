@@ -67,7 +67,10 @@ void ShipBayMenu::UpdateButtons(const float &dt) {
 		}
 	}
 
-	this->buttons[shipSelection]->changeColor(Color::Green);
+	this->buttons[shipSelection]->changeColor(
+		Color(0, 200, 0, 255), 
+		Color(0, 255, 0, 255),
+		Color(0, 50, 0, 255));
 }
 
 void ShipBayMenu::UpdateTimers(const float &dt) {

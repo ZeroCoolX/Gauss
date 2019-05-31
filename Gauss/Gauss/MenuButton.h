@@ -41,8 +41,16 @@ public:
 			this->sprite.getPosition().y + (this->sprite.getGlobalBounds().height / 2.f) - this->text.getGlobalBounds().height / 2.f
 		);
 	}
-	inline void changeColor(Color c) { this->colorIdle = c; }
-	inline void resetColor() { this->colorIdle = this->colorIdleDefault; }
+	inline void changeColor(Color cIdle, Color cHover, Color cPress) { 
+		this->colorIdle = cIdle;
+		this->colorHover = cHover;
+		this->colorPressed = cPress;
+	}
+	inline void resetColor() { 
+		this->colorIdle = this->colorIdleDefault;
+		this->colorHover = Color(255, 255, 255, 240);
+		this->colorPressed = Color(50, 50, 50, 240);
+	}
 	inline void setPositionX(float newX) { 
 		this->sprite.setPosition(Vector2f(newX, this->sprite.getPosition().y));
 		this->text.setPosition(

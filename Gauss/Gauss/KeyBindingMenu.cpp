@@ -125,7 +125,10 @@ void KeyBindingMenu::UpdateButtons(const float &dt) {
 			this->keybindPollingId = this->buttons[i]->getId();
 			this->keybindPolling = !this->keybindPolling;
 			if (this->keybindPolling) {
-				this->buttons[i]->changeColor(Color::Red);
+				this->buttons[i]->changeColor(
+					Color(200, 0, 0, 255),
+					Color(255, 0, 0, 255),
+					Color(50, 0, 0, 255));
 				this->lastChangeText.setString("Press a KEY or MOUSE button to bind");
 				this->lastChangeText.setPosition(Vector2f(425.f - (this->lastChangeText.getGlobalBounds().width / 2.f), 950.f));
 			}

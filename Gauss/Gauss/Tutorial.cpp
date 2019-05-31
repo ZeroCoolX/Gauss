@@ -107,13 +107,8 @@ void Tutorial::InitTexts() {
 	this->dialogTexts.Add(tempText);
 	tempText.Clear();
 
-	// TutorialStage::SHIELD_HOLD
-	tempText.Add("When the shield is depleted you cannot protect yourself so watch the size!");
-	tempText.Add("Now deplete the shield fully by holding (" + KeyManager::KeyName((*((*this->players)[0].getControls()))[Player::CONTROL_SHIELD]) + ") until to bursts.");
-	this->dialogTexts.Add(tempText);
-	tempText.Clear();
-
 	// TutorialStage::HEALTH_HUD
+	tempText.Add("When the shield is depleted you cannot protect yourself so watch the size!");
 	tempText.Add("The Gauss has a Heads up Display which is projected directly on the ship.");
 	tempText.Add("Its health is indicated by the red bar underneath it.");
 	tempText.Add("If this bar hits 0 you turn into space dust - so watch it.");
@@ -145,7 +140,7 @@ void Tutorial::InitTexts() {
 	tempText.Add("Just remember these few key battle tips...");
 	tempText.Add("TAP the direction to move a very small amount and HOLD the direction to accelerate very quickly.");
 	tempText.Add("Leveling up refills your Gauss's health so if you're going down on health, go up on killing!");
-	tempText.Add("Lastly, don't forget to use the reflect shield to reflect enemy projectiles, and to give you some extra buffer if enemy collision is inevitable.");
+	tempText.Add("Lastly, you can re-map any of these controls from the Change Keybinding menu option.");
 	tempText.Add("Alright soldier, time to cut the chit-chat and get out there!");
 	this->dialogTexts.Add(tempText);
 }
@@ -174,9 +169,6 @@ void Tutorial::Update(const float &dt) {
 		case SHIELD:
 			this->updateShield(dt);
 			break;
-		case SHIELD_HOLD:
-			this->updateShieldHold(dt);
-			break;
 		case HEALTH_HUD:
 			this->updateHealthHud(dt);
 			break;
@@ -190,7 +182,6 @@ void Tutorial::Update(const float &dt) {
 			this->updateXpChargeHud(dt);
 			break;
 		case TUTORIAL_OVER:
-			(*this->players)[0].disableAllControls();
 			this->updateTutorialOver(dt);
 			break;
 		default:
@@ -319,6 +310,7 @@ void Tutorial::updateTutorialOver(const float &dt) {
 		this->displayText(dt);
 		if (this->dialogueFinished) {
 			this->dialog->disable();
+			(*this->players)[0].disableAllControls();
 			(*this->players)[0].overrideControlsForTutorial();
 
 			if (this->tutorialCompleteTimer > 0.f) {
@@ -480,31 +472,6 @@ void Tutorial::updateShield(const float &dt) {
 
 	if (this->dialogueFinished) {
 		if (this->shieldPressed) {
-			this->currentStage = TutorialStage::SHIELD_HOLD;
-			this->moveToNextStage = true;
-		}
-	}
-	else {
-		if (!this->dialog->isActive()) {
-			this->dialog->activate();
-			// Clear any previous text
-			this->currentText = "";
-			this->currentTextIndex = 0;
-		}
-		else {
-			this->displayText(dt);
-		}
-	}
-}
-
-void Tutorial::updateShieldHold(const float &dt) {
-	if (this->dialogueFinished) {
-		// start looking for keypresses and hide the dialogue
-		if (this->dialog->isActive()) {
-			this->dialog->disable();
-		}
-
-		if ((*this->players)[0].getShieldChargeTimer() <= 0.f) {
 			this->currentStage = TutorialStage::HEALTH_HUD;
 			this->moveToNextStage = true;
 		}

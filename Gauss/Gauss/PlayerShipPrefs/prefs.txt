@@ -1,2 +1,2 @@
 #SHIP_TYPE SHIP_SKIN
-0 0
+0 4
